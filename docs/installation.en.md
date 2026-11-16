@@ -493,7 +493,7 @@ in the privacy notice, with Anthropic's data processing agreement.
 
 Kontext runs fully on Stalwart's free Community edition; an Enterprise license is not needed.
 Whoever wants Stalwart's Enterprise features all the same (restoring deleted items on the server,
-the AI spam filter, SCIM, for example) buys the license from Stalwart Labs
+the AI spam filter, SCIM, masked addresses, for example) buys the license from Stalwart Labs
 ([pricing](https://stalw.art/pricing/), 30 days to try) and enters it in Stalwart, not in Kontext:
 it is the same image, only the key unlocks it.
 

@@ -315,6 +315,18 @@ mit einem eigenen API-Schlüssel an und erlaubt nur, was die Firmenverwaltung br
   `GET /api/company/edition`, die Firmenverwaltung zeigt sie unter *Mitarbeiter*. Kontext braucht
   Enterprise für nichts; was nur Stalwart Enterprise kann, bietet die App erst an, wenn die
   Lizenz aktiv ist (`useStalwartEdition`, `src/features/company/edition.ts`).
+- **Maskierte Adressen** (nur Enterprise) sind Stalwarts `x:MaskedEmail`
+  (`crates/registry/src/schema/structs.rs`). Die App fragt Stalwart direkt mit dem Token der
+  Sitzung, nicht mit dem Schlüssel des Servers: die Rolle *User* hat `sysMaskedEmail*`
+  (`crates/common/src/auth/permissions.rs`), und Kontexts Scope `full` enthält sie
+  (`SETTINGS` in `crates/common/src/auth/oauth/scope.rs`); Stalwart sieht so nur die Adressen des
+  eigenen Kontos. Die Adresse macht Stalwart: Anfang (zufällig oder `emailPrefix`), Punkt, eine
+  geprüfte Kennung, `@` und die Domain des Kontos
+  (`crates/jmap/src/registry/mapping/masked_email.rs`, `crates/common/src/enterprise/masked.rs`).
+  Zugestellt wird, solange `enable` an und `expiresAt` nicht vorbei ist, sonst lehnt Stalwart den
+  Empfänger ab (`crates/common/src/network/mta.rs`). `expiresAt` steht ab dem Anlegen fest. Ohne
+  Lizenz antwortet Stalwart `forbidden` (`crates/jmap/src/registry/mod.rs`); die App zeigt den
+  Punkt dann nicht (`src/jmap/masked-email.ts`, `src/features/settings/masked-email-section.tsx`).
 - **Gemeinsame Postfächer** sind Gruppen; Mitglied ist, wer die Gruppe in `memberGroupIds` hat.
   „Nur lesen“ bekommt, wem alle Ordner des Postfachs per `shareWith` geteilt sind
   (`mayReadItems`, `maySetSeen`); die App liest das am Posteingang ab.
