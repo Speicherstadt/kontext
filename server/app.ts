@@ -27,10 +27,12 @@ import { createChatRoutes, viewerOf } from "./chat/routes";
 import { createChatStore } from "./chat/store";
 import { createArchive } from "./company/archive";
 import { createBackupControl } from "./company/backup";
+import { createBranding } from "./company/branding";
 import { createCalendars } from "./company/calendars";
 import { createEditionCheck } from "./company/edition";
 import { createEncryptionGateway } from "./company/encryption-gateway";
 import { createExternalHintStore } from "./company/external-hint";
+import { createLicenseCheck } from "./company/license";
 import { createMailstore } from "./company/mailstore";
 import {
   createDownload,
@@ -40,6 +42,7 @@ import {
 } from "./company/management";
 import { createCompanyRoutes } from "./company/routes";
 import { dohResolver } from "./company/security";
+import { createServerHealth } from "./company/server-health-routes";
 import { createCompanySettings } from "./company/settings";
 import { createSignatureDetails } from "./company/signature-details";
 import { createSignatureDetailRoutes } from "./company/signature-details-routes";
@@ -423,6 +426,9 @@ export const createApp = async (env: Env) => {
       encryptionGateway: createEncryptionGateway(request),
       backup: createBackupControl(join(dirname(env.DATABASE_PATH), "backup-control")),
       edition: createEditionCheck({ stalwartUrl: env.STALWART_URL, key: env.STALWART_ADMIN_KEY }),
+      license: createLicenseCheck(request),
+      serverHealth: createServerHealth(request),
+      branding: createBranding(request),
       archive: createArchive(request),
     });
     app.route("/api/company", company);

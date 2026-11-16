@@ -11,6 +11,7 @@ import { authorityRoutes } from "../smime/authorities";
 import { archiveRoutes } from "./archive-routes";
 import { assistantRoutes } from "./assistant";
 import { backupRoutes } from "./backup-routes";
+import { brandingRoutes } from "./branding";
 import { bad, bodyOf, type CompanyDeps, createLoader, type Env } from "./context";
 import { readEdition } from "./edition";
 import { employeeRoutes } from "./employees";
@@ -23,6 +24,7 @@ import { mailboxRoutes } from "./mailboxes";
 import { phishingReportRoutes, readPhishingReport } from "./phishing-report";
 import { searchIndexStatus } from "./search-index";
 import { checkDomain, httpsCheck } from "./security";
+import { serverHealthRoutes } from "./server-health-routes";
 import { signatureRoutes } from "./signature-routes";
 import { readVacationTemplates, vacationTemplateRoutes } from "./vacation-templates";
 
@@ -96,6 +98,14 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
     await next();
   });
 
+  /** Stalwart Enterprise's license: only for the company's admins, nothing without a license. */
+  app.get("/license", async (c) =>
+    c.json({
+      license:
+        deps.license && (await deps.edition?.()) === "enterprise" ? await deps.license() : null,
+    }),
+  );
+
   app.get("/", (c) => {
     const { company, selfId } = c.get("loaded");
     return c.json({ ...company, selfId });
@@ -152,6 +162,13 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
     app.route("/encryption-gateway", encryptionGatewayRoutes(deps.encryptionGateway));
   }
   if (deps.backup) app.route("/backup", backupRoutes(deps.backup));
+  if (deps.serverHealth) {
+    app.route(
+      "/server-health",
+      serverHealthRoutes({ health: deps.serverHealth, edition: deps.edition }),
+    );
+  }
+  if (deps.branding) app.route("/branding", brandingRoutes(deps.branding, deps));
   app.route("/migrations", migrationRoutes(deps.migrations));
   app.route("/syncs", syncRoutes(deps.syncs));
   return app;

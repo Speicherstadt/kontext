@@ -306,6 +306,23 @@ IMAP und SMTP.
 - **Newsletter abbestellen** mit einem Klick direkt an der Mail.
 - Mails werden in einem abgeschotteten Rahmen ohne Skripte angezeigt.
 
+## Maskierte Adressen
+
+Mit Stalwart Enterprise legt jede Person unter *Einstellungen → Maskierte Adressen* eigene
+Adressen für Websites, Shops und Newsletter an, etwa `baumarkt.k3x9…@firma.de`. Mails an sie
+kommen im eigenen Posteingang an, die echte Adresse erfährt der Shop nicht. Kommt Spam, schaltet
+man die Adresse ab (Mails an sie werden dann abgewiesen) oder löscht sie.
+
+- **Anlegen:** wofür (Pflicht), optional die Website, der Anfang der Adresse (Buchstaben, Ziffern
+  und `_`; leer wählt der Mailserver zufällig) und wie lange sie gilt (unbegrenzt, 1 Tag, 1 Woche,
+  30 Tage, 1 Jahr). Den Rest der Adresse macht der Mailserver.
+- **Liste:** Adresse, wofür, Website, angelegt, läuft ab; ein Knopf kopiert die Adresse, ein
+  Schalter nimmt Mails an oder weist sie ab, „Löschen“ entfernt sie endgültig.
+- Jede Person darf 5 Adressen haben; mehr erlaubt Stalwart in den E-Mail-Einstellungen
+  (`maxMaskedAddresses`).
+- Ohne Enterprise-Lizenz fehlt der Punkt in den Einstellungen.
+  [Mehr](architecture.md#firmenverwaltung)
+
 ## Weitere Postfächer: Gmail, GMX, WEB.DE & Co.
 
 Unter *Einstellungen → Weitere Postfächer* verbindet jede Person ihre anderen Adressen: Neue Mail
