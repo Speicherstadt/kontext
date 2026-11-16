@@ -310,6 +310,18 @@ its own and allows only what the company admin needs.
   company admin shows it under *Employees*. Kontext needs Enterprise for nothing; what only
   Stalwart Enterprise can do, the app offers only once the license is active
   (`useStalwartEdition`, `src/features/company/edition.ts`).
+- **Masked addresses** (Enterprise only) are Stalwart's `x:MaskedEmail`
+  (`crates/registry/src/schema/structs.rs`). The app asks Stalwart directly with the session's
+  token, not with the server's key: the *User* role has `sysMaskedEmail*`
+  (`crates/common/src/auth/permissions.rs`), and Kontext's `full` scope includes them (`SETTINGS`
+  in `crates/common/src/auth/oauth/scope.rs`); so Stalwart shows only the own account's
+  addresses. Stalwart makes the address: a start (random or `emailPrefix`), a dot, a checked id,
+  `@` and the account's domain (`crates/jmap/src/registry/mapping/masked_email.rs`,
+  `crates/common/src/enterprise/masked.rs`). Mail is delivered while `enable` is on and
+  `expiresAt` has not passed; otherwise Stalwart refuses the recipient
+  (`crates/common/src/network/mta.rs`). `expiresAt` is fixed once created. Without a license
+  Stalwart answers `forbidden` (`crates/jmap/src/registry/mod.rs`); the app then does not show the
+  item (`src/jmap/masked-email.ts`, `src/features/settings/masked-email-section.tsx`).
 - **Shared mailboxes** are groups; a member is whoever has the group in `memberGroupIds`.
   "Read only" goes to whoever has all of the mailbox's folders shared with them via `shareWith`
   (`mayReadItems`, `maySetSeen`); the app reads this off the inbox.

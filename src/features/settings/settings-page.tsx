@@ -32,6 +32,7 @@ import {
   Truck,
   User,
   Users,
+  VenetianMask,
 } from "lucide-react";
 import { lazy, type ReactNode, Suspense, useId } from "react";
 import { TabBar } from "@/components/shell/app-shell";
@@ -39,6 +40,7 @@ import { AgentsSection } from "@/features/agents/agents-section";
 import { AssistantSection } from "@/features/company/assistant-section";
 import { BackupSection } from "@/features/company/backup-section";
 import { ChatSection } from "@/features/company/chat-section";
+import { useStalwartEdition } from "@/features/company/edition";
 import { EmployeesSection } from "@/features/company/employees-section";
 import { EncryptionGatewaySection } from "@/features/company/encryption-gateway-section";
 import { ExternalHintSection } from "@/features/company/external-hint-section";
@@ -63,6 +65,7 @@ import { AccessSection } from "./access-section";
 import { AppPasswordsCard } from "./app-passwords-card";
 import { AppearanceSection } from "./appearance-section";
 import { DeputySection } from "./deputy-section";
+import { MaskedEmailSection } from "./masked-email-section";
 import { ProfileSection } from "./profile-section";
 import { SecuritySection } from "./security-section";
 import { SignatureDetailsCard } from "./signature-details-card";
@@ -104,6 +107,7 @@ const OWN: Entry[] = [
   { id: "security", label: m.settings_security, icon: KeyRound },
   { id: "access", label: m.settings_access, icon: MonitorSmartphone },
   { id: "encryption", label: m.settings_encryption, icon: LockKeyhole },
+  { id: "masked-email", label: m.settings_masked, icon: VenetianMask },
   { id: "agents", label: m.settings_agents, icon: Bot },
   { id: "appearance", label: m.settings_appearance, icon: Palette },
 ];
@@ -147,6 +151,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
   security: () => <SecuritySection />,
   access: () => <AccessSection />,
   encryption: () => <EncryptionSection />,
+  "masked-email": () => <MaskedEmailSection />,
   agents: () => <AgentsSection />,
   appearance: () => <AppearanceSection />,
   employees: () => <EmployeesSection />,
@@ -203,7 +208,12 @@ export const SettingsPage = ({ section }: { section: Section | undefined }) => {
   const admin = useIsCompanyAdmin();
   // Other mailboxes need the server's Stalwart key; without it the entry is left out.
   const { data: external } = useExternalAccounts();
-  const own = external === null ? OWN.filter((entry) => entry.id !== "accounts") : OWN;
+  // Masked addresses are Stalwart Enterprise's (src/jmap/masked-email.ts).
+  const enterprise = useStalwartEdition() === "enterprise";
+  const own = OWN.filter(
+    (entry) =>
+      (entry.id !== "accounts" || external !== null) && (entry.id !== "masked-email" || enterprise),
+  );
   // Telephony needs LiveKit on the server; without it the section has nothing to set.
   const phone = usePhone().enabled;
   const company = COMPANY.filter((entry) => entry.id !== "phone" || phone);
