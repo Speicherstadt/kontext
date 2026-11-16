@@ -25,6 +25,7 @@ import { createMessageStore } from "./chat/messages";
 import { createChatPruner, createChatRetention } from "./chat/retention";
 import { createChatRoutes, viewerOf } from "./chat/routes";
 import { createChatStore } from "./chat/store";
+import { createArchive } from "./company/archive";
 import { createBackupControl } from "./company/backup";
 import { createBranding } from "./company/branding";
 import { createCalendars } from "./company/calendars";
@@ -428,6 +429,7 @@ export const createApp = async (env: Env) => {
       license: createLicenseCheck(request),
       serverHealth: createServerHealth(request),
       branding: createBranding(request),
+      archive: createArchive(request),
     });
     app.route("/api/company", company);
   }

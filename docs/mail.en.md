@@ -129,6 +129,15 @@ SMTP.
 
   ![Trash with "Empty trash" and the question](screenshots/empty-trash.png)
 
+- **Restoring what was deleted for good** (only with Stalwart Enterprise): Stalwart keeps mails
+  deleted for good for as many days as the company admin sets under *Backup* (none at first).
+  Under *Settings → Deleted items*, or from the trash through **Deleted for good**, they are
+  listed with subject, sender, the day they were deleted and how long they are still kept; the
+  same for shared mailboxes one is a member of. **Restore** puts the mail back into the inbox a
+  moment later, **Delete for good** takes it out of the archive. Other kinds (files, events,
+  contacts, filter rules) are listed, but Stalwart 1.1 restores only mails. With the Community
+  edition the entry is not there.
+
 - **Conversations while reading:** earlier mails and the replies since, quotes collapsed; grouped
   like Gmail if you want.
 - **Snooze:** a mail out of the way until tomorrow, Monday or a set time – then it is back at the

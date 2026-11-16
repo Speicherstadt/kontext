@@ -8,6 +8,7 @@ import { retentionSchema } from "../chat/chat";
 import { migrationRoutes } from "../migration/routes";
 import { syncRoutes } from "../migration/sync-routes";
 import { authorityRoutes } from "../smime/authorities";
+import { archiveRoutes } from "./archive-routes";
 import { assistantRoutes } from "./assistant";
 import { backupRoutes } from "./backup-routes";
 import { brandingRoutes } from "./branding";
@@ -86,6 +87,9 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
     const result = await edition(c.req.raw);
     return result ? c.json(result) : c.json({ error: "Nicht angemeldet" }, 401);
   });
+
+  /** Gelöschte Elemente: everyone their own, the admin everyone's (archive-routes.ts). */
+  app.route("/archive", archiveRoutes(deps));
 
   app.use("*", async (c, next) => {
     const loaded = await load(c.req.raw);

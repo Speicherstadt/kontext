@@ -68,6 +68,8 @@ export type CompanyDeps = {
   serverHealth?: import("./server-health-routes").ServerHealth;
   /** Firmenlogo und Vorlagen in Stalwart, Enterprise only (branding.ts). */
   branding?: import("./branding").Branding;
+  /** Gelöschte Elemente wiederherstellen, Stalwart Enterprise (archive.ts). */
+  archive?: import("./archive").Archive;
 };
 
 export type Loaded = {

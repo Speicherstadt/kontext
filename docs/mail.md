@@ -135,6 +135,16 @@ IMAP und SMTP.
 
   ![Papierkorb mit „Papierkorb leeren“ und der Rückfrage](screenshots/empty-trash.png)
 
+- **Endgültig Gelöschtes wiederherstellen** (nur mit Stalwart Enterprise): Stalwart hebt
+  endgültig gelöschte Mails so viele Tage auf, wie die Firmenverwaltung unter *Datensicherung*
+  einstellt (zu Beginn keine). Unter *Einstellungen → Gelöschte Elemente*, oder im Papierkorb
+  über **Endgültig Gelöschtes**, stehen sie mit Betreff, Absender, Löschdatum und wie lange sie
+  noch aufgehoben werden; für gemeinsame Postfächer, in denen man Mitglied ist, ebenso.
+  **Wiederherstellen** legt die Mail einen Moment später wieder in den Posteingang,
+  **Endgültig löschen** nimmt sie aus der Aufbewahrung. Andere Arten (Dateien, Termine,
+  Kontakte, Filterregeln) zeigt die Liste, Stalwart 1.1 stellt aber nur Mails wieder her. Mit
+  der Community-Ausgabe gibt es den Eintrag nicht.
+
 - **Unterhaltungen beim Lesen:** frühere Mails und die Antworten seitdem, Zitate eingeklappt;
   gruppiert wie Gmail auf Wunsch.
 - **Wiedervorlage:** eine Mail aus dem Weg bis morgen, Montag oder einem Zeitpunkt – dann ist sie

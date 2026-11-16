@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import {
+  DeletedItemsButton,
+  DeletedItemsDialog,
+} from "@/features/deleted-items/deleted-items-admin";
 import { m } from "@/paraglide/messages";
 import { useCompanyRules } from "../rules/queries";
 import { RulesList } from "../rules/rules-section";
@@ -35,6 +39,7 @@ const memberNames = (company: Company, mailbox: SharedMailbox): string => {
 const Mailboxes = ({ company }: { company: Company }) => {
   const [open, setOpen] = useState<string | "new" | null>(null);
   const [rulesOf, setRulesOf] = useState<SharedMailbox | null>(null);
+  const [deletedOf, setDeletedOf] = useState<SharedMailbox | null>(null);
   const mailbox = company.mailboxes.find((mb) => mb.id === open);
 
   return (
@@ -78,6 +83,11 @@ const Mailboxes = ({ company }: { company: Company }) => {
               >
                 <ListFilter size={16} /> <span className="hidden sm:inline">{m.rules_open()}</span>
               </Button>
+              <DeletedItemsButton
+                compact
+                label={m.deleted_of({ name: item.email })}
+                onOpen={() => setDeletedOf(item)}
+              />
             </li>
           ))}
         </ul>
@@ -95,6 +105,13 @@ const Mailboxes = ({ company }: { company: Company }) => {
         />
       ) : null}
       {rulesOf ? <MailboxRulesDialog mailbox={rulesOf} onClose={() => setRulesOf(null)} /> : null}
+      {deletedOf ? (
+        <DeletedItemsDialog
+          accountId={deletedOf.id}
+          name={deletedOf.email}
+          onClose={() => setDeletedOf(null)}
+        />
+      ) : null}
     </>
   );
 };

@@ -116,6 +116,16 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   ein). Kontext prüft die Vorlage so, wie Stalwart sie liest, und zeigt sie mit einem
   Beispieltermin, bevor sie gilt; „Stalwarts Vorlage verwenden“ löscht die eigene wieder. Mit
   Community fehlt der Eintrag ([wie es funktioniert](architecture.md#logo-und-vorlagen)).
+- **Gelöschte Elemente** (nur mit Stalwart Enterprise): unter *Datensicherung* stellt die
+  Firmenverwaltung ein, wie viele Tage Stalwart endgültig Gelöschtes aufhebt – 0 (so ist es zu
+  Beginn) hebt nichts auf; die Dauer gilt für das, was ab dann gelöscht wird. So lange holt jede
+  Person ihre Mails unter *Einstellungen → Gelöschte Elemente* selbst zurück
+  ([Mail](mail.md#ordnen-und-finden)). Am Eintrag eines Mitarbeiters und an jedem gemeinsamen
+  Postfach öffnet **Gelöschte Elemente** dieselbe Liste für dieses Konto: wiederherstellen (in
+  den Posteingang) oder endgültig löschen. Der Kontext-Server braucht dafür die Rechte
+  `sysArchivedItem…` und `sysDataRetention…`, die der
+  [Einrichtungsbefehl](installation.md#einrichtungsbefehl) vergibt. Mit der Community-Ausgabe
+  gibt es beides nicht.
 
 ## Umzug nach Kontext
 

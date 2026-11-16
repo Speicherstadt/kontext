@@ -5,6 +5,7 @@
 import { Link } from "@tanstack/react-router";
 import {
   Activity,
+  ArchiveRestore,
   AtSign,
   BadgeCheck,
   Bot,
@@ -57,6 +58,8 @@ import { SecuritySection as CompanySecuritySection } from "@/features/company/se
 import { ServerHealthSection } from "@/features/company/server-health-section";
 import { SmimeAuthoritiesSection } from "@/features/company/smime-authorities-section";
 import { VacationTemplatesSection } from "@/features/company/vacation-templates-section";
+import { RetentionCard } from "@/features/deleted-items/deleted-items-admin";
+import { DeletedItemsSection } from "@/features/deleted-items/deleted-items-section";
 import { ExternalSection } from "@/features/external/external-section";
 import { useExternalAccounts } from "@/features/external/queries";
 import { usePhone } from "@/features/phone/queries";
@@ -114,6 +117,7 @@ const OWN: Entry[] = [
   { id: "masked-email", label: m.settings_masked, icon: VenetianMask },
   { id: "agents", label: m.settings_agents, icon: Bot },
   { id: "appearance", label: m.settings_appearance, icon: Palette },
+  { id: "deleted", label: m.deleted_title, icon: ArchiveRestore },
 ];
 
 /** The Firmenverwaltung, only for accounts with that right. */
@@ -160,6 +164,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
   "masked-email": () => <MaskedEmailSection />,
   agents: () => <AgentsSection />,
   appearance: () => <AppearanceSection />,
+  deleted: () => <DeletedItemsSection />,
   employees: () => <EmployeesSection />,
   mailboxes: () => <MailboxesSection />,
   "company-signature": () => <CompanySignatureSection />,
@@ -181,7 +186,12 @@ const CONTENT: Record<Section, () => ReactNode> = {
   "company-idle": () => <IdleLogoutSection />,
   "company-external": () => <ExternalHintSection />,
   "company-smime": () => <SmimeAuthoritiesSection />,
-  "company-backup": () => <BackupSection />,
+  "company-backup": () => (
+    <>
+      <BackupSection />
+      <RetentionCard />
+    </>
+  ),
   "company-health": () => <ServerHealthSection />,
   "company-branding": () => <BrandingSection />,
   phone: () => <PhoneSettingsSection />,
@@ -216,11 +226,12 @@ export const SettingsPage = ({ section }: { section: Section | undefined }) => {
   const admin = useIsCompanyAdmin();
   // Other mailboxes need the server's Stalwart key; without it the entry is left out.
   const { data: external } = useExternalAccounts();
-  // Masked addresses are Stalwart Enterprise's (src/jmap/masked-email.ts).
+  // Masked addresses and restoring deleted items are Stalwart Enterprise's.
   const enterprise = useStalwartEdition() === "enterprise";
   const own = OWN.filter(
     (entry) =>
-      (entry.id !== "accounts" || external !== null) && (entry.id !== "masked-email" || enterprise),
+      (entry.id !== "accounts" || external !== null) &&
+      ((entry.id !== "masked-email" && entry.id !== "deleted") || enterprise),
   );
   // Telephony needs LiveKit on the server; without it the section has nothing to set.
   const phone = usePhone().enabled;

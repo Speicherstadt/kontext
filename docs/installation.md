@@ -404,24 +404,24 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysIndexQueueStatusGet`, `sysMetricGet`, `sysMetricQuery`, `sysTraceGet`, `sysTraceQuery`,
    `sysMetricsStoreGet`, `sysTracingStoreGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` und `impersonate`. Mit `sysIndexQueueStatusGet` zeigt die
-   Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Die `sysMetric…`-, `sysTrace…`- und
-   `…StoreGet`-Rechte lesen nur, was der [Serverzustand](#serverzustand) zeigt (Stalwart
-   Enterprise). Mit den `sysEncryption…`- und
    `sysActionCreate`, `actionReloadSettings`, `sysEnterpriseGet`, `sysEnterpriseUpdate`,
    `sysCalendarAlarmGet`, `sysCalendarAlarmUpdate`, `sysCalendarSchedulingGet`,
-   `sysCalendarSchedulingUpdate`, `actionInvalidateCaches` und `impersonate`. Mit den
-   `sysEnterprise…`-, `sysCalendarAlarm…`- und `sysCalendarScheduling…`-Rechten und
-   `actionInvalidateCaches` setzt sie mit Stalwart Enterprise das
-   [Firmenlogo und die Vorlagen](company.md#mitarbeiter-und-postfacher) von Stalwarts
-   Kalender-Mails. Mit `sysIndexQueueStatusGet` zeigt die
-   Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Mit den `sysEncryption…`- und
-   `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln durch
-   Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
+   `sysCalendarSchedulingUpdate`, `actionInvalidateCaches`, `sysArchivedItemGet`,
+   `sysArchivedItemQuery`, `sysArchivedItemUpdate`, `sysArchivedItemDestroy`,
+   `sysDataRetentionGet`, `sysDataRetentionUpdate` und `impersonate`. Mit
+   `sysIndexQueueStatusGet` zeigt die Firmenverwaltung, solange Stalwart den Suchindex aufbaut.
+   Mit den `sysEncryption…`- und `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln
+   durch Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
    Empfänger; `sysActionCreate` mit `actionReloadSettings` lässt sie Stalwart danach die
-   Einstellungen neu laden. Mit `impersonate` arbeitet der Server in den Postfächern der Mitarbeiter
-   (Abwesenheit, Leserechte für gemeinsame Postfächer) und trägt Antworten auf Einladungen ein;
-   die App zeigt dem Chef dabei nie fremde Mails.
+   Einstellungen neu laden. Nur mit [Stalwart Enterprise](#stalwart-enterprise) gebraucht werden:
+   die `sysMetric…`-, `sysTrace…`- und `…StoreGet`-Rechte, die nur lesen, was der
+   [Serverzustand](#serverzustand) zeigt; die `sysEnterprise…`-, `sysCalendarAlarm…`- und
+   `sysCalendarScheduling…`-Rechte mit `actionInvalidateCaches` für das
+   [Firmenlogo und die Vorlagen](company.md#mitarbeiter-und-postfacher) von Stalwarts
+   Kalender-Mails; die `sysArchivedItem…`- und `sysDataRetention…`-Rechte für das
+   Wiederherstellen gelöschter Elemente. Mit `impersonate` arbeitet der Server in den Postfächern
+   der Mitarbeiter (Abwesenheit, Leserechte für gemeinsame Postfächer) und trägt Antworten auf
+   Einladungen ein; die App zeigt dem Chef dabei nie fremde Mails.
 2. Ein **Konto** `kontext-server@firma.de` mit dieser Rolle (statt *User*) und einem langen
    Zufallspasswort anlegen.
 3. Mit diesem Konto einen **API-Schlüssel** erzeugen (*Credentials → API Key*, Rechte
@@ -532,6 +532,11 @@ der [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal gelaufen ist, der der 
 - **Maskierte Adressen:** Jede Person legt unter *Einstellungen → Maskierte Adressen* eigene
   Adressen je Website oder Shop an, schaltet sie ab oder löscht sie
   ([Mail](mail.md#maskierte-adressen)).
+- **Gelöschte Elemente wiederherstellen:** Stalwart hebt endgültig Gelöschtes auf, so viele Tage,
+  wie die Firmenverwaltung unter *Datensicherung* einstellt (`archiveDeletedItemsFor` in
+  Stalwarts *DataRetention*; zu Beginn nichts). Jede Person holt eigene Mails und die ihrer
+  gemeinsamen Postfächer unter *Einstellungen → Gelöschte Elemente* zurück, die Firmenverwaltung
+  die jedes Mitarbeiters ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)).
 - **Logo und Vorlagen** in der Firmenverwaltung: das Firmenlogo und eigene Vorlagen für Stalwarts
   Kalender-Mails ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)).
 - **Serverzustand**, siehe den folgenden Abschnitt.

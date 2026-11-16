@@ -408,24 +408,24 @@ in Stalwart's admin interface it goes like this:
    `sysIndexQueueStatusGet`, `sysMetricGet`, `sysMetricQuery`, `sysTraceGet`, `sysTraceQuery`,
    `sysMetricsStoreGet`, `sysTracingStoreGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` and `impersonate`. With `sysIndexQueueStatusGet` the
-   company admin shows while Stalwart is building the search index. The `sysMetric…`,
-   `sysTrace…` and `…StoreGet` permissions only read what [server health](#serverzustand) shows
-   (Stalwart Enterprise). With the `sysEncryption…` and
    `sysActionCreate`, `actionReloadSettings`, `sysEnterpriseGet`, `sysEnterpriseUpdate`,
    `sysCalendarAlarmGet`, `sysCalendarAlarmUpdate`, `sysCalendarSchedulingGet`,
-   `sysCalendarSchedulingUpdate`, `actionInvalidateCaches` and `impersonate`. With the
-   `sysEnterprise…`, `sysCalendarAlarm…` and `sysCalendarScheduling…` permissions and
-   `actionInvalidateCaches` it sets, with Stalwart Enterprise, the
-   [company logo and the templates](company.md#mitarbeiter-und-postfacher) of Stalwart's calendar
-   mails. With `sysIndexQueueStatusGet` the
-   company admin shows while Stalwart is building the search index. With the `sysEncryption…` and
-   `sysExternalPublicKey…` permissions it switches [encryption by
+   `sysCalendarSchedulingUpdate`, `actionInvalidateCaches`, `sysArchivedItemGet`,
+   `sysArchivedItemQuery`, `sysArchivedItemUpdate`, `sysArchivedItemDestroy`,
+   `sysDataRetentionGet`, `sysDataRetentionUpdate` and `impersonate`. With
+   `sysIndexQueueStatusGet` the company admin shows while Stalwart is building the search index.
+   With the `sysEncryption…` and `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
    `sysActionCreate` with `actionReloadSettings` lets it have Stalwart reload its settings
-   afterwards. With `impersonate` the server works in the employees' mailboxes
-   (out of office, read access to shared mailboxes) and enters replies to invitations;
-   the app never shows the boss anyone else's mail in doing so.
+   afterwards. Needed only with [Stalwart Enterprise](#stalwart-enterprise): the `sysMetric…`,
+   `sysTrace…` and `…StoreGet` permissions, which only read what [server health](#serverzustand)
+   shows; the `sysEnterprise…`, `sysCalendarAlarm…` and `sysCalendarScheduling…` permissions with
+   `actionInvalidateCaches` for the [company logo and the
+   templates](company.md#mitarbeiter-und-postfacher) of Stalwart's calendar mails; the
+   `sysArchivedItem…` and `sysDataRetention…` permissions for restoring deleted items. With
+   `impersonate` the server works in the employees' mailboxes (out of office, read access to shared
+   mailboxes) and enters replies to invitations; the app never shows the boss anyone else's mail in
+   doing so.
 2. Create an **account** `kontext-server@firma.de` with this role (instead of *User*) and a long
    random password.
 3. With this account, generate an **API key** (*Credentials → API Key*, permissions
@@ -534,6 +534,11 @@ permissions for it):
 - **Masked addresses:** everyone creates addresses of their own per website or shop under
   *Settings → Masked addresses*, switches them off or deletes them
   ([Mail](mail.md#maskierte-adressen)).
+- **Restoring deleted items:** Stalwart keeps what was deleted for good for as many days as the
+  company admin sets under *Backup* (`archiveDeletedItemsFor` in Stalwart's *DataRetention*;
+  nothing at first). Everyone brings back their own mails and those of their shared mailboxes
+  under *Settings → Deleted items*, the company admin those of every employee
+  ([company admin](company.md#mitarbeiter-und-postfacher)).
 - **Logo and templates** in the company admin: the company logo and templates of your own for
   Stalwart's calendar mails ([company admin](company.md#mitarbeiter-und-postfacher)).
 - **Server health**, see the next section.

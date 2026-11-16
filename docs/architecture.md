@@ -356,6 +356,24 @@ mit einem eigenen API-Schlüssel an und erlaubt nur, was die Firmenverwaltung br
   `usedDiskQuota` der Mitarbeiter und gemeinsamen Postfächer. Benachrichtigungen per Mail
   (Stalwarts `x:Alert`) richtet Kontext nicht ein: Stalwart prüft sie alle fünf Minuten und
   schickt bei erfüllter Bedingung jedes Mal eine Mail (`crates/common/src/enterprise/alerts.rs`).
+- **Gelöschte Elemente** (nur Enterprise): Stalwart hebt endgültig Gelöschtes als
+  `x:ArchivedItem` auf (Varianten Email, FileNode, CalendarEvent, ContactCard, SieveScript;
+  `crates/registry/src/schema/structs.rs`), so lange wie `archiveDeletedItemsFor` des Singletons
+  `x:DataRetention` sagt (Millisekunden, ohne Wert nichts; `crates/common/src/enterprise/config.rs`).
+  In 1.1 legt Stalwart nur Mails ab (`crates/services/src/index_queue/index.rs`) und stellt nur
+  Mails wieder her, in den Posteingang (`crates/services/src/task_manager/tasks/restore_item.rs`).
+  Wiederherstellen ist `x:ArchivedItem/set` mit `status: "requestRestore"`: Stalwart nimmt den
+  Eintrag heraus und plant den Task; `destroy` löscht endgültig
+  (`crates/jmap/src/registry/mapping/archived_item.rs`). Die OAuth-Scopes der Benutzer enthalten
+  `sysArchivedItem…` nicht, darum fragt der Server mit seinem Schlüssel
+  (`server/company/archive.ts`; Filter `accountId` mit `impersonate`) und entscheidet selbst, wessen
+  Elemente jemand sieht (`server/company/archive-routes.ts`): das eigene Konto und die gemeinsamen
+  Postfächer, in denen man Mitglied ist; die Firmenverwaltung jedes Mitarbeiters und Postfachs.
+  Vor dem Wiederherstellen oder Löschen liest er die Elemente und prüft, dass alle zum Konto im
+  Pfad gehören. `GET /api/company/archive` (Konten, Aufbewahrung), `GET|POST
+  /api/company/archive/accounts/:id[/restore|/destroy]`, `PUT /api/company/archive/retention`
+  (nur Firmenverwaltung; danach `ReloadSettings`). In Community antworten die Routen 404, und die
+  App fragt sie nicht an (`src/features/deleted-items/`).
 - **Gemeinsame Postfächer** sind Gruppen; Mitglied ist, wer die Gruppe in `memberGroupIds` hat.
   „Nur lesen“ bekommt, wem alle Ordner des Postfachs per `shareWith` geteilt sind
   (`mayReadItems`, `maySetSeen`); die App liest das am Posteingang ab.

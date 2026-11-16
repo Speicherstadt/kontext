@@ -352,6 +352,23 @@ its own and allows only what the company admin needs.
   `usedDiskQuota` of the employees and shared mailboxes. Kontext does not set up mail alerts
   (Stalwart's `x:Alert`): Stalwart checks them every five minutes and sends a mail each time the
   condition holds (`crates/common/src/enterprise/alerts.rs`).
+- **Deleted items** (Enterprise only): Stalwart keeps what was deleted for good as
+  `x:ArchivedItem` (variants Email, FileNode, CalendarEvent, ContactCard, SieveScript;
+  `crates/registry/src/schema/structs.rs`), for as long as `archiveDeletedItemsFor` of the
+  singleton `x:DataRetention` says (milliseconds, none without a value;
+  `crates/common/src/enterprise/config.rs`). In 1.1 Stalwart archives only mails
+  (`crates/services/src/index_queue/index.rs`) and restores only mails, into the inbox
+  (`crates/services/src/task_manager/tasks/restore_item.rs`). Restoring is `x:ArchivedItem/set`
+  with `status: "requestRestore"`: Stalwart takes the entry out and schedules the task; `destroy`
+  deletes for good (`crates/jmap/src/registry/mapping/archived_item.rs`). The users' OAuth scopes
+  do not include `sysArchivedItem…`, so the server asks with its key (`server/company/archive.ts`;
+  filter `accountId` with `impersonate`) and decides itself whose items someone sees
+  (`server/company/archive-routes.ts`): the own account and the shared mailboxes one is a member
+  of; the company admin every employee's and mailbox's. Before restoring or deleting it reads the
+  items and checks that all belong to the account in the path. `GET /api/company/archive`
+  (accounts, retention), `GET|POST /api/company/archive/accounts/:id[/restore|/destroy]`,
+  `PUT /api/company/archive/retention` (company admin only; then `ReloadSettings`). In Community
+  the routes answer 404, and the app does not ask them (`src/features/deleted-items/`).
 - **Shared mailboxes** are groups; a member is whoever has the group in `memberGroupIds`.
   "Read only" goes to whoever has all of the mailbox's folders shared with them via `shareWith`
   (`mayReadItems`, `maySetSeen`); the app reads this off the inbox.
