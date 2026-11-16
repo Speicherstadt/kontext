@@ -62,7 +62,9 @@ test.describe("Anmeldung über Firmenkonto", () => {
     await page.getByRole("link", { name: ENTRY }).click();
     await expect(page.getByTestId("sso-redirect")).toHaveText(view.redirectUri);
     await expect(page.getByLabel("Aussteller-URL (Issuer)")).toHaveValue(view.directory.issuerUrl);
-    await expect(page.getByLabel("Client-ID")).toHaveValue("kontext-app");
+    await expect(page.getByRole("textbox", { name: "Client-ID", exact: true })).toHaveValue(
+      "kontext-app",
+    );
     await expect(page.getByLabel(`${DEV_DOMAIN}: Anmeldung über Firmenkonto`)).toBeChecked();
     await expect(page.getByLabel(`${DEV_DOMAIN}: Konten über SCIM`)).toBeChecked();
     await expect(page.getByTestId("scim-url")).toHaveText(view.scimUrl);
