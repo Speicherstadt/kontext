@@ -64,6 +64,8 @@ export type CompanyDeps = {
   edition?: import("./edition").EditionCheck;
   /** Used and licensed accounts of Stalwart Enterprise (license.ts). */
   license?: import("./license").LicenseCheck;
+  /** Serverzustand from Stalwart Enterprise's metrics and traces (server-health-routes.ts). */
+  serverHealth?: import("./server-health-routes").ServerHealth;
 };
 
 export type Loaded = {

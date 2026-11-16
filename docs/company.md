@@ -96,6 +96,15 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   müssen auf dem Server die Units eingerichtet sein
   ([Installation → Backups](installation.md#5-backups)); sonst steht dort „Steuerung auf dem
   Server nicht eingerichtet“.
+- **Serverzustand** (nur mit Stalwart Enterprise) unter *Einstellungen → Firma → Serverzustand*:
+  für die letzten 24 Stunden oder 7 Tage, wie viele Mails ankamen, als Spam einsortiert,
+  verschickt oder unzustellbar wurden, dazu ein kleines Diagramm je Stunde oder Tag,
+  fehlgeschlagene Anmeldungen (und wie viele Adressen Stalwart deshalb gesperrt hat), was in der
+  Warteschlange wartet und wie viel Speicher die Postfächer belegen. Darunter die
+  **Zustellprobleme**: Mails an Empfänger außerhalb, die nicht ankamen, mit der Antwort des
+  fremden Servers („550 5.1.1 User unknown“) und ob Stalwart aufgegeben hat oder es noch einmal
+  versucht. Stalwart muss dafür Kennzahlen und Zustellungen aufzeichnen
+  ([Installation](installation.md#serverzustand)); mit Community fehlt der Eintrag.
 
 ## Umzug nach Kontext
 

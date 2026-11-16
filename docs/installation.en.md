@@ -405,10 +405,13 @@ in Stalwart's admin interface it goes like this:
 1. Create a **role** `Kontext-Server`: it inherits the role *User*
    and additionally gets the permissions `sysAccountGet`, `sysAccountQuery`, `sysAccountCreate`,
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
-   `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
+   `sysIndexQueueStatusGet`, `sysMetricGet`, `sysMetricQuery`, `sysTraceGet`, `sysTraceQuery`,
+   `sysMetricsStoreGet`, `sysTracingStoreGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
    `sysActionCreate`, `actionReloadSettings` and `impersonate`. With `sysIndexQueueStatusGet` the
-   company admin shows while Stalwart is building the search index. With the `sysEncryption…` and
+   company admin shows while Stalwart is building the search index. The `sysMetric…`,
+   `sysTrace…` and `…StoreGet` permissions only read what [server health](#serverzustand) shows
+   (Stalwart Enterprise). With the `sysEncryption…` and
    `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
    `sysActionCreate` with `actionReloadSettings` lets it have Stalwart reload its settings
@@ -515,6 +518,31 @@ the role `Kontext-Server` also has `sysEnterpriseGet` and `includeSecrets` is on
 settings. This is optional: `includeSecrets` also shows the other secrets (relay passwords, keys)
 to everyone with read rights in Stalwart's management. Without both, the company admin shows only
 the mailboxes in use.
+
+#### Server health { #serverzustand }
+
+With Enterprise, the company admin gets *Server health*: mails received, sent, spam and
+undeliverable, failed sign-ins, the queue and storage, and why mails to outside did not arrive
+([Company admin](company.md#mitarbeiter-und-postfacher)). It reads what Stalwart records itself;
+Stalwart records nothing until it is switched on:
+
+1. In Stalwart, set the **metrics store** (`MetricsStore`) and the **tracing store**
+   (`TracingStore`) to *Default* – both are *Disabled* to begin with. Without a web interface it
+   is one call ([VPS, step 10](vps.md#10-stalwart-ohne-oberflache-einrichten)):
+
+   ```bash
+   /root/stalwart-api.sh '[["x:MetricsStore/set",{"update":{"singleton":{"@type":"Default"}}},"0"],
+     ["x:TracingStore/set",{"update":{"singleton":{"@type":"Default"}}},"1"]]'
+   ```
+
+2. **Restart** Stalwart: it opens both stores only at start.
+3. Run the [setup command](#einrichtungsbefehl) again: it gives the role `Kontext-Server` the
+   read permissions for metrics and traces if it lacks them (or add them by hand as in step 1
+   under [Turning on the company admin](#firmenverwaltung-einschalten)).
+
+Stalwart writes the numbers every hour and keeps them for 90 days, the traces for 30 days
+(`metricsCollectionInterval`, `holdMetricsFor`, `holdTracesFor` under *Data retention*). Until
+the first hour has passed the page says so; if a permission is missing, it says that too.
 
 ## 4. Encrypting the disk { #4-platte-verschlusseln }
 

@@ -332,6 +332,26 @@ its own and allows only what the company admin needs.
   `crates/common/src/enterprise/license.rs`); `x:Enterprise/get` gives it out only with
   `sysEnterpriseGet` and `includeSecrets` switched on, otherwise as "****". Then the company admin
   shows only the mailboxes in use.
+- **Server health** (Enterprise): `GET /api/company/server-health?period=day|week`
+  (`server/company/server-health-routes.ts`) answers 403 as long as the edition is not
+  Enterprise; Stalwart refuses `x:Metric` and `x:Trace` without a license anyway
+  (`crates/jmap/src/registry/mod.rs`). Otherwise the server reads, with its key, the metrics since
+  the start of the period (`x:Metric/query` by `timestamp` and name, then `x:Metric/get` in parts
+  of 500). Stalwart writes them at every collection interval (hourly): counters as what was added
+  since the last time, gauges such as `queue.count` as their value
+  (`crates/common/src/telemetry/metrics/store.rs`). `server/company/server-health.ts` adds up
+  `message-ingest.ham`, `message-ingest.spam`, `queue.authenticated-message-queued` and
+  `queue.dsn-queued` per hour (24) or Berlin day (7), plus `auth.failed` and
+  `security.authentication-ban`. The delivery problems come from the traces of the last 200
+  delivery attempts (`x:Trace` with `event` `delivery.attempt-start`): `delivery-problems.ts` takes
+  the last word per recipient from them – `delivery.failed`, `delivery.dsn-perm-fail`,
+  `delivery.rcpt-to-rejected` (final from code 500) and relatives – with `details` or `reason` and
+  `hostname`. Whether Stalwart records at all, `x:MetricsStore` and `x:TracingStore` say
+  (`Disabled` is Stalwart's default). Rights: `sysMetricGet`, `sysMetricQuery`, `sysTraceGet`,
+  `sysTraceQuery`, `sysMetricsStoreGet`, `sysTracingStoreGet`. The storage is the sum of
+  `usedDiskQuota` of the employees and shared mailboxes. Kontext does not set up mail alerts
+  (Stalwart's `x:Alert`): Stalwart checks them every five minutes and sends a mail each time the
+  condition holds (`crates/common/src/enterprise/alerts.rs`).
 - **Shared mailboxes** are groups; a member is whoever has the group in `memberGroupIds`.
   "Read only" goes to whoever has all of the mailbox's folders shared with them via `shareWith`
   (`mayReadItems`, `maySetSeen`); the app reads this off the inbox.

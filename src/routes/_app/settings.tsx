@@ -28,6 +28,7 @@ export const settingsSections = [
   "company-external",
   "company-smime",
   "company-backup",
+  "company-health",
   "phone",
   "migration",
 ] as const;
