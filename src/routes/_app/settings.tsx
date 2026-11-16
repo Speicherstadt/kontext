@@ -14,6 +14,7 @@ export const settingsSections = [
   "security",
   "access",
   "encryption",
+  "masked-email",
   "agents",
   "appearance",
   "employees",

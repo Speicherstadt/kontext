@@ -490,7 +490,7 @@ die USA: Das gehört in die Datenschutzinformation, mit Anthropics Auftragsverar
 
 Kontext läuft mit der kostenlosen Community-Ausgabe von Stalwart vollständig; eine
 Enterprise-Lizenz braucht es nicht. Wer Stalwarts Enterprise-Funktionen trotzdem will (etwa
-Gelöschtes auf dem Server wiederherstellen, KI-Spamfilter, SCIM), kauft die Lizenz bei Stalwart
+Gelöschtes auf dem Server wiederherstellen, KI-Spamfilter, SCIM, maskierte Adressen), kauft die Lizenz bei Stalwart
 Labs ([Preise](https://stalw.art/pricing/), 30 Tage zum Testen) und trägt sie in Stalwart ein, nicht
 in Kontext: Es ist dasselbe Image, nur der Schlüssel schaltet frei.
 
