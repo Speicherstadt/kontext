@@ -26,7 +26,7 @@ import {
 import { useCompanyChange } from "./queries";
 
 /** What the person's dialog opens in its place. */
-export type EmployeeSubDialog = "vacation" | "rules" | "offboarding";
+export type EmployeeSubDialog = "vacation" | "rules" | "offboarding" | "delete";
 
 const mailboxOptions = (company: Company) =>
   company.mailboxes.map((mailbox) => ({
@@ -150,7 +150,7 @@ export const EmployeeDialog = ({
   company: Company;
   employee: Employee;
   onClose: () => void;
-  /** Opens the out-of-office reply, the rules or the leaving instead of this dialog. */
+  /** Opens the out-of-office reply, the rules, the leaving or deleting instead of this dialog. */
   onOpen: (dialog: EmployeeSubDialog) => void;
 }) => {
   const toast = useToast();
@@ -281,6 +281,11 @@ export const EmployeeDialog = ({
               }
             >
               {m.company_activate()}
+            </Button>
+          )}
+          {self ? null : (
+            <Button variant="danger" disabled={busy} onClick={() => onOpen("delete")}>
+              {m.company_delete()}
             </Button>
           )}
         </div>

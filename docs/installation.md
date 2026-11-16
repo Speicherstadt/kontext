@@ -403,8 +403,13 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
    `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` und `impersonate`. Mit `sysIndexQueueStatusGet` zeigt die
-   Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Mit den `sysEncryption…`- und
+   `sysActionCreate`, `actionReloadSettings`, `sysAccountDestroy`, `sysTaskGet`, `sysTaskQuery`,
+   `sysTaskDestroy`, `taskDestroyAccount`, `sysDataRetentionGet`, `sysDataRetentionUpdate` und
+   `impersonate`. Mit `sysIndexQueueStatusGet` zeigt die
+   Firmenverwaltung, solange Stalwart den Suchindex aufbaut. `sysAccountDestroy` löscht
+   Mitarbeiter; mit den `sysTask…`-, `taskDestroyAccount`- und `sysDataRetention…`-Rechten zeigt
+   sie mit Stalwart Enterprise die [gelöschten Konten](company.md#geloschte-konten) und stellt sie
+   wieder her. Mit den `sysEncryption…`- und
    `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln durch
    Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
    Empfänger; `sysActionCreate` mit `actionReloadSettings` lässt sie Stalwart danach die
@@ -504,6 +509,10 @@ Kontext merkt es innerhalb von zehn Minuten; die Firmenverwaltung zeigt unter *M
 Zahl von Postfächern, gemeinsame Postfächer zählen mit; darüber lehnt Stalwart neue Konten ab, und
 die Firmenverwaltung zeigt Stalwarts Meldung. Läuft die Lizenz aus, arbeitet Stalwart als
 Community weiter, ohne Datenverlust.
+
+Was Kontext mit Enterprise zusätzlich anbietet:
+
+- [Gelöschte Konten](company.md#geloschte-konten) eine Zeit lang aufheben und wiederherstellen.
 
 ## 4. Platte verschlüsseln
 

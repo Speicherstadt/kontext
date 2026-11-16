@@ -407,8 +407,12 @@ in Stalwart's admin interface it goes like this:
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
    `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` and `impersonate`. With `sysIndexQueueStatusGet` the
-   company admin shows while Stalwart is building the search index. With the `sysEncryption…` and
+   `sysActionCreate`, `actionReloadSettings`, `sysAccountDestroy`, `sysTaskGet`, `sysTaskQuery`,
+   `sysTaskDestroy`, `taskDestroyAccount`, `sysDataRetentionGet`, `sysDataRetentionUpdate` and
+   `impersonate`. With `sysIndexQueueStatusGet` the
+   company admin shows while Stalwart is building the search index. `sysAccountDestroy` deletes
+   employees; the `sysTask…`, `taskDestroyAccount` and `sysDataRetention…` permissions list and
+   recover [deleted accounts](company.md#geloschte-konten) with Stalwart Enterprise. With the `sysEncryption…` and
    `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
    `sysActionCreate` with `actionReloadSettings` lets it have Stalwart reload its settings
@@ -506,6 +510,10 @@ Kontext notices within ten minutes; the company admin shows "Enterprise (license
 mailboxes, shared mailboxes included; beyond it Stalwart refuses new accounts, and the company
 admin shows Stalwart's message. When the license lapses, Stalwart carries on as Community, without
 losing data.
+
+What Kontext offers in addition with Enterprise:
+
+- Keeping [deleted accounts](company.md#geloschte-konten) for a while and restoring them.
 
 ## 4. Encrypting the disk { #4-platte-verschlusseln }
 

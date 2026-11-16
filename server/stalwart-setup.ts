@@ -37,6 +37,21 @@ export const GATEWAY_RIGHTS = [
   "actionReloadSettings",
 ] as const;
 
+/**
+ * Deleting people, and with Stalwart Enterprise listing and recovering deleted accounts and
+ * setting how long Stalwart keeps them (company/deleted-accounts.ts; Permission::as_str in
+ * crates/registry/src/schema/enums_impl.rs, Task::permission in crates/registry/src/utils/task.rs).
+ */
+export const DELETED_ACCOUNT_RIGHTS = [
+  "sysAccountDestroy",
+  "sysTaskGet",
+  "sysTaskQuery",
+  "sysTaskDestroy",
+  "taskDestroyAccount",
+  "sysDataRetentionGet",
+  "sysDataRetentionUpdate",
+] as const;
+
 /** The rights the Kontext server's key needs beside those of User (docs/installation.md). */
 export const KONTEXT_SERVER_RIGHTS = [
   "sysAccountGet",
@@ -49,6 +64,7 @@ export const KONTEXT_SERVER_RIGHTS = [
   "sysAuthenticationGet",
   "sysIndexQueueStatusGet",
   ...GATEWAY_RIGHTS,
+  ...DELETED_ACCOUNT_RIGHTS,
   "impersonate",
 ] as const;
 

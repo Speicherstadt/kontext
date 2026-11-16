@@ -51,6 +51,10 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   dort kann Kontext nichts anfügen.
 - **Austritt:** Zugang sperren, Postfach einer Kollegin übergeben, neue Mails weiterleiten und
   automatisch antworten – gelöscht wird nichts.
+- **Konto löschen** am Eintrag der Person: Mit Stalwart Community ist das Konto danach mit allen
+  Mails, Kalendern, Kontakten und Dateien endgültig weg, und so sagt es der Dialog. Mit Stalwart
+  Enterprise und einer Aufbewahrung sagt er, wie viele Tage es sich noch wiederherstellen lässt
+  ([Gelöschte Konten](#geloschte-konten)). Das eigene Konto lässt sich nicht löschen.
 - **Verfügbarkeit im Kalender** für alle einschalten.
 - **Team-Chat:** Aufbewahrungsfrist; **Telefonie:** Fritzbox, wer klingelt, Mailbox,
   Öffnungszeiten ([Telefonie](telephony.md)).
@@ -94,6 +98,26 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   müssen auf dem Server die Units eingerichtet sein
   ([Installation → Backups](installation.md#5-backups)); sonst steht dort „Steuerung auf dem
   Server nicht eingerichtet“.
+
+### Gelöschte Konten { #geloschte-konten }
+
+Nur mit Stalwart Enterprise ([Installation](installation.md#stalwart-enterprise)); mit Community
+fehlt der Abschnitt. Mit einer Lizenz hebt Stalwart ein gelöschtes Konto eine Zeit lang auf, samt
+Mails, Kalendern und Dateien, und löscht es erst danach endgültig. Unter *Mitarbeiter →
+Gelöschte Konten* stehen:
+
+- **Aufbewahren für (Tage):** wie lange Stalwart gelöschte Konten aufhebt (in Stalwart
+  `archiveDeletedAccountsFor` unter *Data Retention*). Zu Beginn 0: Auch mit Lizenz löscht
+  Stalwart dann sofort endgültig. Eine neue Zeit gilt für Konten, die danach gelöscht werden.
+- **die Konten, die noch da sind**, mit Adresse, wann gelöscht und wann endgültig weg – auch in
+  Stalwarts Oberfläche gelöschte, wenn sie zu den Domains der Firma gehören, und gemeinsame
+  Postfächer.
+- **Wiederherstellen:** Das Konto ist wieder da, mit seinen Mails, Kalendern, Kontakten und
+  Dateien. Stalwart legt es nur mit Name und Domain neu an; Kontext gibt einer Person ein neues
+  Passwort (einmal angezeigt) und ihre gemeinsamen Postfächer zurück, soweit es sie noch gibt.
+  Den Namen, weitere Adressen, das Recht für die Firmenverwaltung und einen gesperrten Zugang
+  trägt die Firmenverwaltung danach neu ein; Ordner, die die Person freigegeben hatte, gibt sie
+  neu frei.
 
 ## Umzug nach Kontext
 

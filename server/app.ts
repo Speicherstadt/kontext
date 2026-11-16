@@ -27,6 +27,7 @@ import { createChatRoutes, viewerOf } from "./chat/routes";
 import { createChatStore } from "./chat/store";
 import { createBackupControl } from "./company/backup";
 import { createCalendars } from "./company/calendars";
+import { createDeletedAccounts } from "./company/deleted-accounts";
 import { createEditionCheck } from "./company/edition";
 import { createEncryptionGateway } from "./company/encryption-gateway";
 import { createExternalHintStore } from "./company/external-hint";
@@ -422,6 +423,7 @@ export const createApp = async (env: Env) => {
       encryptionGateway: createEncryptionGateway(request),
       backup: createBackupControl(join(dirname(env.DATABASE_PATH), "backup-control")),
       edition: createEditionCheck({ stalwartUrl: env.STALWART_URL, key: env.STALWART_ADMIN_KEY }),
+      deletedAccounts: createDeletedAccounts(request),
     });
     app.route("/api/company", company);
   }

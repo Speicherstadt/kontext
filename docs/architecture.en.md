@@ -310,6 +310,22 @@ its own and allows only what the company admin needs.
   company admin shows it under *Employees*. Kontext needs Enterprise for nothing; what only
   Stalwart Enterprise can do, the app offers only once the license is active
   (`useStalwartEdition`, `src/features/company/edition.ts`).
+- **Deleting and deleted accounts** (`server/company/deleted-accounts.ts`): "Delete account" is
+  `x:Account/set` destroy (permission `sysAccountDestroy`). Stalwart removes the account at once,
+  revokes what it shared and schedules a `DestroyAccount` task that deletes the data
+  (`schedule_account_destruction`, `crates/jmap/src/registry/mapping/principal.rs`). Without a
+  license, or without `archiveDeletedAccountsFor` in `x:DataRetention`, it is due at once; with a
+  license that much later (`deleted_accounts_retention`, `crates/common/src/enterprise/config.rs`).
+  The pending ones are the list of deleted accounts: `x:Task/query` with
+  `{"@type": "DestroyAccount"}` and `x:Task/get` by back-reference, which adds `due` (task_query,
+  task_get in `crates/jmap/src/registry/mapping/task.rs`). Restoring means destroying the task
+  (`x:Task/set` destroy, permissions `sysTaskDestroy` and `taskDestroyAccount`): Stalwart creates
+  the account again under its old id with only name and domain and rebuilds the shares (the
+  `Task::DestroyAccount` branch in `task.rs`; without a license "Account recovery is not supported
+  in this deployment"). Kontext then sets a new password and the shared mailboxes from the task
+  (`memberGroupIds`). The company admin changes the retention with `x:DataRetention/set` and
+  `ReloadSettings`. The routes under `/api/company/deleted-accounts` answer 403 without
+  Enterprise, without asking Stalwart; the app asks them only with Enterprise.
 - **Shared mailboxes** are groups; a member is whoever has the group in `memberGroupIds`.
   "Read only" goes to whoever has all of the mailbox's folders shared with them via `shareWith`
   (`mayReadItems`, `maySetSeen`); the app reads this off the inbox.

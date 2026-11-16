@@ -62,6 +62,8 @@ export type CompanyDeps = {
   backup?: BackupControl;
   /** Stalwart Community or Enterprise (edition.ts); Enterprise-only parts ask it. */
   edition?: import("./edition").EditionCheck;
+  /** Gelöschte Konten wiederherstellen, with Stalwart Enterprise (deleted-accounts.ts). */
+  deletedAccounts?: import("./deleted-accounts").DeletedAccounts;
 };
 
 export type Loaded = {

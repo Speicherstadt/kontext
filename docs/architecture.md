@@ -315,6 +315,23 @@ mit einem eigenen API-Schlüssel an und erlaubt nur, was die Firmenverwaltung br
   `GET /api/company/edition`, die Firmenverwaltung zeigt sie unter *Mitarbeiter*. Kontext braucht
   Enterprise für nichts; was nur Stalwart Enterprise kann, bietet die App erst an, wenn die
   Lizenz aktiv ist (`useStalwartEdition`, `src/features/company/edition.ts`).
+- **Löschen und gelöschte Konten** (`server/company/deleted-accounts.ts`): „Konto löschen“ ist
+  `x:Account/set` destroy (Recht `sysAccountDestroy`). Stalwart entfernt das Konto sofort, nimmt
+  seine Freigaben zurück und plant eine Aufgabe `DestroyAccount`, die die Daten löscht
+  (`schedule_account_destruction`, `crates/jmap/src/registry/mapping/principal.rs`). Ohne Lizenz,
+  oder ohne `archiveDeletedAccountsFor` in `x:DataRetention`, ist sie sofort fällig; mit Lizenz
+  so viel später (`deleted_accounts_retention`, `crates/common/src/enterprise/config.rs`). Die
+  noch ausstehenden sind die Liste der gelöschten Konten: `x:Task/query` mit
+  `{"@type": "DestroyAccount"}` und `x:Task/get` per Rückverweis, das `due` ergänzt (task_query,
+  task_get in `crates/jmap/src/registry/mapping/task.rs`). Wiederherstellen heißt, die Aufgabe zu
+  zerstören (`x:Task/set` destroy, Rechte `sysTaskDestroy` und `taskDestroyAccount`): Stalwart legt
+  das Konto unter der alten Id nur mit Name und Domain neu an und baut die Freigaben neu auf
+  (Zweig `Task::DestroyAccount` in `task.rs`; ohne Lizenz „Account recovery is not supported in
+  this deployment“). Kontext setzt danach ein neues Passwort und die gemeinsamen Postfächer aus
+  der Aufgabe (`memberGroupIds`). Die Aufbewahrung ändert die Firmenverwaltung mit
+  `x:DataRetention/set` und `ReloadSettings`. Die Routen unter `/api/company/deleted-accounts`
+  antworten ohne Enterprise mit 403, ohne Stalwart zu fragen; die App fragt sie nur mit
+  Enterprise.
 - **Gemeinsame Postfächer** sind Gruppen; Mitglied ist, wer die Gruppe in `memberGroupIds` hat.
   „Nur lesen“ bekommt, wem alle Ordner des Postfachs per `shareWith` geteilt sind
   (`mayReadItems`, `maySetSeen`); die App liest das am Posteingang ab.
