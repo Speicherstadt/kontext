@@ -221,7 +221,6 @@ export const SettingsPage = ({ section }: { section: Section | undefined }) => {
   // Telephony needs LiveKit on the server; without it the section has nothing to set.
   const phone = usePhone().enabled;
   // Serverzustand reads what only Stalwart Enterprise records.
-  const enterprise = useStalwartEdition() === "enterprise";
   const company = COMPANY.filter(
     (entry) => (entry.id !== "phone" || phone) && (entry.id !== "company-health" || enterprise),
   );
