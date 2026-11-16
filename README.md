@@ -190,7 +190,9 @@ sets it up and keeps it updated.
 <summary><b>Stalwart Community or Enterprise?</b></summary>
 
 Both. Kontext runs fully on Stalwart's free Community edition, so there is no license to buy. If
-you have a Stalwart Enterprise license, Kontext detects it and shows it in the company admin area;
+you have a Stalwart Enterprise license, Kontext detects it and shows it in the company admin area,
+with the mailboxes in use (such as "12 of 25") and a warning shortly before the limit or the end
+of the license;
 see [Stalwart Enterprise](https://kontext.email/en/installation.html#stalwart-enterprise).
 </details>
 

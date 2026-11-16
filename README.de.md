@@ -191,7 +191,8 @@ jemanden, der ihn einrichtet und aktuell hält.
 
 Beides. Kontext läuft vollständig mit der kostenlosen Community-Ausgabe von Stalwart, eine Lizenz
 muss niemand kaufen. Ist eine Lizenz für Stalwart Enterprise eingetragen, erkennt Kontext sie und
-zeigt sie in der Firmenverwaltung; siehe
+zeigt sie in der Firmenverwaltung, mit den belegten Postfächern (etwa „12 von 25“) und einer
+Warnung kurz vor der Grenze oder dem Ende der Lizenz; siehe
 [Stalwart Enterprise](https://kontext.email/installation.html#stalwart-enterprise).
 </details>
 

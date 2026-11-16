@@ -500,10 +500,19 @@ in Kontext: Es ist dasselbe Image, nur der Schlüssel schaltet frei.
    „Stalwart Enterprise Edition license key is valid“.
 
 Kontext merkt es innerhalb von zehn Minuten; die Firmenverwaltung zeigt unter *Mitarbeiter*
-„Enterprise (Lizenz aktiv)“. Der Schlüssel gilt für die Domain des Server-Hostnamens und für eine
-Zahl von Postfächern, gemeinsame Postfächer zählen mit; darüber lehnt Stalwart neue Konten ab, und
-die Firmenverwaltung zeigt Stalwarts Meldung. Läuft die Lizenz aus, arbeitet Stalwart als
-Community weiter, ohne Datenverlust.
+„Enterprise (Lizenz aktiv)“ und darunter, wie viele Postfächer belegt sind. Der Schlüssel gilt für
+die Domain des Server-Hostnamens und für eine Zahl von Postfächern; Stalwart zählt jedes Konto,
+also auch gemeinsame Postfächer und das Konto des Kontext-Servers. Darüber lehnt Stalwart neue
+Konten ab, und die Firmenverwaltung zeigt Stalwarts Meldung. Läuft die Lizenz aus, arbeitet
+Stalwart als Community weiter, ohne Datenverlust; mit einem `apiKey` unter *Settings → Enterprise*
+verlängert Stalwart sie vorher selbst.
+
+Grenze, Laufzeit und Domain der Lizenz („12 von 25 Postfächern belegt“, „Gültig bis …“, mit
+Warnung ab 90 % oder 30 Tage vor dem Ende) liest Kontext aus dem Schlüssel. Stalwart gibt ihn nur
+heraus, wenn die Rolle `Kontext-Server` zusätzlich `sysEnterpriseGet` hat und in den
+Systemeinstellungen `includeSecrets` an ist. Das ist freiwillig: `includeSecrets` zeigt jedem mit
+Leserechten in Stalwarts Verwaltung auch die anderen Geheimnisse (Passwörter von Relays,
+Schlüssel). Ohne beides zeigt die Firmenverwaltung nur die belegten Postfächer.
 
 ## 4. Platte verschlüsseln
 
