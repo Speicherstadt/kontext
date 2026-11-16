@@ -135,6 +135,16 @@ IMAP und SMTP.
 
   ![Papierkorb mit „Papierkorb leeren“ und der Rückfrage](screenshots/empty-trash.png)
 
+- **Endgültig Gelöschtes wiederherstellen** (nur mit Stalwart Enterprise): Stalwart hebt
+  endgültig gelöschte Mails so viele Tage auf, wie die Firmenverwaltung unter *Datensicherung*
+  einstellt (zu Beginn keine). Unter *Einstellungen → Gelöschte Elemente*, oder im Papierkorb
+  über **Endgültig Gelöschtes**, stehen sie mit Betreff, Absender, Löschdatum und wie lange sie
+  noch aufgehoben werden; für gemeinsame Postfächer, in denen man Mitglied ist, ebenso.
+  **Wiederherstellen** legt die Mail einen Moment später wieder in den Posteingang,
+  **Endgültig löschen** nimmt sie aus der Aufbewahrung. Andere Arten (Dateien, Termine,
+  Kontakte, Filterregeln) zeigt die Liste, Stalwart 1.1 stellt aber nur Mails wieder her. Mit
+  der Community-Ausgabe gibt es den Eintrag nicht.
+
 - **Unterhaltungen beim Lesen:** frühere Mails und die Antworten seitdem, Zitate eingeklappt;
   gruppiert wie Gmail auf Wunsch.
 - **Wiedervorlage:** eine Mail aus dem Weg bis morgen, Montag oder einem Zeitpunkt – dann ist sie
@@ -284,6 +294,15 @@ IMAP und SMTP.
   Rechnungsbetrug); „Details anzeigen“ zeigt SPF, DKIM, DMARC und die Spam-Bewertung.
   [Mehr](architecture.md#prufung-des-absenders)
 - **Als Spam markieren** (`!`) und „Kein Spam“ – der Filter lernt aus beidem.
+- **Urteil des KI-Spamfilters** (nur mit Stalwart Enterprise, von der Firmenverwaltung
+  eingeschaltet): Hält das Sprachmodell eine Mail für Phishing oder Schadsoftware, steht neben dem
+  Absender in Rot „KI: Phishing“ bzw. „KI: Schadsoftware“, bei Spam und unerwünschter Werbung in
+  Gelb, und „KI: unsicher“, wenn sich das Modell nicht sicher war; die Begründung zeigt sich beim
+  Darüberfahren. Gewöhnliche Post, Bestätigungen und Newsletter bekommen keinen Hinweis. „Details
+  anzeigen“ nennt das Urteil immer, mit Wahrscheinlichkeit und Begründung. Kontext liest dafür die
+  Kopfzeile `X-Spam-AI`, die Stalwart in die Mail schreibt – nur Stalwarts eigene, keine vom Absender mitgeschickte ([mehr](architecture.md#prufung-des-absenders)); im Modus „Nur
+  beobachten“ steht es nur in den Details
+  ([Installation → KI-Spamfilter](installation.md#ki-spamfilter)).
 - **Als Phishing melden** im Menü „Weitere Aktionen“, sobald die Firmenverwaltung eine Adresse
   dafür eingetragen hat ([Firma](company.md#mitarbeiter-und-postfacher)): die Mail geht als
   Anhang (.eml) an die IT oder den IT-Dienstleister und landet im Spam.
@@ -295,6 +314,23 @@ IMAP und SMTP.
   (auch alle Kontakte) – aber nur, wenn die Mail wirklich von ihnen kommt.
 - **Newsletter abbestellen** mit einem Klick direkt an der Mail.
 - Mails werden in einem abgeschotteten Rahmen ohne Skripte angezeigt.
+
+## Maskierte Adressen
+
+Mit Stalwart Enterprise legt jede Person unter *Einstellungen → Maskierte Adressen* eigene
+Adressen für Websites, Shops und Newsletter an, etwa `baumarkt.k3x9…@firma.de`. Mails an sie
+kommen im eigenen Posteingang an, die echte Adresse erfährt der Shop nicht. Kommt Spam, schaltet
+man die Adresse ab (Mails an sie werden dann abgewiesen) oder löscht sie.
+
+- **Anlegen:** wofür (Pflicht), optional die Website, der Anfang der Adresse (Buchstaben, Ziffern
+  und `_`; leer wählt der Mailserver zufällig) und wie lange sie gilt (unbegrenzt, 1 Tag, 1 Woche,
+  30 Tage, 1 Jahr). Den Rest der Adresse macht der Mailserver.
+- **Liste:** Adresse, wofür, Website, angelegt, läuft ab; ein Knopf kopiert die Adresse, ein
+  Schalter nimmt Mails an oder weist sie ab, „Löschen“ entfernt sie endgültig.
+- Jede Person darf 5 Adressen haben; mehr erlaubt Stalwart in den E-Mail-Einstellungen
+  (`maxMaskedAddresses`).
+- Ohne Enterprise-Lizenz fehlt der Punkt in den Einstellungen.
+  [Mehr](architecture.md#firmenverwaltung)
 
 ## Weitere Postfächer: Gmail, GMX, WEB.DE & Co.
 

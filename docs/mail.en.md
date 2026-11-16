@@ -129,6 +129,15 @@ SMTP.
 
   ![Trash with "Empty trash" and the question](screenshots/empty-trash.png)
 
+- **Restoring what was deleted for good** (only with Stalwart Enterprise): Stalwart keeps mails
+  deleted for good for as many days as the company admin sets under *Backup* (none at first).
+  Under *Settings → Deleted items*, or from the trash through **Deleted for good**, they are
+  listed with subject, sender, the day they were deleted and how long they are still kept; the
+  same for shared mailboxes one is a member of. **Restore** puts the mail back into the inbox a
+  moment later, **Delete for good** takes it out of the archive. Other kinds (files, events,
+  contacts, filter rules) are listed, but Stalwart 1.1 restores only mails. With the Community
+  edition the entry is not there.
+
 - **Conversations while reading:** earlier mails and the replies since, quotes collapsed; grouped
   like Gmail if you want.
 - **Snooze:** a mail out of the way until tomorrow, Monday or a set time – then it is back at the
@@ -271,6 +280,15 @@ SMTP.
   details" shows SPF, DKIM, DMARC and the spam score.
   [More](architecture.md#prufung-des-absenders)
 - **Mark as spam** (`!`) and "Not spam" – the filter learns from both.
+- **Verdict of the AI spam filter** (only with Stalwart Enterprise, switched on by the company
+  admin): if the language model takes a mail for phishing or malware, "AI: Phishing" or
+  "AI: Malware" stands next to the sender in red, for spam and unsolicited sales in amber, and
+  "AI: unsure" when the model was not sure; hovering shows the reason. Ordinary mail,
+  notifications and newsletters get no hint. "Show details" always names the verdict, with
+  probability and reason. Kontext reads the header `X-Spam-AI` that Stalwart writes into the mail
+  for this – only Stalwart's own, none sent along by the sender
+  ([more](architecture.md#prufung-des-absenders)); in the "Only observe" mode it is shown in the details only
+  ([Installation → AI spam filter](installation.md#ki-spamfilter)).
 - **Report as phishing** in the "More actions" menu, once the company administration has entered
   an address for it ([Company](company.md#mitarbeiter-und-postfacher)): the mail goes as an
   attachment (.eml) to the IT team or the IT provider and lands in spam.
@@ -283,6 +301,23 @@ SMTP.
   contacts too) – but only if the mail really comes from them.
 - **Unsubscribe from newsletters** with one click right on the mail.
 - Mails are shown in a sealed-off frame without scripts.
+
+## Masked addresses { #maskierte-adressen }
+
+With Stalwart Enterprise, everyone creates addresses of their own for websites, shops and
+newsletters under *Settings → Masked addresses*, such as `hardware.k3x9…@company.com`. Mail to
+them arrives in your own inbox; the shop never learns your real address. When spam comes, switch
+the address off (mail to it is then refused) or delete it.
+
+- **Create:** what it is for (required), optionally the website, the start of the address
+  (letters, digits and `_`; left empty, the mail server picks one at random) and how long it is
+  valid (no limit, 1 day, 1 week, 30 days, 1 year). The mail server makes the rest of the address.
+- **List:** address, what for, website, created, expires; a button copies the address, a switch
+  accepts or refuses mail to it, "Delete" removes it for good.
+- Each person may have 5 addresses; Stalwart allows more in its email settings
+  (`maxMaskedAddresses`).
+- Without an Enterprise license the item is not in the settings.
+  [More](architecture.md#firmenverwaltung)
 
 ## Other mailboxes: Gmail, GMX, WEB.DE & Co. { #weitere-postfacher-gmail-gmx-webde-co }
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
+import { DeletedItemsDialog } from "@/features/deleted-items/deleted-items-admin";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
 import { formatSize } from "@/lib/format";
 import { m } from "@/paraglide/messages";
@@ -91,6 +92,13 @@ const Employees = ({ company }: { company: Company }) => {
       ) : null}
       {other && next?.dialog === "offboarding" ? (
         <OffboardingDialog company={company} employee={other} onClose={() => setNext(null)} />
+      ) : null}
+      {other && next?.dialog === "deleted" ? (
+        <DeletedItemsDialog
+          accountId={other.id}
+          name={other.fullName}
+          onClose={() => setNext(null)}
+        />
       ) : null}
       {other && next?.dialog === "delete" ? (
         <DeleteEmployeeDialog employee={other} onClose={() => setNext(null)} />

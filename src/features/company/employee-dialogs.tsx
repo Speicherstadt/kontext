@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { DeletedItemsButton } from "@/features/deleted-items/deleted-items-admin";
 import { formatSize } from "@/lib/format";
 import { m } from "@/paraglide/messages";
 import {
@@ -27,7 +28,7 @@ import {
 import { useCompanyChange } from "./queries";
 
 /** What the person's dialog opens in its place. */
-export type EmployeeSubDialog = "vacation" | "rules" | "offboarding" | "delete";
+export type EmployeeSubDialog = "vacation" | "rules" | "offboarding" | "deleted" | "delete";
 
 const mailboxOptions = (company: Company) =>
   company.mailboxes.map((mailbox) => ({
@@ -237,6 +238,10 @@ export const EmployeeDialog = ({
           <Button disabled={busy} onClick={() => onOpen("rules")}>
             <ListFilter size={16} /> {m.rules_open()}
           </Button>
+          <DeletedItemsButton
+            label={m.deleted_of({ name: employee.fullName })}
+            onOpen={() => onOpen("deleted")}
+          />
           {self ? null : (
             <Button variant="danger" disabled={busy} onClick={() => onOpen("offboarding")}>
               {m.company_offboarding()}

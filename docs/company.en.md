@@ -16,7 +16,9 @@ Stalwart's admin interface and without IT skills.
   **block access** (mail keeps arriving), further addresses such as buchhaltung@.
 - **Stalwart Community or Enterprise:** Kontext runs with both. *Employees* shows which edition
   the server has; Kontext detects an Enterprise license by itself
-  ([installation](installation.md#stalwart-enterprise)).
+  ([installation](installation.md#stalwart-enterprise)). With a license it also shows how many
+  mailboxes are in use (such as "12 of 25 mailboxes in use", shared mailboxes count too), until
+  when it is valid and for which domain; from 90 % in use or 30 days before the end it warns.
 - **Shared mailboxes** with rights per person: no access, read only, read and send; rules of
   their own per mailbox.
 - **Out of office for colleagues** (during illness, for example) with a stand-in named in the reply.
@@ -94,10 +96,44 @@ Stalwart's admin interface and without IT skills.
   and the list of those keys – pasted, looked up by Stalwart (Web Key Directory, keys.openpgp.org)
   or learnt from received mails; each can be removed
   ([Encryption](encryption.md#verschlusseln-durch-stalwart)).
+- **AI spam filter** under *Settings → Company → Email security* (only with Stalwart
+  Enterprise; with Community only a hint is shown there): provider (Anthropic, OpenAI, Google
+  Gemini or your own Ollama server), model, API key – or the one of the assistant in the chat –
+  and whether the verdict counts in the spam score or is only observed. Stalwart asks the model
+  about the mails its filter is unsure of; Kontext shows the verdict when reading
+  ([Mail](mail.md#sicherheit)). What goes to the provider is described under
+  [Installation → AI spam filter](installation.md#ki-spamfilter).
 - **Backup:** where the backup goes, how the last run went, how full the storage is, the time of
   the nightly backup and “Back up now”, plus the log. For this, the units must be set up on the
   server ([Installation → Backups](installation.md#5-backups)); otherwise it says “Control isn’t
   set up on the server”.
+- **Server health** (Stalwart Enterprise only) under *Settings → Company → Server health*: for the
+  last 24 hours or 7 days, how many mails arrived, were filed as spam, were sent or turned out
+  undeliverable, with a small chart per hour or day, failed sign-ins (and how many addresses
+  Stalwart blocked for them), what waits in the queue and how much storage the mailboxes take.
+  Below, the **delivery problems**: mails to recipients outside that did not arrive, with the
+  other server's answer ("550 5.1.1 User unknown") and whether Stalwart gave up or tries again.
+  For this, Stalwart has to record metrics and deliveries
+  ([Installation](installation.md#serverzustand)); with Community the entry is missing.
+- **Logo and templates** (Stalwart Enterprise only) under *Settings → Company → Logo and
+  templates*: Stalwart sends a few mails itself – the **reminder by mail** for an appointment and
+  mails about invitations when someone invites from a phone or a calendar program (CalDAV) or answers in the calendar. They then
+  carry the **company logo** instead of Stalwart's (PNG, JPEG, GIF, WebP, ICO or SVG up to 1 MB;
+  every mail program shows PNG), and both mails can be designed with an **HTML template of your
+  own**. Without one Stalwart uses its built-in template; the editor then starts with Kontext's
+  template in the app's style, in German or English (this only affects fixed texts such as the
+  note under the reminder – Stalwart fills in the other texts in the recipient's language).
+  Kontext checks the template the way Stalwart reads it and shows it with an example appointment
+  before it applies; “Use Stalwart's template” deletes your own again. With Community the entry is
+  missing ([how it works](architecture.md#logo-und-vorlagen)).
+- **Deleted items** (only with Stalwart Enterprise): under *Backup* the company admin sets for how
+  many days Stalwart keeps what was deleted for good – 0 (the start) keeps nothing; the period
+  applies to what is deleted from then on. That long, everyone brings back their own mails under
+  *Settings → Deleted items* ([Mail](mail.md#ordnen-und-finden)). On an employee's entry and on
+  every shared mailbox, **Deleted items** opens the same list for that account: restore (into the
+  inbox) or delete for good. The Kontext server needs the rights `sysArchivedItem…` and
+  `sysDataRetention…` for it, which the [setup command](installation.md#einrichtungsbefehl)
+  grants. With the Community edition neither is there.
 
 ### Deleted accounts { #geloschte-konten }
 

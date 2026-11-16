@@ -15,6 +15,8 @@ import type { GatewayView, NewKey } from "../../../server/company/encryption-gat
 import type { FolderName } from "../../../server/company/mailstore";
 import type { SearchIndexStatus } from "../../../server/company/search-index";
 import type { Check } from "../../../server/company/security";
+import type { Period } from "../../../server/company/server-health";
+import type { ServerHealthView } from "../../../server/company/server-health-routes";
 import type { Job } from "../../../server/migration/jobs";
 import type { ProviderId } from "../../../server/migration/providers";
 import type { Sync } from "../../../server/migration/syncs";
@@ -143,6 +145,10 @@ export const getSearchIndex = () =>
 
 /** How safe the company's mail travels (server/company/security.ts). */
 export const getSecurity = () => send<SecurityReport>("GET", "/security");
+
+/** Serverzustand from Stalwart Enterprise (server/company/server-health-routes.ts). */
+export const getServerHealth = (period: Period) =>
+  send<ServerHealthView>("GET", `/server-health?period=${period}`);
 
 export type { BackupSettings, BackupView };
 

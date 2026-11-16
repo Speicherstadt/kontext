@@ -8,8 +8,10 @@ import { retentionSchema } from "../chat/chat";
 import { migrationRoutes } from "../migration/routes";
 import { syncRoutes } from "../migration/sync-routes";
 import { authorityRoutes } from "../smime/authorities";
+import { archiveRoutes } from "./archive-routes";
 import { assistantRoutes } from "./assistant";
 import { backupRoutes } from "./backup-routes";
+import { brandingRoutes } from "./branding";
 import { bad, bodyOf, type CompanyDeps, createLoader, type Env } from "./context";
 import { deletedAccountRoutes } from "./deleted-accounts";
 import { readEdition } from "./edition";
@@ -23,7 +25,9 @@ import { mailboxRoutes } from "./mailboxes";
 import { phishingReportRoutes, readPhishingReport } from "./phishing-report";
 import { searchIndexStatus } from "./search-index";
 import { checkDomain, httpsCheck } from "./security";
+import { serverHealthRoutes } from "./server-health-routes";
 import { signatureRoutes } from "./signature-routes";
+import { spamAiRoutes } from "./spam-ai";
 import { readVacationTemplates, vacationTemplateRoutes } from "./vacation-templates";
 
 export type { CompanyDeps };
@@ -86,12 +90,23 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
     return result ? c.json(result) : c.json({ error: "Nicht angemeldet" }, 401);
   });
 
+  /** Gelöschte Elemente: everyone their own, the admin everyone's (archive-routes.ts). */
+  app.route("/archive", archiveRoutes(deps));
+
   app.use("*", async (c, next) => {
     const loaded = await load(c.req.raw);
     if (!loaded) return c.json({ error: "Keine Berechtigung" }, 403);
     c.set("loaded", loaded);
     await next();
   });
+
+  /** Stalwart Enterprise's license: only for the company's admins, nothing without a license. */
+  app.get("/license", async (c) =>
+    c.json({
+      license:
+        deps.license && (await deps.edition?.()) === "enterprise" ? await deps.license() : null,
+    }),
+  );
 
   app.get("/", (c) => {
     const { company, selfId } = c.get("loaded");
@@ -148,7 +163,15 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
   if (deps.encryptionGateway) {
     app.route("/encryption-gateway", encryptionGatewayRoutes(deps.encryptionGateway));
   }
+  if (deps.spamAi) app.route("/spam-ai", spamAiRoutes(deps.spamAi, deps));
   if (deps.backup) app.route("/backup", backupRoutes(deps.backup));
+  if (deps.serverHealth) {
+    app.route(
+      "/server-health",
+      serverHealthRoutes({ health: deps.serverHealth, edition: deps.edition }),
+    );
+  }
+  if (deps.branding) app.route("/branding", brandingRoutes(deps.branding, deps));
   if (deps.deletedAccounts) {
     app.route(
       "/deleted-accounts",

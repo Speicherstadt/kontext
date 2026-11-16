@@ -16,7 +16,9 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   **Zugang sperren** (Mails kommen weiter an), weitere Adressen wie buchhaltung@.
 - **Stalwart Community oder Enterprise:** Kontext läuft mit beiden. Unter *Mitarbeiter* steht,
   welche Ausgabe der Server hat; eine Enterprise-Lizenz erkennt Kontext von selbst
-  ([Installation](installation.md#stalwart-enterprise)).
+  ([Installation](installation.md#stalwart-enterprise)). Mit Lizenz steht darunter, wie viele
+  Postfächer belegt sind (etwa „12 von 25 Postfächern belegt“, gemeinsame Postfächer zählen mit),
+  bis wann sie gilt und für welche Domain; ab 90 % belegt oder 30 Tage vor dem Ende warnt sie.
 - **Gemeinsame Postfächer** mit Rechten je Person: kein Zugriff, nur lesen, lesen und senden;
   eigene Regeln je Postfach.
 - **Abwesenheit für Kollegen** (etwa bei Krankheit) mit Vertretung in der Antwort.
@@ -94,11 +96,48 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   deren Schlüssel kennt, und die Liste dieser Schlüssel – eingefügt, von Stalwart gesucht (Web Key
   Directory, keys.openpgp.org) oder aus empfangenen Mails gelernt; jeder lässt sich entfernen
   ([Verschlüsselung](encryption.md#verschlusseln-durch-stalwart)).
+- **KI-Spamfilter** unter *Einstellungen → Firma → Sicherheit der Mails* (nur mit Stalwart
+  Enterprise; mit Community steht dort nur ein Hinweis): Anbieter (Anthropic, OpenAI, Google
+  Gemini oder ein eigener Ollama-Server), Modell, API-Schlüssel – oder der des Assistenten im Chat
+  – und ob das Urteil in der Spam-Bewertung zählt oder nur beobachtet wird. Stalwart fragt das
+  Modell bei den Mails, bei denen sein Filter unsicher ist; das Urteil zeigt Kontext beim Lesen
+  ([Mail](mail.md#sicherheit)). Was dabei an den Anbieter geht, steht unter
+  [Installation → KI-Spamfilter](installation.md#ki-spamfilter).
 - **Datensicherung:** wohin gesichert wird, wie der letzte Lauf ausging, wie voll der Speicher
   ist, die Uhrzeit der nächtlichen Sicherung und „Jetzt sichern“, dazu das Protokoll. Dafür
   müssen auf dem Server die Units eingerichtet sein
   ([Installation → Backups](installation.md#5-backups)); sonst steht dort „Steuerung auf dem
   Server nicht eingerichtet“.
+- **Serverzustand** (nur mit Stalwart Enterprise) unter *Einstellungen → Firma → Serverzustand*:
+  für die letzten 24 Stunden oder 7 Tage, wie viele Mails ankamen, als Spam einsortiert,
+  verschickt oder unzustellbar wurden, dazu ein kleines Diagramm je Stunde oder Tag,
+  fehlgeschlagene Anmeldungen (und wie viele Adressen Stalwart deshalb gesperrt hat), was in der
+  Warteschlange wartet und wie viel Speicher die Postfächer belegen. Darunter die
+  **Zustellprobleme**: Mails an Empfänger außerhalb, die nicht ankamen, mit der Antwort des
+  fremden Servers („550 5.1.1 User unknown“) und ob Stalwart aufgegeben hat oder es noch einmal
+  versucht. Stalwart muss dafür Kennzahlen und Zustellungen aufzeichnen
+  ([Installation](installation.md#serverzustand)); mit Community fehlt der Eintrag.
+- **Logo und Vorlagen** (nur mit Stalwart Enterprise) unter *Einstellungen → Firma → Logo und
+  Vorlagen*: Stalwart verschickt einige Mails selbst – die **Erinnerung per Mail** an einen Termin
+  und Mails zu Einladungen, wenn jemand am Handy oder in einem Kalenderprogramm (CalDAV) einlädt oder im Kalender antwortet. Dort steht
+  dann das **Firmenlogo** statt Stalwarts Logo (PNG, JPEG, GIF, WebP, ICO oder SVG bis 1 MB; PNG
+  zeigen alle Mailprogramme), und beide Mails lassen sich mit einer **eigenen HTML-Vorlage**
+  gestalten. Ohne eigene Vorlage nimmt Stalwart seine eingebaute; der Editor beginnt dann mit
+  Kontexts Vorlage im Stil der App, auf Deutsch oder Englisch (das betrifft nur feste Texte wie den
+  Hinweis unter der Erinnerung – die übrigen Texte setzt Stalwart in der Sprache des Empfängers
+  ein). Kontext prüft die Vorlage so, wie Stalwart sie liest, und zeigt sie mit einem
+  Beispieltermin, bevor sie gilt; „Stalwarts Vorlage verwenden“ löscht die eigene wieder. Mit
+  Community fehlt der Eintrag ([wie es funktioniert](architecture.md#logo-und-vorlagen)).
+- **Gelöschte Elemente** (nur mit Stalwart Enterprise): unter *Datensicherung* stellt die
+  Firmenverwaltung ein, wie viele Tage Stalwart endgültig Gelöschtes aufhebt – 0 (so ist es zu
+  Beginn) hebt nichts auf; die Dauer gilt für das, was ab dann gelöscht wird. So lange holt jede
+  Person ihre Mails unter *Einstellungen → Gelöschte Elemente* selbst zurück
+  ([Mail](mail.md#ordnen-und-finden)). Am Eintrag eines Mitarbeiters und an jedem gemeinsamen
+  Postfach öffnet **Gelöschte Elemente** dieselbe Liste für dieses Konto: wiederherstellen (in
+  den Posteingang) oder endgültig löschen. Der Kontext-Server braucht dafür die Rechte
+  `sysArchivedItem…` und `sysDataRetention…`, die der
+  [Einrichtungsbefehl](installation.md#einrichtungsbefehl) vergibt. Mit der Community-Ausgabe
+  gibt es beides nicht.
 
 ### Gelöschte Konten { #geloschte-konten }
 
