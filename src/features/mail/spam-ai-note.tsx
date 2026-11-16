@@ -5,7 +5,14 @@
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { LOCALE } from "@/lib/locale";
-import { parseSpamAi, type SpamAiTone, type SpamAiVerdict, spamAiHint } from "@/lib/spam-ai";
+import {
+  type EmailHeader,
+  parseSpamAi,
+  type SpamAiTone,
+  type SpamAiVerdict,
+  spamAiHint,
+  stalwartSpamAi,
+} from "@/lib/spam-ai";
 import { m } from "@/paraglide/messages";
 
 const CATEGORY: Record<string, () => string> = {
@@ -28,8 +35,8 @@ const TONE: Record<SpamAiTone, string> = {
   muted: "text-muted",
 };
 
-export const SpamAiNote = ({ headers }: { headers: string[] | null }) => {
-  const verdict = parseSpamAi(headers?.[0]);
+export const SpamAiNote = ({ headers }: { headers?: EmailHeader[] | null }) => {
+  const verdict = parseSpamAi(stalwartSpamAi(headers));
   const hint = spamAiHint(verdict);
   if (!hint || verdict?.kind !== "verdict") return null;
   return (

@@ -251,11 +251,16 @@ colleagues over one's own server, or from a move); they are not rated.
 
 With Stalwart Enterprise and the [AI spam filter](installation.md#ki-spamfilter) switched on,
 `X-Spam-AI` with the language model's verdict is there too (`phishing; p=0.93; confidence=0.88; …`,
-`crates/spam-filter/src/analysis/ai/verdict.rs`). The app reads it from the top as well
-(`src/lib/spam-ai.ts`) and shows only phishing, malware, spam, unsolicited sales and "unsure" next
-to the sender. A header of the same name sent along by the sender sits below Stalwart's and does
-not count; if Stalwart's is missing (the model was not asked), it would stand alone – which is why
-"legitimate" never gets a hint.
+`crates/spam-filter/src/analysis/ai/verdict.rs`). Stalwart does not remove a header of that name
+sent along by the sender, and asks the model only about borderline mails – so "the topmost" is not
+enough here. At delivery Stalwart puts one block above the mail (`crates/smtp/src/inbound/data.rs`,
+`crates/smtp/src/queue/spool.rs`): its `Received`, `Authentication-Results`, `Received-SPF`, then
+`X-Spam-Result`, `X-Spam-AI`, `X-Spam-Score` (`crates/spam-filter/src/analysis/score.rs`). The
+app therefore fetches all headers in their order (`headers`) and takes `X-Spam-AI` only if it sits
+between `X-Spam-Result` and the first `X-Spam-Score`, under a `Received` with only those headers in
+between (`src/lib/spam-ai.ts`); a sender's copy is always below Stalwart's `X-Spam-Score` and does
+not count, not in the details either. Next to the sender the app shows only phishing, malware,
+spam, unsolicited sales and "unsure".
 
 The rules are in `src/lib/sender-check.ts`:
 

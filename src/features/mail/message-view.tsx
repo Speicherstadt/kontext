@@ -184,7 +184,7 @@ export const MessageView = ({ accountId, mailbox, emailId }: Props) => {
                       {showDetails ? m.mail_details_hide() : m.mail_details_show()}
                     </button>
                     <TransportNote received={email.received} />
-                    <SpamAiNote headers={email.spamAi} />
+                    <SpamAiNote headers={email.headers} />
                     <UnsubscribeButton accountId={accountId} mailboxId={mailbox.id} email={email} />
                   </div>
                 </div>

@@ -254,11 +254,17 @@ den eigenen Server, oder aus einem Umzug); sie werden nicht bewertet.
 
 Mit Stalwart Enterprise und eingeschaltetem [KI-Spamfilter](installation.md#ki-spamfilter) steht
 dort auch `X-Spam-AI` mit dem Urteil des Sprachmodells (`phishing; p=0.93; confidence=0.88; …`,
-`crates/spam-filter/src/analysis/ai/verdict.rs`). Die App liest es ebenso von oben
-(`src/lib/spam-ai.ts`) und zeigt neben dem Absender nur Phishing, Schadsoftware, Spam, Werbung und
-„unsicher“ an. Ein vom Absender mitgeschickter Header gleichen Namens steht unter Stalwarts und
-zählt nicht; fehlt Stalwarts (das Modell wurde nicht gefragt), stünde er allein da – darum bekommt
-ein „unbedenklich“ nie einen Hinweis.
+`crates/spam-filter/src/analysis/ai/verdict.rs`). Stalwart entfernt keinen gleichnamigen Header,
+den der Absender mitschickt, und fragt das Modell nur bei Mails im Grenzbereich – „der oberste“
+genügt hier also nicht. Bei der Zustellung setzt Stalwart einen Block über die Mail
+(`crates/smtp/src/inbound/data.rs`, `crates/smtp/src/queue/spool.rs`): sein `Received`,
+`Authentication-Results`, `Received-SPF`, dann `X-Spam-Result`, `X-Spam-AI`, `X-Spam-Score`
+(`crates/spam-filter/src/analysis/score.rs`). Die App holt darum alle Header in ihrer Reihenfolge
+(`headers`) und nimmt `X-Spam-AI` nur, wenn es zwischen `X-Spam-Result` und dem ersten
+`X-Spam-Score` steht, unter einem `Received` mit nur diesen Headern dazwischen
+(`src/lib/spam-ai.ts`); eine Kopie des Absenders steht immer unter Stalwarts `X-Spam-Score` und
+zählt nicht, auch nicht in den Details. Neben dem Absender zeigt die App nur Phishing,
+Schadsoftware, Spam, Werbung und „unsicher“ an.
 
 Die Regeln stehen in `src/lib/sender-check.ts`:
 

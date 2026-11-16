@@ -217,7 +217,7 @@ const arrivalHeaders = (from: string) => {
 export const EMPTY_HEADERS = {
   "header:Content-Type": null,
   "header:X-Spam-Score:asText:all": null,
-  "header:X-Spam-AI:asText:all": null,
+  headers: null,
   "header:Autocrypt:asText": null,
   "header:Disposition-Notification-To:asAddresses": null,
   "header:List-Unsubscribe:asURLs": null,

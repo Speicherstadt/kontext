@@ -19,7 +19,7 @@ import {
   type SenderWarning,
   senderWarnings,
 } from "@/lib/sender-check";
-import { parseSpamAi } from "@/lib/spam-ai";
+import { parseSpamAi, stalwartSpamAi } from "@/lib/spam-ai";
 import { m } from "@/paraglide/messages";
 import { useMailAccounts } from "./queries";
 import { spamAiDetails } from "./spam-ai-note";
@@ -111,7 +111,7 @@ const addresses = (list: EmailDetail["to"]) => list?.map(fullAddress).join(", ")
 const CheckSummary = ({ email }: { email: EmailDetail }) => {
   const check = parseSenderCheck(email.authenticationResults);
   const spam = parseSpamScore(email.spamScore?.[0]);
-  const ai = parseSpamAi(email.spamAi?.[0]);
+  const ai = parseSpamAi(stalwartSpamAi(email.headers));
   const domain = domainOf(email.from?.[0]?.email) ?? "";
   if (!check) return <p className="m-0 text-[13px] text-muted">{m.mail_check_internal()}</p>;
   const failed = check.dmarc?.result === "fail" || check.spf?.result === "fail";

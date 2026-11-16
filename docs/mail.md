@@ -290,7 +290,7 @@ IMAP und SMTP.
   Gelb, und „KI: unsicher“, wenn sich das Modell nicht sicher war; die Begründung zeigt sich beim
   Darüberfahren. Gewöhnliche Post, Bestätigungen und Newsletter bekommen keinen Hinweis. „Details
   anzeigen“ nennt das Urteil immer, mit Wahrscheinlichkeit und Begründung. Kontext liest dafür die
-  Kopfzeile `X-Spam-AI`, die Stalwart in die Mail schreibt (`src/lib/spam-ai.ts`); im Modus „Nur
+  Kopfzeile `X-Spam-AI`, die Stalwart in die Mail schreibt – nur Stalwarts eigene, keine vom Absender mitgeschickte ([mehr](architecture.md#prufung-des-absenders)); im Modus „Nur
   beobachten“ steht es nur in den Details
   ([Installation → KI-Spamfilter](installation.md#ki-spamfilter)).
 - **Als Phishing melden** im Menü „Weitere Aktionen“, sobald die Firmenverwaltung eine Adresse

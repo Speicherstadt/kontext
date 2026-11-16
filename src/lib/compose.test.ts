@@ -50,7 +50,7 @@ const original: EmailDetail = {
   bodyValues: {},
   authenticationResults: null,
   spamScore: null,
-  spamAi: null,
+  headers: null,
   unsubscribe: null,
   receiptTo: null,
   received: null,

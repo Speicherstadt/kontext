@@ -11,6 +11,7 @@
  * SpamAiProperties::default in crates/registry/src/schema/structs_impl.rs). Reasons and errors
  * come without `"` or `;` (push_reason), so a plain split is enough. Pure.
  */
+import type { EmailHeader } from "@/jmap/types";
 
 export type SpamAiVerdict =
   | {
@@ -44,7 +45,38 @@ const numberOf = (value: string | undefined): number => {
   return Number.isFinite(number) ? number : 0;
 };
 
-/** The topmost X-Spam-AI header (Stalwart's own, as with X-Spam-Score) read; else undefined. */
+export type { EmailHeader };
+
+const named = (header: EmailHeader | undefined, name: string) =>
+  header?.name.toLowerCase() === name;
+
+/** What Stalwart writes between its Received line and the spam headers. */
+const BETWEEN = new Set(["authentication-results", "received-spf"]);
+
+/**
+ * Stalwart's own X-Spam-AI, or undefined. Nothing strips a header of that name that the sender put
+ * into the mail, and the model is asked only about borderline mails, so the header alone proves
+ * nothing. At delivery Stalwart puts one block above the mail as it came (crates/smtp/src/inbound/
+ * data.rs, then `dkim + raw_headers + message` in crates/smtp/src/queue/spool.rs): its Received,
+ * Authentication-Results, Received-SPF, then X-Spam-Result, X-Spam-AI, X-Spam-Score (in that order,
+ * crates/spam-filter/src/analysis/score.rs), then Return-Path. So Stalwart's verdict sits right
+ * between X-Spam-Result and the first X-Spam-Score, under its Received with only those two in
+ * between; a sender's copy is always below Stalwart's X-Spam-Score. Pure.
+ */
+export const stalwartSpamAi = (headers: EmailHeader[] | null | undefined): string | undefined => {
+  if (!headers) return undefined;
+  const score = headers.findIndex((header) => named(header, "x-spam-score"));
+  if (score < 3 || !named(headers[score - 1], "x-spam-ai")) return undefined;
+  if (!named(headers[score - 2], "x-spam-result")) return undefined;
+  for (let index = score - 3; index >= 0; index--) {
+    const header = headers[index]!;
+    if (named(header, "received")) return headers[score - 1]!.value.replace(/\r?\n[ \t]+/g, " ");
+    if (!BETWEEN.has(header.name.toLowerCase())) return undefined;
+  }
+  return undefined;
+};
+
+/** An X-Spam-AI value (from stalwartSpamAi) read; else undefined. */
 export const parseSpamAi = (header: string | null | undefined): SpamAiVerdict | undefined => {
   if (!header?.trim()) return undefined;
   const quoted: Record<string, string> = {};

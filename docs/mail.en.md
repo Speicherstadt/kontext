@@ -277,7 +277,8 @@ SMTP.
   "AI: unsure" when the model was not sure; hovering shows the reason. Ordinary mail,
   notifications and newsletters get no hint. "Show details" always names the verdict, with
   probability and reason. Kontext reads the header `X-Spam-AI` that Stalwart writes into the mail
-  for this (`src/lib/spam-ai.ts`); in the "Only observe" mode it is shown in the details only
+  for this – only Stalwart's own, none sent along by the sender
+  ([more](architecture.md#prufung-des-absenders)); in the "Only observe" mode it is shown in the details only
   ([Installation → AI spam filter](installation.md#ki-spamfilter)).
 - **Report as phishing** in the "More actions" menu, once the company administration has entered
   an address for it ([Company](company.md#mitarbeiter-und-postfacher)): the mail goes as an
