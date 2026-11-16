@@ -294,6 +294,15 @@ IMAP und SMTP.
   Rechnungsbetrug); „Details anzeigen“ zeigt SPF, DKIM, DMARC und die Spam-Bewertung.
   [Mehr](architecture.md#prufung-des-absenders)
 - **Als Spam markieren** (`!`) und „Kein Spam“ – der Filter lernt aus beidem.
+- **Urteil des KI-Spamfilters** (nur mit Stalwart Enterprise, von der Firmenverwaltung
+  eingeschaltet): Hält das Sprachmodell eine Mail für Phishing oder Schadsoftware, steht neben dem
+  Absender in Rot „KI: Phishing“ bzw. „KI: Schadsoftware“, bei Spam und unerwünschter Werbung in
+  Gelb, und „KI: unsicher“, wenn sich das Modell nicht sicher war; die Begründung zeigt sich beim
+  Darüberfahren. Gewöhnliche Post, Bestätigungen und Newsletter bekommen keinen Hinweis. „Details
+  anzeigen“ nennt das Urteil immer, mit Wahrscheinlichkeit und Begründung. Kontext liest dafür die
+  Kopfzeile `X-Spam-AI`, die Stalwart in die Mail schreibt – nur Stalwarts eigene, keine vom Absender mitgeschickte ([mehr](architecture.md#prufung-des-absenders)); im Modus „Nur
+  beobachten“ steht es nur in den Details
+  ([Installation → KI-Spamfilter](installation.md#ki-spamfilter)).
 - **Als Phishing melden** im Menü „Weitere Aktionen“, sobald die Firmenverwaltung eine Adresse
   dafür eingetragen hat ([Firma](company.md#mitarbeiter-und-postfacher)): die Mail geht als
   Anhang (.eml) an die IT oder den IT-Dienstleister und landet im Spam.

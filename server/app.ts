@@ -46,6 +46,7 @@ import { createServerHealth } from "./company/server-health-routes";
 import { createCompanySettings } from "./company/settings";
 import { createSignatureDetails } from "./company/signature-details";
 import { createSignatureDetailRoutes } from "./company/signature-details-routes";
+import { createSpamAi } from "./company/spam-ai";
 import { createSealer } from "./crypto";
 import { fromOwnPage } from "./csrf";
 import { createAppPasswordRoutes } from "./dav/app-password-routes";
@@ -424,6 +425,7 @@ export const createApp = async (env: Env) => {
       pruneChat: chatPruner.tick,
       security: { publicUrl: env.BETTER_AUTH_URL, resolve: dohResolver(env.DOH_URL) },
       encryptionGateway: createEncryptionGateway(request),
+      spamAi: createSpamAi(request),
       backup: createBackupControl(join(dirname(env.DATABASE_PATH), "backup-control")),
       edition: createEditionCheck({ stalwartUrl: env.STALWART_URL, key: env.STALWART_ADMIN_KEY }),
       license: createLicenseCheck(request),

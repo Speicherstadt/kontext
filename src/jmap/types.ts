@@ -64,6 +64,9 @@ export type BodyPart = {
 /** A part with its children (RFC 8621 §4.1.4): the MIME tree, for the S/MIME layering. */
 export type BodyStructure = BodyPart & { subParts: BodyStructure[] | null };
 
+/** One header field as the `headers` property lists them, in order, raw (RFC 8621 §4.1.3). */
+export type EmailHeader = { name: string; value: string };
+
 export type EmailDetail = EmailSummary & {
   cc: EmailAddress[] | null;
   bcc: EmailAddress[] | null;
@@ -80,6 +83,8 @@ export type EmailDetail = EmailSummary & {
   /** Headers the mail server adds on arrival, topmost first (src/lib/sender-check.ts). */
   authenticationResults: string[] | null;
   spamScore: string[] | null;
+  /** Every header field in order, raw: for Stalwart's X-Spam-AI (src/lib/spam-ai.ts). */
+  headers?: EmailHeader[] | null;
   /** The whole message as sent, to read an encrypted or signed one. */
   blobId: string;
   /** The raw Content-Type: multipart/encrypted or multipart/signed for PGP/MIME. */

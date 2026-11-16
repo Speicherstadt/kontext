@@ -26,6 +26,7 @@ import { searchIndexStatus } from "./search-index";
 import { checkDomain, httpsCheck } from "./security";
 import { serverHealthRoutes } from "./server-health-routes";
 import { signatureRoutes } from "./signature-routes";
+import { spamAiRoutes } from "./spam-ai";
 import { readVacationTemplates, vacationTemplateRoutes } from "./vacation-templates";
 
 export type { CompanyDeps };
@@ -161,6 +162,7 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
   if (deps.encryptionGateway) {
     app.route("/encryption-gateway", encryptionGatewayRoutes(deps.encryptionGateway));
   }
+  if (deps.spamAi) app.route("/spam-ai", spamAiRoutes(deps.spamAi, deps));
   if (deps.backup) app.route("/backup", backupRoutes(deps.backup));
   if (deps.serverHealth) {
     app.route(

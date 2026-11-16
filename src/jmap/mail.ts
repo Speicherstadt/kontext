@@ -58,6 +58,8 @@ const DETAIL_PROPERTIES = [
   "attachments",
   "bodyStructure",
   "bodyValues",
+  // All header fields in order: only so is Stalwart's X-Spam-AI told from a forged one (src/lib/spam-ai.ts).
+  "headers",
 ];
 
 const BODY_PROPERTIES = [

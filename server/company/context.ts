@@ -70,6 +70,8 @@ export type CompanyDeps = {
   branding?: import("./branding").Branding;
   /** Gelöschte Elemente wiederherstellen, Stalwart Enterprise (archive.ts). */
   archive?: import("./archive").Archive;
+  /** KI-Spamfilter: Stalwart Enterprise's AiModel and SpamAi (spam-ai.ts). */
+  spamAi?: import("./spam-ai").SpamAi;
 };
 
 export type Loaded = {

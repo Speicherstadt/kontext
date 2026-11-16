@@ -57,6 +57,7 @@ import { useIsCompanyAdmin } from "@/features/company/queries";
 import { SecuritySection as CompanySecuritySection } from "@/features/company/security-section";
 import { ServerHealthSection } from "@/features/company/server-health-section";
 import { SmimeAuthoritiesSection } from "@/features/company/smime-authorities-section";
+import { SpamAiSection } from "@/features/company/spam-ai-section";
 import { VacationTemplatesSection } from "@/features/company/vacation-templates-section";
 import { RetentionCard } from "@/features/deleted-items/deleted-items-admin";
 import { DeletedItemsSection } from "@/features/deleted-items/deleted-items-section";
@@ -181,6 +182,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
       <CompanySecuritySection />
       <EncryptionGatewaySection />
       <PhishingReportSection />
+      <SpamAiSection />
     </>
   ),
   "company-idle": () => <IdleLogoutSection />,

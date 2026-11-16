@@ -408,7 +408,8 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysCalendarAlarmGet`, `sysCalendarAlarmUpdate`, `sysCalendarSchedulingGet`,
    `sysCalendarSchedulingUpdate`, `actionInvalidateCaches`, `sysArchivedItemGet`,
    `sysArchivedItemQuery`, `sysArchivedItemUpdate`, `sysArchivedItemDestroy`,
-   `sysDataRetentionGet`, `sysDataRetentionUpdate` und `impersonate`. Mit
+   `sysDataRetentionGet`, `sysDataRetentionUpdate`, `sysAiModelGet`, `sysAiModelCreate`,
+   `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate` und `impersonate`. Mit
    `sysIndexQueueStatusGet` zeigt die Firmenverwaltung, solange Stalwart den Suchindex aufbaut.
    Mit den `sysEncryption…`- und `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln
    durch Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
@@ -419,7 +420,8 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysCalendarScheduling…`-Rechte mit `actionInvalidateCaches` für das
    [Firmenlogo und die Vorlagen](company.md#mitarbeiter-und-postfacher) von Stalwarts
    Kalender-Mails; die `sysArchivedItem…`- und `sysDataRetention…`-Rechte für das
-   Wiederherstellen gelöschter Elemente. Mit `impersonate` arbeitet der Server in den Postfächern
+   Wiederherstellen gelöschter Elemente; die `sysAiModel…`- und `sysSpamAi…`-Rechte für den
+   [KI-Spamfilter](#ki-spamfilter). Mit `impersonate` arbeitet der Server in den Postfächern
    der Mitarbeiter (Abwesenheit, Leserechte für gemeinsame Postfächer) und trägt Antworten auf
    Einladungen ein; die App zeigt dem Chef dabei nie fremde Mails.
 2. Ein **Konto** `kontext-server@firma.de` mit dieser Rolle (statt *User*) und einem langen
@@ -539,7 +541,7 @@ der [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal gelaufen ist, der der 
   die jedes Mitarbeiters ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)).
 - **Logo und Vorlagen** in der Firmenverwaltung: das Firmenlogo und eigene Vorlagen für Stalwarts
   Kalender-Mails ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)).
-- **Serverzustand**, siehe den folgenden Abschnitt.
+- **Serverzustand** und **KI-Spamfilter**, siehe die beiden folgenden Abschnitte.
 
 #### Serverzustand { #serverzustand }
 
@@ -565,6 +567,41 @@ liest, was Stalwart selbst aufzeichnet; das tut Stalwart erst, wenn es eingescha
 Stalwart schreibt die Zahlen stündlich und hält sie 90 Tage, die Spuren 30 Tage
 (`metricsCollectionInterval`, `holdMetricsFor`, `holdTracesFor` unter *Data retention*). Bis die
 erste Stunde um ist, sagt die Seite das; fehlt ein Recht, sagt sie auch das.
+
+#### KI-Spamfilter { #ki-spamfilter }
+
+Mit Enterprise-Lizenz fragt Stalwart bei den Mails, bei denen sein Spamfilter unsicher ist,
+zusätzlich ein Sprachmodell, was sie sind: persönliche oder geschäftliche Post, Bestätigung,
+Newsletter, unerwünschte Werbung, Massen-Spam, Phishing oder Schadsoftware. Einrichten in der
+Firmenverwaltung unter *Sicherheit der Mails → KI-Spamfilter*:
+
+- **Anbieter** Anthropic, OpenAI, Google Gemini oder ein eigener Ollama-Server, das **Modell**
+  (etwa `claude-haiku-5-5`) und der **API-Schlüssel**; bei Ollama statt des Schlüssels die
+  Adresse des Servers. Ist für den [Assistenten im Chat](#ki-agenten) schon ein Claude-Schlüssel
+  eingetragen, kann der Spamfilter ihn mitbenutzen (Haken „Schlüssel des Assistenten im Chat verwenden“);
+  beide Kosten laufen dann über denselben Schlüssel.
+- **Wirkung:** „Zählt in der Spam-Bewertung“ (das Urteil hebt oder senkt Stalwarts Spamwert) oder
+  „Nur beobachten“ (das Urteil steht nur in der Mail, die Bewertung bleibt, wie sie war) – gut zum
+  Ausprobieren.
+
+Kontext schreibt das in Stalwart (`AiModel` „Kontext-Spamfilter“ und `SpamAi`) und lädt Stalwarts
+Einstellungen neu; lehnt Stalwart etwas ab (falsche Adresse, Schlüssel), steht seine Meldung da.
+Der Schlüssel liegt danach in Stalwarts Datenbank (und in dessen Backup), nicht in Kontext; die
+Firmenverwaltung zeigt nur, dass einer gespeichert ist. „Entfernen“ schaltet den Filter aus und
+löscht Modell und Schlüssel aus Stalwart. Das Urteil schreibt Stalwart als Kopfzeile `X-Spam-AI`
+in die Mail; Kontext zeigt es beim Lesen ([Mail → Sicherheit](mail.md#sicherheit)). Welche Mails
+ans Modell gehen, bestimmt Stalwarts Vorgabe: nur die mit einem Spamwert im Grenzbereich, nicht
+die eindeutig guten oder eindeutig schlechten. Wer den Filter für einen Server ohne Lizenz
+einrichten will, bekommt „braucht Stalwart Enterprise“; ohne Lizenz würde Stalwart ihn nicht
+benutzen. Ein Server, der vor dieser Funktion eingerichtet wurde, braucht einmal den
+[Einrichtungsbefehl](#einrichtungsbefehl) für die Rechte `sysAiModel…` und `sysSpamAi…`.
+
+**Datenschutz:** Für jede dieser Mails schickt Stalwart Absender und Antwortadresse, Betreff, die
+Domains der Empfänger, die Ergebnisse von SPF, DKIM und DMARC, die Links mit ihren Zielen, die
+Namen der Anhänge und den Anfang des Textes (bis 6000 Zeichen) an den gewählten Anbieter – bei
+Anthropic, OpenAI und Google in die USA. Das gehört in die Datenschutzinformation, mit dem
+Auftragsverarbeitungsvertrag des Anbieters. Wer keine Mails nach außen geben will, nimmt einen
+eigenen Ollama-Server.
 
 ## 4. Platte verschlüsseln
 

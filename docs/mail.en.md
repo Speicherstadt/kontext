@@ -280,6 +280,15 @@ SMTP.
   details" shows SPF, DKIM, DMARC and the spam score.
   [More](architecture.md#prufung-des-absenders)
 - **Mark as spam** (`!`) and "Not spam" – the filter learns from both.
+- **Verdict of the AI spam filter** (only with Stalwart Enterprise, switched on by the company
+  admin): if the language model takes a mail for phishing or malware, "AI: Phishing" or
+  "AI: Malware" stands next to the sender in red, for spam and unsolicited sales in amber, and
+  "AI: unsure" when the model was not sure; hovering shows the reason. Ordinary mail,
+  notifications and newsletters get no hint. "Show details" always names the verdict, with
+  probability and reason. Kontext reads the header `X-Spam-AI` that Stalwart writes into the mail
+  for this – only Stalwart's own, none sent along by the sender
+  ([more](architecture.md#prufung-des-absenders)); in the "Only observe" mode it is shown in the details only
+  ([Installation → AI spam filter](installation.md#ki-spamfilter)).
 - **Report as phishing** in the "More actions" menu, once the company administration has entered
   an address for it ([Company](company.md#mitarbeiter-und-postfacher)): the mail goes as an
   attachment (.eml) to the IT team or the IT provider and lands in spam.
