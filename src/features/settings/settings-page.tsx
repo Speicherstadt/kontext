@@ -4,6 +4,7 @@
  */
 import { Link } from "@tanstack/react-router";
 import {
+  ArchiveRestore,
   AtSign,
   BadgeCheck,
   Bot,
@@ -39,6 +40,7 @@ import { AgentsSection } from "@/features/agents/agents-section";
 import { AssistantSection } from "@/features/company/assistant-section";
 import { BackupSection } from "@/features/company/backup-section";
 import { ChatSection } from "@/features/company/chat-section";
+import { useStalwartEdition } from "@/features/company/edition";
 import { EmployeesSection } from "@/features/company/employees-section";
 import { EncryptionGatewaySection } from "@/features/company/encryption-gateway-section";
 import { ExternalHintSection } from "@/features/company/external-hint-section";
@@ -51,6 +53,8 @@ import { useIsCompanyAdmin } from "@/features/company/queries";
 import { SecuritySection as CompanySecuritySection } from "@/features/company/security-section";
 import { SmimeAuthoritiesSection } from "@/features/company/smime-authorities-section";
 import { VacationTemplatesSection } from "@/features/company/vacation-templates-section";
+import { RetentionCard } from "@/features/deleted-items/deleted-items-admin";
+import { DeletedItemsSection } from "@/features/deleted-items/deleted-items-section";
 import { ExternalSection } from "@/features/external/external-section";
 import { useExternalAccounts } from "@/features/external/queries";
 import { usePhone } from "@/features/phone/queries";
@@ -106,6 +110,7 @@ const OWN: Entry[] = [
   { id: "encryption", label: m.settings_encryption, icon: LockKeyhole },
   { id: "agents", label: m.settings_agents, icon: Bot },
   { id: "appearance", label: m.settings_appearance, icon: Palette },
+  { id: "deleted", label: m.deleted_title, icon: ArchiveRestore },
 ];
 
 /** The Firmenverwaltung, only for accounts with that right. */
@@ -149,6 +154,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
   encryption: () => <EncryptionSection />,
   agents: () => <AgentsSection />,
   appearance: () => <AppearanceSection />,
+  deleted: () => <DeletedItemsSection />,
   employees: () => <EmployeesSection />,
   mailboxes: () => <MailboxesSection />,
   "company-signature": () => <CompanySignatureSection />,
@@ -170,7 +176,12 @@ const CONTENT: Record<Section, () => ReactNode> = {
   "company-idle": () => <IdleLogoutSection />,
   "company-external": () => <ExternalHintSection />,
   "company-smime": () => <SmimeAuthoritiesSection />,
-  "company-backup": () => <BackupSection />,
+  "company-backup": () => (
+    <>
+      <BackupSection />
+      <RetentionCard />
+    </>
+  ),
   phone: () => <PhoneSettingsSection />,
   migration: () => <MigrationSection />,
 };
@@ -203,7 +214,12 @@ export const SettingsPage = ({ section }: { section: Section | undefined }) => {
   const admin = useIsCompanyAdmin();
   // Other mailboxes need the server's Stalwart key; without it the entry is left out.
   const { data: external } = useExternalAccounts();
-  const own = external === null ? OWN.filter((entry) => entry.id !== "accounts") : OWN;
+  // Restoring deleted items needs Stalwart Enterprise; in Community the entry is left out.
+  const enterprise = useStalwartEdition() === "enterprise";
+  const own = OWN.filter(
+    (entry) =>
+      (entry.id !== "accounts" || external !== null) && (entry.id !== "deleted" || enterprise),
+  );
   // Telephony needs LiveKit on the server; without it the section has nothing to set.
   const phone = usePhone().enabled;
   const company = COMPANY.filter((entry) => entry.id !== "phone" || phone);

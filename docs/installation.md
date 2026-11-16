@@ -403,12 +403,16 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
    `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` und `impersonate`. Mit `sysIndexQueueStatusGet` zeigt die
+   `sysActionCreate`, `actionReloadSettings`, `sysArchivedItemGet`, `sysArchivedItemQuery`,
+   `sysArchivedItemUpdate`, `sysArchivedItemDestroy`, `sysDataRetentionGet`,
+   `sysDataRetentionUpdate` und `impersonate`. Mit `sysIndexQueueStatusGet` zeigt die
    Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Mit den `sysEncryption…`- und
    `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln durch
    Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
    Empfänger; `sysActionCreate` mit `actionReloadSettings` lässt sie Stalwart danach die
-   Einstellungen neu laden. Mit `impersonate` arbeitet der Server in den Postfächern der Mitarbeiter
+   Einstellungen neu laden. Die `sysArchivedItem…`- und `sysDataRetention…`-Rechte braucht nur
+   [Stalwart Enterprise](#stalwart-enterprise) für das Wiederherstellen gelöschter Elemente.
+   Mit `impersonate` arbeitet der Server in den Postfächern der Mitarbeiter
    (Abwesenheit, Leserechte für gemeinsame Postfächer) und trägt Antworten auf Einladungen ein;
    die App zeigt dem Chef dabei nie fremde Mails.
 2. Ein **Konto** `kontext-server@firma.de` mit dieser Rolle (statt *User*) und einem langen
@@ -500,7 +504,18 @@ in Kontext: Es ist dasselbe Image, nur der Schlüssel schaltet frei.
    „Stalwart Enterprise Edition license key is valid“.
 
 Kontext merkt es innerhalb von zehn Minuten; die Firmenverwaltung zeigt unter *Mitarbeiter*
-„Enterprise (Lizenz aktiv)“. Der Schlüssel gilt für die Domain des Server-Hostnamens und für eine
+„Enterprise (Lizenz aktiv)“, und Kontext bietet, was Enterprise dazu bringt:
+
+- **Gelöschte Elemente wiederherstellen:** Stalwart hebt endgültig Gelöschtes auf, so viele Tage,
+  wie die Firmenverwaltung unter *Datensicherung* einstellt (`archiveDeletedItemsFor` in
+  Stalwarts *DataRetention*; zu Beginn nichts). Jede Person holt eigene Mails und die ihrer
+  gemeinsamen Postfächer unter *Einstellungen → Gelöschte Elemente* zurück, die Firmenverwaltung
+  die jedes Mitarbeiters ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)). Auf einem
+  Server, der vor dieser Kontext-Version eingerichtet wurde, den
+  [Einrichtungsbefehl](#einrichtungsbefehl) einmal erneut ausführen: Er gibt der Rolle
+  `Kontext-Server` die Rechte `sysArchivedItem…` und `sysDataRetention…`.
+
+Der Schlüssel gilt für die Domain des Server-Hostnamens und für eine
 Zahl von Postfächern, gemeinsame Postfächer zählen mit; darüber lehnt Stalwart neue Konten ab, und
 die Firmenverwaltung zeigt Stalwarts Meldung. Läuft die Lizenz aus, arbeitet Stalwart als
 Community weiter, ohne Datenverlust.

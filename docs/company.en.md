@@ -93,6 +93,14 @@ Stalwart's admin interface and without IT skills.
   the nightly backup and “Back up now”, plus the log. For this, the units must be set up on the
   server ([Installation → Backups](installation.md#5-backups)); otherwise it says “Control isn’t
   set up on the server”.
+- **Deleted items** (only with Stalwart Enterprise): under *Backup* the company admin sets for how
+  many days Stalwart keeps what was deleted for good – 0 (the start) keeps nothing; the period
+  applies to what is deleted from then on. That long, everyone brings back their own mails under
+  *Settings → Deleted items* ([Mail](mail.md#ordnen-und-finden)). On an employee's entry and on
+  every shared mailbox, **Deleted items** opens the same list for that account: restore (into the
+  inbox) or delete for good. The Kontext server needs the rights `sysArchivedItem…` and
+  `sysDataRetention…` for it, which the [setup command](installation.md#einrichtungsbefehl)
+  grants. With the Community edition neither is there.
 
 ## Moving to Kontext { #umzug-nach-kontext }
 

@@ -25,6 +25,7 @@ import { createMessageStore } from "./chat/messages";
 import { createChatPruner, createChatRetention } from "./chat/retention";
 import { createChatRoutes, viewerOf } from "./chat/routes";
 import { createChatStore } from "./chat/store";
+import { createArchive } from "./company/archive";
 import { createBackupControl } from "./company/backup";
 import { createCalendars } from "./company/calendars";
 import { createEditionCheck } from "./company/edition";
@@ -422,6 +423,7 @@ export const createApp = async (env: Env) => {
       encryptionGateway: createEncryptionGateway(request),
       backup: createBackupControl(join(dirname(env.DATABASE_PATH), "backup-control")),
       edition: createEditionCheck({ stalwartUrl: env.STALWART_URL, key: env.STALWART_ADMIN_KEY }),
+      archive: createArchive(request),
     });
     app.route("/api/company", company);
   }

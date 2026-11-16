@@ -16,6 +16,7 @@ export const settingsSections = [
   "encryption",
   "agents",
   "appearance",
+  "deleted",
   "employees",
   "mailboxes",
   "company-signature",
@@ -32,7 +33,11 @@ export const settingsSections = [
 ] as const;
 
 export const Route = createFileRoute("/_app/settings")({
-  validateSearch: z.object({ section: z.enum(settingsSections).optional() }),
+  validateSearch: z.object({
+    section: z.enum(settingsSections).optional(),
+    /** Gelöschte Elemente: the account to show first (from that account's trash). */
+    account: z.string().max(64).optional(),
+  }),
   component: SettingsRoute,
 });
 

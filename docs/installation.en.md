@@ -407,12 +407,16 @@ in Stalwart's admin interface it goes like this:
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
    `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` and `impersonate`. With `sysIndexQueueStatusGet` the
+   `sysActionCreate`, `actionReloadSettings`, `sysArchivedItemGet`, `sysArchivedItemQuery`,
+   `sysArchivedItemUpdate`, `sysArchivedItemDestroy`, `sysDataRetentionGet`,
+   `sysDataRetentionUpdate` and `impersonate`. With `sysIndexQueueStatusGet` the
    company admin shows while Stalwart is building the search index. With the `sysEncryption…` and
    `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
    `sysActionCreate` with `actionReloadSettings` lets it have Stalwart reload its settings
-   afterwards. With `impersonate` the server works in the employees' mailboxes
+   afterwards. The `sysArchivedItem…` and `sysDataRetention…` permissions are needed only with
+   [Stalwart Enterprise](#stalwart-enterprise), for restoring deleted items. With `impersonate`
+   the server works in the employees' mailboxes
    (out of office, read access to shared mailboxes) and enters replies to invitations;
    the app never shows the boss anyone else's mail in doing so.
 2. Create an **account** `kontext-server@firma.de` with this role (instead of *User*) and a long
@@ -502,7 +506,17 @@ it is the same image, only the key unlocks it.
    "Stalwart Enterprise Edition license key is valid".
 
 Kontext notices within ten minutes; the company admin shows "Enterprise (license active)" under
-*Employees*. The key is valid for the domain of the server's host name and for a number of
+*Employees*, and Kontext offers what Enterprise brings:
+
+- **Restoring deleted items:** Stalwart keeps what was deleted for good for as many days as the
+  company admin sets under *Backup* (`archiveDeletedItemsFor` in Stalwart's *DataRetention*;
+  nothing at first). Everyone brings back their own mails and those of their shared mailboxes
+  under *Settings → Deleted items*, the company admin those of every employee
+  ([company admin](company.md#mitarbeiter-und-postfacher)). On a server set up before this
+  Kontext version, run the [setup command](#einrichtungsbefehl) once more: it gives the role
+  `Kontext-Server` the permissions `sysArchivedItem…` and `sysDataRetention…`.
+
+The key is valid for the domain of the server's host name and for a number of
 mailboxes, shared mailboxes included; beyond it Stalwart refuses new accounts, and the company
 admin shows Stalwart's message. When the license lapses, Stalwart carries on as Community, without
 losing data.

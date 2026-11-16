@@ -111,7 +111,7 @@ VPS mit 2 vCPU und 4 GB RAM. Alles Weitere – DNS, Podman, Backups, Updates –
 
 | | |
 |---|---|
-| ✉️ **Mail** | **Gemeinsame Postfächer** wie info@ mit Rechten pro Person, **Mails zuweisen** mit „Mir zugewiesen“ und „Offen“, **Vertretung in einem Schritt**, **Kategorien** und **Regeln auf dem Server**, Suche wie in Gmail (auch in PDF- und Office-Anhängen), später senden und Wiedervorlage, **weitere Postfächer** (Gmail, GMX), **Warnungen vor gefälschten Absendern** · [mehr →](https://kontext.email/mail.html) |
+| ✉️ **Mail** | **Gemeinsame Postfächer** wie info@ mit Rechten pro Person, **Mails zuweisen** mit „Mir zugewiesen“ und „Offen“, **Vertretung in einem Schritt**, **Kategorien** und **Regeln auf dem Server**, Suche wie in Gmail (auch in PDF- und Office-Anhängen), später senden und Wiedervorlage, **weitere Postfächer** (Gmail, GMX), **Warnungen vor gefälschten Absendern**, **endgültig gelöschte Mails wiederherstellen** (mit Stalwart Enterprise) · [mehr →](https://kontext.email/mail.html) |
 | 📅 **Kalender** | Tag, Woche, Arbeitswoche, Monat und Serien, Arbeitszeit grau hinterlegt, **Einladungen mit einem Klick beantworten** (auch aus Outlook und Google), **Wer hat Zeit?**, **Videobesprechung pro Termin**, geteilte Kalender (auf allen Geräten ein- und ausgeblendet) und **Abos** (iCal), Feiertage und Geburtstage der Kontakte · [mehr →](https://kontext.email/calendar-contacts.html) |
 | 👥 **Kontakte** | **Der Kunde auf einen Blick**: letzte Mails, nächste Termine, offene Aufgaben und Anrufe; Gruppen, vCard und CSV-Import, Doppelte zusammenführen, mehrere Kontakte auf einmal (löschen, in eine Gruppe, in ein anderes Adressbuch, exportieren) · [mehr →](https://kontext.email/calendar-contacts.html#kontakte) |
 | ✅ **Aufgaben** | **Liste oder Kanban-Board** pro Postfach und pro Projekt, **aus einer Mail, einer Chat-Nachricht, einem Termin oder einem verpassten Anruf**, Erinnerungen, per CalDAV in Thunderbird und am Handy · [mehr →](https://kontext.email/tasks.html) |
@@ -191,7 +191,8 @@ jemanden, der ihn einrichtet und aktuell hält.
 
 Beides. Kontext läuft vollständig mit der kostenlosen Community-Ausgabe von Stalwart, eine Lizenz
 muss niemand kaufen. Ist eine Lizenz für Stalwart Enterprise eingetragen, erkennt Kontext sie und
-zeigt sie in der Firmenverwaltung; siehe
+zeigt sie in der Firmenverwaltung und bietet, was sie dazu bringt, etwa endgültig gelöschte Mails
+wiederherstellen; siehe
 [Stalwart Enterprise](https://kontext.email/installation.html#stalwart-enterprise).
 </details>
 

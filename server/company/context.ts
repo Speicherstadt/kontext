@@ -62,6 +62,8 @@ export type CompanyDeps = {
   backup?: BackupControl;
   /** Stalwart Community or Enterprise (edition.ts); Enterprise-only parts ask it. */
   edition?: import("./edition").EditionCheck;
+  /** Gelöschte Elemente wiederherstellen, Stalwart Enterprise (archive.ts). */
+  archive?: import("./archive").Archive;
 };
 
 export type Loaded = {
