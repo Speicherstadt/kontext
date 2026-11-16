@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { DeletedItemsButton } from "@/features/deleted-items/deleted-items-admin";
 import { formatSize } from "@/lib/format";
 import { m } from "@/paraglide/messages";
 import {
@@ -15,6 +16,7 @@ import {
   resetTwoFactor,
   updateEmployee,
 } from "./api";
+import { useStalwartEdition } from "./edition";
 import {
   AddressInput,
   AliasesField,
@@ -27,7 +29,7 @@ import { useCompanyChange } from "./queries";
 import { type Managed, useManagedBy } from "./sso-api";
 
 /** What the person's dialog opens in its place. */
-export type EmployeeSubDialog = "vacation" | "rules" | "offboarding";
+export type EmployeeSubDialog = "vacation" | "rules" | "offboarding" | "deleted" | "delete";
 
 const mailboxOptions = (company: Company) =>
   company.mailboxes.map((mailbox) => ({
@@ -163,11 +165,14 @@ export const EmployeeDialog = ({
   company: Company;
   employee: Employee;
   onClose: () => void;
-  /** Opens the out-of-office reply, the rules or the leaving instead of this dialog. */
+  /** Opens the out-of-office reply, the rules, the leaving or deleting instead of this dialog. */
   onOpen: (dialog: EmployeeSubDialog) => void;
 }) => {
   const toast = useToast();
   const self = employee.id === company.selfId;
+  // Deleting is offered with Stalwart Enterprise only, where it can be undone (deleted-accounts.ts).
+  const enterprise = useStalwartEdition() === "enterprise";
+  const deletable = !self && enterprise;
   const [fullName, setFullName] = useState(employee.fullName);
   const [aliases, setAliases] = useState(employee.aliases);
   const [mailboxIds, setMailboxIds] = useState(employee.mailboxIds);
@@ -259,6 +264,10 @@ export const EmployeeDialog = ({
           <Button disabled={busy} onClick={() => onOpen("rules")}>
             <ListFilter size={16} /> {m.rules_open()}
           </Button>
+          <DeletedItemsButton
+            label={m.deleted_of({ name: employee.fullName })}
+            onOpen={() => onOpen("deleted")}
+          />
           {self ? null : (
             <Button variant="danger" disabled={busy} onClick={() => onOpen("offboarding")}>
               {m.company_offboarding()}
@@ -311,6 +320,11 @@ export const EmployeeDialog = ({
               {m.company_activate()}
             </Button>
           )}
+          {deletable ? (
+            <Button variant="danger" disabled={busy} onClick={() => onOpen("delete")}>
+              {m.company_delete()}
+            </Button>
+          ) : null}
         </div>
       </section>
     </Dialog>

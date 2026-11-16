@@ -1,6 +1,6 @@
 /**
- * The company's people: create, change, password and second factor, lock, out-of-office reply,
- * mail rules.
+ * The company's people: create, change, password and second factor, lock, delete,
+ * out-of-office reply, mail rules.
  * Only users with the plain user role (see `isCompanyUser`); the caller cannot lock themselves out.
  */
 import { Hono } from "hono";
@@ -86,6 +86,7 @@ export const employeeRoutes = ({
   random,
   mailboxChanged,
   categories,
+  edition,
 }: CompanyDeps) => {
   // Who works in a shared mailbox decides who opens its folder in Dokumente (documents/mailboxes.ts).
   const changed = (ids: string[]) => {
@@ -264,6 +265,26 @@ export const employeeRoutes = ({
       const sieve = await mailstore.setSieveScript(user.id, OFFBOARDING_SCRIPT, script);
       if (!sieve.ok) return bad(sieve.error);
     }
+    return c.json({ ok: true });
+  });
+
+  /**
+   * Deletes the person's account, only with Stalwart Enterprise: with a retention it can be
+   * recovered for that long (deleted-accounts.ts). Community offers leaving instead (offboarding),
+   * so that nothing there is gone for good by one click.
+   */
+  app.delete("/:id", async (c) => {
+    if ((await edition?.()) !== "enterprise") {
+      return c.json({ error: "Konten löschen gibt es nur mit Stalwart Enterprise." }, 403);
+    }
+    const loaded = c.get("loaded");
+    const user = userOf(loaded, c.req.param("id"));
+    if (!user) return notFound();
+    if (user.id === loaded.selfId) return bad("Das eigene Konto lässt sich nicht löschen.");
+    const result = await management.destroyAccount(user.id);
+    if (!result.ok) return bad(result.error);
+    changed(mailboxesOf(loaded, user.id));
+    await endSessions(user.emailAddress ?? "");
     return c.json({ ok: true });
   });
 

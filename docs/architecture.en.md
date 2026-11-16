@@ -249,6 +249,19 @@ JMAP would return the bottom one (RFC 8621 §4.1.3), and everything below Stalwa
 the mail and may be forged by the sender. Mails without this header did not come from outside (from
 colleagues over one's own server, or from a move); they are not rated.
 
+With Stalwart Enterprise and the [AI spam filter](installation.md#ki-spamfilter) switched on,
+`X-Spam-AI` with the language model's verdict is there too (`phishing; p=0.93; confidence=0.88; …`,
+`crates/spam-filter/src/analysis/ai/verdict.rs`). Stalwart does not remove a header of that name
+sent along by the sender, and asks the model only about borderline mails – so "the topmost" is not
+enough here. At delivery Stalwart puts one block above the mail (`crates/smtp/src/inbound/data.rs`,
+`crates/smtp/src/queue/spool.rs`): its `Received`, `Authentication-Results`, `Received-SPF`, then
+`X-Spam-Result`, `X-Spam-AI`, `X-Spam-Score` (`crates/spam-filter/src/analysis/score.rs`). The
+app therefore fetches all headers in their order (`headers`) and takes `X-Spam-AI` only if it sits
+between `X-Spam-Result` and the first `X-Spam-Score`, under a `Received` with only those headers in
+between (`src/lib/spam-ai.ts`); a sender's copy is always below Stalwart's `X-Spam-Score` and does
+not count, not in the details either. Next to the sender the app shows only phishing, malware,
+spam, unsolicited sales and "unsure".
+
 The rules are in `src/lib/sender-check.ts`:
 
 | Warning                                           | When                                                                                                   |
@@ -310,6 +323,83 @@ its own and allows only what the company admin needs.
   company admin shows it under *Employees*. Kontext needs Enterprise for nothing; what only
   Stalwart Enterprise can do, the app offers only once the license is active
   (`useStalwartEdition`, `src/features/company/edition.ts`).
+- **Masked addresses** (Enterprise only) are Stalwart's `x:MaskedEmail`
+  (`crates/registry/src/schema/structs.rs`). The app asks Stalwart directly with the session's
+  token, not with the server's key: the *User* role has `sysMaskedEmail*`
+  (`crates/common/src/auth/permissions.rs`), and Kontext's `full` scope includes them (`SETTINGS`
+  in `crates/common/src/auth/oauth/scope.rs`); so Stalwart shows only the own account's
+  addresses. Stalwart makes the address: a start (random or `emailPrefix`), a dot, a checked id,
+  `@` and the account's domain (`crates/jmap/src/registry/mapping/masked_email.rs`,
+  `crates/common/src/enterprise/masked.rs`). Mail is delivered while `enable` is on and
+  `expiresAt` has not passed; otherwise Stalwart refuses the recipient
+  (`crates/common/src/network/mta.rs`). `expiresAt` is fixed once created. Without a license
+  Stalwart answers `forbidden` (`crates/jmap/src/registry/mod.rs`); the app then does not show the
+  item (`src/jmap/masked-email.ts`, `src/features/settings/masked-email-section.tsx`).
+- **License:** With Enterprise the company admin shows the license's usage
+  (`GET /api/company/license`, for the company admin only, `{ license: null }` without a license;
+  `server/company/license.ts`). Stalwart has no route with the license's details. The server
+  counts what is used the way Stalwart's `can_create_account` does
+  (`crates/common/src/enterprise/mod.rs`): every account, so employees, shared mailboxes (groups)
+  and the Kontext server's own account, through `x:Account/query` with `calculateTotal`. Limit,
+  end and domain are only in the key itself (`LicenseKey`,
+  `crates/common/src/enterprise/license.rs`); `x:Enterprise/get` gives it out only with
+  `sysEnterpriseGet` and `includeSecrets` switched on, otherwise as "****". Then the company admin
+  shows only the mailboxes in use.
+- **Server health** (Enterprise): `GET /api/company/server-health?period=day|week`
+  (`server/company/server-health-routes.ts`) answers 403 as long as the edition is not
+  Enterprise; Stalwart refuses `x:Metric` and `x:Trace` without a license anyway
+  (`crates/jmap/src/registry/mod.rs`). Otherwise the server reads, with its key, the metrics since
+  the start of the period (`x:Metric/query` by `timestamp` and name, then `x:Metric/get` in parts
+  of 500). Stalwart writes them at every collection interval (hourly): counters as what was added
+  since the last time, gauges such as `queue.count` as their value
+  (`crates/common/src/telemetry/metrics/store.rs`). `server/company/server-health.ts` adds up
+  `message-ingest.ham`, `message-ingest.spam`, `queue.authenticated-message-queued` and
+  `queue.dsn-queued` per hour (24) or Berlin day (7), plus `auth.failed` and
+  `security.authentication-ban`. The delivery problems come from the traces of the last 200
+  delivery attempts (`x:Trace` with `event` `delivery.attempt-start`): `delivery-problems.ts` takes
+  the last word per recipient from them – `delivery.failed`, `delivery.dsn-perm-fail`,
+  `delivery.rcpt-to-rejected` (final from code 500) and relatives – with `details` or `reason` and
+  `hostname`. Whether Stalwart records at all, `x:MetricsStore` and `x:TracingStore` say
+  (`Disabled` is Stalwart's default). Rights: `sysMetricGet`, `sysMetricQuery`, `sysTraceGet`,
+  `sysTraceQuery`, `sysMetricsStoreGet`, `sysTracingStoreGet`. The storage is the sum of
+  `usedDiskQuota` of the employees and shared mailboxes. Kontext does not set up mail alerts
+  (Stalwart's `x:Alert`): Stalwart checks them every five minutes and sends a mail each time the
+  condition holds (`crates/common/src/enterprise/alerts.rs`).
+- **Deleted items** (Enterprise only): Stalwart keeps what was deleted for good as
+  `x:ArchivedItem` (variants Email, FileNode, CalendarEvent, ContactCard, SieveScript;
+  `crates/registry/src/schema/structs.rs`), for as long as `archiveDeletedItemsFor` of the
+  singleton `x:DataRetention` says (milliseconds, none without a value;
+  `crates/common/src/enterprise/config.rs`). In 1.1 Stalwart archives only mails
+  (`crates/services/src/index_queue/index.rs`) and restores only mails, into the inbox
+  (`crates/services/src/task_manager/tasks/restore_item.rs`). Restoring is `x:ArchivedItem/set`
+  with `status: "requestRestore"`: Stalwart takes the entry out and schedules the task; `destroy`
+  deletes for good (`crates/jmap/src/registry/mapping/archived_item.rs`). The users' OAuth scopes
+  do not include `sysArchivedItem…`, so the server asks with its key (`server/company/archive.ts`;
+  filter `accountId` with `impersonate`) and decides itself whose items someone sees
+  (`server/company/archive-routes.ts`): the own account and the shared mailboxes one is a member
+  of; the company admin every employee's and mailbox's. Before restoring or deleting it reads the
+  items and checks that all belong to the account in the path. `GET /api/company/archive`
+  (accounts, retention), `GET|POST /api/company/archive/accounts/:id[/restore|/destroy]`,
+  `PUT /api/company/archive/retention` (company admin only; then `ReloadSettings`). In Community
+  the routes answer 404, and the app does not ask them (`src/features/deleted-items/`).
+- **Deleting and deleted accounts** (`server/company/deleted-accounts.ts`): "Delete account" exists
+  with Stalwart Enterprise only (otherwise `DELETE /api/company/employees/:id` answers 403 and the
+  app does not show the button); in Community, leaving remains. It is `x:Account/set` destroy
+  (permission `sysAccountDestroy`). Stalwart removes the account at once,
+  revokes what it shared and schedules a `DestroyAccount` task that deletes the data
+  (`schedule_account_destruction`, `crates/jmap/src/registry/mapping/principal.rs`). Without a
+  license, or without `archiveDeletedAccountsFor` in `x:DataRetention`, it is due at once; with a
+  license that much later (`deleted_accounts_retention`, `crates/common/src/enterprise/config.rs`).
+  The pending ones are the list of deleted accounts: `x:Task/query` with
+  `{"@type": "DestroyAccount"}` and `x:Task/get` by back-reference, which adds `due` (task_query,
+  task_get in `crates/jmap/src/registry/mapping/task.rs`). Restoring means destroying the task
+  (`x:Task/set` destroy, permissions `sysTaskDestroy` and `taskDestroyAccount`): Stalwart creates
+  the account again under its old id with only name and domain and rebuilds the shares (the
+  `Task::DestroyAccount` branch in `task.rs`; without a license "Account recovery is not supported
+  in this deployment"). Kontext then sets a new password and the shared mailboxes from the task
+  (`memberGroupIds`). The company admin changes the retention with `x:DataRetention/set` and
+  `ReloadSettings`. The routes under `/api/company/deleted-accounts` answer 403 without
+  Enterprise, without asking Stalwart; the app asks them only with Enterprise.
 - **Shared mailboxes** are groups; a member is whoever has the group in `memberGroupIds`.
   "Read only" goes to whoever has all of the mailbox's folders shared with them via `shareWith`
   (`mayReadItems`, `maySetSeen`); the app reads this off the inbox.
@@ -2157,6 +2247,58 @@ invitees, with a line of text and the iTIP `REPLY` as `text/calendar; method=REP
 RFC 5546 §3.2.3), subject as with Outlook ("Accepted: …"). The copy is in "Sent". If the organiser
 set `RSVP=FALSE`, no answer goes out. This applies to appointments Stalwart entered itself too: it
 then does not send a second answer.
+
+## Logo and templates { #logo-und-vorlagen }
+
+Only with Stalwart Enterprise (`server/company/branding.ts`, in the company admin
+`src/features/company/branding-section.tsx`; without a license the entry is missing, and the
+routes under `/api/company/branding` answer 403). Stalwart itself sends the reminder by mail and
+its mails about invitations (CalDAV, answers given in the calendar, see
+[Invitations](#einladungen)). Both carry a logo (as a `cid:` image in the mail) and follow an HTML
+template; your own exist only with Enterprise (`template_calendar_alarm`,
+`template_scheduling_email` and `logo` in `crates/common/src/enterprise/mod.rs` of
+stalwartlabs/stalwart v1.1.0). Kontext keeps none of it itself, everything is in Stalwart:
+
+| What                      | Object                  | Property        |
+| ------------------------- | ----------------------- | --------------- |
+| Company logo              | `x:Enterprise`          | `logo`          |
+| Reminder by mail          | `x:CalendarAlarm`       | `template`      |
+| Mails about invitations   | `x:CalendarScheduling`  | `emailTemplate` |
+
+Null means Stalwart's own. Stalwart reads the values when its settings load
+(`crates/common/src/enterprise/config.rs`); so after each change the server sends
+`ReloadSettings`, for the logo also `InvalidateCaches` (Stalwart keeps logos per domain in memory,
+`crates/common/src/cache/invalidate.rs`). For this the role `Kontext-Server` needs the
+permissions `sysEnterprise…`, `sysCalendarAlarm…`, `sysCalendarScheduling…` and
+`actionInvalidateCaches` ([Installation](installation.md#firmenverwaltung-einschalten)); without them
+the company admin says to run the setup command again. Of the `x:Enterprise` object Kontext reads
+only `logo`, never the license or API key.
+
+- **Logo** (`src/lib/company-logo.ts`): Stalwart takes a `data:` URI, base64 or an http(s)
+  address, at most 1 MB, PNG, JPEG, GIF, WebP, ICO or SVG (`LogoSource::parse`,
+  `sniff_media_type` in `crates/common/src/enterprise/logo.rs`). Kontext uploads the file as a
+  `data:` URI and checks it beforehand as Stalwart does, the type by its content; Stalwart itself
+  only notices a bad logo when sending and then uses its own. A domain with a logo of its own
+  (`x:Domain`, `logo`) keeps it.
+- **Templates** (`src/lib/calendar-template.ts`): Stalwart's syntax – `{{name}}` (HTML-escaped),
+  `{{!name}}`, `{{#if name}}…{{/if name}}`, `{{#each name}}…{{/each name}}` with the 21 names of
+  `CalendarTemplateVariable` (`crates/common/src/config/groupware.rs`) –, read and filled in as in
+  `crates/utils/src/template.rs`, with its error messages. Stalwart does not check a template when
+  it is saved; it reports a broken one only when loading ("Invalid template") and keeps its
+  built-in one. So the server only accepts templates that read this way. The preview fills the
+  template with an example appointment and the values Stalwart puts in (`alarm.rs`, `imip.rs` in
+  `crates/services/src/task_manager/tasks/`), with Stalwart's German or English texts
+  (`resources/locales/i18n.yml`), in an `<iframe sandbox>` without scripts.
+- **Kontext's template** (`src/lib/calendar-template-defaults.ts`): the same parts as Stalwart's
+  built-in ones (`resources/html-templates/calendar-alarm.html`, `calendar-invite.html`), in the
+  Kontext look, light and dark. Stalwart fills in the texts in the account's language (Kontext
+  creates accounts with `de-DE`); only the note under the reminder is fixed in the template, in
+  German or English, because Stalwart's own refers to a "self-service portal" Kontext does not
+  have.
+
+Kontext does not offer Stalwart's answer page (`x:CalendarScheduling`, `httpRsvpTemplate`,
+Enterprise): it stays off (`httpRsvpEnable`) because Kontext answers invitations with its own
+page; a version of your own would never be shown.
 
 ## Sign-in { #anmeldung }
 

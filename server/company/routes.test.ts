@@ -22,6 +22,7 @@ const account = (id: string, name: string, admin = false): StalwartAccount => ({
 const fakeManagement = ({ annaInInfo = false } = {}) => {
   const updates: Record<string, Record<string, unknown>>[] = [];
   const created: Record<string, unknown>[] = [];
+  const destroyed: string[] = [];
   const management: Management = {
     listAccounts: async () => [
       account("1", "chef", true),
@@ -36,6 +37,10 @@ const fakeManagement = ({ annaInInfo = false } = {}) => {
     },
     updateAccounts: async (patches) => {
       updates.push(patches);
+      return { ok: true, value: null };
+    },
+    destroyAccount: async (id) => {
+      destroyed.push(id);
       return { ok: true, value: null };
     },
     indexQueue: async () => [
@@ -78,12 +83,14 @@ const fakeManagement = ({ annaInInfo = false } = {}) => {
       return { ok: true, value: null };
     },
   };
-  return { management, mailstore, updates, created, shared, rules, back };
+  return { management, mailstore, updates, created, destroyed, shared, rules, back };
 };
+
+const LICENSE = { used: 12, limit: 25, validTo: "2027-12-31T00:00:00.000Z", domain: "firma.de" };
 
 const setup = (
   email: string | null,
-  options: { welcomeError?: string; annaInInfo?: boolean } = {},
+  options: { welcomeError?: string; annaInInfo?: boolean; community?: boolean } = {},
 ) => {
   const { welcomeError } = options;
   const fake = fakeManagement(options);
@@ -178,7 +185,8 @@ const setup = (
       saveSettings: async () => {},
       requestRun: async () => {},
     },
-    edition: async () => "enterprise",
+    edition: async () => (options.community ? "community" : "enterprise"),
+    license: async () => LICENSE,
   });
   const send = (method: string, path: string, body?: unknown) =>
     app.request(path, {
@@ -319,6 +327,21 @@ describe("Firmenverwaltung", () => {
       expect((await leave(member.send)).status).toBe(200);
       expect(member.changedMailboxes).toEqual(["g"]);
     }
+  });
+
+  it("deletes a person, never the own account", async () => {
+    const { send, destroyed, ended } = setup("chef@firma.de", { annaInInfo: true });
+    expect((await send("DELETE", "/employees/1")).status).toBe(400);
+    expect((await send("DELETE", "/employees/g")).status).toBe(404);
+    expect((await send("DELETE", "/employees/2")).status).toBe(200);
+    expect(destroyed).toEqual(["2"]);
+    expect(ended).toEqual(["anna@firma.de"]);
+  });
+
+  it("deletes nobody in Community, where leaving is the way out", async () => {
+    const { send, destroyed } = setup("chef@firma.de", { community: true });
+    expect((await send("DELETE", "/employees/2")).status).toBe(403);
+    expect(destroyed).toEqual([]);
   });
 
   it("ends the offboarding when a person is unlocked again", async () => {
@@ -560,6 +583,15 @@ describe("Firmenverwaltung", () => {
       edition: "enterprise",
     });
     expect((await setup(null).send("GET", "/edition")).status).toBe(401);
+  });
+
+  it("shows the Enterprise license to the admin only, and nothing without a license", async () => {
+    expect(await (await setup("chef@firma.de").send("GET", "/license")).json()).toEqual({
+      license: LICENSE,
+    });
+    expect((await setup("anna@firma.de").send("GET", "/license")).status).toBe(403);
+    const community = setup("chef@firma.de", { community: true });
+    expect(await (await community.send("GET", "/license")).json()).toEqual({ license: null });
   });
 
   it("lets only the admin set the assistant's key and model, and never shows the key", async () => {

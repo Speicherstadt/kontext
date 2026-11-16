@@ -25,11 +25,15 @@ import { createMessageStore } from "./chat/messages";
 import { createChatPruner, createChatRetention } from "./chat/retention";
 import { createChatRoutes, viewerOf } from "./chat/routes";
 import { createChatStore } from "./chat/store";
+import { createArchive } from "./company/archive";
 import { createBackupControl } from "./company/backup";
+import { createBranding } from "./company/branding";
 import { createCalendars } from "./company/calendars";
+import { createDeletedAccounts } from "./company/deleted-accounts";
 import { createEditionCheck } from "./company/edition";
 import { createEncryptionGateway } from "./company/encryption-gateway";
 import { createExternalHintStore } from "./company/external-hint";
+import { createLicenseCheck } from "./company/license";
 import { createMailstore } from "./company/mailstore";
 import {
   createDownload,
@@ -39,9 +43,11 @@ import {
 } from "./company/management";
 import { createCompanyRoutes } from "./company/routes";
 import { dohResolver } from "./company/security";
+import { createServerHealth } from "./company/server-health-routes";
 import { createCompanySettings } from "./company/settings";
 import { createSignatureDetails } from "./company/signature-details";
 import { createSignatureDetailRoutes } from "./company/signature-details-routes";
+import { createSpamAi } from "./company/spam-ai";
 import { createStalwartSso } from "./company/sso";
 import { createSealer } from "./crypto";
 import { fromOwnPage } from "./csrf";
@@ -433,8 +439,14 @@ export const createApp = async (env: Env) => {
       pruneChat: chatPruner.tick,
       security: { publicUrl: env.BETTER_AUTH_URL, resolve: dohResolver(env.DOH_URL) },
       encryptionGateway: createEncryptionGateway(request),
+      spamAi: createSpamAi(request),
       backup: createBackupControl(join(dirname(env.DATABASE_PATH), "backup-control")),
       edition: createEditionCheck({ stalwartUrl: env.STALWART_URL, key: env.STALWART_ADMIN_KEY }),
+      license: createLicenseCheck(request),
+      serverHealth: createServerHealth(request),
+      branding: createBranding(request),
+      archive: createArchive(request),
+      deletedAccounts: createDeletedAccounts(request),
       sso: {
         stalwart: createStalwartSso(request),
         store: ssoStore,

@@ -4,12 +4,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
+import { DeletedItemsDialog } from "@/features/deleted-items/deleted-items-admin";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
 import { formatSize } from "@/lib/format";
 import { m } from "@/paraglide/messages";
 import { useCompanyRules } from "../rules/queries";
 import { RulesList } from "../rules/rules-section";
 import { type Company, type Employee, showAvailabilityToAll } from "./api";
+import { DeleteEmployeeDialog } from "./delete-employee-dialog";
+import { DeletedAccountsSection } from "./deleted-accounts-section";
 import { EditionCard } from "./edition-card";
 import { EmployeeDialog, type EmployeeSubDialog, NewEmployeeDialog } from "./employee-dialogs";
 import { Badge } from "./fields";
@@ -96,6 +99,17 @@ const Employees = ({ company }: { company: Company }) => {
       {other && next?.dialog === "offboarding" ? (
         <OffboardingDialog company={company} employee={other} onClose={() => setNext(null)} />
       ) : null}
+      {other && next?.dialog === "deleted" ? (
+        <DeletedItemsDialog
+          accountId={other.id}
+          name={other.fullName}
+          onClose={() => setNext(null)}
+        />
+      ) : null}
+      {other && next?.dialog === "delete" ? (
+        <DeleteEmployeeDialog employee={other} onClose={() => setNext(null)} />
+      ) : null}
+      <DeletedAccountsSection />
       <EditionCard />
     </>
   );

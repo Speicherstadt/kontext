@@ -10,10 +10,13 @@ import type {
   SharedMailbox,
 } from "../../../server/company/accounts";
 import type { BackupSettings, BackupView } from "../../../server/company/backup-schema";
+import type { DeletedAccount, DeletedAccountsView } from "../../../server/company/deleted-accounts";
 import type { GatewayView, NewKey } from "../../../server/company/encryption-gateway";
 import type { FolderName } from "../../../server/company/mailstore";
 import type { SearchIndexStatus } from "../../../server/company/search-index";
 import type { Check } from "../../../server/company/security";
+import type { Period } from "../../../server/company/server-health";
+import type { ServerHealthView } from "../../../server/company/server-health-routes";
 import type { Job } from "../../../server/migration/jobs";
 import type { ProviderId } from "../../../server/migration/providers";
 import type { Sync } from "../../../server/migration/syncs";
@@ -110,6 +113,23 @@ export type Offboarding = {
 export const offboard = (id: string, offboarding: Offboarding) =>
   send<{ ok: true }>("POST", `/employees/${encodeURIComponent(id)}/offboarding`, offboarding);
 
+/** Final, unless Stalwart Enterprise keeps it for a while (server/company/deleted-accounts.ts). */
+export const deleteEmployee = (id: string) =>
+  send<{ ok: true }>("DELETE", `/employees/${encodeURIComponent(id)}`);
+
+export type { DeletedAccount, DeletedAccountsView };
+
+/** Only with Stalwart Enterprise; 403 otherwise. */
+export const getDeletedAccounts = () => send<DeletedAccountsView>("GET", "/deleted-accounts");
+
+/** A recovered person gets a new password; a shared mailbox none (null). */
+export const restoreDeletedAccount = (id: string) =>
+  send<{ password: string | null }>("POST", `/deleted-accounts/${encodeURIComponent(id)}/restore`);
+
+/** How long Stalwart keeps deleted accounts; 0: not at all. */
+export const saveDeletedAccountsRetention = (days: number) =>
+  send<DeletedAccountsView>("PUT", "/deleted-accounts/retention", { days });
+
 export type SignatureTemplate = { html: string; text: string };
 
 export const getSignature = () => send<SignatureTemplate>("GET", "/signature");
@@ -125,6 +145,10 @@ export const getSearchIndex = () =>
 
 /** How safe the company's mail travels (server/company/security.ts). */
 export const getSecurity = () => send<SecurityReport>("GET", "/security");
+
+/** Serverzustand from Stalwart Enterprise (server/company/server-health-routes.ts). */
+export const getServerHealth = (period: Period) =>
+  send<ServerHealthView>("GET", `/server-health?period=${period}`);
 
 export type { BackupSettings, BackupView };
 
