@@ -412,6 +412,14 @@ in Stalwart's admin interface it goes like this:
    company admin shows while Stalwart is building the search index. The `sysMetric…`,
    `sysTrace…` and `…StoreGet` permissions only read what [server health](#serverzustand) shows
    (Stalwart Enterprise). With the `sysEncryption…` and
+   `sysActionCreate`, `actionReloadSettings`, `sysEnterpriseGet`, `sysEnterpriseUpdate`,
+   `sysCalendarAlarmGet`, `sysCalendarAlarmUpdate`, `sysCalendarSchedulingGet`,
+   `sysCalendarSchedulingUpdate`, `actionInvalidateCaches` and `impersonate`. With the
+   `sysEnterprise…`, `sysCalendarAlarm…` and `sysCalendarScheduling…` permissions and
+   `actionInvalidateCaches` it sets, with Stalwart Enterprise, the
+   [company logo and the templates](company.md#mitarbeiter-und-postfacher) of Stalwart's calendar
+   mails. With `sysIndexQueueStatusGet` the
+   company admin shows while Stalwart is building the search index. With the `sysEncryption…` and
    `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
    `sysActionCreate` with `actionReloadSettings` lets it have Stalwart reload its settings
@@ -514,10 +522,21 @@ by itself beforehand.
 
 The license's limit, term and domain ("12 of 25 mailboxes in use", "Valid until …", with a warning
 from 90 % or 30 days before the end) Kontext reads from the key. Stalwart gives it out only when
-the role `Kontext-Server` also has `sysEnterpriseGet` and `includeSecrets` is on in the system
-settings. This is optional: `includeSecrets` also shows the other secrets (relay passwords, keys)
-to everyone with read rights in Stalwart's management. Without both, the company admin shows only
+`includeSecrets` is on in the system settings (the setup command gives the role `Kontext-Server`
+the permission `sysEnterpriseGet`). This is optional: `includeSecrets` also shows the other secrets (relay passwords, keys)
+to everyone with read rights in Stalwart's management. Without it, the company admin shows only
 the mailboxes in use.
+
+What Kontext offers in addition with Enterprise (on an existing installation only after the
+[setup command](#einrichtungsbefehl) has run once more, which gives the role `Kontext-Server` the
+permissions for it):
+
+- **Masked addresses:** everyone creates addresses of their own per website or shop under
+  *Settings → Masked addresses*, switches them off or deletes them
+  ([Mail](mail.md#maskierte-adressen)).
+- **Logo and templates** in the company admin: the company logo and templates of your own for
+  Stalwart's calendar mails ([company admin](company.md#mitarbeiter-und-postfacher)).
+- **Server health**, see the next section.
 
 #### Server health { #serverzustand }
 

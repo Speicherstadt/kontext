@@ -2260,6 +2260,58 @@ ORGANIZER und das eigene ATTENDEE mit PARTSTAT, RFC 5546 §3.2.3), Betreff wie b
 keine Antwort hinaus. So gilt es auch für Termine, die Stalwart selbst eingetragen hat: Es schickt
 dann nicht noch eine zweite Antwort.
 
+## Logo und Vorlagen
+
+Nur mit Stalwart Enterprise (`server/company/branding.ts`, in der Firmenverwaltung
+`src/features/company/branding-section.tsx`; ohne Lizenz fehlt der Eintrag, und die Routen unter
+`/api/company/branding` antworten 403). Stalwart verschickt selbst die Erinnerung per Mail und
+seine Mails zu Einladungen (CalDAV, Antworten aus dem Kalender, siehe [Einladungen](#einladungen)).
+Beide tragen ein Logo (als `cid:`-Bild in der Mail) und folgen einer HTML-Vorlage; eigene gibt es
+nur mit Enterprise (`template_calendar_alarm`, `template_scheduling_email` und `logo` in
+`crates/common/src/enterprise/mod.rs` von stalwartlabs/stalwart v1.1.0). Kontext hält davon
+nichts selbst, alles liegt in Stalwart:
+
+| Was                       | Objekt                  | Eigenschaft     |
+| ------------------------- | ----------------------- | --------------- |
+| Firmenlogo                | `x:Enterprise`          | `logo`          |
+| Erinnerung per Mail       | `x:CalendarAlarm`       | `template`      |
+| Mails zu Einladungen      | `x:CalendarScheduling`  | `emailTemplate` |
+
+Null heißt Stalwarts eigenes. Stalwart liest die Werte beim Laden der Einstellungen
+(`crates/common/src/enterprise/config.rs`); nach jeder Änderung schickt der Server darum
+`ReloadSettings`, beim Logo auch `InvalidateCaches` (Stalwart hält Logos je Domain im Speicher,
+`crates/common/src/cache/invalidate.rs`). Dafür braucht die Rolle `Kontext-Server` die Rechte
+`sysEnterprise…`, `sysCalendarAlarm…`, `sysCalendarScheduling…` und `actionInvalidateCaches`
+([Installation](installation.md#firmenverwaltung-einschalten)); fehlen sie, sagt die Firmenverwaltung,
+den Einrichtungsbefehl erneut auszuführen. Vom Objekt `x:Enterprise` liest Kontext nur `logo`,
+nie Lizenz- oder API-Schlüssel.
+
+- **Logo** (`src/lib/company-logo.ts`): Stalwart nimmt eine `data:`-URI, Base64 oder eine
+  http(s)-Adresse, höchstens 1 MB, PNG, JPEG, GIF, WebP, ICO oder SVG (`LogoSource::parse`,
+  `sniff_media_type` in `crates/common/src/enterprise/logo.rs`). Kontext lädt die Datei als
+  `data:`-URI hoch und prüft sie vorher wie Stalwart, den Typ am Inhalt; Stalwart selbst merkt ein
+  falsches Logo erst beim Versand und nimmt dann sein eigenes. Eine Domain mit eigenem Logo
+  (`x:Domain`, `logo`) behält ihres.
+- **Vorlagen** (`src/lib/calendar-template.ts`): Stalwarts Syntax – `{{name}}` (HTML-maskiert),
+  `{{!name}}`, `{{#if name}}…{{/if name}}`, `{{#each name}}…{{/each name}}` mit den 21 Namen von
+  `CalendarTemplateVariable` (`crates/common/src/config/groupware.rs`) –, gelesen und ausgefüllt
+  wie in `crates/utils/src/template.rs`, mit dessen Fehlermeldungen. Stalwart prüft eine Vorlage
+  beim Speichern nicht; eine kaputte meldet es erst beim Laden („Invalid template“) und bleibt bei
+  seiner eingebauten. Darum nimmt der Server nur Vorlagen an, die so lesbar sind. Die Vorschau
+  füllt die Vorlage mit einem Beispieltermin und den Werten, die Stalwart einsetzt (`alarm.rs`,
+  `imip.rs` in `crates/services/src/task_manager/tasks/`), mit Stalwarts deutschen oder englischen
+  Texten (`resources/locales/i18n.yml`), in einem `<iframe sandbox>` ohne Skripte.
+- **Kontexts Vorlage** (`src/lib/calendar-template-defaults.ts`): dieselben Teile wie Stalwarts
+  eingebaute (`resources/html-templates/calendar-alarm.html`, `calendar-invite.html`), im
+  Kontext-Look und hell wie dunkel. Die Texte setzt Stalwart in der Sprache des Kontos ein
+  (Kontext legt Konten mit `de-DE` an); fest in der Vorlage steht nur der Hinweis unter der
+  Erinnerung, auf Deutsch oder Englisch, weil Stalwarts eigener auf ein „Self-Service-Portal“
+  verweist, das es bei Kontext nicht gibt.
+
+Stalwarts Antwortseite (`x:CalendarScheduling`, `httpRsvpTemplate`, Enterprise) bietet Kontext
+nicht an: Sie bleibt aus (`httpRsvpEnable`), weil Kontext Einladungen mit seiner eigenen Seite
+beantwortet; eine eigene Fassung käme nie zur Anzeige.
+
 ## Anmeldung
 
 Benutzer und Passwörter bleiben in Stalwart. Bei der Anmeldung schickt die App E-Mail, Passwort

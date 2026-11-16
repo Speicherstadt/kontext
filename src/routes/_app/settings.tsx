@@ -29,6 +29,7 @@ export const settingsSections = [
   "company-smime",
   "company-backup",
   "company-health",
+  "company-branding",
   "phone",
   "migration",
 ] as const;

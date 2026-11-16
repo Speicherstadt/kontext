@@ -103,6 +103,17 @@ Stalwart's admin interface and without IT skills.
   other server's answer ("550 5.1.1 User unknown") and whether Stalwart gave up or tries again.
   For this, Stalwart has to record metrics and deliveries
   ([Installation](installation.md#serverzustand)); with Community the entry is missing.
+- **Logo and templates** (Stalwart Enterprise only) under *Settings → Company → Logo and
+  templates*: Stalwart sends a few mails itself – the **reminder by mail** for an appointment and
+  mails about invitations when someone invites from a phone or a calendar program (CalDAV) or answers in the calendar. They then
+  carry the **company logo** instead of Stalwart's (PNG, JPEG, GIF, WebP, ICO or SVG up to 1 MB;
+  every mail program shows PNG), and both mails can be designed with an **HTML template of your
+  own**. Without one Stalwart uses its built-in template; the editor then starts with Kontext's
+  template in the app's style, in German or English (this only affects fixed texts such as the
+  note under the reminder – Stalwart fills in the other texts in the recipient's language).
+  Kontext checks the template the way Stalwart reads it and shows it with an example appointment
+  before it applies; “Use Stalwart's template” deletes your own again. With Community the entry is
+  missing ([how it works](architecture.md#logo-und-vorlagen)).
 
 ## Moving to Kontext { #umzug-nach-kontext }
 

@@ -408,6 +408,14 @@ von Hand in Stalwarts Verwaltung geht es so:
    Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Die `sysMetric…`-, `sysTrace…`- und
    `…StoreGet`-Rechte lesen nur, was der [Serverzustand](#serverzustand) zeigt (Stalwart
    Enterprise). Mit den `sysEncryption…`- und
+   `sysActionCreate`, `actionReloadSettings`, `sysEnterpriseGet`, `sysEnterpriseUpdate`,
+   `sysCalendarAlarmGet`, `sysCalendarAlarmUpdate`, `sysCalendarSchedulingGet`,
+   `sysCalendarSchedulingUpdate`, `actionInvalidateCaches` und `impersonate`. Mit den
+   `sysEnterprise…`-, `sysCalendarAlarm…`- und `sysCalendarScheduling…`-Rechten und
+   `actionInvalidateCaches` setzt sie mit Stalwart Enterprise das
+   [Firmenlogo und die Vorlagen](company.md#mitarbeiter-und-postfacher) von Stalwarts
+   Kalender-Mails. Mit `sysIndexQueueStatusGet` zeigt die
+   Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Mit den `sysEncryption…`- und
    `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln durch
    Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
    Empfänger; `sysActionCreate` mit `actionReloadSettings` lässt sie Stalwart danach die
@@ -512,10 +520,21 @@ verlängert Stalwart sie vorher selbst.
 
 Grenze, Laufzeit und Domain der Lizenz („12 von 25 Postfächern belegt“, „Gültig bis …“, mit
 Warnung ab 90 % oder 30 Tage vor dem Ende) liest Kontext aus dem Schlüssel. Stalwart gibt ihn nur
-heraus, wenn die Rolle `Kontext-Server` zusätzlich `sysEnterpriseGet` hat und in den
-Systemeinstellungen `includeSecrets` an ist. Das ist freiwillig: `includeSecrets` zeigt jedem mit
+heraus, wenn in den Systemeinstellungen `includeSecrets` an ist (das Recht `sysEnterpriseGet` gibt
+der Einrichtungsbefehl der Rolle `Kontext-Server`). Das ist freiwillig: `includeSecrets` zeigt jedem mit
 Leserechten in Stalwarts Verwaltung auch die anderen Geheimnisse (Passwörter von Relays,
-Schlüssel). Ohne beides zeigt die Firmenverwaltung nur die belegten Postfächer.
+Schlüssel). Ohne das zeigt die Firmenverwaltung nur die belegten Postfächer.
+
+Was Kontext mit Enterprise zusätzlich anbietet (bei einer bestehenden Installation erst, nachdem
+der [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal gelaufen ist, der der Rolle
+`Kontext-Server` die Rechte dafür gibt):
+
+- **Maskierte Adressen:** Jede Person legt unter *Einstellungen → Maskierte Adressen* eigene
+  Adressen je Website oder Shop an, schaltet sie ab oder löscht sie
+  ([Mail](mail.md#maskierte-adressen)).
+- **Logo und Vorlagen** in der Firmenverwaltung: das Firmenlogo und eigene Vorlagen für Stalwarts
+  Kalender-Mails ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)).
+- **Serverzustand**, siehe den folgenden Abschnitt.
 
 #### Serverzustand { #serverzustand }
 

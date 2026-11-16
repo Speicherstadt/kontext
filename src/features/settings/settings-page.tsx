@@ -28,6 +28,7 @@ import {
   Scale,
   ShieldCheck,
   Signature,
+  Stamp,
   TextQuote,
   Timer,
   Truck,
@@ -40,6 +41,7 @@ import { TabBar } from "@/components/shell/app-shell";
 import { AgentsSection } from "@/features/agents/agents-section";
 import { AssistantSection } from "@/features/company/assistant-section";
 import { BackupSection } from "@/features/company/backup-section";
+import { BrandingSection } from "@/features/company/branding-section";
 import { ChatSection } from "@/features/company/chat-section";
 import { useStalwartEdition } from "@/features/company/edition";
 import { EmployeesSection } from "@/features/company/employees-section";
@@ -128,6 +130,7 @@ const COMPANY: Entry[] = [
   { id: "company-smime", label: m.company_smime, icon: BadgeCheck },
   { id: "company-backup", label: m.company_backup, icon: DatabaseBackup },
   { id: "company-health", label: m.company_health, icon: Activity },
+  { id: "company-branding", label: m.company_branding, icon: Stamp },
   { id: "phone", label: m.phone_settings, icon: Phone },
   { id: "migration", label: m.company_migration, icon: Truck },
 ];
@@ -180,6 +183,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
   "company-smime": () => <SmimeAuthoritiesSection />,
   "company-backup": () => <BackupSection />,
   "company-health": () => <ServerHealthSection />,
+  "company-branding": () => <BrandingSection />,
   phone: () => <PhoneSettingsSection />,
   migration: () => <MigrationSection />,
 };
@@ -220,9 +224,11 @@ export const SettingsPage = ({ section }: { section: Section | undefined }) => {
   );
   // Telephony needs LiveKit on the server; without it the section has nothing to set.
   const phone = usePhone().enabled;
-  // Serverzustand reads what only Stalwart Enterprise records.
   const company = COMPANY.filter(
-    (entry) => (entry.id !== "phone" || phone) && (entry.id !== "company-health" || enterprise),
+    (entry) =>
+      (entry.id !== "phone" || phone) &&
+      // Serverzustand, logo and templates are Stalwart Enterprise's.
+      ((entry.id !== "company-health" && entry.id !== "company-branding") || enterprise),
   );
   const title = [...OWN, ...COMPANY].find((s) => s.id === current)!.label();
   return (

@@ -105,6 +105,17 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   fremden Servers („550 5.1.1 User unknown“) und ob Stalwart aufgegeben hat oder es noch einmal
   versucht. Stalwart muss dafür Kennzahlen und Zustellungen aufzeichnen
   ([Installation](installation.md#serverzustand)); mit Community fehlt der Eintrag.
+- **Logo und Vorlagen** (nur mit Stalwart Enterprise) unter *Einstellungen → Firma → Logo und
+  Vorlagen*: Stalwart verschickt einige Mails selbst – die **Erinnerung per Mail** an einen Termin
+  und Mails zu Einladungen, wenn jemand am Handy oder in einem Kalenderprogramm (CalDAV) einlädt oder im Kalender antwortet. Dort steht
+  dann das **Firmenlogo** statt Stalwarts Logo (PNG, JPEG, GIF, WebP, ICO oder SVG bis 1 MB; PNG
+  zeigen alle Mailprogramme), und beide Mails lassen sich mit einer **eigenen HTML-Vorlage**
+  gestalten. Ohne eigene Vorlage nimmt Stalwart seine eingebaute; der Editor beginnt dann mit
+  Kontexts Vorlage im Stil der App, auf Deutsch oder Englisch (das betrifft nur feste Texte wie den
+  Hinweis unter der Erinnerung – die übrigen Texte setzt Stalwart in der Sprache des Empfängers
+  ein). Kontext prüft die Vorlage so, wie Stalwart sie liest, und zeigt sie mit einem
+  Beispieltermin, bevor sie gilt; „Stalwarts Vorlage verwenden“ löscht die eigene wieder. Mit
+  Community fehlt der Eintrag ([wie es funktioniert](architecture.md#logo-und-vorlagen)).
 
 ## Umzug nach Kontext
 
