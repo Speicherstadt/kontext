@@ -292,7 +292,8 @@ then in the phone (web interface → Advanced → Update) enter
 `http://<box>:8089/snom/{mac}.xml` as the settings URL and restart it; it fetches its account and
 settings from the box. For this the box needs a fixed address on the LAN. It hands out the password
 only on the first request; after a reset of the phone, delete the desk phone in Kontext and
-create it again.
+create it again. If the phone used to be an IP phone on the Fritzbox, delete that device there:
+the box is now its phone system, and only the IP phone “Kontext” stays on the Fritzbox.
 
 With Podman: copy `deploy/quadlet/kontext-box.container` to `/etc/containers/systemd/`
 (it can also be downloaded on its own as above), `systemctl daemon-reload`, `systemctl start kontext-box`;

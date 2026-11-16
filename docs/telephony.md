@@ -10,9 +10,9 @@ description: >-
 Kontext verbindet das Firmentelefon mit Mail, Kontakten und Kalender (**CTI**, Computer Telephony
 Integration): Ruft ein Kunde an, zeigt Kontext sofort, wer es ist – Kontakt, Firma, letzte Mail,
 nächster Termin – und man nimmt im Browser an, am Rechner oder am Handy. Angerufen wird mit einem
-Klick am Kontakt. Die Fritzbox bleibt am Anschluss, Nummern und Tischtelefone bleiben, wie sie
-sind; eine kleine **Telefonbox** im Büro meldet sich an der Fritzbox als IP-Telefon an und
-verbindet sie mit Kontext. Keine Telefonanlage aus der Cloud, keine Kosten pro Nebenstelle.
+Klick am Kontakt. Die Fritzbox bleibt am Anschluss, die Nummern und die Telefone an der Fritzbox
+bleiben, wie sie sind; eine kleine **Telefonbox** im Büro meldet sich an der Fritzbox als
+IP-Telefon an und verbindet sie mit Kontext. Keine Telefonanlage aus der Cloud, keine Kosten pro Nebenstelle.
 
 !!! note "Im Test"
     Die Telefonie läuft beim ersten Kunden im Test. Rückmeldungen gern als
@@ -82,13 +82,70 @@ verbindet sie mit Kontext. Keine Telefonanlage aus der Cloud, keine Kosten pro N
 Anrufe der letzten 30 Tage: wie viele, wie schnell angenommen, wann Anrufe verpasst wurden
 (Wochentag × Stunde), außerhalb der Öffnungszeiten, Nachrichten und wer angenommen hat.
 
+## So funktioniert es
+
+```mermaid
+flowchart LR
+  subgraph office["Büro (kein Port offen)"]
+    Fritzbox -->|"SIP im LAN"| Box["Telefonbox<br>(Asterisk + Agent)"]
+    Snom["Snom-Tischtelefone<br>(optional)"] -->|"SIP im LAN"| Box
+  end
+  subgraph srv["Server von Kontext"]
+    Kontext["Kontext"]
+    LiveKit["LiveKit + LiveKit SIP"]
+  end
+  Box -->|"Steuerung (WebSocket)"| Kontext
+  Box -->|"Gespräch (SIP, RTP)"| LiveKit
+  Browser["Browser oder Handy,<br>im Büro oder unterwegs"] -->|"WebRTC"| LiveKit
+```
+
+**Warum muss beim Kunden kein Port offen sein?** Jede Verbindung baut die Box von innen nach außen
+auf, so wie ein Browser eine Website öffnet. Die Fritzbox lässt Antworten auf eine Verbindung, die
+von innen kam, wieder herein. Über die WebSocket-Verbindung zu Kontext, die die Box ständig offen
+hält, kommen auch die Befehle zu ihr („annehmen“, „wählen“); Kontext muss die Box also nie von
+außen erreichen. Für ein Gespräch wählt die Box LiveKit SIP auf dem Server an und schickt den Ton
+zuerst hinaus; der Server antwortet an dieselbe Adresse. Offene Ports gibt es nur auf dem Server.
+
+**Wie geht das von überall?** Das Gespräch findet in einem Raum auf dem Server statt: Die Box holt
+den Anrufer hinein, der Browser oder das Handy tritt demselben Raum bei. Beide verbinden sich nur
+mit dem Server, nicht miteinander – deshalb ist egal, ob man im Büro, zu Hause oder unterwegs ist.
+
+**Meldet sich die Box für jede Person an der Fritzbox an?** Nein, einmal je Rufnummer. Für die
+Fritzbox ist die Box ein einziges IP-Telefon; wer klingelt, wer annimmt, Weitervermitteln an
+Kollegen, Halten und Konferenz regelt Kontext selbst. Ein weiteres IP-Telefon in der Fritzbox
+braucht es nur für eine weitere Nummer (eine Durchwahl), damit die Box sieht, welche Nummer
+angerufen wurde.
+
+**Braucht man Tischtelefone?** Nein. Kontext ist selbst das Telefon, im Browser mit Headset oder am
+Handy. Tischtelefone (heute Snom) kommen dazu, wo jemand lieber einen Hörer in die Hand nimmt.
+
+**Und Snom-Telefone, die schon an der Fritzbox hängen?** Die klingeln weiter, weil die Fritzbox alle
+ihre Telefone klingeln lässt; Kontext sieht dann aber nur „Am Telefon angenommen“ und nicht, wer
+abgenommen hat, und kann nicht an sie weitervermitteln. Besser zieht man sie auf die Box um (in
+Kontext anlegen, in der Fritzbox löschen, siehe [Installation](installation.md#telefonie)): Dann
+klingeln sie zusammen mit Kontext, erreichen sich per Kurzwahl, lassen sich beim Weitervermitteln
+wählen, und ihre Anrufe stehen in der Liste. Läuft die Box nicht, bleiben sie still; Telefone
+direkt an der Fritzbox (etwa DECT) klingeln weiter.
+
+**Wie viele Gespräche gehen gleichzeitig?** So viele, wie der Anschluss nach draußen erlaubt – bei
+vielen Anschlüssen zwei, bei Geschäftsanschlüssen oft mehr (das steht im Vertrag). Gespräche und
+Weitervermitteln innerhalb von Kontext und zu den Tischtelefonen an der Box kosten keine Leitung.
+Weitervermitteln an eine Nummer draußen oder an ein Telefon der Fritzbox und das Handy, das
+mitklingelt, brauchen zwei freie Leitungen: die zum Anrufer und eine zweite.
+
+**Geht es auch ohne Fritzbox?** Mit einem anderen Router, wenn er IP-Telefone annimmt (eine
+eingebaute Telefonanlage hat); getestet ist bisher nur die Fritzbox. Die Türsprechstelle gibt es nur
+mit der Fritzbox. Ohne Router mit Telefonanlage braucht es den SIP-Trunk direkt beim Anbieter, der
+auf der Roadmap steht.
+
 ## Was es braucht
 
 - eine **Fritzbox** am Anschluss (Telefonie → Telefoniegeräte → IP-Telefon „Kontext“);
 - die **Telefonbox** im Büronetz: ein Container mit Asterisk und dem Box-Agent, auf einem
   gebrauchten Thin Client, einem Raspberry Pi, dem Firmenserver oder einem NAS mit Docker. Sie
   baut die Verbindung zu Kontext von innen auf, **beim Kunden ist kein Port offen**;
-- auf dem Server **LiveKit** und **LiveKit SIP** (in `compose.yaml` mit dem Profil `calls`).
+- auf dem Server **LiveKit** und **LiveKit SIP** (in `compose.yaml` mit dem Profil `calls`);
+- **Tischtelefone nicht:** Ein Headset am Rechner oder das Handy reicht.
 
 Einrichtung Schritt für Schritt: [Installation → Telefonie](installation.md#telefonie). Wie Box,
 Asterisk, LiveKit SIP und Kontext zusammenspielen: [Architektur → Telefonie](architecture.md#telefonie).
