@@ -315,6 +315,47 @@ mit einem eigenen API-Schlüssel an und erlaubt nur, was die Firmenverwaltung br
   `GET /api/company/edition`, die Firmenverwaltung zeigt sie unter *Mitarbeiter*. Kontext braucht
   Enterprise für nichts; was nur Stalwart Enterprise kann, bietet die App erst an, wenn die
   Lizenz aktiv ist (`useStalwartEdition`, `src/features/company/edition.ts`).
+- **Maskierte Adressen** (nur Enterprise) sind Stalwarts `x:MaskedEmail`
+  (`crates/registry/src/schema/structs.rs`). Die App fragt Stalwart direkt mit dem Token der
+  Sitzung, nicht mit dem Schlüssel des Servers: die Rolle *User* hat `sysMaskedEmail*`
+  (`crates/common/src/auth/permissions.rs`), und Kontexts Scope `full` enthält sie
+  (`SETTINGS` in `crates/common/src/auth/oauth/scope.rs`); Stalwart sieht so nur die Adressen des
+  eigenen Kontos. Die Adresse macht Stalwart: Anfang (zufällig oder `emailPrefix`), Punkt, eine
+  geprüfte Kennung, `@` und die Domain des Kontos
+  (`crates/jmap/src/registry/mapping/masked_email.rs`, `crates/common/src/enterprise/masked.rs`).
+  Zugestellt wird, solange `enable` an und `expiresAt` nicht vorbei ist, sonst lehnt Stalwart den
+  Empfänger ab (`crates/common/src/network/mta.rs`). `expiresAt` steht ab dem Anlegen fest. Ohne
+  Lizenz antwortet Stalwart `forbidden` (`crates/jmap/src/registry/mod.rs`); die App zeigt den
+  Punkt dann nicht (`src/jmap/masked-email.ts`, `src/features/settings/masked-email-section.tsx`).
+- **Lizenz:** Mit Enterprise zeigt die Firmenverwaltung die Nutzung der Lizenz
+  (`GET /api/company/license`, nur für die Firmenverwaltung, ohne Lizenz `{ license: null }`;
+  `server/company/license.ts`). Eine Route mit den Lizenzdaten hat Stalwart nicht. Belegt zählt
+  der Server wie Stalwarts `can_create_account` (`crates/common/src/enterprise/mod.rs`): jedes
+  Konto, also Mitarbeiter, gemeinsame Postfächer (Gruppen) und das Konto des Kontext-Servers, per
+  `x:Account/query` mit `calculateTotal`. Grenze, Ende und Domain stehen nur im Schlüssel selbst
+  (`LicenseKey`, `crates/common/src/enterprise/license.rs`); `x:Enterprise/get` gibt ihn nur mit
+  `sysEnterpriseGet` und eingeschaltetem `includeSecrets` heraus, sonst als „****“. Dann zeigt die
+  Firmenverwaltung nur die belegten Postfächer.
+- **Serverzustand** (Enterprise): `GET /api/company/server-health?period=day|week`
+  (`server/company/server-health-routes.ts`) antwortet 403, solange die Ausgabe nicht Enterprise
+  ist; Stalwart lehnt `x:Metric` und `x:Trace` ohne Lizenz ohnehin ab
+  (`crates/jmap/src/registry/mod.rs`). Sonst liest der Server mit seinem Schlüssel die Kennzahlen
+  seit Beginn des Zeitraums (`x:Metric/query` nach `timestamp` und Namen, dann `x:Metric/get` in
+  Teilen zu 500). Stalwart schreibt sie in jedem Sammelintervall (stündlich): Zähler als Zuwachs
+  seit dem letzten Mal, Messwerte wie `queue.count` als Stand
+  (`crates/common/src/telemetry/metrics/store.rs`). `server/company/server-health.ts` summiert
+  `message-ingest.ham`, `message-ingest.spam`, `queue.authenticated-message-queued` und
+  `queue.dsn-queued` je Stunde (24) oder Berliner Tag (7), dazu `auth.failed` und
+  `security.authentication-ban`. Die Zustellprobleme kommen aus den Spuren der letzten 200
+  Zustellversuche (`x:Trace` mit `event` `delivery.attempt-start`): `delivery-problems.ts` nimmt
+  daraus je Empfänger das letzte Wort – `delivery.failed`, `delivery.dsn-perm-fail`,
+  `delivery.rcpt-to-rejected` (ab Code 500 endgültig) und Verwandte – mit `details` oder `reason`
+  und `hostname`. Ob Stalwart überhaupt aufzeichnet, sagen `x:MetricsStore` und `x:TracingStore`
+  (`Disabled` ist Stalwarts Vorgabe). Rechte: `sysMetricGet`, `sysMetricQuery`, `sysTraceGet`,
+  `sysTraceQuery`, `sysMetricsStoreGet`, `sysTracingStoreGet`. Der Speicher ist die Summe von
+  `usedDiskQuota` der Mitarbeiter und gemeinsamen Postfächer. Benachrichtigungen per Mail
+  (Stalwarts `x:Alert`) richtet Kontext nicht ein: Stalwart prüft sie alle fünf Minuten und
+  schickt bei erfüllter Bedingung jedes Mal eine Mail (`crates/common/src/enterprise/alerts.rs`).
 - **Gemeinsame Postfächer** sind Gruppen; Mitglied ist, wer die Gruppe in `memberGroupIds` hat.
   „Nur lesen“ bekommt, wem alle Ordner des Postfachs per `shareWith` geteilt sind
   (`mayReadItems`, `maySetSeen`); die App liest das am Posteingang ab.

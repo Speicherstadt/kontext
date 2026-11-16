@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import { createJmapClient } from "../src/jmap/client";
 import { newEmployee, signInWith, stamp } from "./company-helpers";
 import {
@@ -16,6 +16,32 @@ import { deliverMail } from "./protocols";
 /** The stand-in for Schreibzeug (dev/fake-schreibzeug.ts, playwright.config.ts). */
 const SCHREIBZEUG = "http://localhost:28097";
 
+/**
+ * Stalwart Enterprise for this page only: the CI's Stalwart has no license, so the app's two
+ * questions are answered here (server/company/edition.ts, server/company/license.ts).
+ */
+const withLicense = async (page: Page) => {
+  const license = {
+    used: 23,
+    limit: 25,
+    validTo: new Date(Date.now() + 10 * 24 * 60 * 60_000).toISOString(),
+    domain: "weber-haustechnik.test",
+  };
+  await page.route("**/api/company/edition", (route) =>
+    route.fulfill({ json: { edition: "enterprise" } }),
+  );
+  await page.route("**/api/company/license", (route) => route.fulfill({ json: { license } }));
+};
+
+const expectLicenseShown = async (page: Page) => {
+  const details = page.getByTestId("stalwart-license");
+  await expect(details).toContainText("23 von 25 Postfächern belegt");
+  await expect(details).toContainText("Lizenziert für weber-haustechnik.test");
+  await expect(details.getByRole("status")).toHaveCount(2);
+  await expect(details.getByRole("status").first()).toContainText("noch 2 Postfächer frei");
+  await expect(details.getByRole("status").last()).toContainText("Die Lizenz endet am");
+};
+
 test.describe("Firmenverwaltung", () => {
   test("nur mit dem Recht sichtbar", async ({ page }) => {
     await login(page, "anna");
@@ -31,6 +57,28 @@ test.describe("Firmenverwaltung", () => {
     await login(page);
     await page.goto("/settings?section=employees");
     await expect(page.getByTestId("stalwart-edition")).toHaveText("Community (kostenlos)");
+    await expect(page.getByTestId("stalwart-license")).toHaveCount(0);
+    expect(await (await page.request.get("/api/company/license")).json()).toEqual({
+      license: null,
+    });
+  });
+
+  test("zeigt mit Enterprise-Lizenz, wie viele Postfächer belegt sind, und warnt", async ({
+    page,
+  }) => {
+    await withLicense(page);
+    await login(page);
+    await page.goto("/settings?section=employees");
+    await expect(page.getByTestId("stalwart-edition")).toHaveText("Enterprise (Lizenz aktiv)");
+    await expectLicenseShown(page);
+  });
+
+  test("zeigt die Lizenz auch am Handy @phone", async ({ page }) => {
+    await withLicense(page);
+    await login(page, "jonas");
+    await page.goto("/settings");
+    await page.getByRole("link", { name: "Mitarbeiter" }).click();
+    await expectLicenseShown(page);
   });
 
   test("legt einen Mitarbeiter an, der sich anmeldet, und sperrt ihn wieder", async ({

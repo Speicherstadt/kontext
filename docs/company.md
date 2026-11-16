@@ -16,7 +16,9 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   **Zugang sperren** (Mails kommen weiter an), weitere Adressen wie buchhaltung@.
 - **Stalwart Community oder Enterprise:** Kontext läuft mit beiden. Unter *Mitarbeiter* steht,
   welche Ausgabe der Server hat; eine Enterprise-Lizenz erkennt Kontext von selbst
-  ([Installation](installation.md#stalwart-enterprise)).
+  ([Installation](installation.md#stalwart-enterprise)). Mit Lizenz steht darunter, wie viele
+  Postfächer belegt sind (etwa „12 von 25 Postfächern belegt“, gemeinsame Postfächer zählen mit),
+  bis wann sie gilt und für welche Domain; ab 90 % belegt oder 30 Tage vor dem Ende warnt sie.
 - **Gemeinsame Postfächer** mit Rechten je Person: kein Zugriff, nur lesen, lesen und senden;
   eigene Regeln je Postfach.
 - **Abwesenheit für Kollegen** (etwa bei Krankheit) mit Vertretung in der Antwort.
@@ -94,6 +96,15 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   müssen auf dem Server die Units eingerichtet sein
   ([Installation → Backups](installation.md#5-backups)); sonst steht dort „Steuerung auf dem
   Server nicht eingerichtet“.
+- **Serverzustand** (nur mit Stalwart Enterprise) unter *Einstellungen → Firma → Serverzustand*:
+  für die letzten 24 Stunden oder 7 Tage, wie viele Mails ankamen, als Spam einsortiert,
+  verschickt oder unzustellbar wurden, dazu ein kleines Diagramm je Stunde oder Tag,
+  fehlgeschlagene Anmeldungen (und wie viele Adressen Stalwart deshalb gesperrt hat), was in der
+  Warteschlange wartet und wie viel Speicher die Postfächer belegen. Darunter die
+  **Zustellprobleme**: Mails an Empfänger außerhalb, die nicht ankamen, mit der Antwort des
+  fremden Servers („550 5.1.1 User unknown“) und ob Stalwart aufgegeben hat oder es noch einmal
+  versucht. Stalwart muss dafür Kennzahlen und Zustellungen aufzeichnen
+  ([Installation](installation.md#serverzustand)); mit Community fehlt der Eintrag.
 - **Logo und Vorlagen** (nur mit Stalwart Enterprise) unter *Einstellungen → Firma → Logo und
   Vorlagen*: Stalwart verschickt einige Mails selbst – die **Erinnerung per Mail** an einen Termin
   und Mails zu Einladungen, wenn jemand am Handy oder in einem Kalenderprogramm (CalDAV) einlädt oder im Kalender antwortet. Dort steht

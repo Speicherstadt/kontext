@@ -16,7 +16,9 @@ Stalwart's admin interface and without IT skills.
   **block access** (mail keeps arriving), further addresses such as buchhaltung@.
 - **Stalwart Community or Enterprise:** Kontext runs with both. *Employees* shows which edition
   the server has; Kontext detects an Enterprise license by itself
-  ([installation](installation.md#stalwart-enterprise)).
+  ([installation](installation.md#stalwart-enterprise)). With a license it also shows how many
+  mailboxes are in use (such as "12 of 25 mailboxes in use", shared mailboxes count too), until
+  when it is valid and for which domain; from 90 % in use or 30 days before the end it warns.
 - **Shared mailboxes** with rights per person: no access, read only, read and send; rules of
   their own per mailbox.
 - **Out of office for colleagues** (during illness, for example) with a stand-in named in the reply.
@@ -93,6 +95,14 @@ Stalwart's admin interface and without IT skills.
   the nightly backup and “Back up now”, plus the log. For this, the units must be set up on the
   server ([Installation → Backups](installation.md#5-backups)); otherwise it says “Control isn’t
   set up on the server”.
+- **Server health** (Stalwart Enterprise only) under *Settings → Company → Server health*: for the
+  last 24 hours or 7 days, how many mails arrived, were filed as spam, were sent or turned out
+  undeliverable, with a small chart per hour or day, failed sign-ins (and how many addresses
+  Stalwart blocked for them), what waits in the queue and how much storage the mailboxes take.
+  Below, the **delivery problems**: mails to recipients outside that did not arrive, with the
+  other server's answer ("550 5.1.1 User unknown") and whether Stalwart gave up or tries again.
+  For this, Stalwart has to record metrics and deliveries
+  ([Installation](installation.md#serverzustand)); with Community the entry is missing.
 - **Logo and templates** (Stalwart Enterprise only) under *Settings → Company → Logo and
   templates*: Stalwart sends a few mails itself – the **reminder by mail** for an appointment and
   mails about invitations when someone invites from a phone or a calendar program (CalDAV) or answers in the calendar. They then

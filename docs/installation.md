@@ -401,8 +401,13 @@ von Hand in Stalwarts Verwaltung geht es so:
 1. Eine **Rolle** `Kontext-Server` anlegen: sie erbt die Rolle *User*
    und bekommt dazu die Rechte `sysAccountGet`, `sysAccountQuery`, `sysAccountCreate`,
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
-   `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
+   `sysIndexQueueStatusGet`, `sysMetricGet`, `sysMetricQuery`, `sysTraceGet`, `sysTraceQuery`,
+   `sysMetricsStoreGet`, `sysTracingStoreGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
+   `sysActionCreate`, `actionReloadSettings` und `impersonate`. Mit `sysIndexQueueStatusGet` zeigt die
+   Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Die `sysMetric…`-, `sysTrace…`- und
+   `…StoreGet`-Rechte lesen nur, was der [Serverzustand](#serverzustand) zeigt (Stalwart
+   Enterprise). Mit den `sysEncryption…`- und
    `sysActionCreate`, `actionReloadSettings`, `sysEnterpriseGet`, `sysEnterpriseUpdate`,
    `sysCalendarAlarmGet`, `sysCalendarAlarmUpdate`, `sysCalendarSchedulingGet`,
    `sysCalendarSchedulingUpdate`, `actionInvalidateCaches` und `impersonate`. Mit den
@@ -496,7 +501,7 @@ die USA: Das gehört in die Datenschutzinformation, mit Anthropics Auftragsverar
 
 Kontext läuft mit der kostenlosen Community-Ausgabe von Stalwart vollständig; eine
 Enterprise-Lizenz braucht es nicht. Wer Stalwarts Enterprise-Funktionen trotzdem will (etwa
-Gelöschtes auf dem Server wiederherstellen, KI-Spamfilter, SCIM), kauft die Lizenz bei Stalwart
+Gelöschtes auf dem Server wiederherstellen, KI-Spamfilter, SCIM, maskierte Adressen), kauft die Lizenz bei Stalwart
 Labs ([Preise](https://stalw.art/pricing/), 30 Tage zum Testen) und trägt sie in Stalwart ein, nicht
 in Kontext: Es ist dasselbe Image, nur der Schlüssel schaltet frei.
 
@@ -506,17 +511,55 @@ in Kontext: Es ist dasselbe Image, nur der Schlüssel schaltet frei.
    „Stalwart Enterprise Edition license key is valid“.
 
 Kontext merkt es innerhalb von zehn Minuten; die Firmenverwaltung zeigt unter *Mitarbeiter*
-„Enterprise (Lizenz aktiv)“. Der Schlüssel gilt für die Domain des Server-Hostnamens und für eine
-Zahl von Postfächern, gemeinsame Postfächer zählen mit; darüber lehnt Stalwart neue Konten ab, und
-die Firmenverwaltung zeigt Stalwarts Meldung. Läuft die Lizenz aus, arbeitet Stalwart als
-Community weiter, ohne Datenverlust.
+„Enterprise (Lizenz aktiv)“ und darunter, wie viele Postfächer belegt sind. Der Schlüssel gilt für
+die Domain des Server-Hostnamens und für eine Zahl von Postfächern; Stalwart zählt jedes Konto,
+also auch gemeinsame Postfächer und das Konto des Kontext-Servers. Darüber lehnt Stalwart neue
+Konten ab, und die Firmenverwaltung zeigt Stalwarts Meldung. Läuft die Lizenz aus, arbeitet
+Stalwart als Community weiter, ohne Datenverlust; mit einem `apiKey` unter *Settings → Enterprise*
+verlängert Stalwart sie vorher selbst.
 
-Was Kontext dann zusätzlich anbietet (bei einer bestehenden Installation erst, nachdem der
-[Einrichtungsbefehl](#einrichtungsbefehl) noch einmal gelaufen ist, der der Rolle
+Grenze, Laufzeit und Domain der Lizenz („12 von 25 Postfächern belegt“, „Gültig bis …“, mit
+Warnung ab 90 % oder 30 Tage vor dem Ende) liest Kontext aus dem Schlüssel. Stalwart gibt ihn nur
+heraus, wenn in den Systemeinstellungen `includeSecrets` an ist (das Recht `sysEnterpriseGet` gibt
+der Einrichtungsbefehl der Rolle `Kontext-Server`). Das ist freiwillig: `includeSecrets` zeigt jedem mit
+Leserechten in Stalwarts Verwaltung auch die anderen Geheimnisse (Passwörter von Relays,
+Schlüssel). Ohne das zeigt die Firmenverwaltung nur die belegten Postfächer.
+
+Was Kontext mit Enterprise zusätzlich anbietet (bei einer bestehenden Installation erst, nachdem
+der [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal gelaufen ist, der der Rolle
 `Kontext-Server` die Rechte dafür gibt):
 
+- **Maskierte Adressen:** Jede Person legt unter *Einstellungen → Maskierte Adressen* eigene
+  Adressen je Website oder Shop an, schaltet sie ab oder löscht sie
+  ([Mail](mail.md#maskierte-adressen)).
 - **Logo und Vorlagen** in der Firmenverwaltung: das Firmenlogo und eigene Vorlagen für Stalwarts
   Kalender-Mails ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)).
+- **Serverzustand**, siehe den folgenden Abschnitt.
+
+#### Serverzustand { #serverzustand }
+
+Mit Enterprise bekommt die Firmenverwaltung den *Serverzustand*: empfangene, gesendete,
+Spam- und unzustellbare Mails, fehlgeschlagene Anmeldungen, Warteschlange und Speicher, und warum
+Mails nach außen nicht ankamen ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)). Er
+liest, was Stalwart selbst aufzeichnet; das tut Stalwart erst, wenn es eingeschaltet ist:
+
+1. In Stalwart den **Speicher für Kennzahlen** (`MetricsStore`) und den **Speicher für Spuren**
+   (`TracingStore`) auf *Default* stellen – zu Beginn stehen beide auf *Disabled*. Ohne
+   Oberfläche ist es ein Aufruf ([VPS, Schritt 10](vps.md#10-stalwart-ohne-oberflache-einrichten)):
+
+   ```bash
+   /root/stalwart-api.sh '[["x:MetricsStore/set",{"update":{"singleton":{"@type":"Default"}}},"0"],
+     ["x:TracingStore/set",{"update":{"singleton":{"@type":"Default"}}},"1"]]'
+   ```
+
+2. Stalwart **neu starten**: Beide Speicher öffnet es nur beim Start.
+3. Den [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal ausführen: Er gibt der Rolle
+   `Kontext-Server` die Leserechte für Kennzahlen und Spuren, falls sie fehlen (oder von Hand wie
+   in Schritt 1 unter [Firmenverwaltung einschalten](#firmenverwaltung-einschalten)).
+
+Stalwart schreibt die Zahlen stündlich und hält sie 90 Tage, die Spuren 30 Tage
+(`metricsCollectionInterval`, `holdMetricsFor`, `holdTracesFor` unter *Data retention*). Bis die
+erste Stunde um ist, sagt die Seite das; fehlt ein Recht, sagt sie auch das.
 
 ## 4. Platte verschlüsseln
 

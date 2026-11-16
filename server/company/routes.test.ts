@@ -81,9 +81,11 @@ const fakeManagement = ({ annaInInfo = false } = {}) => {
   return { management, mailstore, updates, created, shared, rules, back };
 };
 
+const LICENSE = { used: 12, limit: 25, validTo: "2027-12-31T00:00:00.000Z", domain: "firma.de" };
+
 const setup = (
   email: string | null,
-  options: { welcomeError?: string; annaInInfo?: boolean } = {},
+  options: { welcomeError?: string; annaInInfo?: boolean; community?: boolean } = {},
 ) => {
   const { welcomeError } = options;
   const fake = fakeManagement(options);
@@ -178,7 +180,8 @@ const setup = (
       saveSettings: async () => {},
       requestRun: async () => {},
     },
-    edition: async () => "enterprise",
+    edition: async () => (options.community ? "community" : "enterprise"),
+    license: async () => LICENSE,
   });
   const send = (method: string, path: string, body?: unknown) =>
     app.request(path, {
@@ -560,6 +563,15 @@ describe("Firmenverwaltung", () => {
       edition: "enterprise",
     });
     expect((await setup(null).send("GET", "/edition")).status).toBe(401);
+  });
+
+  it("shows the Enterprise license to the admin only, and nothing without a license", async () => {
+    expect(await (await setup("chef@firma.de").send("GET", "/license")).json()).toEqual({
+      license: LICENSE,
+    });
+    expect((await setup("anna@firma.de").send("GET", "/license")).status).toBe(403);
+    const community = setup("chef@firma.de", { community: true });
+    expect(await (await community.send("GET", "/license")).json()).toEqual({ license: null });
   });
 
   it("lets only the admin set the assistant's key and model, and never shows the key", async () => {

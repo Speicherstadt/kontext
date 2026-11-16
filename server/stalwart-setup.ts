@@ -38,6 +38,19 @@ export const GATEWAY_RIGHTS = [
 ] as const;
 
 /**
+ * Serverzustand (company/server-health-routes.ts): Stalwart Enterprise's metrics and traces, and
+ * whether it records them. Read only; without a license Stalwart refuses the objects anyway.
+ */
+export const TELEMETRY_RIGHTS = [
+  "sysMetricGet",
+  "sysMetricQuery",
+  "sysTraceGet",
+  "sysTraceQuery",
+  "sysMetricsStoreGet",
+  "sysTracingStoreGet",
+] as const;
+
+/**
  * Firmenlogo und Vorlagen (company/branding.ts, Stalwart Enterprise): the logo in x:Enterprise,
  * the calendar mail templates in x:CalendarAlarm and x:CalendarScheduling, and the caches Stalwart
  * keeps its logos in. The objects exist in Community too, so the rights can always be granted.
@@ -63,6 +76,7 @@ export const KONTEXT_SERVER_RIGHTS = [
   "sysDomainGet",
   "sysAuthenticationGet",
   "sysIndexQueueStatusGet",
+  ...TELEMETRY_RIGHTS,
   ...GATEWAY_RIGHTS,
   ...BRANDING_RIGHTS,
   "impersonate",
