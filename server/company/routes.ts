@@ -22,6 +22,7 @@ import { mailboxRoutes } from "./mailboxes";
 import { phishingReportRoutes, readPhishingReport } from "./phishing-report";
 import { searchIndexStatus } from "./search-index";
 import { checkDomain, httpsCheck } from "./security";
+import { serverHealthRoutes } from "./server-health-routes";
 import { signatureRoutes } from "./signature-routes";
 import { readVacationTemplates, vacationTemplateRoutes } from "./vacation-templates";
 
@@ -148,6 +149,12 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
     app.route("/encryption-gateway", encryptionGatewayRoutes(deps.encryptionGateway));
   }
   if (deps.backup) app.route("/backup", backupRoutes(deps.backup));
+  if (deps.serverHealth) {
+    app.route(
+      "/server-health",
+      serverHealthRoutes({ health: deps.serverHealth, edition: deps.edition }),
+    );
+  }
   app.route("/migrations", migrationRoutes(deps.migrations));
   app.route("/syncs", syncRoutes(deps.syncs));
   return app;

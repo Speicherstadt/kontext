@@ -37,6 +37,19 @@ export const GATEWAY_RIGHTS = [
   "actionReloadSettings",
 ] as const;
 
+/**
+ * Serverzustand (company/server-health-routes.ts): Stalwart Enterprise's metrics and traces, and
+ * whether it records them. Read only; without a license Stalwart refuses the objects anyway.
+ */
+export const TELEMETRY_RIGHTS = [
+  "sysMetricGet",
+  "sysMetricQuery",
+  "sysTraceGet",
+  "sysTraceQuery",
+  "sysMetricsStoreGet",
+  "sysTracingStoreGet",
+] as const;
+
 /** The rights the Kontext server's key needs beside those of User (docs/installation.md). */
 export const KONTEXT_SERVER_RIGHTS = [
   "sysAccountGet",
@@ -48,6 +61,7 @@ export const KONTEXT_SERVER_RIGHTS = [
   "sysDomainGet",
   "sysAuthenticationGet",
   "sysIndexQueueStatusGet",
+  ...TELEMETRY_RIGHTS,
   ...GATEWAY_RIGHTS,
   "impersonate",
 ] as const;

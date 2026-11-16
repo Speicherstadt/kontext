@@ -401,10 +401,13 @@ von Hand in Stalwarts Verwaltung geht es so:
 1. Eine **Rolle** `Kontext-Server` anlegen: sie erbt die Rolle *User*
    und bekommt dazu die Rechte `sysAccountGet`, `sysAccountQuery`, `sysAccountCreate`,
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
-   `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
+   `sysIndexQueueStatusGet`, `sysMetricGet`, `sysMetricQuery`, `sysTraceGet`, `sysTraceQuery`,
+   `sysMetricsStoreGet`, `sysTracingStoreGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
    `sysActionCreate`, `actionReloadSettings` und `impersonate`. Mit `sysIndexQueueStatusGet` zeigt die
-   Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Mit den `sysEncryption…`- und
+   Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Die `sysMetric…`-, `sysTrace…`- und
+   `…StoreGet`-Rechte lesen nur, was der [Serverzustand](#serverzustand) zeigt (Stalwart
+   Enterprise). Mit den `sysEncryption…`- und
    `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln durch
    Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
    Empfänger; `sysActionCreate` mit `actionReloadSettings` lässt sie Stalwart danach die
@@ -504,6 +507,31 @@ Kontext merkt es innerhalb von zehn Minuten; die Firmenverwaltung zeigt unter *M
 Zahl von Postfächern, gemeinsame Postfächer zählen mit; darüber lehnt Stalwart neue Konten ab, und
 die Firmenverwaltung zeigt Stalwarts Meldung. Läuft die Lizenz aus, arbeitet Stalwart als
 Community weiter, ohne Datenverlust.
+
+#### Serverzustand { #serverzustand }
+
+Mit Enterprise bekommt die Firmenverwaltung den *Serverzustand*: empfangene, gesendete,
+Spam- und unzustellbare Mails, fehlgeschlagene Anmeldungen, Warteschlange und Speicher, und warum
+Mails nach außen nicht ankamen ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)). Er
+liest, was Stalwart selbst aufzeichnet; das tut Stalwart erst, wenn es eingeschaltet ist:
+
+1. In Stalwart den **Speicher für Kennzahlen** (`MetricsStore`) und den **Speicher für Spuren**
+   (`TracingStore`) auf *Default* stellen – zu Beginn stehen beide auf *Disabled*. Ohne
+   Oberfläche ist es ein Aufruf ([VPS, Schritt 10](vps.md#10-stalwart-ohne-oberflache-einrichten)):
+
+   ```bash
+   /root/stalwart-api.sh '[["x:MetricsStore/set",{"update":{"singleton":{"@type":"Default"}}},"0"],
+     ["x:TracingStore/set",{"update":{"singleton":{"@type":"Default"}}},"1"]]'
+   ```
+
+2. Stalwart **neu starten**: Beide Speicher öffnet es nur beim Start.
+3. Den [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal ausführen: Er gibt der Rolle
+   `Kontext-Server` die Leserechte für Kennzahlen und Spuren, falls sie fehlen (oder von Hand wie
+   in Schritt 1 unter [Firmenverwaltung einschalten](#firmenverwaltung-einschalten)).
+
+Stalwart schreibt die Zahlen stündlich und hält sie 90 Tage, die Spuren 30 Tage
+(`metricsCollectionInterval`, `holdMetricsFor`, `holdTracesFor` unter *Data retention*). Bis die
+erste Stunde um ist, sagt die Seite das; fehlt ein Recht, sagt sie auch das.
 
 ## 4. Platte verschlüsseln
 

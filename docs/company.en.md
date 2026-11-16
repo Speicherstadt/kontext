@@ -93,6 +93,14 @@ Stalwart's admin interface and without IT skills.
   the nightly backup and “Back up now”, plus the log. For this, the units must be set up on the
   server ([Installation → Backups](installation.md#5-backups)); otherwise it says “Control isn’t
   set up on the server”.
+- **Server health** (Stalwart Enterprise only) under *Settings → Company → Server health*: for the
+  last 24 hours or 7 days, how many mails arrived, were filed as spam, were sent or turned out
+  undeliverable, with a small chart per hour or day, failed sign-ins (and how many addresses
+  Stalwart blocked for them), what waits in the queue and how much storage the mailboxes take.
+  Below, the **delivery problems**: mails to recipients outside that did not arrive, with the
+  other server's answer ("550 5.1.1 User unknown") and whether Stalwart gave up or tries again.
+  For this, Stalwart has to record metrics and deliveries
+  ([Installation](installation.md#serverzustand)); with Community the entry is missing.
 
 ## Moving to Kontext { #umzug-nach-kontext }
 

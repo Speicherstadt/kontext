@@ -4,6 +4,7 @@
  */
 import { Link } from "@tanstack/react-router";
 import {
+  Activity,
   AtSign,
   BadgeCheck,
   Bot,
@@ -39,6 +40,7 @@ import { AgentsSection } from "@/features/agents/agents-section";
 import { AssistantSection } from "@/features/company/assistant-section";
 import { BackupSection } from "@/features/company/backup-section";
 import { ChatSection } from "@/features/company/chat-section";
+import { useStalwartEdition } from "@/features/company/edition";
 import { EmployeesSection } from "@/features/company/employees-section";
 import { EncryptionGatewaySection } from "@/features/company/encryption-gateway-section";
 import { ExternalHintSection } from "@/features/company/external-hint-section";
@@ -49,6 +51,7 @@ import { MigrationSection } from "@/features/company/migration-section";
 import { PhishingReportSection } from "@/features/company/phishing-report-section";
 import { useIsCompanyAdmin } from "@/features/company/queries";
 import { SecuritySection as CompanySecuritySection } from "@/features/company/security-section";
+import { ServerHealthSection } from "@/features/company/server-health-section";
 import { SmimeAuthoritiesSection } from "@/features/company/smime-authorities-section";
 import { VacationTemplatesSection } from "@/features/company/vacation-templates-section";
 import { ExternalSection } from "@/features/external/external-section";
@@ -121,6 +124,7 @@ const COMPANY: Entry[] = [
   { id: "company-external", label: m.company_external, icon: Globe },
   { id: "company-smime", label: m.company_smime, icon: BadgeCheck },
   { id: "company-backup", label: m.company_backup, icon: DatabaseBackup },
+  { id: "company-health", label: m.company_health, icon: Activity },
   { id: "phone", label: m.phone_settings, icon: Phone },
   { id: "migration", label: m.company_migration, icon: Truck },
 ];
@@ -171,6 +175,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
   "company-external": () => <ExternalHintSection />,
   "company-smime": () => <SmimeAuthoritiesSection />,
   "company-backup": () => <BackupSection />,
+  "company-health": () => <ServerHealthSection />,
   phone: () => <PhoneSettingsSection />,
   migration: () => <MigrationSection />,
 };
@@ -206,7 +211,11 @@ export const SettingsPage = ({ section }: { section: Section | undefined }) => {
   const own = external === null ? OWN.filter((entry) => entry.id !== "accounts") : OWN;
   // Telephony needs LiveKit on the server; without it the section has nothing to set.
   const phone = usePhone().enabled;
-  const company = COMPANY.filter((entry) => entry.id !== "phone" || phone);
+  // Serverzustand reads what only Stalwart Enterprise records.
+  const enterprise = useStalwartEdition() === "enterprise";
+  const company = COMPANY.filter(
+    (entry) => (entry.id !== "phone" || phone) && (entry.id !== "company-health" || enterprise),
+  );
   const title = [...OWN, ...COMPANY].find((s) => s.id === current)!.label();
   return (
     <>

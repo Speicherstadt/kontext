@@ -39,6 +39,7 @@ import {
 } from "./company/management";
 import { createCompanyRoutes } from "./company/routes";
 import { dohResolver } from "./company/security";
+import { createServerHealth } from "./company/server-health-routes";
 import { createCompanySettings } from "./company/settings";
 import { createSignatureDetails } from "./company/signature-details";
 import { createSignatureDetailRoutes } from "./company/signature-details-routes";
@@ -422,6 +423,7 @@ export const createApp = async (env: Env) => {
       encryptionGateway: createEncryptionGateway(request),
       backup: createBackupControl(join(dirname(env.DATABASE_PATH), "backup-control")),
       edition: createEditionCheck({ stalwartUrl: env.STALWART_URL, key: env.STALWART_ADMIN_KEY }),
+      serverHealth: createServerHealth(request),
     });
     app.route("/api/company", company);
   }

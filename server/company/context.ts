@@ -62,6 +62,8 @@ export type CompanyDeps = {
   backup?: BackupControl;
   /** Stalwart Community or Enterprise (edition.ts); Enterprise-only parts ask it. */
   edition?: import("./edition").EditionCheck;
+  /** Serverzustand from Stalwart Enterprise's metrics and traces (server-health-routes.ts). */
+  serverHealth?: import("./server-health-routes").ServerHealth;
 };
 
 export type Loaded = {
