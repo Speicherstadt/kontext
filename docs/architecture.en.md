@@ -310,6 +310,16 @@ its own and allows only what the company admin needs.
   company admin shows it under *Employees*. Kontext needs Enterprise for nothing; what only
   Stalwart Enterprise can do, the app offers only once the license is active
   (`useStalwartEdition`, `src/features/company/edition.ts`).
+- **License:** With Enterprise the company admin shows the license's usage
+  (`GET /api/company/license`, for the company admin only, `{ license: null }` without a license;
+  `server/company/license.ts`). Stalwart has no route with the license's details. The server
+  counts what is used the way Stalwart's `can_create_account` does
+  (`crates/common/src/enterprise/mod.rs`): every account, so employees, shared mailboxes (groups)
+  and the Kontext server's own account, through `x:Account/query` with `calculateTotal`. Limit,
+  end and domain are only in the key itself (`LicenseKey`,
+  `crates/common/src/enterprise/license.rs`); `x:Enterprise/get` gives it out only with
+  `sysEnterpriseGet` and `includeSecrets` switched on, otherwise as "****". Then the company admin
+  shows only the mailboxes in use.
 - **Shared mailboxes** are groups; a member is whoever has the group in `memberGroupIds`.
   "Read only" goes to whoever has all of the mailbox's folders shared with them via `shareWith`
   (`mayReadItems`, `maySetSeen`); the app reads this off the inbox.

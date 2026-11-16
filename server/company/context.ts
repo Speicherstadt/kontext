@@ -62,6 +62,8 @@ export type CompanyDeps = {
   backup?: BackupControl;
   /** Stalwart Community or Enterprise (edition.ts); Enterprise-only parts ask it. */
   edition?: import("./edition").EditionCheck;
+  /** Used and licensed accounts of Stalwart Enterprise (license.ts). */
+  license?: import("./license").LicenseCheck;
 };
 
 export type Loaded = {

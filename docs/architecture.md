@@ -315,6 +315,15 @@ mit einem eigenen API-Schlüssel an und erlaubt nur, was die Firmenverwaltung br
   `GET /api/company/edition`, die Firmenverwaltung zeigt sie unter *Mitarbeiter*. Kontext braucht
   Enterprise für nichts; was nur Stalwart Enterprise kann, bietet die App erst an, wenn die
   Lizenz aktiv ist (`useStalwartEdition`, `src/features/company/edition.ts`).
+- **Lizenz:** Mit Enterprise zeigt die Firmenverwaltung die Nutzung der Lizenz
+  (`GET /api/company/license`, nur für die Firmenverwaltung, ohne Lizenz `{ license: null }`;
+  `server/company/license.ts`). Eine Route mit den Lizenzdaten hat Stalwart nicht. Belegt zählt
+  der Server wie Stalwarts `can_create_account` (`crates/common/src/enterprise/mod.rs`): jedes
+  Konto, also Mitarbeiter, gemeinsame Postfächer (Gruppen) und das Konto des Kontext-Servers, per
+  `x:Account/query` mit `calculateTotal`. Grenze, Ende und Domain stehen nur im Schlüssel selbst
+  (`LicenseKey`, `crates/common/src/enterprise/license.rs`); `x:Enterprise/get` gibt ihn nur mit
+  `sysEnterpriseGet` und eingeschaltetem `includeSecrets` heraus, sonst als „****“. Dann zeigt die
+  Firmenverwaltung nur die belegten Postfächer.
 - **Gemeinsame Postfächer** sind Gruppen; Mitglied ist, wer die Gruppe in `memberGroupIds` hat.
   „Nur lesen“ bekommt, wem alle Ordner des Postfachs per `shareWith` geteilt sind
   (`mayReadItems`, `maySetSeen`); die App liest das am Posteingang ab.

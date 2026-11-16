@@ -1,10 +1,12 @@
 /**
  * The Firmenverwaltung shows which Stalwart edition runs: Kontext works with both, an Enterprise
- * license adds what only Stalwart Enterprise has. Nothing to set here; the key goes into Stalwart.
+ * license adds what only Stalwart Enterprise has, and its usage shows below (license-details.tsx).
+ * Nothing to set here; the key goes into Stalwart.
  */
 import { m } from "@/paraglide/messages";
 import { SettingsCard } from "../settings/settings-page";
 import { type Edition, useStalwartEdition } from "./edition";
+import { LicenseDetails } from "./license-details";
 
 const LABEL: Record<Edition, () => string> = {
   community: m.company_edition_community,
@@ -24,6 +26,7 @@ export const EditionCard = () => {
             {LABEL[edition]()}
           </span>
         </p>
+        {edition === "enterprise" && <LicenseDetails />}
       </SettingsCard>
     </div>
   );

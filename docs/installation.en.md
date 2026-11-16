@@ -502,10 +502,19 @@ it is the same image, only the key unlocks it.
    "Stalwart Enterprise Edition license key is valid".
 
 Kontext notices within ten minutes; the company admin shows "Enterprise (license active)" under
-*Employees*. The key is valid for the domain of the server's host name and for a number of
-mailboxes, shared mailboxes included; beyond it Stalwart refuses new accounts, and the company
-admin shows Stalwart's message. When the license lapses, Stalwart carries on as Community, without
-losing data.
+*Employees* and below it how many mailboxes are in use. The key is valid for the domain of the
+server's host name and for a number of mailboxes; Stalwart counts every account, so shared
+mailboxes and the Kontext server's own account too. Beyond it Stalwart refuses new accounts, and
+the company admin shows Stalwart's message. When the license lapses, Stalwart carries on as
+Community, without losing data; with an `apiKey` under *Settings → Enterprise* Stalwart renews it
+by itself beforehand.
+
+The license's limit, term and domain ("12 of 25 mailboxes in use", "Valid until …", with a warning
+from 90 % or 30 days before the end) Kontext reads from the key. Stalwart gives it out only when
+the role `Kontext-Server` also has `sysEnterpriseGet` and `includeSecrets` is on in the system
+settings. This is optional: `includeSecrets` also shows the other secrets (relay passwords, keys)
+to everyone with read rights in Stalwart's management. Without both, the company admin shows only
+the mailboxes in use.
 
 ## 4. Encrypting the disk { #4-platte-verschlusseln }
 

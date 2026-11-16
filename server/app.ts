@@ -30,6 +30,7 @@ import { createCalendars } from "./company/calendars";
 import { createEditionCheck } from "./company/edition";
 import { createEncryptionGateway } from "./company/encryption-gateway";
 import { createExternalHintStore } from "./company/external-hint";
+import { createLicenseCheck } from "./company/license";
 import { createMailstore } from "./company/mailstore";
 import {
   createDownload,
@@ -422,6 +423,7 @@ export const createApp = async (env: Env) => {
       encryptionGateway: createEncryptionGateway(request),
       backup: createBackupControl(join(dirname(env.DATABASE_PATH), "backup-control")),
       edition: createEditionCheck({ stalwartUrl: env.STALWART_URL, key: env.STALWART_ADMIN_KEY }),
+      license: createLicenseCheck(request),
     });
     app.route("/api/company", company);
   }

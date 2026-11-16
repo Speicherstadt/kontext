@@ -92,6 +92,14 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
     await next();
   });
 
+  /** Stalwart Enterprise's license: only for the company's admins, nothing without a license. */
+  app.get("/license", async (c) =>
+    c.json({
+      license:
+        deps.license && (await deps.edition?.()) === "enterprise" ? await deps.license() : null,
+    }),
+  );
+
   app.get("/", (c) => {
     const { company, selfId } = c.get("loaded");
     return c.json({ ...company, selfId });
