@@ -1,0 +1,1 @@
+ALTER TABLE `stalwart_grant` ADD `issuer` text;

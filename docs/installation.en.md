@@ -407,7 +407,10 @@ in Stalwart's admin interface it goes like this:
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
    `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` and `impersonate`. With `sysIndexQueueStatusGet` the
+   `sysActionCreate`, `actionReloadSettings`, `sysDirectoryGet`, `sysDirectoryCreate`,
+   `sysDirectoryUpdate`, `sysDirectoryDestroy`, `sysDomainUpdate`, `scimAccess` and
+   `impersonate`. The `sysDirectory…` permissions, `sysDomainUpdate` and `scimAccess` are only
+   needed for [sign-in with company account](#sso-entra-id) with Stalwart Enterprise. With `sysIndexQueueStatusGet` the
    company admin shows while Stalwart is building the search index. With the `sysEncryption…` and
    `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
@@ -506,6 +509,57 @@ Kontext notices within ten minutes; the company admin shows "Enterprise (license
 mailboxes, shared mailboxes included; beyond it Stalwart refuses new accounts, and the company
 admin shows Stalwart's message. When the license lapses, Stalwart carries on as Community, without
 losing data.
+
+What Kontext offers in addition with the license:
+
+- **Sign-in with company account (SSO) and SCIM** ([company admin](company.md#sso), setup with
+  Entra ID in the next section).
+
+#### Sign-in with company account using Microsoft Entra ID { #sso-entra-id }
+
+Stalwart checks the provider's access tokens itself (an OIDC directory Kontext creates); Kontext
+fetches them as the provider's app and keeps them on the server like Stalwart's own tokens
+([architecture](architecture.md#anmeldung-uber-firmenkonto)). Google Workspace and Keycloak work
+the same way, with their names for the same values.
+
+1. Run the [setup command](#einrichtungsbefehl) again: it gives the role `Kontext-Server` the
+   permissions `sysDirectoryGet`, `sysDirectoryCreate`, `sysDirectoryUpdate`,
+   `sysDirectoryDestroy`, `sysDomainUpdate` and `scimAccess`.
+2. In the [Microsoft Entra admin center](https://entra.microsoft.com) under *App registrations →
+   New registration*, create an app “Kontext” (this directory only), redirect URI of type *Web*:
+   `https://kontext.firma.de/api/auth/sso/callback` (Kontext shows it under *Provider*).
+3. *Certificates & secrets → New client secret*; note the **value**.
+4. *Expose an API*: set the application ID URI (`api://<client ID>`) and add a scope `kontext`
+   (admins and users). In the *Manifest* under `api` set `"requestedAccessTokenVersion": 2`: only
+   then does Entra issue tokens with the issuer
+   `https://login.microsoftonline.com/<tenant ID>/v2.0` and the client ID as `aud`, which
+   Stalwart accepts.
+5. *API permissions*: for Microsoft Graph `openid`, `email`, `profile` and `offline_access`
+   (delegated), and grant admin consent.
+6. In Kontext under *Settings → Company → Sign-in with company account (SSO)*: issuer URL
+   `https://login.microsoftonline.com/<tenant ID>/v2.0`, client ID, secret, scopes
+   `openid email profile offline_access api://<client ID>/kontext`; audience empty (= client ID),
+   claim with the email address `preferred_username` (the user principal name must be the mail
+   address, otherwise `email`), checking *Signed tokens*. Save, tick the domain under *Domains*,
+   save, **Test connection**.
+7. Stalwart must reach `login.microsoftonline.com` over HTTPS (the provider's keys and discovery).
+
+For **SCIM** in addition:
+
+1. In Kontext tick *Accounts over SCIM* for the domain, under *Accounts over SCIM* **Create
+   token** and copy it.
+2. In Entra under *Enterprise applications → Kontext → Provisioning* choose mode *Automatic*,
+   enter tenant URL `https://kontext.firma.de/scim/v2` and the token as secret token, *Test
+   connection*, assign users or groups and start provisioning. The user principal name goes to
+   Stalwart as `userName`; it must be an address of the domain.
+
+Caddy forwards `/scim/v2` to Stalwart (`deploy/Caddyfile`, from this version on). What does not
+work: Stalwart's own sign-in page does not hand over to the provider, so Kontext makes the round
+trip itself; in a domain with the company account Stalwart no longer takes passwords, so mail
+programs (IMAP, SMTP, CalDAV) sign in with app passwords or over OAuth (OAUTHBEARER) with a token
+of the provider. What asks for the password in Kontext (app passwords for tasks, keys for agents,
+changing the password) does not work for these accounts. Deleting over SCIM needs the permission
+`sysAccountDestroy` for the role `Kontext-Server`, which the setup command does not give.
 
 ## 4. Encrypting the disk { #4-platte-verschlusseln }
 

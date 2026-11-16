@@ -37,6 +37,20 @@ export const GATEWAY_RIGHTS = [
   "actionReloadSettings",
 ] as const;
 
+/**
+ * Anmeldung über Firmenkonto (SSO) and SCIM with Stalwart Enterprise (company/sso.ts): the OIDC
+ * directory, the domains' `directoryId` and `allowScimProvisioning`, and `scimAccess` for the
+ * provider's SCIM token, an API key of the server's account. Harmless without a license.
+ */
+export const SSO_RIGHTS = [
+  "sysDirectoryGet",
+  "sysDirectoryCreate",
+  "sysDirectoryUpdate",
+  "sysDirectoryDestroy",
+  "sysDomainUpdate",
+  "scimAccess",
+] as const;
+
 /** The rights the Kontext server's key needs beside those of User (docs/installation.md). */
 export const KONTEXT_SERVER_RIGHTS = [
   "sysAccountGet",
@@ -49,6 +63,7 @@ export const KONTEXT_SERVER_RIGHTS = [
   "sysAuthenticationGet",
   "sysIndexQueueStatusGet",
   ...GATEWAY_RIGHTS,
+  ...SSO_RIGHTS,
   "impersonate",
 ] as const;
 

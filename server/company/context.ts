@@ -62,6 +62,8 @@ export type CompanyDeps = {
   backup?: BackupControl;
   /** Stalwart Community or Enterprise (edition.ts); Enterprise-only parts ask it. */
   edition?: import("./edition").EditionCheck;
+  /** Anmeldung über Firmenkonto (SSO) and SCIM, Enterprise only (sso-routes.ts). */
+  sso?: import("./sso-routes").SsoDeps;
 };
 
 export type Loaded = {

@@ -42,6 +42,7 @@ import { dohResolver } from "./company/security";
 import { createCompanySettings } from "./company/settings";
 import { createSignatureDetails } from "./company/signature-details";
 import { createSignatureDetailRoutes } from "./company/signature-details-routes";
+import { createStalwartSso } from "./company/sso";
 import { createSealer } from "./crypto";
 import { fromOwnPage } from "./csrf";
 import { createAppPasswordRoutes } from "./dav/app-password-routes";
@@ -110,6 +111,9 @@ import { createSnippetStore } from "./snippets/store";
 import { createSnoozeRoutes } from "./snooze/routes";
 import { createSnoozeStore } from "./snooze/store";
 import { createSnoozeWaker } from "./snooze/waker";
+import { createProviderGrants } from "./sso/grants";
+import { createDiscoveryCache } from "./sso/oidc";
+import { createSsoStore } from "./sso/store";
 import { loginAtStalwart } from "./stalwart";
 import { tokenOrUnavailable, unavailable } from "./stalwart-away";
 import { createSubscribedCalendars } from "./subscriptions/calendars";
@@ -231,12 +235,21 @@ const liveKitOf = (env: Env): LiveKitConfig | null =>
 
 export const createApp = async (env: Env) => {
   const db = openDatabase(env.DATABASE_PATH);
+  // Sign-in with the company account (Stalwart Enterprise): the provider's client and documents.
+  const ssoStore = createSsoStore(db, await createSealer(env.BETTER_AUTH_SECRET, "sso"));
+  const ssoDiscovery = createDiscoveryCache();
   const grants = createGrants(
     db,
     await createSealer(env.BETTER_AUTH_SECRET, "stalwart-grant"),
     env.STALWART_URL,
+    undefined,
+    undefined,
+    createProviderGrants(ssoStore, ssoDiscovery),
   );
-  const auth = createAuth(env, db, grants, createNameOf(env));
+  const auth = createAuth(env, db, grants, createNameOf(env), undefined, {
+    store: ssoStore,
+    discovery: ssoDiscovery,
+  });
   const schreibzeug = schreibzeugClientOf(env);
   if (schreibzeug) await registerClient(db, schreibzeug);
   const documents = schreibzeug && createSchreibzeugOf(env, auth, schreibzeug);
@@ -422,6 +435,12 @@ export const createApp = async (env: Env) => {
       encryptionGateway: createEncryptionGateway(request),
       backup: createBackupControl(join(dirname(env.DATABASE_PATH), "backup-control")),
       edition: createEditionCheck({ stalwartUrl: env.STALWART_URL, key: env.STALWART_ADMIN_KEY }),
+      sso: {
+        stalwart: createStalwartSso(request),
+        store: ssoStore,
+        stalwartUrl: env.STALWART_URL,
+        publicUrl: env.BETTER_AUTH_URL,
+      },
     });
     app.route("/api/company", company);
   }

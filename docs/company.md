@@ -95,6 +95,37 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   ([Installation → Backups](installation.md#5-backups)); sonst steht dort „Steuerung auf dem
   Server nicht eingerichtet“.
 
+## Anmeldung über Firmenkonto (SSO) { #sso }
+
+Nur mit [Stalwart Enterprise](installation.md#stalwart-enterprise); in der Community-Ausgabe fehlt
+der Eintrag. Unter *Einstellungen → Firma → Anmeldung über Firmenkonto (SSO)* melden sich die
+Mitarbeiter einer Domain mit dem Konto der Firma an – Microsoft Entra ID, Google Workspace,
+Keycloak oder ein anderer OpenID-Connect-Anbieter – statt mit einem Passwort für Kontext. Die
+Schritte für Entra ID stehen in der [Installation](installation.md#sso-entra-id).
+
+- **Anbieter:** Aussteller-URL, Client-ID und -Secret der App, die beim Anbieter für Kontext
+  registriert ist (mit der angezeigten Weiterleitungs-URL), die Scopes, die Zielgruppe der Tokens
+  (`aud`, leer heißt Client-ID) und welche Ansprüche Adresse, Name und Gruppen tragen. Bei
+  Anbietern, deren Zugriffstokens keine JWTs sind (Google), „Beim Anbieter nachfragen
+  (UserInfo)“ wählen. **Verbindung testen** prüft, ob der Anbieter antwortet und ob Stalwart die
+  Anmeldung für jede Domain zu ihm schickt.
+- **Domains:** je Domain *Anmeldung über Firmenkonto* und *Konten über SCIM*. Mit dem Firmenkonto
+  nimmt Stalwart für die Domain **keine Passwörter mehr an** – auch nicht in Mailprogrammen; dort
+  gelten App-Passwörter, die bei Stalwart weiter vor dem Verzeichnis geprüft werden. Wer sich zum
+  ersten Mal anmeldet, bekommt sein Konto von selbst, es sei denn, SCIM ist an.
+- **Anmelden:** Auf der Anmeldeseite die Adresse eingeben; gehört sie zu einer solchen Domain,
+  verschwindet das Passwortfeld und **Weiter mit Firmenkonto** führt zum Anbieter und zurück.
+- **Konten über SCIM:** Der Anbieter legt die Konten selbst an, ändert Namen und Adressen und
+  sperrt Ausgeschiedene. Die Karte zeigt den **SCIM-Endpunkt** (`https://<Kontext>/scim/v2`) und
+  erzeugt das **Token** dafür, das nur einmal angezeigt wird; ein neues ersetzt das alte. In der
+  Mitarbeiterliste tragen diese Konten die Marke **SCIM**; Name, Adressen und Sperre sind dort
+  nicht änderbar, weil der nächste Abgleich sie zurücksetzen würde. Bei Konten mit Firmenkonto
+  fehlt „Passwort zurücksetzen“. Löschen über SCIM geht nur, wenn die Rolle `Kontext-Server` das
+  Recht `sysAccountDestroy` hat (von Haus aus nicht): Sonst sperrt der Anbieter, gelöscht wird in
+  Stalwart.
+- **Anbieter entfernen** gibt die Domains frei; wer nur das Firmenkonto hatte, braucht dann ein
+  Passwort (*Passwort zurücksetzen*).
+
 ## Umzug nach Kontext
 
 Unter *Einstellungen → Firma → Umzug* holt der Chef die Daten eines Mitarbeiters aus dem alten

@@ -17,6 +17,7 @@ import { CompanyGate } from "./gate";
 import { OffboardingDialog } from "./offboarding-dialog";
 import { useCompanyChange } from "./queries";
 import { SearchIndexNotice } from "./search-index-notice";
+import { managedBy, useSso } from "./sso-api";
 import { VacationDialog } from "./vacation-dialog";
 
 export const EmployeesSection = () => (
@@ -28,6 +29,8 @@ const Employees = ({ company }: { company: Company }) => {
   const [next, setNext] = useState<{ id: string; dialog: EmployeeSubDialog } | null>(null);
   const employee = company.employees.find((e) => e.id === open);
   const other = company.employees.find((e) => e.id === next?.id);
+  // With Stalwart Enterprise: who the identity provider manages over SCIM.
+  const ssoDomains = useSso()?.domains ?? [];
 
   return (
     <>
@@ -53,6 +56,9 @@ const Employees = ({ company }: { company: Company }) => {
                   {person.id === company.selfId ? <Badge>{m.company_badge_you()}</Badge> : null}
                   {person.admin ? <Badge>{m.company_badge_admin()}</Badge> : null}
                   {person.twoFactor ? <Badge>{m.company_badge_code()}</Badge> : null}
+                  {managedBy(person.email, ssoDomains).scim ? (
+                    <Badge>{m.company_badge_scim()}</Badge>
+                  ) : null}
                   {person.active ? null : <Badge tone="danger">{m.company_badge_inactive()}</Badge>}
                 </span>
                 <span className="truncate text-[13px] text-muted">

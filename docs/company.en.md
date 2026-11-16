@@ -94,6 +94,36 @@ Stalwart's admin interface and without IT skills.
   server ([Installation → Backups](installation.md#5-backups)); otherwise it says “Control isn’t
   set up on the server”.
 
+## Sign-in with company account (SSO) { #sso }
+
+Only with [Stalwart Enterprise](installation.md#stalwart-enterprise); in the Community edition
+the entry is missing. Under *Settings → Company → Sign-in with company account (SSO)* the
+employees of a domain sign in with the company's account – Microsoft Entra ID, Google Workspace,
+Keycloak or another OpenID Connect provider – instead of a password for Kontext. The steps for
+Entra ID are in the [installation guide](installation.md#sso-entra-id).
+
+- **Provider:** issuer URL, client ID and secret of the app registered for Kontext at the provider
+  (with the redirect URL shown), the scopes, the audience of the tokens (`aud`, empty means the
+  client ID) and which claims carry address, name and groups. For providers whose access tokens
+  are no JWTs (Google), choose “Ask the provider (UserInfo)”. **Test connection** checks that the
+  provider answers and that Stalwart sends the sign-in for each domain to it.
+- **Domains:** per domain *Sign-in with company account* and *Accounts over SCIM*. With the
+  company account, Stalwart **no longer takes passwords** for the domain – not in mail programs
+  either; app passwords work there, which Stalwart still checks before the directory. Whoever
+  signs in for the first time gets their account by themselves, unless SCIM is on.
+- **Signing in:** enter the address on the sign-in page; if it belongs to such a domain, the
+  password field disappears and **Continue with company account** goes to the provider and back.
+- **Accounts over SCIM:** the provider creates the accounts itself, changes names and addresses
+  and locks those who leave. The card shows the **SCIM endpoint** (`https://<Kontext>/scim/v2`)
+  and creates the **token** for it, shown only once; a new one replaces the old. In the employee
+  list these accounts carry the mark **SCIM**; name, addresses and lock cannot be changed there,
+  because the next sync would set them back. Accounts with the company account have no “Reset
+  password”. Deleting over SCIM works only when the role `Kontext-Server` has the right
+  `sysAccountDestroy` (not by default): otherwise the provider locks, deleting happens in
+  Stalwart.
+- **Remove provider** releases the domains; whoever only had the company account then needs a
+  password (*Reset password*).
+
 ## Moving to Kontext { #umzug-nach-kontext }
 
 Under *Settings → Company → Migration* the boss fetches an employee's data from the old system; a

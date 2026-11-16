@@ -23,6 +23,7 @@ import { phishingReportRoutes, readPhishingReport } from "./phishing-report";
 import { searchIndexStatus } from "./search-index";
 import { checkDomain, httpsCheck } from "./security";
 import { signatureRoutes } from "./signature-routes";
+import { ssoRoutes } from "./sso-routes";
 import { readVacationTemplates, vacationTemplateRoutes } from "./vacation-templates";
 
 export type { CompanyDeps };
@@ -148,6 +149,7 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
     app.route("/encryption-gateway", encryptionGatewayRoutes(deps.encryptionGateway));
   }
   if (deps.backup) app.route("/backup", backupRoutes(deps.backup));
+  if (deps.sso) app.route("/sso", ssoRoutes(deps.sso, deps.edition));
   app.route("/migrations", migrationRoutes(deps.migrations));
   app.route("/syncs", syncRoutes(deps.syncs));
   return app;

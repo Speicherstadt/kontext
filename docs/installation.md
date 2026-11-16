@@ -403,7 +403,10 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
    `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` und `impersonate`. Mit `sysIndexQueueStatusGet` zeigt die
+   `sysActionCreate`, `actionReloadSettings`, `sysDirectoryGet`, `sysDirectoryCreate`,
+   `sysDirectoryUpdate`, `sysDirectoryDestroy`, `sysDomainUpdate`, `scimAccess` und
+   `impersonate`. Die `sysDirectory…`-Rechte, `sysDomainUpdate` und `scimAccess` braucht nur die
+   [Anmeldung über Firmenkonto](#sso-entra-id) mit Stalwart Enterprise. Mit `sysIndexQueueStatusGet` zeigt die
    Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Mit den `sysEncryption…`- und
    `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln durch
    Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
@@ -504,6 +507,58 @@ Kontext merkt es innerhalb von zehn Minuten; die Firmenverwaltung zeigt unter *M
 Zahl von Postfächern, gemeinsame Postfächer zählen mit; darüber lehnt Stalwart neue Konten ab, und
 die Firmenverwaltung zeigt Stalwarts Meldung. Läuft die Lizenz aus, arbeitet Stalwart als
 Community weiter, ohne Datenverlust.
+
+Was Kontext mit der Lizenz zusätzlich anbietet:
+
+- **Anmeldung über Firmenkonto (SSO) und SCIM** ([Firmenverwaltung](company.md#sso), Einrichtung
+  mit Entra ID im nächsten Abschnitt).
+
+#### Anmeldung über Firmenkonto mit Microsoft Entra ID { #sso-entra-id }
+
+Stalwart prüft die Zugriffstokens des Anbieters selbst (ein OIDC-Verzeichnis, das Kontext anlegt);
+Kontext holt sie als App des Anbieters ab und hält sie wie Stalwarts eigene Tokens auf dem Server
+([Architektur](architecture.md#anmeldung-uber-firmenkonto)). Google Workspace und Keycloak gehen
+genauso, mit ihren Namen für dieselben Werte.
+
+1. Den [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal ausführen: Er gibt der Rolle
+   `Kontext-Server` die Rechte `sysDirectoryGet`, `sysDirectoryCreate`, `sysDirectoryUpdate`,
+   `sysDirectoryDestroy`, `sysDomainUpdate` und `scimAccess`.
+2. Im [Microsoft Entra Admin Center](https://entra.microsoft.com) unter *App-Registrierungen →
+   Neue Registrierung* eine App „Kontext“ anlegen (nur dieses Verzeichnis), Umleitungs-URI vom Typ
+   *Web*: `https://kontext.firma.de/api/auth/sso/callback` (Kontext zeigt sie unter *Anbieter*).
+3. *Zertifikate & Geheimnisse → Neuer geheimer Clientschlüssel*; den **Wert** notieren.
+4. *Eine API verfügbar machen*: die Anwendungs-ID-URI festlegen (`api://<Client-ID>`) und einen
+   Scope `kontext` hinzufügen (Administratoren und Benutzer). Im *Manifest* unter `api`
+   `"requestedAccessTokenVersion": 2` setzen: Erst dann stellt Entra Tokens mit dem Aussteller
+   `https://login.microsoftonline.com/<Mandanten-ID>/v2.0` und der Client-ID als `aud` aus, die
+   Stalwart annimmt.
+5. *API-Berechtigungen*: für Microsoft Graph `openid`, `email`, `profile` und `offline_access`
+   (delegiert) und die Administratorzustimmung erteilen.
+6. In Kontext unter *Einstellungen → Firma → Anmeldung über Firmenkonto (SSO)*:
+   Aussteller-URL `https://login.microsoftonline.com/<Mandanten-ID>/v2.0`, Client-ID, Secret,
+   Scopes `openid email profile offline_access api://<Client-ID>/kontext`; Zielgruppe leer
+   (= Client-ID), Anspruch mit der E-Mail-Adresse `preferred_username` (der
+   Benutzerprinzipalname muss die Mailadresse sein, sonst `email`), Prüfung *Signierte Tokens*.
+   Speichern, unter *Domains* die Domain ankreuzen, speichern, **Verbindung testen**.
+7. Stalwart muss `login.microsoftonline.com` über HTTPS erreichen (Schlüssel und Discovery des
+   Anbieters).
+
+Für **SCIM** zusätzlich:
+
+1. In Kontext bei der Domain *Konten über SCIM* ankreuzen, unter *Konten über SCIM* **Token
+   erzeugen** und kopieren.
+2. In Entra unter *Unternehmensanwendungen → Kontext → Bereitstellung* den Modus *Automatisch*,
+   Mandanten-URL `https://kontext.firma.de/scim/v2` und das Token als geheimes Token eintragen,
+   *Verbindung testen*, Benutzer oder Gruppen zuweisen und die Bereitstellung starten. Als
+   `userName` geht der Benutzerprinzipalname zu Stalwart, er muss eine Adresse der Domain sein.
+
+Caddy leitet `/scim/v2` an Stalwart weiter (`deploy/Caddyfile`, ab dieser Version). Was nicht
+geht: Stalwarts eigene Anmeldeseite vermittelt nicht zum Anbieter, darum macht Kontext den Weg
+selbst; in einer Domain mit Firmenkonto nimmt Stalwart keine Passwörter mehr an, Mailprogramme
+(IMAP, SMTP, CalDAV) melden sich mit App-Passwörtern oder per OAuth (OAUTHBEARER) mit einem Token
+des Anbieters an. Was in Kontext nach dem Passwort fragt (App-Passwörter für Aufgaben, Schlüssel
+für Agenten, Passwort ändern), geht für diese Konten nicht. Löschen über SCIM braucht das Recht
+`sysAccountDestroy` für die Rolle `Kontext-Server`, das der Einrichtungsbefehl nicht vergibt.
 
 ## 4. Platte verschlüsseln
 
