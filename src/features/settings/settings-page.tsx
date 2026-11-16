@@ -27,6 +27,7 @@ import {
   Scale,
   ShieldCheck,
   Signature,
+  Stamp,
   TextQuote,
   Timer,
   Truck,
@@ -38,7 +39,9 @@ import { TabBar } from "@/components/shell/app-shell";
 import { AgentsSection } from "@/features/agents/agents-section";
 import { AssistantSection } from "@/features/company/assistant-section";
 import { BackupSection } from "@/features/company/backup-section";
+import { BrandingSection } from "@/features/company/branding-section";
 import { ChatSection } from "@/features/company/chat-section";
+import { useStalwartEdition } from "@/features/company/edition";
 import { EmployeesSection } from "@/features/company/employees-section";
 import { EncryptionGatewaySection } from "@/features/company/encryption-gateway-section";
 import { ExternalHintSection } from "@/features/company/external-hint-section";
@@ -121,6 +124,7 @@ const COMPANY: Entry[] = [
   { id: "company-external", label: m.company_external, icon: Globe },
   { id: "company-smime", label: m.company_smime, icon: BadgeCheck },
   { id: "company-backup", label: m.company_backup, icon: DatabaseBackup },
+  { id: "company-branding", label: m.company_branding, icon: Stamp },
   { id: "phone", label: m.phone_settings, icon: Phone },
   { id: "migration", label: m.company_migration, icon: Truck },
 ];
@@ -171,6 +175,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
   "company-external": () => <ExternalHintSection />,
   "company-smime": () => <SmimeAuthoritiesSection />,
   "company-backup": () => <BackupSection />,
+  "company-branding": () => <BrandingSection />,
   phone: () => <PhoneSettingsSection />,
   migration: () => <MigrationSection />,
 };
@@ -206,7 +211,11 @@ export const SettingsPage = ({ section }: { section: Section | undefined }) => {
   const own = external === null ? OWN.filter((entry) => entry.id !== "accounts") : OWN;
   // Telephony needs LiveKit on the server; without it the section has nothing to set.
   const phone = usePhone().enabled;
-  const company = COMPANY.filter((entry) => entry.id !== "phone" || phone);
+  // Logo and templates are used by Stalwart Enterprise only.
+  const enterprise = useStalwartEdition() === "enterprise";
+  const company = COMPANY.filter(
+    (entry) => (entry.id !== "phone" || phone) && (entry.id !== "company-branding" || enterprise),
+  );
   const title = [...OWN, ...COMPANY].find((s) => s.id === current)!.label();
   return (
     <>

@@ -37,6 +37,21 @@ export const GATEWAY_RIGHTS = [
   "actionReloadSettings",
 ] as const;
 
+/**
+ * Firmenlogo und Vorlagen (company/branding.ts, Stalwart Enterprise): the logo in x:Enterprise,
+ * the calendar mail templates in x:CalendarAlarm and x:CalendarScheduling, and the caches Stalwart
+ * keeps its logos in. The objects exist in Community too, so the rights can always be granted.
+ */
+export const BRANDING_RIGHTS = [
+  "sysEnterpriseGet",
+  "sysEnterpriseUpdate",
+  "sysCalendarAlarmGet",
+  "sysCalendarAlarmUpdate",
+  "sysCalendarSchedulingGet",
+  "sysCalendarSchedulingUpdate",
+  "actionInvalidateCaches",
+] as const;
+
 /** The rights the Kontext server's key needs beside those of User (docs/installation.md). */
 export const KONTEXT_SERVER_RIGHTS = [
   "sysAccountGet",
@@ -49,6 +64,7 @@ export const KONTEXT_SERVER_RIGHTS = [
   "sysAuthenticationGet",
   "sysIndexQueueStatusGet",
   ...GATEWAY_RIGHTS,
+  ...BRANDING_RIGHTS,
   "impersonate",
 ] as const;
 

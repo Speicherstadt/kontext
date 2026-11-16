@@ -62,6 +62,8 @@ export type CompanyDeps = {
   backup?: BackupControl;
   /** Stalwart Community or Enterprise (edition.ts); Enterprise-only parts ask it. */
   edition?: import("./edition").EditionCheck;
+  /** Firmenlogo und Vorlagen in Stalwart, Enterprise only (branding.ts). */
+  branding?: import("./branding").Branding;
 };
 
 export type Loaded = {

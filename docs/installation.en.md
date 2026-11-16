@@ -407,7 +407,13 @@ in Stalwart's admin interface it goes like this:
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
    `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` and `impersonate`. With `sysIndexQueueStatusGet` the
+   `sysActionCreate`, `actionReloadSettings`, `sysEnterpriseGet`, `sysEnterpriseUpdate`,
+   `sysCalendarAlarmGet`, `sysCalendarAlarmUpdate`, `sysCalendarSchedulingGet`,
+   `sysCalendarSchedulingUpdate`, `actionInvalidateCaches` and `impersonate`. With the
+   `sysEnterprise…`, `sysCalendarAlarm…` and `sysCalendarScheduling…` permissions and
+   `actionInvalidateCaches` it sets, with Stalwart Enterprise, the
+   [company logo and the templates](company.md#mitarbeiter-und-postfacher) of Stalwart's calendar
+   mails. With `sysIndexQueueStatusGet` the
    company admin shows while Stalwart is building the search index. With the `sysEncryption…` and
    `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
@@ -506,6 +512,13 @@ Kontext notices within ten minutes; the company admin shows "Enterprise (license
 mailboxes, shared mailboxes included; beyond it Stalwart refuses new accounts, and the company
 admin shows Stalwart's message. When the license lapses, Stalwart carries on as Community, without
 losing data.
+
+What Kontext then offers in addition (on an existing installation only after the
+[setup command](#einrichtungsbefehl) has run once more, which gives the role `Kontext-Server` the
+permissions for it):
+
+- **Logo and templates** in the company admin: the company logo and templates of your own for
+  Stalwart's calendar mails ([company admin](company.md#mitarbeiter-und-postfacher)).
 
 ## 4. Encrypting the disk { #4-platte-verschlusseln }
 

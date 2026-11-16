@@ -10,6 +10,7 @@ import { syncRoutes } from "../migration/sync-routes";
 import { authorityRoutes } from "../smime/authorities";
 import { assistantRoutes } from "./assistant";
 import { backupRoutes } from "./backup-routes";
+import { brandingRoutes } from "./branding";
 import { bad, bodyOf, type CompanyDeps, createLoader, type Env } from "./context";
 import { readEdition } from "./edition";
 import { employeeRoutes } from "./employees";
@@ -148,6 +149,7 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
     app.route("/encryption-gateway", encryptionGatewayRoutes(deps.encryptionGateway));
   }
   if (deps.backup) app.route("/backup", backupRoutes(deps.backup));
+  if (deps.branding) app.route("/branding", brandingRoutes(deps.branding, deps));
   app.route("/migrations", migrationRoutes(deps.migrations));
   app.route("/syncs", syncRoutes(deps.syncs));
   return app;

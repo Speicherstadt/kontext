@@ -403,7 +403,13 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
    `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` und `impersonate`. Mit `sysIndexQueueStatusGet` zeigt die
+   `sysActionCreate`, `actionReloadSettings`, `sysEnterpriseGet`, `sysEnterpriseUpdate`,
+   `sysCalendarAlarmGet`, `sysCalendarAlarmUpdate`, `sysCalendarSchedulingGet`,
+   `sysCalendarSchedulingUpdate`, `actionInvalidateCaches` und `impersonate`. Mit den
+   `sysEnterprise…`-, `sysCalendarAlarm…`- und `sysCalendarScheduling…`-Rechten und
+   `actionInvalidateCaches` setzt sie mit Stalwart Enterprise das
+   [Firmenlogo und die Vorlagen](company.md#mitarbeiter-und-postfacher) von Stalwarts
+   Kalender-Mails. Mit `sysIndexQueueStatusGet` zeigt die
    Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Mit den `sysEncryption…`- und
    `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln durch
    Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
@@ -504,6 +510,13 @@ Kontext merkt es innerhalb von zehn Minuten; die Firmenverwaltung zeigt unter *M
 Zahl von Postfächern, gemeinsame Postfächer zählen mit; darüber lehnt Stalwart neue Konten ab, und
 die Firmenverwaltung zeigt Stalwarts Meldung. Läuft die Lizenz aus, arbeitet Stalwart als
 Community weiter, ohne Datenverlust.
+
+Was Kontext dann zusätzlich anbietet (bei einer bestehenden Installation erst, nachdem der
+[Einrichtungsbefehl](#einrichtungsbefehl) noch einmal gelaufen ist, der der Rolle
+`Kontext-Server` die Rechte dafür gibt):
+
+- **Logo und Vorlagen** in der Firmenverwaltung: das Firmenlogo und eigene Vorlagen für Stalwarts
+  Kalender-Mails ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)).
 
 ## 4. Platte verschlüsseln
 
