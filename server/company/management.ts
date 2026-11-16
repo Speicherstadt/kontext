@@ -139,6 +139,15 @@ export const createManagement = (request: StalwartRequest) => {
   };
 
   /**
+   * Deletes one account. Without an Enterprise retention (deleted-accounts.ts) Stalwart removes
+   * it and its data for good right after (schedule_account_destruction, principal.rs).
+   */
+  const destroyAccount = async (id: string): Promise<Result<null>> => {
+    const error = firstError(await call<SetResult>("x:Account/set", { destroy: [id] }));
+    return error ? { ok: false, error } : { ok: true, value: null };
+  };
+
+  /**
    * What waits for the search index (search-index.ts); null when the key may not read it
    * (`sysIndexQueueStatusGet`, docs/installation.md) or Stalwart is older than 1.0.
    */
@@ -147,7 +156,15 @@ export const createManagement = (request: StalwartRequest) => {
       .then((result) => result.list ?? [])
       .catch(() => null);
 
-  return { listAccounts, listDomains, loadRoles, createAccount, updateAccounts, indexQueue };
+  return {
+    listAccounts,
+    listDomains,
+    loadRoles,
+    createAccount,
+    updateAccounts,
+    destroyAccount,
+    indexQueue,
+  };
 };
 
 export type Management = ReturnType<typeof createManagement>;

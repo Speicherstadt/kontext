@@ -409,7 +409,8 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysCalendarSchedulingUpdate`, `actionInvalidateCaches`, `sysArchivedItemGet`,
    `sysArchivedItemQuery`, `sysArchivedItemUpdate`, `sysArchivedItemDestroy`,
    `sysDataRetentionGet`, `sysDataRetentionUpdate`, `sysAiModelGet`, `sysAiModelCreate`,
-   `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate` und `impersonate`. Mit
+   `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate`, `sysAccountDestroy`,
+   `sysTaskGet`, `sysTaskQuery`, `sysTaskDestroy`, `taskDestroyAccount` und `impersonate`. Mit
    `sysIndexQueueStatusGet` zeigt die Firmenverwaltung, solange Stalwart den Suchindex aufbaut.
    Mit den `sysEncryption…`- und `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln
    durch Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
@@ -421,7 +422,9 @@ von Hand in Stalwarts Verwaltung geht es so:
    [Firmenlogo und die Vorlagen](company.md#mitarbeiter-und-postfacher) von Stalwarts
    Kalender-Mails; die `sysArchivedItem…`- und `sysDataRetention…`-Rechte für das
    Wiederherstellen gelöschter Elemente; die `sysAiModel…`- und `sysSpamAi…`-Rechte für den
-   [KI-Spamfilter](#ki-spamfilter). Mit `impersonate` arbeitet der Server in den Postfächern
+   [KI-Spamfilter](#ki-spamfilter); `sysAccountDestroy` mit den `sysTask…`-Rechten und
+   `taskDestroyAccount`, um Mitarbeiter zu löschen und [gelöschte Konten](company.md#geloschte-konten)
+   wiederherzustellen. Mit `impersonate` arbeitet der Server in den Postfächern
    der Mitarbeiter (Abwesenheit, Leserechte für gemeinsame Postfächer) und trägt Antworten auf
    Einladungen ein; die App zeigt dem Chef dabei nie fremde Mails.
 2. Ein **Konto** `kontext-server@firma.de` mit dieser Rolle (statt *User*) und einem langen
@@ -539,6 +542,8 @@ der [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal gelaufen ist, der der 
   Stalwarts *DataRetention*; zu Beginn nichts). Jede Person holt eigene Mails und die ihrer
   gemeinsamen Postfächer unter *Einstellungen → Gelöschte Elemente* zurück, die Firmenverwaltung
   die jedes Mitarbeiters ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)).
+- **Gelöschte Konten:** Mitarbeiter löschen, die eine Zeit lang wiederherstellbar bleiben
+  ([Gelöschte Konten](company.md#geloschte-konten)).
 - **Logo und Vorlagen** in der Firmenverwaltung: das Firmenlogo und eigene Vorlagen für Stalwarts
   Kalender-Mails ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)).
 - **Serverzustand** und **KI-Spamfilter**, siehe die beiden folgenden Abschnitte.

@@ -29,6 +29,7 @@ import { createArchive } from "./company/archive";
 import { createBackupControl } from "./company/backup";
 import { createBranding } from "./company/branding";
 import { createCalendars } from "./company/calendars";
+import { createDeletedAccounts } from "./company/deleted-accounts";
 import { createEditionCheck } from "./company/edition";
 import { createEncryptionGateway } from "./company/encryption-gateway";
 import { createExternalHintStore } from "./company/external-hint";
@@ -432,6 +433,7 @@ export const createApp = async (env: Env) => {
       serverHealth: createServerHealth(request),
       branding: createBranding(request),
       archive: createArchive(request),
+      deletedAccounts: createDeletedAccounts(request),
     });
     app.route("/api/company", company);
   }

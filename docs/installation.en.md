@@ -413,7 +413,8 @@ in Stalwart's admin interface it goes like this:
    `sysCalendarSchedulingUpdate`, `actionInvalidateCaches`, `sysArchivedItemGet`,
    `sysArchivedItemQuery`, `sysArchivedItemUpdate`, `sysArchivedItemDestroy`,
    `sysDataRetentionGet`, `sysDataRetentionUpdate`, `sysAiModelGet`, `sysAiModelCreate`,
-   `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate` and `impersonate`. With
+   `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate`, `sysAccountDestroy`,
+   `sysTaskGet`, `sysTaskQuery`, `sysTaskDestroy`, `taskDestroyAccount` and `impersonate`. With
    `sysIndexQueueStatusGet` the company admin shows while Stalwart is building the search index.
    With the `sysEncryption…` and `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
@@ -424,7 +425,9 @@ in Stalwart's admin interface it goes like this:
    `actionInvalidateCaches` for the [company logo and the
    templates](company.md#mitarbeiter-und-postfacher) of Stalwart's calendar mails; the
    `sysArchivedItem…` and `sysDataRetention…` permissions for restoring deleted items; the
-   `sysAiModel…` and `sysSpamAi…` permissions for the [AI spam filter](#ki-spamfilter). With
+   `sysAiModel…` and `sysSpamAi…` permissions for the [AI spam filter](#ki-spamfilter);
+   `sysAccountDestroy` with the `sysTask…` permissions and `taskDestroyAccount` for deleting
+   employees and restoring [deleted accounts](company.md#geloschte-konten). With
    `impersonate` the server works in the employees' mailboxes (out of office, read access to shared
    mailboxes) and enters replies to invitations; the app never shows the boss anyone else's mail in
    doing so.
@@ -541,6 +544,8 @@ permissions for it):
   nothing at first). Everyone brings back their own mails and those of their shared mailboxes
   under *Settings → Deleted items*, the company admin those of every employee
   ([company admin](company.md#mitarbeiter-und-postfacher)).
+- **Deleted accounts:** deleting employees, who stay restorable for a while
+  ([Deleted accounts](company.md#geloschte-konten)).
 - **Logo and templates** in the company admin: the company logo and templates of your own for
   Stalwart's calendar mails ([company admin](company.md#mitarbeiter-und-postfacher)).
 - **Server health** and the **AI spam filter**, see the next two sections.

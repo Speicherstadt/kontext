@@ -92,6 +92,20 @@ export const SPAM_AI_RIGHTS = [
   "sysSpamAiUpdate",
 ] as const;
 
+/**
+ * Deleting people, and with Stalwart Enterprise listing and recovering deleted accounts
+ * (company/deleted-accounts.ts; Permission::as_str in crates/registry/src/schema/enums_impl.rs,
+ * Task::permission in crates/registry/src/utils/task.rs). How long Stalwart keeps them is set with
+ * the sysDataRetention… rights of ARCHIVE_RIGHTS.
+ */
+export const DELETED_ACCOUNT_RIGHTS = [
+  "sysAccountDestroy",
+  "sysTaskGet",
+  "sysTaskQuery",
+  "sysTaskDestroy",
+  "taskDestroyAccount",
+] as const;
+
 /** The rights the Kontext server's key needs beside those of User (docs/installation.md). */
 export const KONTEXT_SERVER_RIGHTS = [
   "sysAccountGet",
@@ -108,6 +122,7 @@ export const KONTEXT_SERVER_RIGHTS = [
   ...BRANDING_RIGHTS,
   ...ARCHIVE_RIGHTS,
   ...SPAM_AI_RIGHTS,
+  ...DELETED_ACCOUNT_RIGHTS,
   "impersonate",
 ] as const;
 

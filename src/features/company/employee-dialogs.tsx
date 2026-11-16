@@ -16,6 +16,7 @@ import {
   resetTwoFactor,
   updateEmployee,
 } from "./api";
+import { useStalwartEdition } from "./edition";
 import {
   AddressInput,
   AliasesField,
@@ -27,7 +28,7 @@ import {
 import { useCompanyChange } from "./queries";
 
 /** What the person's dialog opens in its place. */
-export type EmployeeSubDialog = "vacation" | "rules" | "offboarding" | "deleted";
+export type EmployeeSubDialog = "vacation" | "rules" | "offboarding" | "deleted" | "delete";
 
 const mailboxOptions = (company: Company) =>
   company.mailboxes.map((mailbox) => ({
@@ -151,11 +152,14 @@ export const EmployeeDialog = ({
   company: Company;
   employee: Employee;
   onClose: () => void;
-  /** Opens the out-of-office reply, the rules or the leaving instead of this dialog. */
+  /** Opens the out-of-office reply, the rules, the leaving or deleting instead of this dialog. */
   onOpen: (dialog: EmployeeSubDialog) => void;
 }) => {
   const toast = useToast();
   const self = employee.id === company.selfId;
+  // Deleting is offered with Stalwart Enterprise only, where it can be undone (deleted-accounts.ts).
+  const enterprise = useStalwartEdition() === "enterprise";
+  const deletable = !self && enterprise;
   const [fullName, setFullName] = useState(employee.fullName);
   const [aliases, setAliases] = useState(employee.aliases);
   const [mailboxIds, setMailboxIds] = useState(employee.mailboxIds);
@@ -288,6 +292,11 @@ export const EmployeeDialog = ({
               {m.company_activate()}
             </Button>
           )}
+          {deletable ? (
+            <Button variant="danger" disabled={busy} onClick={() => onOpen("delete")}>
+              {m.company_delete()}
+            </Button>
+          ) : null}
         </div>
       </section>
     </Dialog>

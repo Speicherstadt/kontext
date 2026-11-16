@@ -53,6 +53,11 @@ Stalwart's admin interface and without IT skills.
   anything there.
 - **Leaving:** block access, hand the mailbox over to a colleague, forward new mail and reply
   automatically – nothing is deleted.
+- **Delete account** on the person's entry, with Stalwart Enterprise only: the dialog says for how
+  many days it can still be restored ([Deleted accounts](#geloschte-konten)), or, while no
+  retention is set, that it is gone for good with all mail, calendars, contacts and files. With
+  Stalwart Community there is no deleting, only leaving: so nothing there is lost by one click.
+  One's own account cannot be deleted.
 - **Availability in the calendar**, switched on for everyone.
 - **Team chat:** retention period; **telephony:** Fritzbox, who is rung, voicemail, opening hours
   ([Telephony](telephony.md)).
@@ -129,6 +134,24 @@ Stalwart's admin interface and without IT skills.
   inbox) or delete for good. The Kontext server needs the rights `sysArchivedItem…` and
   `sysDataRetention…` for it, which the [setup command](installation.md#einrichtungsbefehl)
   grants. With the Community edition neither is there.
+
+### Deleted accounts { #geloschte-konten }
+
+Only with Stalwart Enterprise ([installation](installation.md#stalwart-enterprise)); with
+Community the section is missing. With a license Stalwart keeps a deleted account for a while,
+with its mail, calendars and files, and only then deletes it for good. *Employees → Deleted
+accounts* has:
+
+- **Keep for (days):** how long Stalwart keeps deleted accounts (in Stalwart
+  `archiveDeletedAccountsFor` under *Data Retention*). At first 0: even with a license Stalwart
+  then deletes for good at once. A new time applies to accounts deleted after it.
+- **the accounts still there**, with address, when deleted and when gone for good – also those
+  deleted in Stalwart's interface, if they belong to the company's domains, and shared mailboxes.
+- **Restore:** the account is back, with its mail, calendars, contacts and files. Stalwart creates
+  it again with only name and domain; Kontext gives a person a new password (shown once) and
+  their shared mailboxes back, as far as they still exist. The name, further addresses, the
+  right for the company admin and a blocked access are entered again afterwards; folders the
+  person had shared are shared again.
 
 ## Moving to Kontext { #umzug-nach-kontext }
 

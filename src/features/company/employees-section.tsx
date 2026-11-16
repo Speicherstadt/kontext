@@ -11,6 +11,8 @@ import { m } from "@/paraglide/messages";
 import { useCompanyRules } from "../rules/queries";
 import { RulesList } from "../rules/rules-section";
 import { type Company, type Employee, showAvailabilityToAll } from "./api";
+import { DeleteEmployeeDialog } from "./delete-employee-dialog";
+import { DeletedAccountsSection } from "./deleted-accounts-section";
 import { EditionCard } from "./edition-card";
 import { EmployeeDialog, type EmployeeSubDialog, NewEmployeeDialog } from "./employee-dialogs";
 import { Badge } from "./fields";
@@ -98,6 +100,10 @@ const Employees = ({ company }: { company: Company }) => {
           onClose={() => setNext(null)}
         />
       ) : null}
+      {other && next?.dialog === "delete" ? (
+        <DeleteEmployeeDialog employee={other} onClose={() => setNext(null)} />
+      ) : null}
+      <DeletedAccountsSection />
       <EditionCard />
     </>
   );

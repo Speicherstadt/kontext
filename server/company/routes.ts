@@ -13,6 +13,7 @@ import { assistantRoutes } from "./assistant";
 import { backupRoutes } from "./backup-routes";
 import { brandingRoutes } from "./branding";
 import { bad, bodyOf, type CompanyDeps, createLoader, type Env } from "./context";
+import { deletedAccountRoutes } from "./deleted-accounts";
 import { readEdition } from "./edition";
 import { employeeRoutes } from "./employees";
 import { encryptionGatewayRoutes } from "./encryption-gateway";
@@ -171,6 +172,18 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
     );
   }
   if (deps.branding) app.route("/branding", brandingRoutes(deps.branding, deps));
+  if (deps.deletedAccounts) {
+    app.route(
+      "/deleted-accounts",
+      deletedAccountRoutes({
+        deleted: deps.deletedAccounts,
+        edition: deps.edition,
+        updateAccounts: deps.management.updateAccounts,
+        random: deps.random,
+        mailboxChanged: deps.mailboxChanged,
+      }),
+    );
+  }
   app.route("/migrations", migrationRoutes(deps.migrations));
   app.route("/syncs", syncRoutes(deps.syncs));
   return app;

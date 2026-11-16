@@ -447,6 +447,8 @@ chmod 600 /root/.stalwart-kontext-server
   "sysAccountUpdate":true,"sysRoleGet":true,"sysRoleCreate":true,"sysDomainGet":true,
   "sysAuthenticationGet":true,"sysIndexQueueStatusGet":true,"sysMetricGet":true,"sysMetricQuery":true,
   "sysTraceGet":true,"sysTraceQuery":true,"sysMetricsStoreGet":true,"sysTracingStoreGet":true,
+  "sysAccountDestroy":true,"sysTaskGet":true,"sysTaskQuery":true,"sysTaskDestroy":true,
+  "taskDestroyAccount":true,"sysDataRetentionGet":true,"sysDataRetentionUpdate":true,
   "impersonate":true}}}},"0"]]'
 /root/stalwart-api.sh '[["x:Account/set",{"create":{"a":{"@type":"User","name":"kontext-server",
   "domainId":"<domain-id>","roles":{"@type":"Custom","roleIds":{"<rollen-id>":true}},

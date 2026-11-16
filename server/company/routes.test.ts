@@ -22,6 +22,7 @@ const account = (id: string, name: string, admin = false): StalwartAccount => ({
 const fakeManagement = ({ annaInInfo = false } = {}) => {
   const updates: Record<string, Record<string, unknown>>[] = [];
   const created: Record<string, unknown>[] = [];
+  const destroyed: string[] = [];
   const management: Management = {
     listAccounts: async () => [
       account("1", "chef", true),
@@ -36,6 +37,10 @@ const fakeManagement = ({ annaInInfo = false } = {}) => {
     },
     updateAccounts: async (patches) => {
       updates.push(patches);
+      return { ok: true, value: null };
+    },
+    destroyAccount: async (id) => {
+      destroyed.push(id);
       return { ok: true, value: null };
     },
     indexQueue: async () => [
@@ -78,7 +83,7 @@ const fakeManagement = ({ annaInInfo = false } = {}) => {
       return { ok: true, value: null };
     },
   };
-  return { management, mailstore, updates, created, shared, rules, back };
+  return { management, mailstore, updates, created, destroyed, shared, rules, back };
 };
 
 const LICENSE = { used: 12, limit: 25, validTo: "2027-12-31T00:00:00.000Z", domain: "firma.de" };
@@ -322,6 +327,21 @@ describe("Firmenverwaltung", () => {
       expect((await leave(member.send)).status).toBe(200);
       expect(member.changedMailboxes).toEqual(["g"]);
     }
+  });
+
+  it("deletes a person, never the own account", async () => {
+    const { send, destroyed, ended } = setup("chef@firma.de", { annaInInfo: true });
+    expect((await send("DELETE", "/employees/1")).status).toBe(400);
+    expect((await send("DELETE", "/employees/g")).status).toBe(404);
+    expect((await send("DELETE", "/employees/2")).status).toBe(200);
+    expect(destroyed).toEqual(["2"]);
+    expect(ended).toEqual(["anna@firma.de"]);
+  });
+
+  it("deletes nobody in Community, where leaving is the way out", async () => {
+    const { send, destroyed } = setup("chef@firma.de", { community: true });
+    expect((await send("DELETE", "/employees/2")).status).toBe(403);
+    expect(destroyed).toEqual([]);
   });
 
   it("ends the offboarding when a person is unlocked again", async () => {

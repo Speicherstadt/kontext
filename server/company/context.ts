@@ -72,6 +72,8 @@ export type CompanyDeps = {
   archive?: import("./archive").Archive;
   /** KI-Spamfilter: Stalwart Enterprise's AiModel and SpamAi (spam-ai.ts). */
   spamAi?: import("./spam-ai").SpamAi;
+  /** Gelöschte Konten wiederherstellen, with Stalwart Enterprise (deleted-accounts.ts). */
+  deletedAccounts?: import("./deleted-accounts").DeletedAccounts;
 };
 
 export type Loaded = {
