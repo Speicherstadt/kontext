@@ -329,6 +329,65 @@ mit einem eigenen API-Schlüssel an und erlaubt nur, was die Firmenverwaltung br
   `GET /api/company/edition`, die Firmenverwaltung zeigt sie unter *Mitarbeiter*. Kontext braucht
   Enterprise für nichts; was nur Stalwart Enterprise kann, bietet die App erst an, wenn die
   Lizenz aktiv ist (`useStalwartEdition`, `src/features/company/edition.ts`).
+- **Maskierte Adressen** (nur Enterprise) sind Stalwarts `x:MaskedEmail`
+  (`crates/registry/src/schema/structs.rs`). Die App fragt Stalwart direkt mit dem Token der
+  Sitzung, nicht mit dem Schlüssel des Servers: die Rolle *User* hat `sysMaskedEmail*`
+  (`crates/common/src/auth/permissions.rs`), und Kontexts Scope `full` enthält sie
+  (`SETTINGS` in `crates/common/src/auth/oauth/scope.rs`); Stalwart sieht so nur die Adressen des
+  eigenen Kontos. Die Adresse macht Stalwart: Anfang (zufällig oder `emailPrefix`), Punkt, eine
+  geprüfte Kennung, `@` und die Domain des Kontos
+  (`crates/jmap/src/registry/mapping/masked_email.rs`, `crates/common/src/enterprise/masked.rs`).
+  Zugestellt wird, solange `enable` an und `expiresAt` nicht vorbei ist, sonst lehnt Stalwart den
+  Empfänger ab (`crates/common/src/network/mta.rs`). `expiresAt` steht ab dem Anlegen fest. Ohne
+  Lizenz antwortet Stalwart `forbidden` (`crates/jmap/src/registry/mod.rs`); die App zeigt den
+  Punkt dann nicht (`src/jmap/masked-email.ts`, `src/features/settings/masked-email-section.tsx`).
+- **Lizenz:** Mit Enterprise zeigt die Firmenverwaltung die Nutzung der Lizenz
+  (`GET /api/company/license`, nur für die Firmenverwaltung, ohne Lizenz `{ license: null }`;
+  `server/company/license.ts`). Eine Route mit den Lizenzdaten hat Stalwart nicht. Belegt zählt
+  der Server wie Stalwarts `can_create_account` (`crates/common/src/enterprise/mod.rs`): jedes
+  Konto, also Mitarbeiter, gemeinsame Postfächer (Gruppen) und das Konto des Kontext-Servers, per
+  `x:Account/query` mit `calculateTotal`. Grenze, Ende und Domain stehen nur im Schlüssel selbst
+  (`LicenseKey`, `crates/common/src/enterprise/license.rs`); `x:Enterprise/get` gibt ihn nur mit
+  `sysEnterpriseGet` und eingeschaltetem `includeSecrets` heraus, sonst als „****“. Dann zeigt die
+  Firmenverwaltung nur die belegten Postfächer.
+- **Serverzustand** (Enterprise): `GET /api/company/server-health?period=day|week`
+  (`server/company/server-health-routes.ts`) antwortet 403, solange die Ausgabe nicht Enterprise
+  ist; Stalwart lehnt `x:Metric` und `x:Trace` ohne Lizenz ohnehin ab
+  (`crates/jmap/src/registry/mod.rs`). Sonst liest der Server mit seinem Schlüssel die Kennzahlen
+  seit Beginn des Zeitraums (`x:Metric/query` nach `timestamp` und Namen, dann `x:Metric/get` in
+  Teilen zu 500). Stalwart schreibt sie in jedem Sammelintervall (stündlich): Zähler als Zuwachs
+  seit dem letzten Mal, Messwerte wie `queue.count` als Stand
+  (`crates/common/src/telemetry/metrics/store.rs`). `server/company/server-health.ts` summiert
+  `message-ingest.ham`, `message-ingest.spam`, `queue.authenticated-message-queued` und
+  `queue.dsn-queued` je Stunde (24) oder Berliner Tag (7), dazu `auth.failed` und
+  `security.authentication-ban`. Die Zustellprobleme kommen aus den Spuren der letzten 200
+  Zustellversuche (`x:Trace` mit `event` `delivery.attempt-start`): `delivery-problems.ts` nimmt
+  daraus je Empfänger das letzte Wort – `delivery.failed`, `delivery.dsn-perm-fail`,
+  `delivery.rcpt-to-rejected` (ab Code 500 endgültig) und Verwandte – mit `details` oder `reason`
+  und `hostname`. Ob Stalwart überhaupt aufzeichnet, sagen `x:MetricsStore` und `x:TracingStore`
+  (`Disabled` ist Stalwarts Vorgabe). Rechte: `sysMetricGet`, `sysMetricQuery`, `sysTraceGet`,
+  `sysTraceQuery`, `sysMetricsStoreGet`, `sysTracingStoreGet`. Der Speicher ist die Summe von
+  `usedDiskQuota` der Mitarbeiter und gemeinsamen Postfächer. Benachrichtigungen per Mail
+  (Stalwarts `x:Alert`) richtet Kontext nicht ein: Stalwart prüft sie alle fünf Minuten und
+  schickt bei erfüllter Bedingung jedes Mal eine Mail (`crates/common/src/enterprise/alerts.rs`).
+- **Gelöschte Elemente** (nur Enterprise): Stalwart hebt endgültig Gelöschtes als
+  `x:ArchivedItem` auf (Varianten Email, FileNode, CalendarEvent, ContactCard, SieveScript;
+  `crates/registry/src/schema/structs.rs`), so lange wie `archiveDeletedItemsFor` des Singletons
+  `x:DataRetention` sagt (Millisekunden, ohne Wert nichts; `crates/common/src/enterprise/config.rs`).
+  In 1.1 legt Stalwart nur Mails ab (`crates/services/src/index_queue/index.rs`) und stellt nur
+  Mails wieder her, in den Posteingang (`crates/services/src/task_manager/tasks/restore_item.rs`).
+  Wiederherstellen ist `x:ArchivedItem/set` mit `status: "requestRestore"`: Stalwart nimmt den
+  Eintrag heraus und plant den Task; `destroy` löscht endgültig
+  (`crates/jmap/src/registry/mapping/archived_item.rs`). Die OAuth-Scopes der Benutzer enthalten
+  `sysArchivedItem…` nicht, darum fragt der Server mit seinem Schlüssel
+  (`server/company/archive.ts`; Filter `accountId` mit `impersonate`) und entscheidet selbst, wessen
+  Elemente jemand sieht (`server/company/archive-routes.ts`): das eigene Konto und die gemeinsamen
+  Postfächer, in denen man Mitglied ist; die Firmenverwaltung jedes Mitarbeiters und Postfachs.
+  Vor dem Wiederherstellen oder Löschen liest er die Elemente und prüft, dass alle zum Konto im
+  Pfad gehören. `GET /api/company/archive` (Konten, Aufbewahrung), `GET|POST
+  /api/company/archive/accounts/:id[/restore|/destroy]`, `PUT /api/company/archive/retention`
+  (nur Firmenverwaltung; danach `ReloadSettings`). In Community antworten die Routen 404, und die
+  App fragt sie nicht an (`src/features/deleted-items/`).
 - **Gemeinsame Postfächer** sind Gruppen; Mitglied ist, wer die Gruppe in `memberGroupIds` hat.
   „Nur lesen“ bekommt, wem alle Ordner des Postfachs per `shareWith` geteilt sind
   (`mayReadItems`, `maySetSeen`); die App liest das am Posteingang ab.
@@ -2232,6 +2291,58 @@ ORGANIZER und das eigene ATTENDEE mit PARTSTAT, RFC 5546 §3.2.3), Betreff wie b
 („Angenommen: …“). Die Kopie liegt in „Gesendet“. Hat der Organisator `RSVP=FALSE` gesetzt, geht
 keine Antwort hinaus. So gilt es auch für Termine, die Stalwart selbst eingetragen hat: Es schickt
 dann nicht noch eine zweite Antwort.
+
+## Logo und Vorlagen
+
+Nur mit Stalwart Enterprise (`server/company/branding.ts`, in der Firmenverwaltung
+`src/features/company/branding-section.tsx`; ohne Lizenz fehlt der Eintrag, und die Routen unter
+`/api/company/branding` antworten 403). Stalwart verschickt selbst die Erinnerung per Mail und
+seine Mails zu Einladungen (CalDAV, Antworten aus dem Kalender, siehe [Einladungen](#einladungen)).
+Beide tragen ein Logo (als `cid:`-Bild in der Mail) und folgen einer HTML-Vorlage; eigene gibt es
+nur mit Enterprise (`template_calendar_alarm`, `template_scheduling_email` und `logo` in
+`crates/common/src/enterprise/mod.rs` von stalwartlabs/stalwart v1.1.0). Kontext hält davon
+nichts selbst, alles liegt in Stalwart:
+
+| Was                       | Objekt                  | Eigenschaft     |
+| ------------------------- | ----------------------- | --------------- |
+| Firmenlogo                | `x:Enterprise`          | `logo`          |
+| Erinnerung per Mail       | `x:CalendarAlarm`       | `template`      |
+| Mails zu Einladungen      | `x:CalendarScheduling`  | `emailTemplate` |
+
+Null heißt Stalwarts eigenes. Stalwart liest die Werte beim Laden der Einstellungen
+(`crates/common/src/enterprise/config.rs`); nach jeder Änderung schickt der Server darum
+`ReloadSettings`, beim Logo auch `InvalidateCaches` (Stalwart hält Logos je Domain im Speicher,
+`crates/common/src/cache/invalidate.rs`). Dafür braucht die Rolle `Kontext-Server` die Rechte
+`sysEnterprise…`, `sysCalendarAlarm…`, `sysCalendarScheduling…` und `actionInvalidateCaches`
+([Installation](installation.md#firmenverwaltung-einschalten)); fehlen sie, sagt die Firmenverwaltung,
+den Einrichtungsbefehl erneut auszuführen. Vom Objekt `x:Enterprise` liest Kontext nur `logo`,
+nie Lizenz- oder API-Schlüssel.
+
+- **Logo** (`src/lib/company-logo.ts`): Stalwart nimmt eine `data:`-URI, Base64 oder eine
+  http(s)-Adresse, höchstens 1 MB, PNG, JPEG, GIF, WebP, ICO oder SVG (`LogoSource::parse`,
+  `sniff_media_type` in `crates/common/src/enterprise/logo.rs`). Kontext lädt die Datei als
+  `data:`-URI hoch und prüft sie vorher wie Stalwart, den Typ am Inhalt; Stalwart selbst merkt ein
+  falsches Logo erst beim Versand und nimmt dann sein eigenes. Eine Domain mit eigenem Logo
+  (`x:Domain`, `logo`) behält ihres.
+- **Vorlagen** (`src/lib/calendar-template.ts`): Stalwarts Syntax – `{{name}}` (HTML-maskiert),
+  `{{!name}}`, `{{#if name}}…{{/if name}}`, `{{#each name}}…{{/each name}}` mit den 21 Namen von
+  `CalendarTemplateVariable` (`crates/common/src/config/groupware.rs`) –, gelesen und ausgefüllt
+  wie in `crates/utils/src/template.rs`, mit dessen Fehlermeldungen. Stalwart prüft eine Vorlage
+  beim Speichern nicht; eine kaputte meldet es erst beim Laden („Invalid template“) und bleibt bei
+  seiner eingebauten. Darum nimmt der Server nur Vorlagen an, die so lesbar sind. Die Vorschau
+  füllt die Vorlage mit einem Beispieltermin und den Werten, die Stalwart einsetzt (`alarm.rs`,
+  `imip.rs` in `crates/services/src/task_manager/tasks/`), mit Stalwarts deutschen oder englischen
+  Texten (`resources/locales/i18n.yml`), in einem `<iframe sandbox>` ohne Skripte.
+- **Kontexts Vorlage** (`src/lib/calendar-template-defaults.ts`): dieselben Teile wie Stalwarts
+  eingebaute (`resources/html-templates/calendar-alarm.html`, `calendar-invite.html`), im
+  Kontext-Look und hell wie dunkel. Die Texte setzt Stalwart in der Sprache des Kontos ein
+  (Kontext legt Konten mit `de-DE` an); fest in der Vorlage steht nur der Hinweis unter der
+  Erinnerung, auf Deutsch oder Englisch, weil Stalwarts eigener auf ein „Self-Service-Portal“
+  verweist, das es bei Kontext nicht gibt.
+
+Stalwarts Antwortseite (`x:CalendarScheduling`, `httpRsvpTemplate`, Enterprise) bietet Kontext
+nicht an: Sie bleibt aus (`httpRsvpEnable`), weil Kontext Einladungen mit seiner eigenen Seite
+beantwortet; eine eigene Fassung käme nie zur Anzeige.
 
 ## Anmeldung
 

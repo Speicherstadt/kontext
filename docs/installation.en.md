@@ -405,19 +405,29 @@ in Stalwart's admin interface it goes like this:
 1. Create a **role** `Kontext-Server`: it inherits the role *User*
    and additionally gets the permissions `sysAccountGet`, `sysAccountQuery`, `sysAccountCreate`,
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
-   `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
+   `sysIndexQueueStatusGet`, `sysMetricGet`, `sysMetricQuery`, `sysTraceGet`, `sysTraceQuery`,
+   `sysMetricsStoreGet`, `sysTracingStoreGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings`, `sysAiModelGet`, `sysAiModelCreate`,
-   `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate` and `impersonate`.
-   With `sysIndexQueueStatusGet` the
-   company admin shows while Stalwart is building the search index. With the `sysEncryption…` and
-   `sysExternalPublicKey…` permissions it switches [encryption by
+   `sysActionCreate`, `actionReloadSettings`, `sysEnterpriseGet`, `sysEnterpriseUpdate`,
+   `sysCalendarAlarmGet`, `sysCalendarAlarmUpdate`, `sysCalendarSchedulingGet`,
+   `sysCalendarSchedulingUpdate`, `actionInvalidateCaches`, `sysArchivedItemGet`,
+   `sysArchivedItemQuery`, `sysArchivedItemUpdate`, `sysArchivedItemDestroy`,
+   `sysDataRetentionGet`, `sysDataRetentionUpdate`, `sysAiModelGet`, `sysAiModelCreate`,
+   `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate` and `impersonate`. With
+   `sysIndexQueueStatusGet` the company admin shows while Stalwart is building the search index.
+   With the `sysEncryption…` and `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
    `sysActionCreate` with `actionReloadSettings` lets it have Stalwart reload its settings
-   afterwards. With the `sysAiModel…` and `sysSpamAi…` permissions it sets up the
-   [AI spam filter](#ki-spamfilter) (only with an Enterprise license). With `impersonate` the server works in the employees' mailboxes
-   (out of office, read access to shared mailboxes) and enters replies to invitations;
-   the app never shows the boss anyone else's mail in doing so.
+   afterwards. Needed only with [Stalwart Enterprise](#stalwart-enterprise): the `sysMetric…`,
+   `sysTrace…` and `…StoreGet` permissions, which only read what [server health](#serverzustand)
+   shows; the `sysEnterprise…`, `sysCalendarAlarm…` and `sysCalendarScheduling…` permissions with
+   `actionInvalidateCaches` for the [company logo and the
+   templates](company.md#mitarbeiter-und-postfacher) of Stalwart's calendar mails; the
+   `sysArchivedItem…` and `sysDataRetention…` permissions for restoring deleted items; the
+   `sysAiModel…` and `sysSpamAi…` permissions for the [AI spam filter](#ki-spamfilter). With
+   `impersonate` the server works in the employees' mailboxes (out of office, read access to shared
+   mailboxes) and enters replies to invitations; the app never shows the boss anyone else's mail in
+   doing so.
 2. Create an **account** `kontext-server@firma.de` with this role (instead of *User*) and a long
    random password.
 3. With this account, generate an **API key** (*Credentials → API Key*, permissions
@@ -496,7 +506,7 @@ in the privacy notice, with Anthropic's data processing agreement.
 
 Kontext runs fully on Stalwart's free Community edition; an Enterprise license is not needed.
 Whoever wants Stalwart's Enterprise features all the same (restoring deleted items on the server,
-the AI spam filter, SCIM, for example) buys the license from Stalwart Labs
+the AI spam filter, SCIM, masked addresses, for example) buys the license from Stalwart Labs
 ([pricing](https://stalw.art/pricing/), 30 days to try) and enters it in Stalwart, not in Kontext:
 it is the same image, only the key unlocks it.
 
@@ -505,10 +515,60 @@ it is the same image, only the key unlocks it.
    "Stalwart Enterprise Edition license key is valid".
 
 Kontext notices within ten minutes; the company admin shows "Enterprise (license active)" under
-*Employees*. The key is valid for the domain of the server's host name and for a number of
-mailboxes, shared mailboxes included; beyond it Stalwart refuses new accounts, and the company
-admin shows Stalwart's message. When the license lapses, Stalwart carries on as Community, without
-losing data.
+*Employees* and below it how many mailboxes are in use. The key is valid for the domain of the
+server's host name and for a number of mailboxes; Stalwart counts every account, so shared
+mailboxes and the Kontext server's own account too. Beyond it Stalwart refuses new accounts, and
+the company admin shows Stalwart's message. When the license lapses, Stalwart carries on as
+Community, without losing data; with an `apiKey` under *Settings → Enterprise* Stalwart renews it
+by itself beforehand.
+
+The license's limit, term and domain ("12 of 25 mailboxes in use", "Valid until …", with a warning
+from 90 % or 30 days before the end) Kontext reads from the key. Stalwart gives it out only when
+`includeSecrets` is on in the system settings (the setup command gives the role `Kontext-Server`
+the permission `sysEnterpriseGet`). This is optional: `includeSecrets` also shows the other secrets (relay passwords, keys)
+to everyone with read rights in Stalwart's management. Without it, the company admin shows only
+the mailboxes in use.
+
+What Kontext offers in addition with Enterprise (on an existing installation only after the
+[setup command](#einrichtungsbefehl) has run once more, which gives the role `Kontext-Server` the
+permissions for it):
+
+- **Masked addresses:** everyone creates addresses of their own per website or shop under
+  *Settings → Masked addresses*, switches them off or deletes them
+  ([Mail](mail.md#maskierte-adressen)).
+- **Restoring deleted items:** Stalwart keeps what was deleted for good for as many days as the
+  company admin sets under *Backup* (`archiveDeletedItemsFor` in Stalwart's *DataRetention*;
+  nothing at first). Everyone brings back their own mails and those of their shared mailboxes
+  under *Settings → Deleted items*, the company admin those of every employee
+  ([company admin](company.md#mitarbeiter-und-postfacher)).
+- **Logo and templates** in the company admin: the company logo and templates of your own for
+  Stalwart's calendar mails ([company admin](company.md#mitarbeiter-und-postfacher)).
+- **Server health** and the **AI spam filter**, see the next two sections.
+
+#### Server health { #serverzustand }
+
+With Enterprise, the company admin gets *Server health*: mails received, sent, spam and
+undeliverable, failed sign-ins, the queue and storage, and why mails to outside did not arrive
+([Company admin](company.md#mitarbeiter-und-postfacher)). It reads what Stalwart records itself;
+Stalwart records nothing until it is switched on:
+
+1. In Stalwart, set the **metrics store** (`MetricsStore`) and the **tracing store**
+   (`TracingStore`) to *Default* – both are *Disabled* to begin with. Without a web interface it
+   is one call ([VPS, step 10](vps.md#10-stalwart-ohne-oberflache-einrichten)):
+
+   ```bash
+   /root/stalwart-api.sh '[["x:MetricsStore/set",{"update":{"singleton":{"@type":"Default"}}},"0"],
+     ["x:TracingStore/set",{"update":{"singleton":{"@type":"Default"}}},"1"]]'
+   ```
+
+2. **Restart** Stalwart: it opens both stores only at start.
+3. Run the [setup command](#einrichtungsbefehl) again: it gives the role `Kontext-Server` the
+   read permissions for metrics and traces if it lacks them (or add them by hand as in step 1
+   under [Turning on the company admin](#firmenverwaltung-einschalten)).
+
+Stalwart writes the numbers every hour and keeps them for 90 days, the traces for 30 days
+(`metricsCollectionInterval`, `holdMetricsFor`, `holdTracesFor` under *Data retention*). Until
+the first hour has passed the page says so; if a permission is missing, it says that too.
 
 #### AI spam filter { #ki-spamfilter }
 

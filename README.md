@@ -111,7 +111,7 @@ Calls and documents (Schreibzeug, no install of its own needed) are switched on 
 
 | | |
 |---|---|
-| ✉️ **Mail** | **Shared mailboxes** like info@ with rights per person, **assign mails** with “Assigned to me” and “Open”, **a deputy in one step**, **categories** and **rules on the server**, search like Gmail (also inside PDF and Office attachments), send later and snooze, **other mailboxes** (Gmail, GMX), **warnings about forged senders**, the **AI spam filter's verdict** (with Stalwart Enterprise) · [more →](https://kontext.email/en/mail.html) |
+| ✉️ **Mail** | **Shared mailboxes** like info@ with rights per person, **assign mails** with “Assigned to me” and “Open”, **a deputy in one step**, **categories** and **rules on the server**, search like Gmail (also inside PDF and Office attachments), send later and snooze, **other mailboxes** (Gmail, GMX), **warnings about forged senders**, with Stalwart Enterprise **masked addresses** per website or shop, **restoring mails deleted for good** and the **AI spam filter's verdict** · [more →](https://kontext.email/en/mail.html) |
 | 📅 **Calendar** | Day, week, work week, month and recurring events, working hours shaded, **invitations answered with one click** (also from Outlook and Google), **who is free?**, a **video meeting per event**, shared calendars (shown or hidden on every device) and **subscriptions** (iCal), public holidays and the contacts' birthdays · [more →](https://kontext.email/en/calendar-contacts.html) |
 | 👥 **Contacts** | **The customer at a glance**: latest mails, next appointments, open tasks and calls; groups, vCard and CSV import, merging duplicates, several contacts at once (delete, add to a group, move to another address book, export) · [more →](https://kontext.email/en/calendar-contacts.html#kontakte) |
 | ✅ **Tasks** | **List or Kanban board** per mailbox and per project, **from a mail, a chat message, an appointment or a missed call**, reminders, in Thunderbird and on the phone via CalDAV · [more →](https://kontext.email/en/tasks.html) |
@@ -120,7 +120,7 @@ Calls and documents (Schreibzeug, no install of its own needed) are switched on 
 | 🔐 **Encryption** | **OpenPGP** and **S/MIME**, **send confidentially to anyone** through a link to your own server, **automatic encryption when sending** to recipients with a known key, mails stored encrypted on the server, **storage encrypted and compressed by the server**, encrypted backups · [more →](https://kontext.email/en/encryption.html) |
 | 📄 **Documents** | **Word, Excel, PowerPoint and PDF** in Kontext with [Schreibzeug](https://github.com/firsttris/schreibzeug), a folder per shared mailbox · [more →](https://kontext.email/en/documents.html) |
 | 🤖 **AI agents (MCP)** | Claude and other agents look up customers, mails and appointments with your rights, **write drafts** and **invite colleagues to appointments** – nothing goes outside the company, no deleting, every change logged; or simply ask the **assistant in the chat** (with a Claude API key) · [more →](https://kontext.email/en/agents.html) |
-| 🏢 **Company admin** | **People, shared mailboxes and rights** without IT skills, **mail rules for each employee**, company signature with each person's phone and position, **legal footer under every mail**, sign-out after inactivity for shared computers, **offboarding without deleting**, backups at a glance, **moving in from Microsoft 365, Gmail and Outlook** · [more →](https://kontext.email/en/company.html) |
+| 🏢 **Company admin** | **People, shared mailboxes and rights** without IT skills, **mail rules for each employee**, company signature with each person's phone and position, **legal footer under every mail**, sign-out after inactivity for shared computers, **offboarding without deleting**, backups at a glance, **moving in from Microsoft 365, Gmail and Outlook**, with Stalwart Enterprise server health (mail traffic, delivery problems), the company logo and your own templates for Stalwart's calendar mails · [more →](https://kontext.email/en/company.html) |
 | 📱 **On every device** | **An app on desktop, Android and iPhone** without an app store, **a short tour on the first start**, push notifications with **badges in the tab bar that show which app has news**, light and dark, two-factor sign-in, **sign-in with a passkey** (fingerprint or face, no password), **one overview of who has access** (sign out other devices), **built for keyboard and screen reader**, checked automatically against WCAG 2.2 AA on every push ([accessibility](https://kontext.email/en/accessibility.html)) · [more →](https://kontext.email/en/app.html) |
 | ♿ **Accessibility** | **Everything by keyboard** with a skip link and visible focus, contrast in light and dark, **reduced motion** · [more →](https://kontext.email/en/accessibility.html) |
 
@@ -190,7 +190,9 @@ sets it up and keeps it updated.
 <summary><b>Stalwart Community or Enterprise?</b></summary>
 
 Both. Kontext runs fully on Stalwart's free Community edition, so there is no license to buy. If
-you have a Stalwart Enterprise license, Kontext detects it and shows it in the company admin area;
+you have a Stalwart Enterprise license, Kontext detects it and shows it in the company admin area,
+with the mailboxes in use (such as "12 of 25") and a warning shortly before the limit or the end
+of the license, and offers what it adds, such as restoring mails deleted for good;
 see [Stalwart Enterprise](https://kontext.email/en/installation.html#stalwart-enterprise).
 </details>
 

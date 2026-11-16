@@ -62,6 +62,14 @@ export type CompanyDeps = {
   backup?: BackupControl;
   /** Stalwart Community or Enterprise (edition.ts); Enterprise-only parts ask it. */
   edition?: import("./edition").EditionCheck;
+  /** Used and licensed accounts of Stalwart Enterprise (license.ts). */
+  license?: import("./license").LicenseCheck;
+  /** Serverzustand from Stalwart Enterprise's metrics and traces (server-health-routes.ts). */
+  serverHealth?: import("./server-health-routes").ServerHealth;
+  /** Firmenlogo und Vorlagen in Stalwart, Enterprise only (branding.ts). */
+  branding?: import("./branding").Branding;
+  /** Gelöschte Elemente wiederherstellen, Stalwart Enterprise (archive.ts). */
+  archive?: import("./archive").Archive;
   /** KI-Spamfilter: Stalwart Enterprise's AiModel and SpamAi (spam-ai.ts). */
   spamAi?: import("./spam-ai").SpamAi;
 };

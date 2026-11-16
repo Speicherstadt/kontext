@@ -8,6 +8,7 @@ import { mailboxNotice } from "@/lib/mail-accounts";
 import { mailboxName, mailboxRights } from "@/lib/mailboxes";
 import { m } from "@/paraglide/messages";
 import type { MailSearch } from "@/routes/_app/mail.$accountId.$mailboxId";
+import { TrashActions } from "../deleted-items/trash-actions";
 import { usePersonalAccountId } from "../settings/queries";
 import { RESURFACED, useSnoozes } from "../snooze/queries";
 import { EmlImportButton, useEmlImport } from "./eml-import";
@@ -113,7 +114,9 @@ export const MessageList = ({ accountId, mailbox, search }: Props) => {
       onDropFiles={onDropFiles}
       sortable={!scheduled && !isSnoozed}
       folderAction={
-        canEmpty(mailbox) ? <EmptyFolder accountId={accountId} mailbox={mailbox} /> : undefined
+        <TrashActions accountId={accountId} mailbox={mailbox}>
+          {canEmpty(mailbox) ? <EmptyFolder accountId={accountId} mailbox={mailbox} /> : null}
+        </TrashActions>
       }
       filters={
         shared && !isSent ? (

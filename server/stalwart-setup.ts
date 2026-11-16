@@ -38,6 +38,47 @@ export const GATEWAY_RIGHTS = [
 ] as const;
 
 /**
+ * Serverzustand (company/server-health-routes.ts): Stalwart Enterprise's metrics and traces, and
+ * whether it records them. Read only; without a license Stalwart refuses the objects anyway.
+ */
+export const TELEMETRY_RIGHTS = [
+  "sysMetricGet",
+  "sysMetricQuery",
+  "sysTraceGet",
+  "sysTraceQuery",
+  "sysMetricsStoreGet",
+  "sysTracingStoreGet",
+] as const;
+
+/**
+ * Firmenlogo und Vorlagen (company/branding.ts, Stalwart Enterprise): the logo in x:Enterprise,
+ * the calendar mail templates in x:CalendarAlarm and x:CalendarScheduling, and the caches Stalwart
+ * keeps its logos in. The objects exist in Community too, so the rights can always be granted.
+ */
+export const BRANDING_RIGHTS = [
+  "sysEnterpriseGet",
+  "sysEnterpriseUpdate",
+  "sysCalendarAlarmGet",
+  "sysCalendarAlarmUpdate",
+  "sysCalendarSchedulingGet",
+  "sysCalendarSchedulingUpdate",
+  "actionInvalidateCaches",
+] as const;
+
+/**
+ * Gelöschte Elemente wiederherstellen (company/archive.ts), used only with Stalwart Enterprise.
+ * Optional like the gateway rights: an admin role that lacks them may not grant them.
+ */
+export const ARCHIVE_RIGHTS = [
+  "sysArchivedItemGet",
+  "sysArchivedItemQuery",
+  "sysArchivedItemUpdate",
+  "sysArchivedItemDestroy",
+  "sysDataRetentionGet",
+  "sysDataRetentionUpdate",
+] as const;
+
+/**
  * KI-Spamfilter (company/spam-ai.ts): Kontext's AiModel and the SpamAi settings, applied with
  * ReloadSettings (GATEWAY_RIGHTS). Admin roles have them since Stalwart 1.0.0, which brought the
  * AI models (CHANGELOG.md); Stalwart uses them only with an Enterprise license.
@@ -62,14 +103,19 @@ export const KONTEXT_SERVER_RIGHTS = [
   "sysDomainGet",
   "sysAuthenticationGet",
   "sysIndexQueueStatusGet",
+  ...TELEMETRY_RIGHTS,
   ...GATEWAY_RIGHTS,
+  ...BRANDING_RIGHTS,
+  ...ARCHIVE_RIGHTS,
   ...SPAM_AI_RIGHTS,
   "impersonate",
 ] as const;
 
-const withoutGatewayRights: readonly string[] = KONTEXT_SERVER_RIGHTS.filter(
-  (right) => !(GATEWAY_RIGHTS as readonly string[]).includes(right),
-);
+const without = (rights: readonly string[], left: readonly string[]): readonly string[] =>
+  rights.filter((right) => !left.includes(right));
+
+const withoutArchiveRights = without(KONTEXT_SERVER_RIGHTS, ARCHIVE_RIGHTS);
+const withoutOptionalRights = without(withoutArchiveRights, GATEWAY_RIGHTS);
 
 /** What the admin reads when its role may not grant the gateway rights. */
 export const GATEWAY_RIGHTS_HINT =
@@ -77,6 +123,12 @@ export const GATEWAY_RIGHTS_HINT =
   "einer Version vor 1.0.2 aktualisiert); ohne sie kann Kontext nicht beim Versand verschlüsseln. " +
   "Der Admin-Rolle die Rechte geben, wie es Stalwarts Changelog zu 1.0.2 beschreibt " +
   "(https://github.com/stalwartlabs/stalwart/blob/main/CHANGELOG.md), dann den Befehl erneut ausführen.";
+
+/** What the admin reads when its role may not grant the rights for deleted items. */
+export const ARCHIVE_RIGHTS_HINT =
+  "Hinweis: Stalwarts Admin-Rolle fehlen die Rechte für gelöschte Elemente (sysArchivedItem…, " +
+  "sysDataRetention…); ohne sie kann Kontext mit Stalwart Enterprise Gelöschtes nicht " +
+  "wiederherstellen. Der Admin-Rolle die Rechte geben, dann den Befehl erneut ausführen.";
 
 /**
  * What the passkeys in the settings need (x:Passkey, src/jmap/passkeys.ts). A new server's User
@@ -400,15 +452,16 @@ export const ensureRole = async (
     "0",
   ]);
   const userRoleIds = Object.keys(auth?.defaultUserRoleIds ?? {});
-  const applied = await applyRole(request, rolePlan(roles, userRoleIds));
-  const outcome =
-    !applied.result.ok && isGrantRefusal(applied.result.error)
-      ? await applyRole(
-          request,
-          rolePlan(roles, userRoleIds, withoutGatewayRights),
-          GATEWAY_RIGHTS_HINT,
-        )
-      : applied;
+  // All rights first; on a refusal of rights the admin lacks, without the optional ones.
+  const fallbacks: [readonly string[], string][] = [
+    [withoutArchiveRights, ARCHIVE_RIGHTS_HINT],
+    [withoutOptionalRights, `${GATEWAY_RIGHTS_HINT}\n${ARCHIVE_RIGHTS_HINT}`],
+  ];
+  let outcome = await applyRole(request, rolePlan(roles, userRoleIds));
+  for (const [wanted, hint] of fallbacks) {
+    if (outcome.result.ok || !isGrantRefusal(outcome.result.error)) break;
+    outcome = await applyRole(request, rolePlan(roles, userRoleIds, wanted), hint);
+  }
   const { result, message } = outcome;
   if (!result.ok) return fail(`Rolle „${ROLE_NAME}“: ${result.error}`);
   const id = result.value.created?.role?.id ?? roles.find((r) => r.description === ROLE_NAME)?.id;
