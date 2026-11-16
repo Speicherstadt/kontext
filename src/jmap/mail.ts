@@ -76,6 +76,8 @@ const BODY_PROPERTIES = [
 export const CHECK_HEADERS = {
   authenticationResults: AUTHENTICATION_RESULTS,
   spamScore: "header:X-Spam-Score:asText:all",
+  /** The AI spam filter's verdict (Stalwart Enterprise, src/lib/spam-ai.ts). */
+  spamAi: "header:X-Spam-AI:asText:all",
   /** Its type, raw (Stalwart names raw headers without ":asRaw"): an encrypted or signed mail. */
   contentType: "header:Content-Type",
   /** The sender's public key, if they send it along (src/lib/pgp.ts). */

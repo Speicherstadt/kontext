@@ -1,6 +1,7 @@
 /**
  * The sender check in the reading pane: a warning above the mail when something is off, and the
- * details to unfold (who sent it to whom, what the mail server found, spam score, sizes).
+ * details to unfold (who sent it to whom, what the mail server found, spam score and the AI spam
+ * filter's verdict, sizes).
  * The rules are in src/lib/sender-check.ts.
  */
 import { Check, Minus, ShieldAlert, X } from "lucide-react";
@@ -18,8 +19,10 @@ import {
   type SenderWarning,
   senderWarnings,
 } from "@/lib/sender-check";
+import { parseSpamAi } from "@/lib/spam-ai";
 import { m } from "@/paraglide/messages";
 import { useMailAccounts } from "./queries";
+import { spamAiDetails } from "./spam-ai-note";
 
 /** The domains of the own company: those of the user's mailboxes. */
 const useOwnDomains = (): string[] => {
@@ -108,6 +111,7 @@ const addresses = (list: EmailDetail["to"]) => list?.map(fullAddress).join(", ")
 const CheckSummary = ({ email }: { email: EmailDetail }) => {
   const check = parseSenderCheck(email.authenticationResults);
   const spam = parseSpamScore(email.spamScore?.[0]);
+  const ai = parseSpamAi(email.spamAi?.[0]);
   const domain = domainOf(email.from?.[0]?.email) ?? "";
   if (!check) return <p className="m-0 text-[13px] text-muted">{m.mail_check_internal()}</p>;
   const failed = check.dmarc?.result === "fail" || check.spf?.result === "fail";
@@ -130,12 +134,22 @@ const CheckSummary = ({ email }: { email: EmailDetail }) => {
           result ? <ResultChip key={label} label={label} result={result} /> : null,
         )}
       </ul>
-      {spam ? (
-        <dl className="m-0">
-          <Field label={m.mail_details_spam()}>
-            {spam.isSpam ? m.mail_spam_yes() : m.mail_spam_no()} ·{" "}
-            {spam.score.toLocaleString(LOCALE)}
-          </Field>
+      {spam || ai ? (
+        <dl className="m-0 flex flex-col gap-1.5">
+          {spam ? (
+            <Field label={m.mail_details_spam()}>
+              {spam.isSpam ? m.mail_spam_yes() : m.mail_spam_no()} ·{" "}
+              {spam.score.toLocaleString(LOCALE)}
+            </Field>
+          ) : null}
+          {ai ? (
+            <Field label={m.mail_spam_ai_details()}>
+              {spamAiDetails(ai)}
+              {ai.kind === "verdict" && ai.reason ? (
+                <span className="block text-[12px] text-muted">{ai.reason}</span>
+              ) : null}
+            </Field>
+          ) : null}
         </dl>
       ) : null}
     </>

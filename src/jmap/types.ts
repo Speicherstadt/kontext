@@ -80,6 +80,8 @@ export type EmailDetail = EmailSummary & {
   /** Headers the mail server adds on arrival, topmost first (src/lib/sender-check.ts). */
   authenticationResults: string[] | null;
   spamScore: string[] | null;
+  /** X-Spam-AI, the verdict of Stalwart's AI spam filter (Enterprise), topmost first. */
+  spamAi: string[] | null;
   /** The whole message as sent, to read an encrypted or signed one. */
   blobId: string;
   /** The raw Content-Type: multipart/encrypted or multipart/signed for PGP/MIME. */

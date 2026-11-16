@@ -252,6 +252,14 @@ untersten zurück (RFC 8621 §4.1.3), und alles unter Stalwarts Header kam mit d
 vom Absender gefälscht sein. Mails ohne diesen Header kamen nicht von außen (von Kollegen über
 den eigenen Server, oder aus einem Umzug); sie werden nicht bewertet.
 
+Mit Stalwart Enterprise und eingeschaltetem [KI-Spamfilter](installation.md#ki-spamfilter) steht
+dort auch `X-Spam-AI` mit dem Urteil des Sprachmodells (`phishing; p=0.93; confidence=0.88; …`,
+`crates/spam-filter/src/analysis/ai/verdict.rs`). Die App liest es ebenso von oben
+(`src/lib/spam-ai.ts`) und zeigt neben dem Absender nur Phishing, Schadsoftware, Spam, Werbung und
+„unsicher“ an. Ein vom Absender mitgeschickter Header gleichen Namens steht unter Stalwarts und
+zählt nicht; fehlt Stalwarts (das Modell wurde nicht gefragt), stünde er allein da – darum bekommt
+ein „unbedenklich“ nie einen Hinweis.
+
 Die Regeln stehen in `src/lib/sender-check.ts`:
 
 | Warnung                                           | Wann                                                                                                   |

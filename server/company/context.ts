@@ -62,6 +62,8 @@ export type CompanyDeps = {
   backup?: BackupControl;
   /** Stalwart Community or Enterprise (edition.ts); Enterprise-only parts ask it. */
   edition?: import("./edition").EditionCheck;
+  /** KI-Spamfilter: Stalwart Enterprise's AiModel and SpamAi (spam-ai.ts). */
+  spamAi?: import("./spam-ai").SpamAi;
 };
 
 export type Loaded = {

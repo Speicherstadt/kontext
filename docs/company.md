@@ -89,6 +89,13 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   deren Schlüssel kennt, und die Liste dieser Schlüssel – eingefügt, von Stalwart gesucht (Web Key
   Directory, keys.openpgp.org) oder aus empfangenen Mails gelernt; jeder lässt sich entfernen
   ([Verschlüsselung](encryption.md#verschlusseln-durch-stalwart)).
+- **KI-Spamfilter** unter *Einstellungen → Firma → Sicherheit der Mails* (nur mit Stalwart
+  Enterprise; mit Community steht dort nur ein Hinweis): Anbieter (Anthropic, OpenAI, Google
+  Gemini oder ein eigener Ollama-Server), Modell, API-Schlüssel – oder der des Assistenten im Chat
+  – und ob das Urteil in der Spam-Bewertung zählt oder nur beobachtet wird. Stalwart fragt das
+  Modell bei den Mails, bei denen sein Filter unsicher ist; das Urteil zeigt Kontext beim Lesen
+  ([Mail](mail.md#sicherheit)). Was dabei an den Anbieter geht, steht unter
+  [Installation → KI-Spamfilter](installation.md#ki-spamfilter).
 - **Datensicherung:** wohin gesichert wird, wie der letzte Lauf ausging, wie voll der Speicher
   ist, die Uhrzeit der nächtlichen Sicherung und „Jetzt sichern“, dazu das Protokoll. Dafür
   müssen auf dem Server die Units eingerichtet sein

@@ -403,12 +403,15 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
    `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` und `impersonate`. Mit `sysIndexQueueStatusGet` zeigt die
+   `sysActionCreate`, `actionReloadSettings`, `sysAiModelGet`, `sysAiModelCreate`,
+   `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate` und `impersonate`.
+   Mit `sysIndexQueueStatusGet` zeigt die
    Firmenverwaltung, solange Stalwart den Suchindex aufbaut. Mit den `sysEncryption…`- und
    `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln durch
    Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
    Empfänger; `sysActionCreate` mit `actionReloadSettings` lässt sie Stalwart danach die
-   Einstellungen neu laden. Mit `impersonate` arbeitet der Server in den Postfächern der Mitarbeiter
+   Einstellungen neu laden. Mit den `sysAiModel…`- und `sysSpamAi…`-Rechten richtet sie den
+   [KI-Spamfilter](#ki-spamfilter) ein (nur mit Enterprise-Lizenz). Mit `impersonate` arbeitet der Server in den Postfächern der Mitarbeiter
    (Abwesenheit, Leserechte für gemeinsame Postfächer) und trägt Antworten auf Einladungen ein;
    die App zeigt dem Chef dabei nie fremde Mails.
 2. Ein **Konto** `kontext-server@firma.de` mit dieser Rolle (statt *User*) und einem langen
@@ -504,6 +507,41 @@ Kontext merkt es innerhalb von zehn Minuten; die Firmenverwaltung zeigt unter *M
 Zahl von Postfächern, gemeinsame Postfächer zählen mit; darüber lehnt Stalwart neue Konten ab, und
 die Firmenverwaltung zeigt Stalwarts Meldung. Läuft die Lizenz aus, arbeitet Stalwart als
 Community weiter, ohne Datenverlust.
+
+#### KI-Spamfilter { #ki-spamfilter }
+
+Mit Enterprise-Lizenz fragt Stalwart bei den Mails, bei denen sein Spamfilter unsicher ist,
+zusätzlich ein Sprachmodell, was sie sind: persönliche oder geschäftliche Post, Bestätigung,
+Newsletter, unerwünschte Werbung, Massen-Spam, Phishing oder Schadsoftware. Einrichten in der
+Firmenverwaltung unter *Sicherheit der Mails → KI-Spamfilter*:
+
+- **Anbieter** Anthropic, OpenAI, Google Gemini oder ein eigener Ollama-Server, das **Modell**
+  (etwa `claude-haiku-5-5`) und der **API-Schlüssel**; bei Ollama statt des Schlüssels die
+  Adresse des Servers. Ist für den [Assistenten im Chat](#ki-agenten) schon ein Claude-Schlüssel
+  eingetragen, kann der Spamfilter ihn mitbenutzen (Haken „Schlüssel des Assistenten im Chat verwenden“);
+  beide Kosten laufen dann über denselben Schlüssel.
+- **Wirkung:** „Zählt in der Spam-Bewertung“ (das Urteil hebt oder senkt Stalwarts Spamwert) oder
+  „Nur beobachten“ (das Urteil steht nur in der Mail, die Bewertung bleibt, wie sie war) – gut zum
+  Ausprobieren.
+
+Kontext schreibt das in Stalwart (`AiModel` „Kontext-Spamfilter“ und `SpamAi`) und lädt Stalwarts
+Einstellungen neu; lehnt Stalwart etwas ab (falsche Adresse, Schlüssel), steht seine Meldung da.
+Der Schlüssel liegt danach in Stalwarts Datenbank (und in dessen Backup), nicht in Kontext; die
+Firmenverwaltung zeigt nur, dass einer gespeichert ist. „Entfernen“ schaltet den Filter aus und
+löscht Modell und Schlüssel aus Stalwart. Das Urteil schreibt Stalwart als Kopfzeile `X-Spam-AI`
+in die Mail; Kontext zeigt es beim Lesen ([Mail → Sicherheit](mail.md#sicherheit)). Welche Mails
+ans Modell gehen, bestimmt Stalwarts Vorgabe: nur die mit einem Spamwert im Grenzbereich, nicht
+die eindeutig guten oder eindeutig schlechten. Wer den Filter für einen Server ohne Lizenz
+einrichten will, bekommt „braucht Stalwart Enterprise“; ohne Lizenz würde Stalwart ihn nicht
+benutzen. Ein Server, der vor dieser Funktion eingerichtet wurde, braucht einmal den
+[Einrichtungsbefehl](#einrichtungsbefehl) für die Rechte `sysAiModel…` und `sysSpamAi…`.
+
+**Datenschutz:** Für jede dieser Mails schickt Stalwart Absender und Antwortadresse, Betreff, die
+Domains der Empfänger, die Ergebnisse von SPF, DKIM und DMARC, die Links mit ihren Zielen, die
+Namen der Anhänge und den Anfang des Textes (bis 6000 Zeichen) an den gewählten Anbieter – bei
+Anthropic, OpenAI und Google in die USA. Das gehört in die Datenschutzinformation, mit dem
+Auftragsverarbeitungsvertrag des Anbieters. Wer keine Mails nach außen geben will, nimmt einen
+eigenen Ollama-Server.
 
 ## 4. Platte verschlüsseln
 

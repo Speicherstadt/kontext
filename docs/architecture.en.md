@@ -249,6 +249,14 @@ JMAP would return the bottom one (RFC 8621 §4.1.3), and everything below Stalwa
 the mail and may be forged by the sender. Mails without this header did not come from outside (from
 colleagues over one's own server, or from a move); they are not rated.
 
+With Stalwart Enterprise and the [AI spam filter](installation.md#ki-spamfilter) switched on,
+`X-Spam-AI` with the language model's verdict is there too (`phishing; p=0.93; confidence=0.88; …`,
+`crates/spam-filter/src/analysis/ai/verdict.rs`). The app reads it from the top as well
+(`src/lib/spam-ai.ts`) and shows only phishing, malware, spam, unsolicited sales and "unsure" next
+to the sender. A header of the same name sent along by the sender sits below Stalwart's and does
+not count; if Stalwart's is missing (the model was not asked), it would stand alone – which is why
+"legitimate" never gets a hint.
+
 The rules are in `src/lib/sender-check.ts`:
 
 | Warning                                           | When                                                                                                   |

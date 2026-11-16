@@ -50,6 +50,7 @@ import { PhishingReportSection } from "@/features/company/phishing-report-sectio
 import { useIsCompanyAdmin } from "@/features/company/queries";
 import { SecuritySection as CompanySecuritySection } from "@/features/company/security-section";
 import { SmimeAuthoritiesSection } from "@/features/company/smime-authorities-section";
+import { SpamAiSection } from "@/features/company/spam-ai-section";
 import { VacationTemplatesSection } from "@/features/company/vacation-templates-section";
 import { ExternalSection } from "@/features/external/external-section";
 import { useExternalAccounts } from "@/features/external/queries";
@@ -165,6 +166,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
       <CompanySecuritySection />
       <EncryptionGatewaySection />
       <PhishingReportSection />
+      <SpamAiSection />
     </>
   ),
   "company-idle": () => <IdleLogoutSection />,

@@ -407,12 +407,15 @@ in Stalwart's admin interface it goes like this:
    `sysAccountUpdate`, `sysRoleGet`, `sysRoleCreate`, `sysDomainGet`, `sysAuthenticationGet`,
    `sysIndexQueueStatusGet`, `sysEncryptionGet`, `sysEncryptionUpdate`,
    `sysExternalPublicKeyGet`, `sysExternalPublicKeyCreate`, `sysExternalPublicKeyDestroy`,
-   `sysActionCreate`, `actionReloadSettings` and `impersonate`. With `sysIndexQueueStatusGet` the
+   `sysActionCreate`, `actionReloadSettings`, `sysAiModelGet`, `sysAiModelCreate`,
+   `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate` and `impersonate`.
+   With `sysIndexQueueStatusGet` the
    company admin shows while Stalwart is building the search index. With the `sysEncryption…` and
    `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
    `sysActionCreate` with `actionReloadSettings` lets it have Stalwart reload its settings
-   afterwards. With `impersonate` the server works in the employees' mailboxes
+   afterwards. With the `sysAiModel…` and `sysSpamAi…` permissions it sets up the
+   [AI spam filter](#ki-spamfilter) (only with an Enterprise license). With `impersonate` the server works in the employees' mailboxes
    (out of office, read access to shared mailboxes) and enters replies to invitations;
    the app never shows the boss anyone else's mail in doing so.
 2. Create an **account** `kontext-server@firma.de` with this role (instead of *User*) and a long
@@ -506,6 +509,39 @@ Kontext notices within ten minutes; the company admin shows "Enterprise (license
 mailboxes, shared mailboxes included; beyond it Stalwart refuses new accounts, and the company
 admin shows Stalwart's message. When the license lapses, Stalwart carries on as Community, without
 losing data.
+
+#### AI spam filter { #ki-spamfilter }
+
+With an Enterprise license, Stalwart also asks a language model about the mails its spam filter
+is unsure of: personal or business mail, a notification, a newsletter, unsolicited sales, bulk
+spam, phishing or malware. Set it up in the company admin under *Email security → AI spam
+filter*:
+
+- **Provider** Anthropic, OpenAI, Google Gemini or your own Ollama server, the **model** (such as
+  `claude-haiku-5-5`) and the **API key**; for Ollama the server's address instead of the key. If
+  a Claude key is already entered for the [assistant in the chat](#ki-agenten), the spam filter can
+  use it too (check "Use the assistant's key from the chat"); both then bill to the same key.
+- **Effect:** "Counts in the spam score" (the verdict raises or lowers Stalwart's spam score) or
+  "Only observe" (the verdict is only written into the mail, the score stays as it was) – good
+  for trying it out.
+
+Kontext writes this into Stalwart (`AiModel` "Kontext-Spamfilter" and `SpamAi`) and reloads
+Stalwart's settings; if Stalwart refuses something (wrong address, key), its message is shown.
+The key then lives in Stalwart's database (and its backup), not in Kontext; the company admin only
+shows that one is stored. "Remove" switches the filter off and deletes the model and key from
+Stalwart. Stalwart writes the verdict into the mail as the header `X-Spam-AI`; Kontext shows it
+when reading ([Mail → Security](mail.md#sicherheit)). Which mails go to the model is decided by
+Stalwart's default: only those with a borderline spam score, not the clearly good or clearly bad
+ones. Setting up the filter for a server without a license answers "needs Stalwart Enterprise";
+without a license Stalwart would not use it. A server set up before this feature needs the
+[setup command](#einrichtungsbefehl) once for the permissions `sysAiModel…` and `sysSpamAi…`.
+
+**Privacy:** for each of these mails, Stalwart sends the sender and reply address, subject, the
+recipients' domains, the SPF, DKIM and DMARC results, the links with their destinations, the
+attachments' names and the beginning of the text (up to 6000 characters) to the chosen provider –
+for Anthropic, OpenAI and Google to the USA. This belongs in the privacy notice, with the
+provider's data processing agreement. Whoever wants no mail to leave the company uses their own
+Ollama server.
 
 ## 4. Encrypting the disk { #4-platte-verschlusseln }
 

@@ -37,6 +37,20 @@ export const GATEWAY_RIGHTS = [
   "actionReloadSettings",
 ] as const;
 
+/**
+ * KI-Spamfilter (company/spam-ai.ts): Kontext's AiModel and the SpamAi settings, applied with
+ * ReloadSettings (GATEWAY_RIGHTS). Admin roles have them since Stalwart 1.0.0, which brought the
+ * AI models (CHANGELOG.md); Stalwart uses them only with an Enterprise license.
+ */
+export const SPAM_AI_RIGHTS = [
+  "sysAiModelGet",
+  "sysAiModelCreate",
+  "sysAiModelUpdate",
+  "sysAiModelDestroy",
+  "sysSpamAiGet",
+  "sysSpamAiUpdate",
+] as const;
+
 /** The rights the Kontext server's key needs beside those of User (docs/installation.md). */
 export const KONTEXT_SERVER_RIGHTS = [
   "sysAccountGet",
@@ -49,6 +63,7 @@ export const KONTEXT_SERVER_RIGHTS = [
   "sysAuthenticationGet",
   "sysIndexQueueStatusGet",
   ...GATEWAY_RIGHTS,
+  ...SPAM_AI_RIGHTS,
   "impersonate",
 ] as const;
 
