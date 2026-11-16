@@ -288,7 +288,8 @@ dann im Telefon (Weboberfläche → Erweitert → Update) als Einstellungs-URL
 `http://<box>:8089/snom/{mac}.xml` eintragen und neu starten; es holt sich Konto und Einstellungen
 von der Box. Die Box braucht dafür eine feste Adresse im LAN. Das Passwort gibt sie nur beim
 ersten Abruf heraus; nach einem Zurücksetzen des Telefons das Tischtelefon in Kontext löschen und
-neu anlegen.
+neu anlegen. Hing das Telefon bisher als IP-Telefon an der Fritzbox, dieses Gerät dort löschen:
+Die Box ist jetzt seine Telefonanlage, an der Fritzbox bleibt nur das IP-Telefon „Kontext“.
 
 Mit Podman: `deploy/quadlet/kontext-box.container` nach `/etc/containers/systemd/` kopieren
 (auch einzeln herunterladen wie oben), `systemctl daemon-reload`, `systemctl start kontext-box`;
