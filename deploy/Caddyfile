@@ -38,9 +38,12 @@
 	# DAV lives under /dav/cal, /dav/card, /dav/file, /dav/pal and /dav/itip
 	# (DavResourceName in crates/groupware/src/lib.rs). The rest of /dav is Kontext's task boards;
 	# Kontext also answers the OAuth discovery for agents (MCP, RFC 9728 / 8414) and WKD.
+	# SCIM (Stalwart Enterprise): the company's identity provider creates and changes accounts at
+	# /scim/v2 with its own token (crates/scim of stalwartlabs/stalwart; docs/company.md, SSO).
 	@stalwart {
 		path /dav/cal /dav/cal/* /dav/card /dav/card/* /dav/file /dav/file/* /dav/pal /dav/pal/* /dav/itip /dav/itip/*
 		path /.well-known/* /mail/config-v1.1.xml /autodiscover/*
+		path /scim/v2 /scim/v2/*
 		not path /.well-known/oauth-protected-resource* /.well-known/oauth-authorization-server* /.well-known/openpgpkey/*
 	}
 	handle @stalwart {

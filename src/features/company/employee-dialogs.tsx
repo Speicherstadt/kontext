@@ -26,6 +26,7 @@ import {
   PasswordNotice,
 } from "./fields";
 import { useCompanyChange } from "./queries";
+import { type Managed, useManagedBy } from "./sso-api";
 
 /** What the person's dialog opens in its place. */
 export type EmployeeSubDialog = "vacation" | "rules" | "offboarding" | "deleted" | "delete";
@@ -143,6 +144,18 @@ export const NewEmployeeDialog = ({
   );
 };
 
+/**
+ * What the identity provider owns (Stalwart Enterprise): over SCIM the name, the addresses and
+ * whether the person may sign in, which its next sync would set back; with the company account a
+ * password, which Stalwart no longer takes for that domain (server/company/sso.ts).
+ */
+const ManagedNotice = ({ managed }: { managed: Managed }) =>
+  managed.scim || managed.sso ? (
+    <p className="m-0 rounded-lg border border-border bg-subtle px-3 py-2 text-[13px] text-muted">
+      {managed.scim ? m.company_employee_scim_hint() : m.company_employee_sso_hint()}
+    </p>
+  ) : null;
+
 export const EmployeeDialog = ({
   company,
   employee,
@@ -172,6 +185,7 @@ export const EmployeeDialog = ({
   const reset = useCompanyChange(() => resetPassword(employee.id));
   const resetCode = useCompanyChange(() => resetTwoFactor(employee.id));
   const name = employee.fullName;
+  const managed = useManagedBy(employee.email);
 
   const run = async (action: () => Promise<unknown>, done?: string) => {
     setProblem(null);
@@ -202,11 +216,23 @@ export const EmployeeDialog = ({
       description={employee.email}
     >
       <form onSubmit={submit} className="flex flex-col gap-4">
+        <ManagedNotice managed={managed} />
         <Label>
           {m.company_name()}
-          <Input value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+          <Input
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+            disabled={managed.scim}
+          />
         </Label>
-        <AliasesField aliases={aliases} domain={domain} onChange={setAliases} />
+        {managed.scim ? (
+          aliases.length ? (
+            <p className="m-0 text-[13px] text-muted">{aliases.join(", ")}</p>
+          ) : null
+        ) : (
+          <AliasesField aliases={aliases} domain={domain} onChange={setAliases} />
+        )}
         <CheckList
           legend={m.company_member_of()}
           options={mailboxOptions(company)}
@@ -247,15 +273,17 @@ export const EmployeeDialog = ({
               {m.company_offboarding()}
             </Button>
           )}
-          <ConfirmButton
-            label={m.company_password_reset()}
-            question={m.company_password_reset_confirm({ name })}
-            disabled={busy}
-            onConfirm={() =>
-              void run(async () => setPassword((await reset.mutateAsync(undefined)).password))
-            }
-          />
-          {employee.twoFactor ? (
+          {managed.sso ? null : (
+            <ConfirmButton
+              label={m.company_password_reset()}
+              question={m.company_password_reset_confirm({ name })}
+              disabled={busy}
+              onConfirm={() =>
+                void run(async () => setPassword((await reset.mutateAsync(undefined)).password))
+              }
+            />
+          )}
+          {employee.twoFactor && !managed.sso ? (
             <ConfirmButton
               label={m.company_code_reset()}
               question={m.company_code_reset_hint({ name })}
@@ -265,7 +293,7 @@ export const EmployeeDialog = ({
               }
             />
           ) : null}
-          {self ? null : employee.active ? (
+          {self || managed.scim ? null : employee.active ? (
             <ConfirmButton
               danger
               label={m.company_deactivate()}

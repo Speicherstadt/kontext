@@ -414,7 +414,9 @@ in Stalwart's admin interface it goes like this:
    `sysArchivedItemQuery`, `sysArchivedItemUpdate`, `sysArchivedItemDestroy`,
    `sysDataRetentionGet`, `sysDataRetentionUpdate`, `sysAiModelGet`, `sysAiModelCreate`,
    `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate`, `sysAccountDestroy`,
-   `sysTaskGet`, `sysTaskQuery`, `sysTaskDestroy`, `taskDestroyAccount` and `impersonate`. With
+   `sysTaskGet`, `sysTaskQuery`, `sysTaskDestroy`, `taskDestroyAccount`, `sysDirectoryGet`,
+   `sysDirectoryCreate`, `sysDirectoryUpdate`, `sysDirectoryDestroy`, `sysDomainUpdate`,
+   `scimAccess` and `impersonate`. With
    `sysIndexQueueStatusGet` the company admin shows while Stalwart is building the search index.
    With the `sysEncryption…` and `sysExternalPublicKey…` permissions it switches [encryption by
    Stalwart](encryption.md#verschlusseln-durch-stalwart) and manages the recipients' keys;
@@ -427,7 +429,9 @@ in Stalwart's admin interface it goes like this:
    `sysArchivedItem…` and `sysDataRetention…` permissions for restoring deleted items; the
    `sysAiModel…` and `sysSpamAi…` permissions for the [AI spam filter](#ki-spamfilter);
    `sysAccountDestroy` with the `sysTask…` permissions and `taskDestroyAccount` for deleting
-   employees and restoring [deleted accounts](company.md#geloschte-konten). With
+   employees and restoring [deleted accounts](company.md#geloschte-konten); the `sysDirectory…`
+   permissions, `sysDomainUpdate` and `scimAccess` for [sign-in with the company
+   account](#sso-entra-id). With
    `impersonate` the server works in the employees' mailboxes (out of office, read access to shared
    mailboxes) and enters replies to invitations; the app never shows the boss anyone else's mail in
    doing so.
@@ -548,7 +552,9 @@ permissions for it):
   ([Deleted accounts](company.md#geloschte-konten)).
 - **Logo and templates** in the company admin: the company logo and templates of your own for
   Stalwart's calendar mails ([company admin](company.md#mitarbeiter-und-postfacher)).
-- **Server health** and the **AI spam filter**, see the next two sections.
+- **Sign-in with the company account (SSO) and SCIM** ([company admin](company.md#sso)).
+- **Server health**, the **AI spam filter** and **sign-in with the company account via Entra ID**,
+  see the following sections.
 
 #### Server health { #serverzustand }
 
@@ -607,6 +613,52 @@ attachments' names and the beginning of the text (up to 6000 characters) to the 
 for Anthropic, OpenAI and Google to the USA. This belongs in the privacy notice, with the
 provider's data processing agreement. Whoever wants no mail to leave the company uses their own
 Ollama server.
+
+#### Sign-in with company account using Microsoft Entra ID { #sso-entra-id }
+
+Stalwart checks the provider's access tokens itself (an OIDC directory Kontext creates); Kontext
+fetches them as the provider's app and keeps them on the server like Stalwart's own tokens
+([architecture](architecture.md#anmeldung-uber-firmenkonto)). Google Workspace and Keycloak work
+the same way, with their names for the same values.
+
+1. Run the [setup command](#einrichtungsbefehl) again: it gives the role `Kontext-Server` the
+   permissions `sysDirectoryGet`, `sysDirectoryCreate`, `sysDirectoryUpdate`,
+   `sysDirectoryDestroy`, `sysDomainUpdate` and `scimAccess`.
+2. In the [Microsoft Entra admin center](https://entra.microsoft.com) under *App registrations →
+   New registration*, create an app “Kontext” (this directory only), redirect URI of type *Web*:
+   `https://kontext.firma.de/api/auth/sso/callback` (Kontext shows it under *Provider*).
+3. *Certificates & secrets → New client secret*; note the **value**.
+4. *Expose an API*: set the application ID URI (`api://<client ID>`) and add a scope `kontext`
+   (admins and users). In the *Manifest* under `api` set `"requestedAccessTokenVersion": 2`: only
+   then does Entra issue tokens with the issuer
+   `https://login.microsoftonline.com/<tenant ID>/v2.0` and the client ID as `aud`, which
+   Stalwart accepts.
+5. *API permissions*: for Microsoft Graph `openid`, `email`, `profile` and `offline_access`
+   (delegated), and grant admin consent.
+6. In Kontext under *Settings → Company → Sign-in with company account (SSO)*: issuer URL
+   `https://login.microsoftonline.com/<tenant ID>/v2.0`, client ID, secret, scopes
+   `openid email profile offline_access api://<client ID>/kontext`; audience empty (= client ID),
+   claim with the email address `preferred_username` (the user principal name must be the mail
+   address, otherwise `email`), checking *Signed tokens*. Save, tick the domain under *Domains*,
+   save, **Test connection**.
+7. Stalwart must reach `login.microsoftonline.com` over HTTPS (the provider's keys and discovery).
+
+For **SCIM** in addition:
+
+1. In Kontext tick *Accounts over SCIM* for the domain, under *Accounts over SCIM* **Create
+   token** and copy it.
+2. In Entra under *Enterprise applications → Kontext → Provisioning* choose mode *Automatic*,
+   enter tenant URL `https://kontext.firma.de/scim/v2` and the token as secret token, *Test
+   connection*, assign users or groups and start provisioning. The user principal name goes to
+   Stalwart as `userName`; it must be an address of the domain.
+
+Caddy forwards `/scim/v2` to Stalwart (`deploy/Caddyfile`, from this version on). What does not
+work: Stalwart's own sign-in page does not hand over to the provider, so Kontext makes the round
+trip itself; in a domain with the company account Stalwart no longer takes passwords, so mail
+programs (IMAP, SMTP, CalDAV) sign in with app passwords or over OAuth (OAUTHBEARER) with a token
+of the provider. What asks for the password in Kontext (app passwords for tasks, keys for agents,
+changing the password) does not work for these accounts. Deleting over SCIM works with the permission
+`sysAccountDestroy`, which the setup command gives the role `Kontext-Server`.
 
 ## 4. Encrypting the disk { #4-platte-verschlusseln }
 

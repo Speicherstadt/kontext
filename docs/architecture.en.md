@@ -2394,6 +2394,56 @@ Kontext is also a **sign-in provider**: by OpenID Connect for Schreibzeug, see
 share one provider (Better Auth allows only one, `server/oidc/provider.ts`). On every sign-in Kontext
 matches the name Schreibzeug sees with the sender name in Stalwart.
 
+### Sign-in with company account { #anmeldung-uber-firmenkonto }
+
+With Stalwart Enterprise the employees of a domain sign in with the company's provider (Entra
+ID, Google, Keycloak; [company admin](company.md#sso), [setup](installation.md#sso-entra-id)).
+Stalwart's sources (v1.1.0) settle how that fits together:
+
+- Stalwart does **not** hand over to the provider. An account in a domain whose `directoryId`
+  points to an OIDC directory has no password at Stalwart any more:
+  `OpenIdDirectory::authenticate` refuses every sign-in with credentials
+  (`crates/directory/src/backend/oidc/lookup.rs`), and Stalwart's sign-in (`/api/auth`) only knows
+  password and passkey. Kontext's way through `/api/auth/sign-in/stalwart` does not work for these
+  accounts.
+- Stalwart **accepts the provider's access token** as the bearer (`authenticate_bearer` →
+  `authenticate_external_token` in `crates/common/src/auth/authentication.rs`): it finds the
+  directory by the domain in the claims or by the issuer, checks signature (JWKS), expiry, `aud`
+  (`acceptedAudiences`) and scopes, and takes the address from `claimUsername`. Without an account
+  it creates one, unless the domain has `allowScimProvisioning`
+  (`crates/common/src/cache/directory.rs`).
+- Which provider serves an address, Stalwart says at `/api/discover/<address>`: the provider's
+  discovery document for a domain with an OIDC directory, its own otherwise
+  (`handle_discover_request` in `crates/http/src/auth/oauth/auth.rs`).
+
+So the Kontext server runs the authorization code flow with the provider itself (`server/sso/`):
+the sign-in page asks `POST /api/auth/sign-in/sso/check` whether Stalwart sends the address to the
+configured issuer; then `GET /api/auth/sign-in/sso` takes the browser to the provider with PKCE,
+`state` and the address as `login_hint`. State and PKCE verifier stay for ten minutes in a signed
+httpOnly cookie (path `/api/auth/sso`, SameSite Lax, so the redirect back brings it).
+`GET /api/auth/sso/callback` swaps the code for the tokens with the client secret, asks for
+Stalwart's JMAP session with the access token – Stalwart checks the token and names the account
+in doing so – and opens the session as for a password (`server/open-session.ts`). The provider's
+tokens are kept encrypted in `stalwart_grant`, with the issuer in `issuer`; they are renewed and
+revoked at the provider (`server/sso/grants.ts`, RFC 7009 only where it has a revocation
+endpoint; Entra ID has none). Without `offline_access` the provider gives no refresh token, and
+the session ends with the access token. Here too the browser holds only the session cookie; JMAP
+goes to Stalwart with the provider's token.
+
+The settings live in two places: the OIDC directory (`x:Directory`, `@type: "Oidc"`, description
+“Firmenkonto (Kontext)”) and per domain `directoryId` and `allowScimProvisioning` in Stalwart
+(`server/company/sso.ts`, `ReloadSettings` after every change, since Stalwart builds its
+directories at start and on reload); client ID, secret and scopes in Kontext's SQLite
+(`server/sso/store.ts`, the secret sealed), because Stalwart's directory only checks tokens and
+knows no client. Kontext sets `unscopedTokens: "full"`: Entra ID cannot issue Stalwart's scope
+names, and Kontext needs all the account's rights as with the scope `full`; the limit is the
+audience `aud`. The **SCIM token** is an API key of the account `kontext-server@` (`x:ApiKey`,
+permissions `Replace`: `authenticate`, `scimAccess`, `sysAccountGet`, `sysAccountCreate`,
+`sysAccountUpdate`, plus `sysAccountDestroy` when the server has it), because Stalwart makes no
+key for another account; the IdP reaches Stalwart's `/scim/v2` through Caddy. Without a license
+Stalwart does not use per-domain directories and refuses SCIM; the routes under
+`/api/company/sso` then change nothing (403), and the entry in the settings is missing.
+
 ## Documents { #dokumente }
 
 The "Documents" module is [Schreibzeug](https://github.com/firsttris/schreibzeug): a service of its

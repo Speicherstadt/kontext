@@ -64,6 +64,11 @@ export const stalwartGrant = sqliteTable("stalwart_grant", {
   accessToken: text("access_token").notNull(),
   refreshToken: text("refresh_token").notNull(),
   accessExpiresAt: integer("access_expires_at", { mode: "timestamp_ms" }).notNull(),
+  /**
+   * The company identity provider's issuer when the session signed in with the company account
+   * (server/sso): its tokens are renewed there, not at Stalwart. Null for Stalwart's own.
+   */
+  issuer: text("issuer"),
   updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
 });
 

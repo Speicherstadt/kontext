@@ -6,11 +6,12 @@
  * Stalwart's challenge (POST /api/auth/sign-in/stalwart/passkey-options hands one out), keeps
  * Stalwart's tokens for the new session and sets Better Auth's session cookie. The passkeys live
  * in Stalwart (since 1.1.0), beside the password, so mail programs signing in there use them too.
+ * With Stalwart Enterprise a domain may sign in with the company's identity provider instead
+ * (sso/sign-in.ts); those sessions keep the provider's tokens, renewed at the provider.
  */
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError, createAuthEndpoint } from "better-auth/api";
-import { setSessionCookie } from "better-auth/cookies";
 import type { BetterAuthPlugin } from "better-auth/types";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -19,14 +20,16 @@ import { type Db, schema } from "./db";
 import type { Env } from "./env";
 import { attemptOf, createLoginFailures, type FailureLimit, loginKey } from "./failures";
 import { providerPlugins } from "./oidc/provider";
+import { type NameOf, openSession } from "./open-session";
+import { type SsoSignInDeps, ssoSignIn } from "./sso/sign-in";
 import {
   type Credentials,
   loginAtStalwart,
   passkeyOptionsAtStalwart,
+  type RefreshResult,
   refreshAtStalwart,
   revokeAtStalwart,
   type StalwartTokens,
-  whoAmI,
 } from "./stalwart";
 import { stalwartUnavailable } from "./stalwart-away";
 
@@ -42,20 +45,32 @@ export const DISABLED_PATHS = [
   "/token",
 ] as const;
 
-/** Stores and renews the Stalwart tokens of a session. */
+/**
+ * Tokens of the company's identity provider (sso/grants.ts): a session signed in with the company
+ * account holds the provider's tokens, which Stalwart takes as the bearer; they are renewed and
+ * revoked at the provider, not at Stalwart.
+ */
+export type ProviderGrants = {
+  refresh: (issuer: string, refreshToken: string) => Promise<RefreshResult>;
+  revoke: (issuer: string, refreshToken: string) => Promise<boolean>;
+};
+
+/** Stores and renews the Stalwart tokens of a session (or the identity provider's, `issuer`). */
 export const createGrants = (
   db: Db,
   sealer: Sealer,
   stalwartUrl: string,
   refresh = refreshAtStalwart,
   revoke = revokeAtStalwart,
+  provider?: ProviderGrants,
 ) => {
-  const save = async (sessionId: string, tokens: StalwartTokens) => {
+  const save = async (sessionId: string, tokens: StalwartTokens, issuer?: string) => {
     const row = {
       sessionId,
       accessToken: await sealer.seal(tokens.accessToken),
       refreshToken: await sealer.seal(tokens.refreshToken),
       accessExpiresAt: tokens.accessExpiresAt,
+      issuer: issuer ?? null,
       updatedAt: new Date(),
     };
     await db
@@ -75,7 +90,10 @@ export const createGrants = (
       .where(eq(schema.stalwartGrant.sessionId, sessionId));
     if (!row) return null;
     if (row.accessExpiresAt.getTime() > Date.now()) return sealer.open(row.accessToken);
-    const renewed = await refresh(stalwartUrl, await sealer.open(row.refreshToken));
+    const refreshToken = await sealer.open(row.refreshToken);
+    const renewed = row.issuer
+      ? await (provider?.refresh(row.issuer, refreshToken) ?? { status: "rejected" as const })
+      : await refresh(stalwartUrl, refreshToken);
     // Only a refused token ends the grant; while Stalwart is down or limits Kontext, the session
     // waits and goes on once it answers again.
     if (renewed.status === "unavailable") throw stalwartUnavailable();
@@ -83,7 +101,7 @@ export const createGrants = (
       await db.delete(schema.stalwartGrant).where(eq(schema.stalwartGrant.sessionId, sessionId));
       return null;
     }
-    await save(sessionId, renewed.tokens);
+    await save(sessionId, renewed.tokens, row.issuer ?? undefined);
     return renewed.tokens.accessToken;
   };
 
@@ -93,11 +111,16 @@ export const createGrants = (
    */
   const end = async (sessionId: string): Promise<void> => {
     const [row] = await db
-      .select({ refreshToken: schema.stalwartGrant.refreshToken })
+      .select({
+        refreshToken: schema.stalwartGrant.refreshToken,
+        issuer: schema.stalwartGrant.issuer,
+      })
       .from(schema.stalwartGrant)
       .where(eq(schema.stalwartGrant.sessionId, sessionId));
     if (!row) return;
-    await revoke(stalwartUrl, await sealer.open(row.refreshToken));
+    const refreshToken = await sealer.open(row.refreshToken);
+    if (row.issuer) await provider?.revoke(row.issuer, refreshToken);
+    else await revoke(stalwartUrl, refreshToken);
     await db.delete(schema.stalwartGrant).where(eq(schema.stalwartGrant.sessionId, sessionId));
   };
 
@@ -156,8 +179,7 @@ const credentialsOf = (body: z.infer<typeof signInBody>): Credentials =>
     ? { passkey: body.passkey }
     : { email: body.email, password: body.password, code: body.code };
 
-/** The name the person sends mail as, from their Stalwart account (session-info.ts). */
-export type NameOf = (accessToken: string, email: string) => Promise<string>;
+export type { NameOf };
 
 const stalwartSignIn = (
   stalwartUrl: string,
@@ -196,23 +218,7 @@ const stalwartSignIn = (
           // password alone between wrong codes would let them be guessed without end.
           if (result.status === "mfa") return ctx.json({ status: "mfa" as const });
           if (login) failures.cleared(login);
-          // Stalwart may accept a bare name; the account's real address comes from the session.
-          const { email } = await whoAmI(stalwartUrl, result.tokens.accessToken);
-          const adapter = ctx.context.internalAdapter;
-          const name = await nameOf(result.tokens.accessToken, email);
-          const found = await adapter.findUserByEmail(email);
-          // The name goes to Schreibzeug with the sign-in; it follows the one in Stalwart.
-          const user = found
-            ? found.user.name === name
-              ? found.user
-              : await adapter.updateUser(found.user.id, { name })
-            : await adapter.createUser(
-                { email, name, emailVerified: true },
-                { method: "stalwart" },
-              );
-          const session = await adapter.createSession(user.id);
-          await grants.save(session.id, result.tokens);
-          await setSessionCookie(ctx, { session, user });
+          const email = await openSession(ctx, { stalwartUrl, grants, nameOf }, result.tokens);
           return ctx.json({ status: "ok" as const, email });
         },
       ),
@@ -235,6 +241,8 @@ export const createAuth = (
   grants: Grants,
   nameOf: NameOf,
   failures: FailureLimit = createLoginFailures(),
+  /** Sign-in with the company account (Stalwart Enterprise, sso/sign-in.ts); off without it. */
+  sso?: Omit<SsoSignInDeps, "stalwartUrl" | "publicUrl" | "grants" | "nameOf">,
 ) =>
   betterAuth({
     baseURL: env.BETTER_AUTH_URL,
@@ -254,6 +262,9 @@ export const createAuth = (
       customRules: {
         "/sign-in/stalwart": { window: 60, max: env.SIGN_IN_PER_MINUTE },
         "/sign-in/stalwart/passkey-options": { window: 60, max: env.SIGN_IN_PER_MINUTE },
+        "/sign-in/sso": { window: 60, max: env.SIGN_IN_PER_MINUTE },
+        "/sign-in/sso/check": { window: 60, max: env.SIGN_IN_PER_MINUTE * 3 },
+        "/sso/callback": { window: 60, max: env.SIGN_IN_PER_MINUTE },
         // Asked on every app start; a 429 there would look like being signed out.
         "/get-session": false,
       },
@@ -264,6 +275,17 @@ export const createAuth = (
     },
     plugins: [
       stalwartSignIn(env.STALWART_URL, grants, nameOf, failures),
+      ...(sso
+        ? [
+            ssoSignIn({
+              ...sso,
+              stalwartUrl: env.STALWART_URL,
+              publicUrl: env.BETTER_AUTH_URL,
+              grants,
+              nameOf,
+            }),
+          ]
+        : []),
       // Kontext signs people in to Schreibzeug and agents to /mcp (oidc/provider.ts).
       ...providerPlugins(env.BETTER_AUTH_URL),
     ],

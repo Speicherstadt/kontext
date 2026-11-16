@@ -2461,6 +2461,56 @@ Kontext ist außerdem **Anmeldeanbieter**: per OpenID Connect für Schreibzeug, 
 Beide teilen sich einen Anbieter (Better Auth erlaubt nur einen, `server/oidc/provider.ts`). Den Namen, den Schreibzeug sieht, gleicht Kontext bei jeder Anmeldung mit
 dem Absendernamen in Stalwart ab.
 
+### Anmeldung über Firmenkonto { #anmeldung-uber-firmenkonto }
+
+Mit Stalwart Enterprise melden sich die Mitarbeiter einer Domain beim Anbieter der Firma an
+(Entra ID, Google, Keycloak; [Firmenverwaltung](company.md#sso),
+[Einrichtung](installation.md#sso-entra-id)). Aus Stalwarts Quellen (v1.1.0) ergibt sich, wie das
+zusammengeht:
+
+- Stalwart vermittelt **nicht** zum Anbieter. Ein Konto in einer Domain, deren `directoryId` auf
+  ein OIDC-Verzeichnis zeigt, hat bei Stalwart kein Passwort mehr: `OpenIdDirectory::authenticate`
+  lehnt jede Anmeldung mit Zugangsdaten ab (`crates/directory/src/backend/oidc/lookup.rs`), und
+  Stalwarts Anmeldung (`/api/auth`) kennt nur Passwort und Passkey. Kontexts Weg über
+  `/api/auth/sign-in/stalwart` geht für diese Konten also nicht.
+- Stalwart **nimmt den Zugriffstoken des Anbieters** als Bearer an (`authenticate_bearer` →
+  `authenticate_external_token` in `crates/common/src/auth/authentication.rs`): Es sucht das
+  Verzeichnis über die Domain im Anspruch oder den Aussteller, prüft Signatur (JWKS), Ablauf,
+  `aud` (`acceptedAudiences`) und Scopes und nimmt die Adresse aus `claimUsername`. Ohne Konto legt
+  es eines an, außer die Domain hat `allowScimProvisioning` (`crates/common/src/cache/directory.rs`).
+- Welcher Anbieter eine Adresse bedient, sagt Stalwart unter `/api/discover/<Adresse>`: das
+  Discovery-Dokument des Anbieters für eine Domain mit OIDC-Verzeichnis, sonst Stalwarts eigenes
+  (`handle_discover_request` in `crates/http/src/auth/oauth/auth.rs`).
+
+Also macht der Kontext-Server den Autorisierungscode-Fluss mit dem Anbieter selbst
+(`server/sso/`): Die Anmeldeseite fragt `POST /api/auth/sign-in/sso/check`, ob Stalwart die
+Adresse zum eingetragenen Aussteller schickt; dann führt `GET /api/auth/sign-in/sso` den Browser
+mit PKCE, `state` und der Adresse als `login_hint` zum Anbieter. Zustand und PKCE-Verifier
+liegen dabei zehn Minuten in einem signierten httpOnly-Cookie (Pfad `/api/auth/sso`, SameSite
+Lax, damit es die Rückleitung mitbringt). `GET /api/auth/sso/callback` tauscht den Code mit dem
+Client-Secret gegen die Tokens, fragt mit dem Zugriffstoken Stalwarts JMAP-Session ab – dabei
+prüft Stalwart den Token und nennt das Konto – und legt die Sitzung an wie bei der Anmeldung mit
+Passwort (`server/open-session.ts`). Die Tokens des Anbieters liegen verschlüsselt in
+`stalwart_grant`, mit dem Aussteller in `issuer`; erneuert und widerrufen werden sie beim Anbieter
+(`server/sso/grants.ts`, RFC 7009 nur, wo er einen Widerrufs-Endpunkt hat; Entra ID hat keinen).
+Ohne `offline_access` gibt der Anbieter keinen Refresh-Token, und die Sitzung endet mit dem
+Zugriffstoken. Der Browser hält auch hier nur das Sitzungs-Cookie; JMAP geht mit dem Token des
+Anbieters an Stalwart.
+
+Die Einstellungen liegen an zwei Orten: das OIDC-Verzeichnis (`x:Directory`, `@type: "Oidc"`,
+Beschreibung „Firmenkonto (Kontext)“) und je Domain `directoryId` und `allowScimProvisioning` in
+Stalwart (`server/company/sso.ts`, nach jeder Änderung `ReloadSettings`, denn Stalwart baut seine
+Verzeichnisse beim Start und beim Neuladen); Client-ID, Secret und Scopes in Kontexts SQLite
+(`server/sso/store.ts`, das Secret versiegelt), weil Stalwarts Verzeichnis Tokens nur prüft und
+keinen Client kennt. Kontext setzt `unscopedTokens: "full"`: Entra ID kann Stalwarts Scope-Namen
+nicht ausstellen, und Kontext braucht alle Rechte des Kontos wie mit dem Scope `full`; die
+Grenze ist die Zielgruppe `aud`. Das **SCIM-Token** ist ein API-Schlüssel des Kontos
+`kontext-server@` (`x:ApiKey`, Rechte `Replace`: `authenticate`, `scimAccess`, `sysAccountGet`,
+`sysAccountCreate`, `sysAccountUpdate`, dazu `sysAccountDestroy`, wenn der Server es hat), denn
+Stalwart vergibt keinen Schlüssel für fremde Konten; die IdP erreicht Stalwarts `/scim/v2` über
+Caddy. Ohne Lizenz nutzt Stalwart Verzeichnisse je Domain nicht und lehnt SCIM ab; die Routen
+unter `/api/company/sso` ändern dann nichts (403), und der Eintrag in den Einstellungen fehlt.
+
 ## Dokumente
 
 Das Modul „Dokumente“ ist [Schreibzeug](https://github.com/firsttris/schreibzeug): ein eigener

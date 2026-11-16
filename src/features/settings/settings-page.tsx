@@ -18,6 +18,7 @@ import {
   KeyRound,
   ListFilter,
   LockKeyhole,
+  LogIn,
   type LucideIcon,
   MessagesSquare,
   MonitorSmartphone,
@@ -58,6 +59,7 @@ import { SecuritySection as CompanySecuritySection } from "@/features/company/se
 import { ServerHealthSection } from "@/features/company/server-health-section";
 import { SmimeAuthoritiesSection } from "@/features/company/smime-authorities-section";
 import { SpamAiSection } from "@/features/company/spam-ai-section";
+import { SsoSection } from "@/features/company/sso-section";
 import { VacationTemplatesSection } from "@/features/company/vacation-templates-section";
 import { RetentionCard } from "@/features/deleted-items/deleted-items-admin";
 import { DeletedItemsSection } from "@/features/deleted-items/deleted-items-section";
@@ -136,6 +138,7 @@ const COMPANY: Entry[] = [
   { id: "company-backup", label: m.company_backup, icon: DatabaseBackup },
   { id: "company-health", label: m.company_health, icon: Activity },
   { id: "company-branding", label: m.company_branding, icon: Stamp },
+  { id: "company-sso", label: m.company_sso, icon: LogIn },
   { id: "phone", label: m.phone_settings, icon: Phone },
   { id: "migration", label: m.company_migration, icon: Truck },
 ];
@@ -196,6 +199,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
   ),
   "company-health": () => <ServerHealthSection />,
   "company-branding": () => <BrandingSection />,
+  "company-sso": () => <SsoSection />,
   phone: () => <PhoneSettingsSection />,
   migration: () => <MigrationSection />,
 };
@@ -240,8 +244,9 @@ export const SettingsPage = ({ section }: { section: Section | undefined }) => {
   const company = COMPANY.filter(
     (entry) =>
       (entry.id !== "phone" || phone) &&
-      // Serverzustand, logo and templates are Stalwart Enterprise's.
-      ((entry.id !== "company-health" && entry.id !== "company-branding") || enterprise),
+      // Serverzustand, logo and templates and sign-in with the company account are Stalwart
+      // Enterprise's.
+      (!["company-health", "company-branding", "company-sso"].includes(entry.id) || enterprise),
   );
   const title = [...OWN, ...COMPANY].find((s) => s.id === current)!.label();
   return (

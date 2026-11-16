@@ -410,7 +410,9 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysArchivedItemQuery`, `sysArchivedItemUpdate`, `sysArchivedItemDestroy`,
    `sysDataRetentionGet`, `sysDataRetentionUpdate`, `sysAiModelGet`, `sysAiModelCreate`,
    `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate`, `sysAccountDestroy`,
-   `sysTaskGet`, `sysTaskQuery`, `sysTaskDestroy`, `taskDestroyAccount` und `impersonate`. Mit
+   `sysTaskGet`, `sysTaskQuery`, `sysTaskDestroy`, `taskDestroyAccount`, `sysDirectoryGet`,
+   `sysDirectoryCreate`, `sysDirectoryUpdate`, `sysDirectoryDestroy`, `sysDomainUpdate`,
+   `scimAccess` und `impersonate`. Mit
    `sysIndexQueueStatusGet` zeigt die Firmenverwaltung, solange Stalwart den Suchindex aufbaut.
    Mit den `sysEncryption…`- und `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln
    durch Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
@@ -424,7 +426,8 @@ von Hand in Stalwarts Verwaltung geht es so:
    Wiederherstellen gelöschter Elemente; die `sysAiModel…`- und `sysSpamAi…`-Rechte für den
    [KI-Spamfilter](#ki-spamfilter); `sysAccountDestroy` mit den `sysTask…`-Rechten und
    `taskDestroyAccount`, um Mitarbeiter zu löschen und [gelöschte Konten](company.md#geloschte-konten)
-   wiederherzustellen. Mit `impersonate` arbeitet der Server in den Postfächern
+   wiederherzustellen; die `sysDirectory…`-Rechte, `sysDomainUpdate` und `scimAccess` für die
+   [Anmeldung über Firmenkonto](#sso-entra-id). Mit `impersonate` arbeitet der Server in den Postfächern
    der Mitarbeiter (Abwesenheit, Leserechte für gemeinsame Postfächer) und trägt Antworten auf
    Einladungen ein; die App zeigt dem Chef dabei nie fremde Mails.
 2. Ein **Konto** `kontext-server@firma.de` mit dieser Rolle (statt *User*) und einem langen
@@ -546,7 +549,9 @@ der [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal gelaufen ist, der der 
   ([Gelöschte Konten](company.md#geloschte-konten)).
 - **Logo und Vorlagen** in der Firmenverwaltung: das Firmenlogo und eigene Vorlagen für Stalwarts
   Kalender-Mails ([Firmenverwaltung](company.md#mitarbeiter-und-postfacher)).
-- **Serverzustand** und **KI-Spamfilter**, siehe die beiden folgenden Abschnitte.
+- **Anmeldung über Firmenkonto (SSO) und SCIM** ([Firmenverwaltung](company.md#sso)).
+- **Serverzustand**, **KI-Spamfilter** und die **Anmeldung über Firmenkonto mit Entra ID**, siehe
+  die folgenden Abschnitte.
 
 #### Serverzustand { #serverzustand }
 
@@ -607,6 +612,53 @@ Namen der Anhänge und den Anfang des Textes (bis 6000 Zeichen) an den gewählte
 Anthropic, OpenAI und Google in die USA. Das gehört in die Datenschutzinformation, mit dem
 Auftragsverarbeitungsvertrag des Anbieters. Wer keine Mails nach außen geben will, nimmt einen
 eigenen Ollama-Server.
+
+#### Anmeldung über Firmenkonto mit Microsoft Entra ID { #sso-entra-id }
+
+Stalwart prüft die Zugriffstokens des Anbieters selbst (ein OIDC-Verzeichnis, das Kontext anlegt);
+Kontext holt sie als App des Anbieters ab und hält sie wie Stalwarts eigene Tokens auf dem Server
+([Architektur](architecture.md#anmeldung-uber-firmenkonto)). Google Workspace und Keycloak gehen
+genauso, mit ihren Namen für dieselben Werte.
+
+1. Den [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal ausführen: Er gibt der Rolle
+   `Kontext-Server` die Rechte `sysDirectoryGet`, `sysDirectoryCreate`, `sysDirectoryUpdate`,
+   `sysDirectoryDestroy`, `sysDomainUpdate` und `scimAccess`.
+2. Im [Microsoft Entra Admin Center](https://entra.microsoft.com) unter *App-Registrierungen →
+   Neue Registrierung* eine App „Kontext“ anlegen (nur dieses Verzeichnis), Umleitungs-URI vom Typ
+   *Web*: `https://kontext.firma.de/api/auth/sso/callback` (Kontext zeigt sie unter *Anbieter*).
+3. *Zertifikate & Geheimnisse → Neuer geheimer Clientschlüssel*; den **Wert** notieren.
+4. *Eine API verfügbar machen*: die Anwendungs-ID-URI festlegen (`api://<Client-ID>`) und einen
+   Scope `kontext` hinzufügen (Administratoren und Benutzer). Im *Manifest* unter `api`
+   `"requestedAccessTokenVersion": 2` setzen: Erst dann stellt Entra Tokens mit dem Aussteller
+   `https://login.microsoftonline.com/<Mandanten-ID>/v2.0` und der Client-ID als `aud` aus, die
+   Stalwart annimmt.
+5. *API-Berechtigungen*: für Microsoft Graph `openid`, `email`, `profile` und `offline_access`
+   (delegiert) und die Administratorzustimmung erteilen.
+6. In Kontext unter *Einstellungen → Firma → Anmeldung über Firmenkonto (SSO)*:
+   Aussteller-URL `https://login.microsoftonline.com/<Mandanten-ID>/v2.0`, Client-ID, Secret,
+   Scopes `openid email profile offline_access api://<Client-ID>/kontext`; Zielgruppe leer
+   (= Client-ID), Anspruch mit der E-Mail-Adresse `preferred_username` (der
+   Benutzerprinzipalname muss die Mailadresse sein, sonst `email`), Prüfung *Signierte Tokens*.
+   Speichern, unter *Domains* die Domain ankreuzen, speichern, **Verbindung testen**.
+7. Stalwart muss `login.microsoftonline.com` über HTTPS erreichen (Schlüssel und Discovery des
+   Anbieters).
+
+Für **SCIM** zusätzlich:
+
+1. In Kontext bei der Domain *Konten über SCIM* ankreuzen, unter *Konten über SCIM* **Token
+   erzeugen** und kopieren.
+2. In Entra unter *Unternehmensanwendungen → Kontext → Bereitstellung* den Modus *Automatisch*,
+   Mandanten-URL `https://kontext.firma.de/scim/v2` und das Token als geheimes Token eintragen,
+   *Verbindung testen*, Benutzer oder Gruppen zuweisen und die Bereitstellung starten. Als
+   `userName` geht der Benutzerprinzipalname zu Stalwart, er muss eine Adresse der Domain sein.
+
+Caddy leitet `/scim/v2` an Stalwart weiter (`deploy/Caddyfile`, ab dieser Version). Was nicht
+geht: Stalwarts eigene Anmeldeseite vermittelt nicht zum Anbieter, darum macht Kontext den Weg
+selbst; in einer Domain mit Firmenkonto nimmt Stalwart keine Passwörter mehr an, Mailprogramme
+(IMAP, SMTP, CalDAV) melden sich mit App-Passwörtern oder per OAuth (OAUTHBEARER) mit einem Token
+des Anbieters an. Was in Kontext nach dem Passwort fragt (App-Passwörter für Aufgaben, Schlüssel
+für Agenten, Passwort ändern), geht für diese Konten nicht. Löschen über SCIM geht mit dem Recht
+`sysAccountDestroy`, das der Einrichtungsbefehl der Rolle `Kontext-Server` gibt.
 
 ## 4. Platte verschlüsseln
 

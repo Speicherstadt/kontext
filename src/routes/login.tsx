@@ -3,6 +3,7 @@ import { KeyRound } from "lucide-react";
 import { type FormEvent, lazy, Suspense, useState } from "react";
 import { type SignInResult, useAuth } from "@/auth/auth";
 import { signedOAuthQuery } from "@/auth/oauth-query";
+import { checkSso, type SsoOutcome, ssoOutcomeOf, ssoStartUrl } from "@/auth/sso";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { passkeysSupported } from "@/lib/webauthn";
@@ -10,7 +11,7 @@ import { z } from "@/lib/zod";
 import { m } from "@/paraglide/messages";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: z.object({ redirect: z.string().optional() }),
+  validateSearch: z.object({ redirect: z.string().optional(), sso: z.string().optional() }),
   beforeLoad: ({ context }) => {
     // An OAuth sign-in that asks to sign in again (prompt=login) stays here.
     if (context.client && !signedOAuthQuery(window.location.search)) throw redirect({ to: "/" });
@@ -23,6 +24,13 @@ const DemoSignIn =
   import.meta.env.MODE === "demo"
     ? lazy(() => import("@/demo/demo-sign-in").then((module) => ({ default: module.DemoSignIn })))
     : null;
+
+/** What the way back from the company's identity provider says. */
+const SSO_PROBLEM: Record<SsoOutcome, () => string> = {
+  failed: m.login_sso_failed,
+  unavailable: m.login_sso_unavailable,
+  cancelled: m.login_sso_cancelled,
+};
 
 /** What a failed sign-in says; none for a closed passkey dialog. */
 const problemOf = (
@@ -44,12 +52,17 @@ const problemOf = (
 function LoginPage() {
   const { login, loginWithPasskey } = useAuth();
   const navigate = useNavigate();
-  const { redirect: target } = Route.useSearch();
+  const { redirect: target, sso: ssoOutcome } = Route.useSearch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [needsCode, setNeedsCode] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => {
+    const outcome = ssoOutcomeOf(ssoOutcome);
+    return outcome ? SSO_PROBLEM[outcome]() : null;
+  });
+  // The address signs in with the company account (Stalwart Enterprise): no password here.
+  const [sso, setSso] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const finish = async (result: SignInResult, withPasskey: boolean) => {
@@ -69,6 +82,10 @@ function LoginPage() {
     event.preventDefault();
     setBusy(true);
     setError(null);
+    if (sso) {
+      window.location.assign(ssoStartUrl(username));
+      return;
+    }
     await finish(await login(username.trim(), password, needsCode ? code : undefined), false);
   };
 
@@ -121,19 +138,29 @@ function LoginPage() {
                 required
                 autoFocus
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setSso(false);
+                }}
+                onBlur={() => void checkSso(username).then(setSso)}
               />
             </Label>
-            <Label>
-              {m.login_password()}
-              <Input
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Label>
+            {sso ? (
+              <p className="m-0 text-[13px] text-muted" data-testid="login-sso">
+                {m.login_sso_hint()}
+              </p>
+            ) : (
+              <Label>
+                {m.login_password()}
+                <Input
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </Label>
+            )}
             {needsCode ? (
               <Label>
                 {m.login_code()}
@@ -155,9 +182,9 @@ function LoginPage() {
               </p>
             ) : null}
             <Button type="submit" variant="primary" size="lg" disabled={busy}>
-              {busy ? m.login_busy() : m.login_submit()}
+              {busy ? m.login_busy() : sso ? m.login_sso_submit() : m.login_submit()}
             </Button>
-            {passkeysSupported() && !needsCode ? (
+            {passkeysSupported() && !needsCode && !sso ? (
               <>
                 <div className="flex items-center gap-3 text-[12px] text-muted" aria-hidden="true">
                   <span className="h-px flex-1 bg-border" />

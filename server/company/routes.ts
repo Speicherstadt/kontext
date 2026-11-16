@@ -28,6 +28,7 @@ import { checkDomain, httpsCheck } from "./security";
 import { serverHealthRoutes } from "./server-health-routes";
 import { signatureRoutes } from "./signature-routes";
 import { spamAiRoutes } from "./spam-ai";
+import { ssoRoutes } from "./sso-routes";
 import { readVacationTemplates, vacationTemplateRoutes } from "./vacation-templates";
 
 export type { CompanyDeps };
@@ -184,6 +185,7 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
       }),
     );
   }
+  if (deps.sso) app.route("/sso", ssoRoutes(deps.sso, deps.edition));
   app.route("/migrations", migrationRoutes(deps.migrations));
   app.route("/syncs", syncRoutes(deps.syncs));
   return app;

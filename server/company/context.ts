@@ -74,6 +74,8 @@ export type CompanyDeps = {
   spamAi?: import("./spam-ai").SpamAi;
   /** Gelöschte Konten wiederherstellen, with Stalwart Enterprise (deleted-accounts.ts). */
   deletedAccounts?: import("./deleted-accounts").DeletedAccounts;
+  /** Anmeldung über Firmenkonto (SSO) and SCIM, Enterprise only (sso-routes.ts). */
+  sso?: import("./sso-routes").SsoDeps;
 };
 
 export type Loaded = {
