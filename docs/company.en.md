@@ -51,10 +51,11 @@ Stalwart's admin interface and without IT skills.
   anything there.
 - **Leaving:** block access, hand the mailbox over to a colleague, forward new mail and reply
   automatically – nothing is deleted.
-- **Delete account** on the person's entry: with Stalwart Community the account is then gone for
-  good with all mail, calendars, contacts and files, and the dialog says so. With Stalwart
-  Enterprise and a retention it says for how many days it can still be restored
-  ([Deleted accounts](#geloschte-konten)). One's own account cannot be deleted.
+- **Delete account** on the person's entry, with Stalwart Enterprise only: the dialog says for how
+  many days it can still be restored ([Deleted accounts](#geloschte-konten)), or, while no
+  retention is set, that it is gone for good with all mail, calendars, contacts and files. With
+  Stalwart Community there is no deleting, only leaving: so nothing there is lost by one click.
+  One's own account cannot be deleted.
 - **Availability in the calendar**, switched on for everyone.
 - **Team chat:** retention period; **telephony:** Fritzbox, who is rung, voicemail, opening hours
   ([Telephony](telephony.md)).

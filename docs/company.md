@@ -51,10 +51,11 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   dort kann Kontext nichts anfügen.
 - **Austritt:** Zugang sperren, Postfach einer Kollegin übergeben, neue Mails weiterleiten und
   automatisch antworten – gelöscht wird nichts.
-- **Konto löschen** am Eintrag der Person: Mit Stalwart Community ist das Konto danach mit allen
-  Mails, Kalendern, Kontakten und Dateien endgültig weg, und so sagt es der Dialog. Mit Stalwart
-  Enterprise und einer Aufbewahrung sagt er, wie viele Tage es sich noch wiederherstellen lässt
-  ([Gelöschte Konten](#geloschte-konten)). Das eigene Konto lässt sich nicht löschen.
+- **Konto löschen** am Eintrag der Person, nur mit Stalwart Enterprise: Der Dialog sagt, wie viele
+  Tage es sich noch wiederherstellen lässt ([Gelöschte Konten](#geloschte-konten)), oder, solange
+  keine Aufbewahrung eingestellt ist, dass es mit allen Mails, Kalendern, Kontakten und Dateien
+  endgültig weg ist. Mit Stalwart Community gibt es kein Löschen, nur den Austritt: So ist dort
+  nichts mit einem Klick verloren. Das eigene Konto lässt sich nicht löschen.
 - **Verfügbarkeit im Kalender** für alle einschalten.
 - **Team-Chat:** Aufbewahrungsfrist; **Telefonie:** Fritzbox, wer klingelt, Mailbox,
   Öffnungszeiten ([Telefonie](telephony.md)).

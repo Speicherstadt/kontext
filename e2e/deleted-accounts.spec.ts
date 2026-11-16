@@ -1,10 +1,9 @@
 /**
  * Deleting people and Gelöschte Konten. The CI's Stalwart has no license (Community): there
- * deleting is final and the list stays hidden. Enterprise is stood in for by routing Kontext's own
+ * nobody can be deleted, only leave, and the list stays hidden. Enterprise is stood in for by routing Kontext's own
  * /api/company answers (server/company/deleted-accounts.ts has the Vitest tests against Stalwart).
  */
 import { expect, type Page, test } from "@playwright/test";
-import { newEmployee, stamp } from "./company-helpers";
 import { address, login } from "./helpers";
 
 const DAY = 86_400_000;
@@ -42,22 +41,14 @@ const asEnterprise = async (page: Page) => {
 };
 
 test.describe("Konten löschen", () => {
-  test("löscht in Community endgültig, ohne Liste gelöschter Konten", async ({ page }) => {
-    const local = `weg-${stamp()}`;
+  test("bietet in Community kein Löschen und keine gelöschten Konten", async ({ page }) => {
     await login(page, "jonas");
-    await newEmployee(page, local, "Tom Weg");
+    await page.goto("/settings?section=employees");
     await expect(page.getByRole("region", { name: "Gelöschte Konten" })).toHaveCount(0);
-
-    await page.getByRole("button", { name: new RegExp(address(local)) }).click();
-    await page
-      .getByRole("dialog", { name: "Mitarbeiter bearbeiten" })
-      .getByRole("button", { name: "Konto löschen" })
-      .click();
-    const dialog = page.getByRole("dialog", { name: "Tom Weg löschen" });
-    await expect(dialog.getByTestId("delete-notice")).toContainText("endgültig gelöscht");
-    await dialog.getByRole("button", { name: "Endgültig löschen" }).click();
-    await expect(page.getByRole("status").filter({ hasText: "Tom Weg gelöscht" })).toBeVisible();
-    await expect(page.getByRole("button", { name: new RegExp(address(local)) })).toHaveCount(0);
+    await page.getByRole("button", { name: new RegExp(address("anna")) }).click();
+    const dialog = page.getByRole("dialog", { name: "Mitarbeiter bearbeiten" });
+    await expect(dialog.getByRole("button", { name: "Austritt" })).toBeVisible();
+    await expect(dialog.getByRole("button", { name: "Konto löschen" })).toHaveCount(0);
   });
 
   test("sagt mit Enterprise, wie lange ein Konto wiederherstellbar bleibt", async ({ page }) => {

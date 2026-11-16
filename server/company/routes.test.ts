@@ -88,7 +88,11 @@ const fakeManagement = ({ annaInInfo = false } = {}) => {
 
 const setup = (
   email: string | null,
-  options: { welcomeError?: string; annaInInfo?: boolean } = {},
+  options: {
+    welcomeError?: string;
+    annaInInfo?: boolean;
+    edition?: "community" | "enterprise";
+  } = {},
 ) => {
   const { welcomeError } = options;
   const fake = fakeManagement(options);
@@ -183,7 +187,7 @@ const setup = (
       saveSettings: async () => {},
       requestRun: async () => {},
     },
-    edition: async () => "enterprise",
+    edition: async () => options.edition ?? "enterprise",
   });
   const send = (method: string, path: string, body?: unknown) =>
     app.request(path, {
@@ -333,6 +337,12 @@ describe("Firmenverwaltung", () => {
     expect((await send("DELETE", "/employees/2")).status).toBe(200);
     expect(destroyed).toEqual(["2"]);
     expect(ended).toEqual(["anna@firma.de"]);
+  });
+
+  it("deletes nobody in Community, where leaving is the way out", async () => {
+    const { send, destroyed } = setup("chef@firma.de", { edition: "community" });
+    expect((await send("DELETE", "/employees/2")).status).toBe(403);
+    expect(destroyed).toEqual([]);
   });
 
   it("ends the offboarding when a person is unlocked again", async () => {

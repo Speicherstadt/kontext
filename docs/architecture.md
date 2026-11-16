@@ -315,8 +315,10 @@ mit einem eigenen API-Schlüssel an und erlaubt nur, was die Firmenverwaltung br
   `GET /api/company/edition`, die Firmenverwaltung zeigt sie unter *Mitarbeiter*. Kontext braucht
   Enterprise für nichts; was nur Stalwart Enterprise kann, bietet die App erst an, wenn die
   Lizenz aktiv ist (`useStalwartEdition`, `src/features/company/edition.ts`).
-- **Löschen und gelöschte Konten** (`server/company/deleted-accounts.ts`): „Konto löschen“ ist
-  `x:Account/set` destroy (Recht `sysAccountDestroy`). Stalwart entfernt das Konto sofort, nimmt
+- **Löschen und gelöschte Konten** (`server/company/deleted-accounts.ts`): „Konto löschen“ gibt es
+  nur mit Stalwart Enterprise (sonst antwortet `DELETE /api/company/employees/:id` mit 403, und die
+  App zeigt den Knopf nicht); in Community bleibt der Austritt. Es ist `x:Account/set` destroy
+  (Recht `sysAccountDestroy`). Stalwart entfernt das Konto sofort, nimmt
   seine Freigaben zurück und plant eine Aufgabe `DestroyAccount`, die die Daten löscht
   (`schedule_account_destruction`, `crates/jmap/src/registry/mapping/principal.rs`). Ohne Lizenz,
   oder ohne `archiveDeletedAccountsFor` in `x:DataRetention`, ist sie sofort fällig; mit Lizenz

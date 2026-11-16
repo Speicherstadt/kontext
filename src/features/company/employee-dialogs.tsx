@@ -15,6 +15,7 @@ import {
   resetTwoFactor,
   updateEmployee,
 } from "./api";
+import { useStalwartEdition } from "./edition";
 import {
   AddressInput,
   AliasesField,
@@ -155,6 +156,9 @@ export const EmployeeDialog = ({
 }) => {
   const toast = useToast();
   const self = employee.id === company.selfId;
+  // Deleting is offered with Stalwart Enterprise only, where it can be undone (deleted-accounts.ts).
+  const enterprise = useStalwartEdition() === "enterprise";
+  const deletable = !self && enterprise;
   const [fullName, setFullName] = useState(employee.fullName);
   const [aliases, setAliases] = useState(employee.aliases);
   const [mailboxIds, setMailboxIds] = useState(employee.mailboxIds);
@@ -283,11 +287,11 @@ export const EmployeeDialog = ({
               {m.company_activate()}
             </Button>
           )}
-          {self ? null : (
+          {deletable ? (
             <Button variant="danger" disabled={busy} onClick={() => onOpen("delete")}>
               {m.company_delete()}
             </Button>
-          )}
+          ) : null}
         </div>
       </section>
     </Dialog>

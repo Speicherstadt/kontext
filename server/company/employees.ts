@@ -86,6 +86,7 @@ export const employeeRoutes = ({
   random,
   mailboxChanged,
   categories,
+  edition,
 }: CompanyDeps) => {
   // Who works in a shared mailbox decides who opens its folder in Dokumente (documents/mailboxes.ts).
   const changed = (ids: string[]) => {
@@ -268,10 +269,14 @@ export const employeeRoutes = ({
   });
 
   /**
-   * Deletes the person's account. With Stalwart Enterprise and a retention it can be recovered
-   * for that long (deleted-accounts.ts); otherwise the mailbox and its mail are gone for good.
+   * Deletes the person's account, only with Stalwart Enterprise: with a retention it can be
+   * recovered for that long (deleted-accounts.ts). Community offers leaving instead (offboarding),
+   * so that nothing there is gone for good by one click.
    */
   app.delete("/:id", async (c) => {
+    if ((await edition?.()) !== "enterprise") {
+      return c.json({ error: "Konten löschen gibt es nur mit Stalwart Enterprise." }, 403);
+    }
     const loaded = c.get("loaded");
     const user = userOf(loaded, c.req.param("id"));
     if (!user) return notFound();

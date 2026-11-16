@@ -310,8 +310,10 @@ its own and allows only what the company admin needs.
   company admin shows it under *Employees*. Kontext needs Enterprise for nothing; what only
   Stalwart Enterprise can do, the app offers only once the license is active
   (`useStalwartEdition`, `src/features/company/edition.ts`).
-- **Deleting and deleted accounts** (`server/company/deleted-accounts.ts`): "Delete account" is
-  `x:Account/set` destroy (permission `sysAccountDestroy`). Stalwart removes the account at once,
+- **Deleting and deleted accounts** (`server/company/deleted-accounts.ts`): "Delete account" exists
+  with Stalwart Enterprise only (otherwise `DELETE /api/company/employees/:id` answers 403 and the
+  app does not show the button); in Community, leaving remains. It is `x:Account/set` destroy
+  (permission `sysAccountDestroy`). Stalwart removes the account at once,
   revokes what it shared and schedules a `DestroyAccount` task that deletes the data
   (`schedule_account_destruction`, `crates/jmap/src/registry/mapping/principal.rs`). Without a
   license, or without `archiveDeletedAccountsFor` in `x:DataRetention`, it is due at once; with a
