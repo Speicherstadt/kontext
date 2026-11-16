@@ -310,6 +310,28 @@ its own and allows only what the company admin needs.
   company admin shows it under *Employees*. Kontext needs Enterprise for nothing; what only
   Stalwart Enterprise can do, the app offers only once the license is active
   (`useStalwartEdition`, `src/features/company/edition.ts`).
+- **Masked addresses** (Enterprise only) are Stalwart's `x:MaskedEmail`
+  (`crates/registry/src/schema/structs.rs`). The app asks Stalwart directly with the session's
+  token, not with the server's key: the *User* role has `sysMaskedEmail*`
+  (`crates/common/src/auth/permissions.rs`), and Kontext's `full` scope includes them (`SETTINGS`
+  in `crates/common/src/auth/oauth/scope.rs`); so Stalwart shows only the own account's
+  addresses. Stalwart makes the address: a start (random or `emailPrefix`), a dot, a checked id,
+  `@` and the account's domain (`crates/jmap/src/registry/mapping/masked_email.rs`,
+  `crates/common/src/enterprise/masked.rs`). Mail is delivered while `enable` is on and
+  `expiresAt` has not passed; otherwise Stalwart refuses the recipient
+  (`crates/common/src/network/mta.rs`). `expiresAt` is fixed once created. Without a license
+  Stalwart answers `forbidden` (`crates/jmap/src/registry/mod.rs`); the app then does not show the
+  item (`src/jmap/masked-email.ts`, `src/features/settings/masked-email-section.tsx`).
+- **License:** With Enterprise the company admin shows the license's usage
+  (`GET /api/company/license`, for the company admin only, `{ license: null }` without a license;
+  `server/company/license.ts`). Stalwart has no route with the license's details. The server
+  counts what is used the way Stalwart's `can_create_account` does
+  (`crates/common/src/enterprise/mod.rs`): every account, so employees, shared mailboxes (groups)
+  and the Kontext server's own account, through `x:Account/query` with `calculateTotal`. Limit,
+  end and domain are only in the key itself (`LicenseKey`,
+  `crates/common/src/enterprise/license.rs`); `x:Enterprise/get` gives it out only with
+  `sysEnterpriseGet` and `includeSecrets` switched on, otherwise as "****". Then the company admin
+  shows only the mailboxes in use.
 - **Server health** (Enterprise): `GET /api/company/server-health?period=day|week`
   (`server/company/server-health-routes.ts`) answers 403 as long as the edition is not
   Enterprise; Stalwart refuses `x:Metric` and `x:Trace` without a license anyway
