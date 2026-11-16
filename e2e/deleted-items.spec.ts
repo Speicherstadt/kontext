@@ -101,7 +101,8 @@ test.describe("Gelöschte Elemente", () => {
     await page.goto("/settings?section=deleted");
     await expect(page.getByText("nur mit Stalwart Enterprise")).toBeVisible();
     await page.goto(`/mail/${await personalAccountId("jonas")}/trash`);
-    await expect(page.getByRole("list", { name: "Papierkorb" })).toBeVisible();
+    // Jonas's trash may be empty: then there is no list, only the heading.
+    await expect(page.getByRole("heading", { level: 1, name: "Papierkorb" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Endgültig Gelöschtes" })).toHaveCount(0);
   });
 
