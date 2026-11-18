@@ -13,7 +13,12 @@ site_url: https://kontext.email/
 repo_url: https://github.com/firsttris/kontext
 repo_name: firsttris/kontext
 edit_uri: edit/main/docs/
-copyright: Lizenz AGPL-3.0 · © Tristan Teufel und Mitwirkende
+# HTML: the legal notice and the privacy policy in the footer of every page (English below, under
+# the i18n plugin)
+copyright: >-
+  Lizenz AGPL-3.0 · © Tristan Teufel und Mitwirkende ·
+  <a href="https://teufel-it.de/de/impressum/">Impressum</a> ·
+  <a href="https://speicherstadt.app/datenschutz/">Datenschutz</a>
 # Pages as mail.html instead of mail/: keeps the relative image paths right, which also have to
 # work on GitHub
 use_directory_urls: false
@@ -51,6 +56,13 @@ theme:
       toggle: { icon: material/weather-sunny, name: Hell }
 plugins:
   - search
+  # No requests to Google Fonts or CDNs from the reader's browser: the fonts and Mermaid are
+  # downloaded at build time and served from the site (cache in .cache/). The Schreibzeug
+  # screenshots stay on firsttris.github.io, GitHub Pages like this site: the plugin can't fetch
+  # images with #only-light/#only-dark (it asks for the URL with the fragment, a 404)
+  - privacy:
+      assets_exclude:
+        - firsttris.github.io/*
   - i18n:
       docs_structure: suffix
       fallback_to_default: true
@@ -64,6 +76,10 @@ plugins:
             Mail, calendar, contacts, tasks, team chat and telephony (CTI) on your own server – the
             self-hosted alternative to Google Workspace and Microsoft 365, with Stalwart as the
             mail server.
+          copyright: >-
+            License AGPL-3.0 · © Tristan Teufel and contributors ·
+            <a href="https://teufel-it.de/de/impressum/">Legal notice</a> ·
+            <a href="https://speicherstadt.app/en/privacy/">Privacy</a>
           nav_translations:
             Start: Home
             Überblick: Overview

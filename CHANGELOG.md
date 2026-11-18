@@ -7,6 +7,10 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
 
 ## Unreleased
 
+- Docs (kontext.email): the pages no longer load anything from Google Fonts or a CDN; the fonts
+  and Mermaid are downloaded at build time and served from the site (Material's `privacy`
+  plugin). Every page has links to the legal notice (Impressum) and the privacy policy in the
+  footer.
 - Deploy: `deploy/.env.example` and the Quadlet use Schreibzeug 0.1.21 (was 0.1.19, with security
   updates and its own container hardening), and Compose and the Quadlet use Caddy 2.11.9 (was
   2.11.8), the versions running on the first server. No step beyond raising the versions; with

@@ -8,6 +8,8 @@ playwright-report
 *.log
 .DS_Store
 site
+# Downloads of the docs privacy plugin (mkdocs.yml)
+.cache
 .box-sample
 
 # Secrets of a deployment (deploy/.env for Compose, one env file per service for Quadlet)

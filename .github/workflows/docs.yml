@@ -65,6 +65,11 @@ jobs:
           test -z "$(grep -l 'name="robots" content="noindex"' site/*.html site/en/*.html | grep -v -e '^site/404.html$' -e 'entdecken.html$')"
       - run: |
           grep -q '^Sitemap: https://kontext.email/sitemap.xml' site/robots.txt
+      # No fonts or scripts from Google Fonts or a CDN (the privacy plugin in mkdocs.yml serves
+      # them from the site), and the legal notice and privacy policy in the footer
+      - run: |
+          test -z "$(grep -rlE '(src|href)="(https?:)?//(fonts\.googleapis|fonts\.gstatic|unpkg|cdn\.jsdelivr)' site --include='*.html' --include='*.css')"
+          test -z "$(grep -L 'teufel-it.de/de/impressum/' site/*.html site/en/*.html | grep -v 'entdecken.html$')"
       - if: github.event_name != 'pull_request'
         uses: oven-sh/setup-bun@v2
         with:
