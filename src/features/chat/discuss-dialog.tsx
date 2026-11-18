@@ -57,6 +57,26 @@ const useTargets = (accountId: string, email: EmailSummary): Target[] => {
   return [...suggested, ...rest, ...colleagues];
 };
 
+/** The field that narrows the people and channels to choose from. */
+const TargetFilter = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) => (
+  <label className="flex h-10 items-center gap-2 rounded-lg border border-border px-3 text-muted focus-within:border-muted">
+    <Search size={16} aria-hidden="true" />
+    <span className="sr-only">{m.chat_discuss_to()}</span>
+    <input
+      value={value}
+      placeholder={m.chat_discuss_to()}
+      onChange={(event) => onChange(event.target.value)}
+      className="flex-1 bg-transparent text-[14px] text-fg outline-none"
+    />
+  </label>
+);
+
 export const DiscussDialog = ({
   accountId,
   email,
@@ -119,19 +139,13 @@ export const DiscussDialog = ({
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()} title={m.chat_discuss_title()}>
       <div className="flex flex-col gap-1.5">
-        <label className="flex h-10 items-center gap-2 rounded-lg border border-border px-3 text-muted focus-within:border-muted">
-          <Search size={16} aria-hidden="true" />
-          <span className="sr-only">{m.chat_discuss_to()}</span>
-          <input
-            value={filter}
-            placeholder={m.chat_discuss_to()}
-            onChange={(event) => {
-              setFilter(event.target.value);
-              setChosen(null);
-            }}
-            className="flex-1 bg-transparent text-[14px] text-fg outline-none"
-          />
-        </label>
+        <TargetFilter
+          value={filter}
+          onChange={(value) => {
+            setFilter(value);
+            setChosen(null);
+          }}
+        />
         <fieldset className="m-0 flex max-h-48 flex-col gap-px overflow-y-auto border-0 p-0">
           <legend className="sr-only">{m.chat_discuss_to()}</legend>
           {shown.map((option) => {
