@@ -5,13 +5,8 @@ dev/seed-data.ts
 server/app.ts
 server/chat/routes.ts
 server/db/schema.ts
-server/mcp/writer.ts
-server/phone/admin-routes.ts
-server/phone/phone.ts
 server/phone/service.ts
-server/phone/store.ts
 server/stalwart-setup.ts
-server/tasks/store.ts
 src/features/calendar/calendar-page.tsx
 src/features/calendar/event-editor.tsx
 src/features/calendar/queries.ts
