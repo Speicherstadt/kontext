@@ -1,5 +1,6 @@
 {
   "fileSize": { "include": ["src/**/*.{ts,tsx}", "server/**/*.ts", "dev/**/*.ts"] },
   "pages": { "routeTree": "src/routeTree.gen.ts", "specs": ["e2e/accessibility.spec.ts"] },
-  "i18n": { "include": ["src/**/*.{ts,tsx}"] }
+  "i18n": { "include": ["src/**/*.{ts,tsx}"] },
+  "cycles": { "modules": ["src/features/*", "server/*", "src/*"], "aliases": { "@/": "src/" } }
 }

@@ -227,7 +227,7 @@ mit einem Klick als Jonas, Anna, Sandra oder Max an.
 |                 | Befehl                |                                                                                                             |
 | --------------- | --------------------- | ----------------------------------------------------------------------------------------------------------- |
 | Typen           | `bun run typecheck`   | TypeScript strict                                                                                           |
-| Format und Lint | `bun run lint`        | Biome und `checks` ([firsttris/workflows](https://github.com/firsttris/workflows#checks)): Dateien bis 400 Zeilen, jede Seite in `e2e/accessibility.spec.ts`, Texte in beiden Sprachen, alle genutzt, keiner im Code; was vorher schon abwich, steht in `.checks/` (`checks <prüfung> --init`, `--clean`) |
+| Format und Lint | `bun run lint`        | Biome und `checks` ([firsttris/workflows](https://github.com/firsttris/workflows#checks)): Dateien bis 400 Zeilen, jede Seite in `e2e/accessibility.spec.ts`, Texte in beiden Sprachen, alle genutzt, keiner im Code, keine Kreise von Importen zwischen Modulen; was vorher schon abwich, steht in `.checks/` (`checks <prüfung> --init`, `--clean`) |
 | Unit            | `bun run test`        | Vitest, für alles in `src/lib/` und die Protokoll-Helfer                                                    |
 | Komponenten     | `bun run test`        | Vitest mit Testing Library für UI-Bausteine ohne Server (Empfängerfeld, Tastaturkürzel)                     |
 | Integration     | `bun run e2e`         | `e2e/integration.spec.ts`: JMAP-Funktionen, IMAP (gemeinsame Postfächer), CalDAV und CardDAV gegen Stalwart |
