@@ -85,12 +85,10 @@ src/features/mail -> src/features/smime
 src/features/mail -> src/features/snippets
 src/features/mail -> src/features/snooze
 src/features/mail -> src/features/tasks
-src/features/mail -> src/pwa
 src/features/notifications -> src/features/calendar
 src/features/notifications -> src/features/chat
 src/features/notifications -> src/features/mail
 src/features/notifications -> src/features/tasks
-src/features/notifications -> src/pwa
 src/features/pgp -> src/features/company
 src/features/pgp -> src/features/mail
 src/features/pgp -> src/features/secure
@@ -125,7 +123,6 @@ src/features/settings -> src/features/rules
 src/features/settings -> src/features/sharing
 src/features/settings -> src/features/smime
 src/features/settings -> src/features/snippets
-src/features/settings -> src/pwa
 src/features/sharing -> src/features/photos
 src/features/smime -> src/features/mail
 src/features/smime -> src/features/pgp
@@ -147,4 +144,3 @@ src/lib -> server/phone
 src/lib -> server/rules
 src/lib -> server/tasks
 src/lib -> src/jmap
-src/pwa -> src/features/mail

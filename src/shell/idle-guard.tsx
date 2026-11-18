@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useCallStore } from "@/features/calls/call-store";
 import { useIdleLogout } from "@/features/company/idle-logout";
-import { flushDrafts } from "@/features/mail/draft-flush";
+import { flushDrafts } from "@/lib/draft-flush";
 import {
   countdownText,
   createIdleTimer,

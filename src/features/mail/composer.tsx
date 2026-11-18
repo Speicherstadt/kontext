@@ -31,6 +31,7 @@ import {
   switchReplyTo,
 } from "@/lib/compose";
 import { savedBlobs, withSavedBlob } from "@/lib/draft-blobs";
+import { registerDraftFlush } from "@/lib/draft-flush";
 import { formatSize } from "@/lib/format";
 import { fitsEncrypted, HELD_LIMIT } from "@/lib/held-files";
 import { htmlToText, sanitizeMailHtml, textToHtml } from "@/lib/html";
@@ -49,7 +50,6 @@ import { SnippetMenu } from "../snippets/snippet-menu";
 import { ComposerActions } from "./composer-actions";
 import { AttachmentList, ComposerFields } from "./composer-fields";
 import { InsertImageButton, pictures, useComposerImages } from "./composer-images";
-import { registerDraftFlush } from "./draft-flush";
 import { EditorToolbar } from "./editor-toolbar";
 import { useExternalQuestion } from "./external-question";
 import { ForgottenAttachment } from "./forgotten-attachment";
