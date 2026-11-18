@@ -510,7 +510,7 @@ die USA: Das gehört in die Datenschutzinformation, mit Anthropics Auftragsverar
 
 Kontext läuft mit der kostenlosen Community-Ausgabe von Stalwart vollständig; eine
 Enterprise-Lizenz braucht es nicht. Wer Stalwarts Enterprise-Funktionen trotzdem will (etwa
-Gelöschtes auf dem Server wiederherstellen, KI-Spamfilter, SCIM, maskierte Adressen), kauft die Lizenz bei Stalwart
+Gelöschtes auf dem Server wiederherstellen, KI-Spamfilter, SCIM), kauft die Lizenz bei Stalwart
 Labs ([Preise](https://stalw.art/pricing/), 30 Tage zum Testen) und trägt sie in Stalwart ein, nicht
 in Kontext: Es ist dasselbe Image, nur der Schlüssel schaltet frei.
 
@@ -534,13 +534,11 @@ der Einrichtungsbefehl der Rolle `Kontext-Server`). Das ist freiwillig: `include
 Leserechten in Stalwarts Verwaltung auch die anderen Geheimnisse (Passwörter von Relays,
 Schlüssel). Ohne das zeigt die Firmenverwaltung nur die belegten Postfächer.
 
-Was Kontext mit Enterprise zusätzlich anbietet (bei einer bestehenden Installation erst, nachdem
+Maskierte Adressen ([Mail](mail.md#maskierte-adressen)) brauchen seit Stalwart 1.1.1 keine
+Lizenz mehr. Was Kontext mit Enterprise zusätzlich anbietet (bei einer bestehenden Installation erst, nachdem
 der [Einrichtungsbefehl](#einrichtungsbefehl) noch einmal gelaufen ist, der der Rolle
 `Kontext-Server` die Rechte dafür gibt):
 
-- **Maskierte Adressen:** Jede Person legt unter *Einstellungen → Maskierte Adressen* eigene
-  Adressen je Website oder Shop an, schaltet sie ab oder löscht sie
-  ([Mail](mail.md#maskierte-adressen)).
 - **Gelöschte Elemente wiederherstellen:** Stalwart hebt endgültig Gelöschtes auf, so viele Tage,
   wie die Firmenverwaltung unter *Datensicherung* einstellt (`archiveDeletedItemsFor` in
   Stalwarts *DataRetention*; zu Beginn nichts). Jede Person holt eigene Mails und die ihrer
@@ -961,7 +959,17 @@ Vor einem Stalwart-Update mit neuer Hauptversion die `UPGRADING`-Hinweise von St
 vorher ein Backup machen. Nach jedem Update den [Einrichtungsbefehl](#einrichtungsbefehl) noch
 einmal ausführen; er ergänzt nur, was eine neue Version braucht und noch fehlt.
 
-### Stalwart 1.1.0
+### Stalwart 1.1.1
+
+Mit Stalwart 1.1.1 gibt es **maskierte Adressen** in jeder Ausgabe, auch ohne Enterprise-Lizenz:
+Unter *Einstellungen → Maskierte Adressen* legt jeder eigene Adressen je Website oder Shop an
+([Mail](mail.md#maskierte-adressen)). Die Rechte dafür hat die Rolle *User* schon, es gibt nichts
+einzurichten. `STALWART_VERSION=1.1.1` in `deploy/.env` (Quadlet: `Image=…/stalwart:v1.1.1`)
+zusammen mit der neuen Kontext-Version heben; wer von 1.0.x kommt, macht auch den Schritt unter
+[Stalwart 1.1.0](#stalwart-110). Mit einem älteren Stalwart ohne Lizenz sagt die Seite der
+maskierten Adressen, dass Stalwart 1.1.1 nötig ist.
+
+### Stalwart 1.1.0 { #stalwart-110 }
 
 Stalwart 1.1.0 bringt **Passkeys**: Unter *Einstellungen → Passwort und Sicherheit* legt jeder
 seine Passkeys an, und „Mit Passkey anmelden“ meldet ohne Passwort an

@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
-import type { JmapClient } from "./client";
+import { type JmapClient, jmapError } from "./client";
 import {
   createMaskedEmail,
   creationOf,
   deleteMaskedEmail,
   expiryFrom,
+  isUnavailable,
   isValidPrefix,
   listMaskedEmails,
   type MaskedEmail,
@@ -32,6 +33,23 @@ describe("expiryFrom", () => {
     expect(expiryFrom("day", NOW)).toBe("2026-11-17T10:00:00Z");
     expect(expiryFrom("week", NOW)).toBe("2026-11-23T10:00:00Z");
     expect(expiryFrom("year", NOW)).toBe("2027-11-16T10:00:00Z");
+  });
+});
+
+describe("isUnavailable", () => {
+  it("is Stalwart's forbidden for an Enterprise object (before 1.1.1, without a license)", () => {
+    expect(
+      isUnavailable(
+        jmapError("This feature is only available in the Enterprise edition.", "forbidden"),
+      ),
+    ).toBe(true);
+  });
+
+  it("is not any other failure", () => {
+    expect(isUnavailable(jmapError("boom", "serverFail"))).toBe(false);
+    expect(isUnavailable(jmapError("Bad Gateway", "request", 502))).toBe(false);
+    expect(isUnavailable(new Error("forbidden"))).toBe(false);
+    expect(isUnavailable(undefined)).toBe(false);
   });
 });
 

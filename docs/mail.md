@@ -317,7 +317,7 @@ IMAP und SMTP.
 
 ## Maskierte Adressen
 
-Mit Stalwart Enterprise legt jede Person unter *Einstellungen → Maskierte Adressen* eigene
+Jede Person legt unter *Einstellungen → Maskierte Adressen* eigene
 Adressen für Websites, Shops und Newsletter an, etwa `baumarkt.k3x9…@firma.de`. Mails an sie
 kommen im eigenen Posteingang an, die echte Adresse erfährt der Shop nicht. Kommt Spam, schaltet
 man die Adresse ab (Mails an sie werden dann abgewiesen) oder löscht sie.
@@ -329,8 +329,8 @@ man die Adresse ab (Mails an sie werden dann abgewiesen) oder löscht sie.
   Schalter nimmt Mails an oder weist sie ab, „Löschen“ entfernt sie endgültig.
 - Jede Person darf 5 Adressen haben; mehr erlaubt Stalwart in den E-Mail-Einstellungen
   (`maxMaskedAddresses`).
-- Ohne Enterprise-Lizenz fehlt der Punkt in den Einstellungen.
-  [Mehr](architecture.md#firmenverwaltung)
+- Das geht mit jeder Ausgabe von Stalwart ab 1.1.1; ein älterer Stalwart ohne Enterprise-Lizenz
+  lehnt sie ab, und die Seite sagt das. [Mehr](architecture.md#firmenverwaltung)
 
 ## Weitere Postfächer: Gmail, GMX, WEB.DE & Co.
 

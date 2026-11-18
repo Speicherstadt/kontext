@@ -1,16 +1,18 @@
 /**
  * Masked addresses: one address per website or shop that ends in the person's own inbox and can be
- * switched off or deleted when it gets spam (x:MaskedEmail, Stalwart Enterprise only; MaskedEmail
- * in crates/registry/src/schema/structs.rs). Stalwart makes the address itself
+ * switched off or deleted when it gets spam (x:MaskedEmail, MaskedEmail in
+ * crates/registry/src/schema/structs.rs). Stalwart makes the address itself
  * (crates/jmap/src/registry/mapping/masked_email.rs): a prefix (random, or `emailPrefix`), a dot,
- * a checked id and the account's domain (crates/common/src/enterprise/masked.rs). Mail to it
+ * a checked id and the account's domain (crates/common/src/network/masked.rs). Mail to it
  * arrives while `enable` is on and `expiresAt` has not passed (crates/common/src/cache/
  * principals.rs, crates/common/src/network/mta.rs). The person's own token may do this: the User
  * role has sysMaskedEmail* (crates/common/src/auth/permissions.rs) and Kontext's `full` OAuth scope
  * includes them (SETTINGS in crates/common/src/auth/oauth/scope.rs), so the browser asks Stalwart
- * directly. Without a license Stalwart answers "forbidden" (crates/jmap/src/registry/mod.rs).
+ * directly. Since Stalwart 1.1.1 every edition has them; before, they were an Enterprise object and
+ * Stalwart answered "forbidden" without a license (assert_enterprise_object in
+ * crates/jmap/src/registry/mod.rs, which since 1.1.1 lists ArchivedItem, Metric and Trace only).
  */
-import { assertSetOk, CAPABILITIES, type JmapClient } from "./client";
+import { assertSetOk, CAPABILITIES, isJmapError, type JmapClient } from "./client";
 
 const STALWART = [CAPABILITIES.core, CAPABILITIES.stalwart];
 
@@ -93,6 +95,10 @@ export const creationOf = (input: NewMaskedEmail, now: Date): Record<string, unk
     ...(expiresAt ? { expiresAt } : {}),
   };
 };
+
+/** Stalwart before 1.1.1 without a license: x:MaskedEmail is an Enterprise object there. Pure. */
+export const isUnavailable = (error: unknown): boolean =>
+  isJmapError(error) && error.type === "forbidden";
 
 /** The newest first. */
 export const listMaskedEmails = async (client: JmapClient): Promise<MaskedEmail[]> => {

@@ -11,11 +11,14 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
   updates and its own container hardening), and Compose and the Quadlet use Caddy 2.11.9 (was
   2.11.8), the versions running on the first server. No step beyond raising the versions; with
   Quadlet, raise the images in `schreibzeug.container` and `caddy.container`.
-- **Upgrade** Stalwart 1.1.0: raise `STALWART_VERSION=1.1.0` in `deploy/.env` (Quadlet:
-  `Image=…/stalwart:v1.1.0`) with this release. Kontext keeps working with 1.0.3, only without
+- **Upgrade** Stalwart 1.1.1: raise `STALWART_VERSION=1.1.1` in `deploy/.env` (Quadlet:
+  `Image=…/stalwart:v1.1.1`) with this release (installation guide, "Stalwart 1.1.1"). Kontext keeps working with 1.0.3, only without
   passkeys. On a Stalwart set up before 1.1.0 the default role *User* lacks the `sysPasskey*`
   rights; the setup command says so, and starting Stalwart once with
   `STALWART_UPDATE_ROLE_PERMISSIONS=true` adds them (installation guide, "Stalwart 1.1.0").
+- Masked addresses without Stalwart Enterprise: Stalwart 1.1.1 has them in every edition, so
+  *Einstellungen → Maskierte Adressen* is there for everyone. With an older Stalwart without a
+  license the page says that Stalwart 1.1.1 is needed instead of hiding the item.
 - Passkeys: "Mit Passkey anmelden" on the sign-in page signs in with fingerprint, face or the
   device's PIN, without password and code. *Einstellungen → Passwort und Sicherheit → Passkeys*
   adds (after the password once more), renames and deletes them. Stalwart keeps them (new in

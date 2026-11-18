@@ -1,7 +1,7 @@
 /**
  * Settings → Maskierte Adressen: an address of its own for each website, switched off or deleted
- * when spam comes (src/jmap/masked-email.ts). Only with Stalwart Enterprise; without the license
- * the entry is not in the list, and the page opened by its address says why.
+ * when spam comes (src/jmap/masked-email.ts). Every edition of Stalwart has them since 1.1.1; an
+ * older Community Stalwart refuses them with "forbidden", and the page then says what is needed.
  */
 import { useQuery } from "@tanstack/react-query";
 import { Check, Copy } from "lucide-react";
@@ -10,10 +10,10 @@ import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
-import { useStalwartEdition } from "@/features/company/edition";
 import { ConfirmButton } from "@/features/company/fields";
 import {
   deleteMaskedEmail,
+  isUnavailable,
   listMaskedEmails,
   type MaskedEmail,
   maskedState,
@@ -96,7 +96,7 @@ const MaskedEmailRow = ({ entry }: { entry: MaskedEmail }) => {
   );
 };
 
-const MaskedEmailCard = () => {
+export const MaskedEmailSection = () => {
   const client = useClient();
   const toast = useToast();
   const { data: list, error } = useQuery({
@@ -106,7 +106,9 @@ const MaskedEmailCard = () => {
   });
   return (
     <SettingsCard title={m.settings_masked()} description={m.masked_hint()}>
-      {error ? (
+      {isUnavailable(error) ? (
+        <p className="m-0 text-[14px] text-muted">{m.masked_unavailable()}</p>
+      ) : error ? (
         <p role="alert" className="m-0 text-[13px] text-danger">
           {m.common_error({ message: error.message })}
         </p>
@@ -119,15 +121,9 @@ const MaskedEmailCard = () => {
       ) : list ? (
         <p className="m-0 text-[13px] text-muted">{m.masked_none()}</p>
       ) : null}
-      <NewMaskedEmailForm onCreated={(email) => toast.show(m.masked_created({ email }))} />
+      {isUnavailable(error) ? null : (
+        <NewMaskedEmailForm onCreated={(email) => toast.show(m.masked_created({ email }))} />
+      )}
     </SettingsCard>
   );
-};
-
-export const MaskedEmailSection = () => {
-  const edition = useStalwartEdition();
-  if (edition === undefined) return null;
-  if (edition !== "enterprise")
-    return <p className="m-0 text-[14px] text-muted">{m.masked_enterprise_only()}</p>;
-  return <MaskedEmailCard />;
 };

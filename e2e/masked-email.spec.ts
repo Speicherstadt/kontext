@@ -2,126 +2,100 @@ import { expect, type Page, test } from "@playwright/test";
 import { login } from "./helpers";
 
 /**
- * Masked addresses need Stalwart Enterprise (x:MaskedEmail, src/jmap/masked-email.ts); the e2e
- * Stalwart runs without a license. So the Community case is the real one, and for Enterprise this
- * page answers Kontext's edition and Stalwart's x:MaskedEmail calls itself, keeping the addresses
- * in memory the way Stalwart would (crates/jmap/src/registry/mapping/masked_email.rs makes the
- * address from the prefix, an id and the account's domain).
+ * Masked addresses against the e2e Stalwart, a Community edition without a license: since
+ * Stalwart 1.1.1 every edition has x:MaskedEmail (src/jmap/masked-email.ts). Stalwart makes the
+ * address from the prefix, a dot, an id and the account's domain
+ * (crates/jmap/src/registry/mapping/masked_email.rs). The tests share the server, so each one
+ * looks only at the address it made itself.
  */
-type Entry = {
-  id: string;
-  email: string;
-  enable: boolean;
-  description?: string;
-  forDomain?: string;
-  createdAt: string;
-  expiresAt?: string;
-};
-
-const asEnterprise = async (page: Page) => {
-  const entries: Entry[] = [];
-  let next = 1;
-  await page.route("**/api/company/edition", (route) =>
-    route.fulfill({ json: { edition: "enterprise" } }),
-  );
-  await page.route(/\/jmap/, async (route) => {
-    const body = route.request().postData() ?? "";
-    if (!body.includes('"x:MaskedEmail/')) return route.fallback();
-    const [[name, args]] = JSON.parse(body).methodCalls as [[string, Record<string, unknown>]];
-    const answer = (result: unknown) =>
-      route.fulfill({ json: { methodResponses: [[name, result, "0"]], sessionState: "s" } });
-    if (name === "x:MaskedEmail/get") return answer({ list: entries });
-    const { create, update, destroy } = args as {
-      create?: Record<string, Entry & { emailPrefix?: string }>;
-      update?: Record<string, Partial<Entry>>;
-      destroy?: string[];
-    };
-    const created: Record<string, { id: string; email: string }> = {};
-    for (const [key, { emailPrefix, ...value }] of Object.entries(create ?? {})) {
-      const id = `m${next++}`;
-      const email = `${emailPrefix ?? "x7k2q"}.1bz9${id}@weber-haustechnik.test`;
-      entries.push({ ...value, id, email, createdAt: new Date().toISOString() });
-      created[key] = { id, email };
-    }
-    for (const [id, patch] of Object.entries(update ?? {})) {
-      Object.assign(entries.find((entry) => entry.id === id)!, patch);
-    }
-    for (const id of destroy ?? [])
-      entries.splice(
-        entries.findIndex((e) => e.id === id),
-        1,
-      );
-    return answer({ created, updated: update ?? null, destroyed: destroy ?? [] });
-  });
-};
-
 const list = (page: Page) => page.getByRole("list", { name: "Maskierte Adressen" });
 
-const createAddress = async (page: Page, description: string, prefix = "") => {
+/** A prefix of its own per test and run, so that parallel or repeated runs do not meet. */
+const prefixFor = (name: string) => `${name}${Date.now().toString(36)}`;
+
+const createAddress = async (page: Page, description: string, prefix: string) => {
   await page.getByLabel("Wofür").fill(description);
   await page.getByLabel("Website (optional)").fill("https://www.baumarkt.de/konto");
-  if (prefix) await page.getByLabel("Anfang der Adresse (optional)").fill(prefix);
+  await page.getByLabel("Anfang der Adresse (optional)").fill(prefix);
   await page.getByLabel("Gültig").selectOption({ label: "1 Woche" });
   await page.getByRole("button", { name: "Adresse anlegen" }).click();
 };
 
 test.describe("Maskierte Adressen", () => {
-  test("gibt es ohne Stalwart Enterprise nicht", async ({ page }) => {
-    await login(page);
-    await page.goto("/settings");
-    await expect(page.getByRole("link", { name: "Darstellung" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Maskierte Adressen" })).toHaveCount(0);
-    await page.goto("/settings?section=masked-email");
-    await expect(page.getByText("nur mit Stalwart Enterprise")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Adresse anlegen" })).toHaveCount(0);
-  });
-
-  test("legt mit Enterprise eine an, schaltet sie ab und löscht sie", async ({ page }) => {
-    await asEnterprise(page);
+  test("legt ohne Enterprise eine an, schaltet sie ab und löscht sie", async ({ page }) => {
     await login(page);
     await page.goto("/settings");
     await page.getByRole("link", { name: "Maskierte Adressen" }).click();
-    await expect(page.getByText("Noch keine maskierten Adressen.")).toBeVisible();
 
-    await createAddress(page, "Baumarkt-Kundenkonto", "baumarkt");
-    await expect(page.getByText(/Adresse angelegt: baumarkt\./)).toBeVisible();
-    const row = list(page).getByRole("listitem");
-    await expect(row).toContainText("baumarkt.1bz9m1@weber-haustechnik.test");
+    const prefix = prefixFor("baumarkt");
+    await createAddress(page, "Baumarkt-Kundenkonto", prefix);
+    await expect(page.getByText(`Adresse angelegt: ${prefix}.`)).toBeVisible();
+    const row = list(page)
+      .getByRole("listitem")
+      .filter({ hasText: `${prefix}.` });
+    await expect(row).toContainText(new RegExp(`${prefix}\\.[a-z0-9]+@weber-haustechnik\\.test`));
     await expect(row).toContainText("Baumarkt-Kundenkonto · baumarkt.de");
     await expect(row).toContainText("läuft ab");
 
-    const toggle = row.getByRole("switch", { name: /Mails an baumarkt\./ });
+    const toggle = row.getByRole("switch", { name: new RegExp(`Mails an ${prefix}\\.`) });
     await expect(toggle).toHaveAttribute("aria-checked", "true");
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-checked", "false");
     await expect(row).toContainText("abgeschaltet");
+    // Kept by Stalwart, not only on the page
+    await page.reload();
+    await expect(row).toContainText("abgeschaltet");
 
     await row.getByRole("button", { name: "Löschen" }).click();
     await row.getByRole("button", { name: "Ja, weiter" }).click();
-    await expect(page.getByText("Noch keine maskierten Adressen.")).toBeVisible();
+    await expect(row).toHaveCount(0);
   });
 
   test("nimmt einen Anfang mit Punkt nicht an", async ({ page }) => {
-    await asEnterprise(page);
     await login(page);
     await page.goto("/settings?section=masked-email");
     await page.getByLabel("Anfang der Adresse (optional)").fill("shop.de");
     await expect(page.getByText("Nur Buchstaben, Ziffern und _")).toBeVisible();
     await expect(page.getByRole("button", { name: "Adresse anlegen" })).toBeDisabled();
   });
+
+  test("sagt bei einem älteren Stalwart ohne Lizenz, was fehlt", async ({ page }) => {
+    // Stalwart before 1.1.1: x:MaskedEmail is an Enterprise object and refused with "forbidden"
+    await page.route(/\/jmap/, async (route) => {
+      const body = route.request().postData() ?? "";
+      if (!body.includes('"x:MaskedEmail/')) return route.fallback();
+      const forbidden = {
+        type: "forbidden",
+        description: "This feature is only available in the Enterprise edition.",
+      };
+      return route.fulfill({
+        json: { methodResponses: [["error", forbidden, "0"]], sessionState: "s" },
+      });
+    });
+    await login(page);
+    await page.goto("/settings?section=masked-email");
+    await expect(page.getByText("brauchen Stalwart 1.1.1 oder neuer")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Adresse anlegen" })).toHaveCount(0);
+  });
 });
 
 test.describe("Maskierte Adressen am Handy @phone", () => {
   test("legt eine an, ohne seitliches Scrollen @phone", async ({ page }) => {
-    await asEnterprise(page);
-    await login(page);
+    await login(page, "anna");
     await page.goto("/settings");
     await page.getByRole("link", { name: "Maskierte Adressen" }).click();
-    await createAddress(page, "Newsletter");
-    await expect(list(page).getByRole("listitem")).toContainText("@weber-haustechnik.test");
+    const prefix = prefixFor("newsletter");
+    await createAddress(page, "Newsletter", prefix);
+    const row = list(page)
+      .getByRole("listitem")
+      .filter({ hasText: `${prefix}.` });
+    await expect(row).toContainText("@weber-haustechnik.test");
     const width = page.viewportSize()?.width ?? 0;
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
       width,
     );
+    await row.getByRole("button", { name: "Löschen" }).click();
+    await row.getByRole("button", { name: "Ja, weiter" }).click();
+    await expect(row).toHaveCount(0);
   });
 });
