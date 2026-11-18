@@ -8,7 +8,7 @@ import { ShieldCheck, ShieldOff } from "lucide-react";
 import { type FormEvent, type ReactNode, useMemo, useState } from "react";
 import { renderSVG } from "uqr";
 import { useAuth, useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";

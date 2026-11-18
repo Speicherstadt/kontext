@@ -10,7 +10,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { RefreshCw, WifiOff } from "lucide-react";
 import { useEffect, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
-import { flushDrafts } from "@/features/mail/draft-flush";
+import { flushDrafts } from "@/lib/draft-flush";
 import { m } from "@/paraglide/messages";
 import { activateUpdate, browserUpdateDeps } from "./activate-update";
 

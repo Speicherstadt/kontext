@@ -5,7 +5,7 @@ import { EventEditor } from "./event-editor";
 
 const anna = { name: "Anna Weber", email: "anna@weber.test" };
 
-vi.mock("@/components/shell/app-shell", () => ({
+vi.mock("@/auth/session", () => ({
   useSession: () => ({ data: { username: "jonas@weber.test" } }),
 }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ show: vi.fn() }) }));

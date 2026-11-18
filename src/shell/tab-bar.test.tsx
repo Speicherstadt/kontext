@@ -1,8 +1,8 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { TabBar } from "./app-shell";
-import { setTabChoice } from "./tab-bar-settings";
+import { setTabChoice } from "@/components/shell/tab-bar-settings";
+import { ShellTabBar as TabBar } from "./app-shell";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ to, children, ...props }: { to: string; children: ReactNode }) => (
@@ -15,7 +15,9 @@ vi.mock("@tanstack/react-router", () => ({
     select({ location: { pathname: "/mail" } }),
 }));
 vi.mock("@/auth/auth", () => ({ useAuth: () => ({ logout: vi.fn() }) }));
-vi.mock("./session", () => ({ useSession: () => ({ data: { username: "jonas@weber.test" } }) }));
+vi.mock("@/auth/session", () => ({
+  useSession: () => ({ data: { username: "jonas@weber.test" } }),
+}));
 vi.mock("./account-avatar", () => ({
   AccountAvatar: () => null,
   StorageSummary: () => null,

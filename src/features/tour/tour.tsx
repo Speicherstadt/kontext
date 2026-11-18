@@ -6,7 +6,7 @@
  */
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { type RefObject, useLayoutEffect, useRef, useState } from "react";
-import { useSession } from "@/components/shell/session";
+import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "@/components/use-media-query";
 import { useMailAccounts } from "@/features/mail/queries";

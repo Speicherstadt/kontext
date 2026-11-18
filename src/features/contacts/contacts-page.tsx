@@ -2,7 +2,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { BookUser, Plus, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { TabBar } from "@/components/shell/app-shell";
+import { TabBar } from "@/components/shell/tab-bar-slot";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/input";
 import { Loading, PlaceholderRows } from "@/components/ui/placeholder";

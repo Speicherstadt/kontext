@@ -3,7 +3,6 @@
  * in use) and Stalwart's tokens; the browser only knows whether it is signed in.
  */
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from "react";
-import { signOutFrame } from "@/features/documents/frame-store";
 import { createJmapClient, type JmapClient } from "@/jmap/client";
 import { assertionJson, isCancelled, requestOptions, type SignInOptions } from "@/lib/webauthn";
 import { markSignedIn } from "./idle-store";
@@ -118,11 +117,14 @@ export const AuthProvider = ({
   initialClient,
   makeClient,
   onChange,
+  beforeSignOut,
   children,
 }: {
   initialClient: JmapClient | null;
   makeClient: () => JmapClient;
   onChange: (client: JmapClient | null) => void;
+  /** Runs first on sign-out, e.g. so that Schreibzeug in its frame signs out while it is still there */
+  beforeSignOut?: () => Promise<void>;
   children: ReactNode;
 }) => {
   const [client, setClient] = useState(initialClient);
@@ -149,12 +151,11 @@ export const AuthProvider = ({
   const loginWithPasskey = useCallback(async () => signedIn(await signInWithPasskey()), [signedIn]);
 
   const logout = useCallback(async () => {
-    // Schreibzeug in its frame signs out first, while the frame is still there.
-    await signOutFrame();
+    await beforeSignOut?.();
     await signOut();
     setClient(null);
     onChange(null);
-  }, [onChange]);
+  }, [onChange, beforeSignOut]);
 
   const value = useMemo(
     () => ({ client, login, loginWithPasskey, logout }),

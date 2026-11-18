@@ -1,6 +1,6 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";

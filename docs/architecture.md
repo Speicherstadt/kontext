@@ -452,7 +452,7 @@ mit einem eigenen API-Schlüssel an und erlaubt nur, was die Firmenverwaltung br
   `idleLogout`, 0 = aus; erlaubt sind 15, 30, 60, 240 und 480), gelesen von jedem Angemeldeten
   (`GET /api/company/idle-logout`), geändert nur von der Firmenverwaltung (`PUT`,
   `server/company/idle-logout.ts`). Die App zählt selbst: `src/lib/idle-logout.ts` ist der Zustand
-  aktiv → Warnung → abgelaufen über dem Zeitpunkt der letzten Eingabe, `src/auth/idle-guard.tsx`
+  aktiv → Warnung → abgelaufen über dem Zeitpunkt der letzten Eingabe, `src/shell/idle-guard.tsx`
   füttert ihn mit `pointerdown`, `pointermove`, `keydown`, `wheel`, `touchstart` und dem
   Sichtbarwerden des Tabs (der holt erst einen im Hintergrund verspäteten Timer nach, zählt dann);
   ein laufender Anruf zählt alle 20 Sekunden als Eingabe. Während der Frage zählen Eingaben nicht,

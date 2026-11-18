@@ -5,7 +5,7 @@
  * the own account, one's other mailboxes (Gmail, GMX, …) are senders too.
  */
 import { useMemo } from "react";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { externalIdentity } from "@/features/external/api";
 import { useExternalAccounts } from "@/features/external/queries";
 import { withOwnReplyTo } from "@/lib/compose";

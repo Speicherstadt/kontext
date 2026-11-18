@@ -39,7 +39,7 @@ import {
   VenetianMask,
 } from "lucide-react";
 import { lazy, type ReactNode, Suspense, useId } from "react";
-import { TabBar } from "@/components/shell/app-shell";
+import { TabBar } from "@/components/shell/tab-bar-slot";
 import { AgentsSection } from "@/features/agents/agents-section";
 import { AssistantSection } from "@/features/company/assistant-section";
 import { BackupSection } from "@/features/company/backup-section";
@@ -67,10 +67,10 @@ import { ExternalSection } from "@/features/external/external-section";
 import { useExternalAccounts } from "@/features/external/queries";
 import { usePhone } from "@/features/phone/queries";
 import { RulesSection } from "@/features/rules/rules-section";
+import type { settingsSections } from "@/features/settings/sections";
 import { SnippetsSection } from "@/features/snippets/snippets-section";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
-import type { settingsSections } from "@/routes/_app/settings";
 import { AccessSection } from "./access-section";
 import { AppPasswordsCard } from "./app-passwords-card";
 import { AppearanceSection } from "./appearance-section";

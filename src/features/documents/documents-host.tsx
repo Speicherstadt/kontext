@@ -6,7 +6,7 @@
  */
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { TabBar } from "@/components/shell/app-shell";
+import { TabBar } from "@/components/shell/tab-bar-slot";
 import { useTheme } from "@/components/theme/use-theme";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";

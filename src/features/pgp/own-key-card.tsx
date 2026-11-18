@@ -4,7 +4,7 @@
  */
 import { Download, KeyRound, Printer } from "lucide-react";
 import { type FormEvent, type ReactNode, useState } from "react";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Textarea } from "@/components/ui/input";

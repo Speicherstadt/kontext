@@ -5,11 +5,12 @@ import { createHashHistory, createRouter, RouterProvider } from "@tanstack/react
 import { StrictMode, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import { AuthProvider, createAppClient, hasSession } from "@/auth/auth";
-import { opensApp, StartScreen } from "@/components/shell/start-screen";
 import { ToastProvider } from "@/components/ui/toast";
+import { signOutFrame } from "@/features/documents/frame-store";
 import type { JmapClient } from "@/jmap/client";
 import { parseSearch, stringifySearch } from "@/lib/search-params";
 import { getLocale } from "@/paraglide/runtime";
+import { opensApp, StartScreen } from "@/shell/start-screen";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 
@@ -72,6 +73,7 @@ const App = () => {
       initialClient={routerContext.client}
       makeClient={makeClient}
       onChange={onAuthChange}
+      beforeSignOut={signOutFrame}
     >
       <QueryClientProvider client={queryClient}>
         <ToastProvider>

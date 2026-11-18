@@ -2,9 +2,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useClient } from "@/auth/auth";
-import { IdleGuard } from "@/auth/idle-guard";
-import { AppShell, railButton } from "@/components/shell/app-shell";
-import { StartScreen } from "@/components/shell/start-screen";
 import { CallHost } from "@/features/calls/call-host";
 import { useChannels } from "@/features/chat/queries";
 import { useChatAnnouncer } from "@/features/chat/use-chat-announcer";
@@ -19,6 +16,9 @@ import { useMe } from "@/features/tasks/queries";
 import { subscribeToChanges } from "@/jmap/push";
 import { totalUnread } from "@/lib/chat";
 import { useAppBadge } from "@/pwa/badge";
+import { AppShell, railButton } from "@/shell/app-shell";
+import { IdleGuard } from "@/shell/idle-guard";
+import { StartScreen } from "@/shell/start-screen";
 
 export const Route = createFileRoute("/_app")({
   beforeLoad: ({ context, location }) => {

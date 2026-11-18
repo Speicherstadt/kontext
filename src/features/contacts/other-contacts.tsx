@@ -7,7 +7,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronLeft, Mail, Search, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";

@@ -6,7 +6,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import { ChevronLeft, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { AttachFromDocuments } from "@/features/documents/document-actions";
@@ -31,6 +31,7 @@ import {
   switchReplyTo,
 } from "@/lib/compose";
 import { savedBlobs, withSavedBlob } from "@/lib/draft-blobs";
+import { registerDraftFlush } from "@/lib/draft-flush";
 import { formatSize } from "@/lib/format";
 import { fitsEncrypted, HELD_LIMIT } from "@/lib/held-files";
 import { htmlToText, sanitizeMailHtml, textToHtml } from "@/lib/html";
@@ -49,7 +50,6 @@ import { SnippetMenu } from "../snippets/snippet-menu";
 import { ComposerActions } from "./composer-actions";
 import { AttachmentList, ComposerFields } from "./composer-fields";
 import { InsertImageButton, pictures, useComposerImages } from "./composer-images";
-import { registerDraftFlush } from "./draft-flush";
 import { EditorToolbar } from "./editor-toolbar";
 import { useExternalQuestion } from "./external-question";
 import { ForgottenAttachment } from "./forgotten-attachment";

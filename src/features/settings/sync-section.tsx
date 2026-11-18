@@ -4,7 +4,7 @@
  */
 import { Check, Copy } from "lucide-react";
 import { type ReactNode, useState } from "react";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { m } from "@/paraglide/messages";
 import { SettingsCard } from "./settings-page";

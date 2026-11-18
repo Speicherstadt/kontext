@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import {
   type Calendar,
   createCalendar,

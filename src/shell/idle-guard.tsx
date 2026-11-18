@@ -6,11 +6,13 @@
  * src/lib/idle-logout.ts; the time is shared across the browser's tabs through localStorage.
  */
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "@/auth/auth";
+import { idleStore } from "@/auth/idle-store";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useCallStore } from "@/features/calls/call-store";
 import { useIdleLogout } from "@/features/company/idle-logout";
-import { flushDrafts } from "@/features/mail/draft-flush";
+import { flushDrafts } from "@/lib/draft-flush";
 import {
   countdownText,
   createIdleTimer,
@@ -21,8 +23,6 @@ import {
   secondsLeft,
 } from "@/lib/idle-logout";
 import { m } from "@/paraglide/messages";
-import { useAuth } from "./auth";
-import { idleStore } from "./idle-store";
 
 /** What counts as someone at the computer. */
 const ACTIVITY_EVENTS = ["pointerdown", "pointermove", "keydown", "wheel", "touchstart"] as const;

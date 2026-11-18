@@ -6,7 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { PhoneIncoming, PhoneMissed, PhoneOutgoing } from "lucide-react";
 import { type FormEvent, useState } from "react";
-import { TabBar } from "@/components/shell/app-shell";
+import { TabBar } from "@/components/shell/tab-bar-slot";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";

@@ -9,7 +9,7 @@
  * workbox-window 7.4 Workbox.ts `_onControllerChange`, `messageSkipWaiting`).
  */
 
-import { flushDrafts } from "@/features/mail/draft-flush";
+import { flushDrafts } from "@/lib/draft-flush";
 
 /** What the update needs from the browser, passed in so it can be tested. */
 export type UpdateDeps = {
