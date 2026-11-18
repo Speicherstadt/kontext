@@ -28,7 +28,11 @@ jobs:
       image: tristanteu/kontext
       description: Self-hosted office suite for small businesses – mail, calendar and contacts on Stalwart
       ghcr: true
-    secrets: inherit
+    # Passed by name: "secrets: inherit" only reaches reusable workflows of the same owner, and since
+    # the move to Speicherstadt firsttris/workflows is another owner (v0.1.33: DOCKER_PAT arrived
+    # empty, so "prepare" was refused before it got a runner).
+    secrets:
+      DOCKER_PAT: ${{ secrets.DOCKER_PAT }}
     permissions:
       contents: write
       packages: write
@@ -48,7 +52,8 @@ jobs:
       # second GitHub release: the app image's call creates it.
       ghcr-image: speicherstadt/kontext-box
       github-release: false
-    secrets: inherit
+    secrets:
+      DOCKER_PAT: ${{ secrets.DOCKER_PAT }}
     permissions:
       contents: write
       packages: write
