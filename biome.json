@@ -28,6 +28,12 @@
       },
       "a11y": {
         "noAutofocus": "off"
+      },
+      "complexity": {
+        "noExcessiveLinesPerFunction": {
+          "level": "info",
+          "options": { "maxLines": 80, "skipBlankLines": true }
+        }
       }
     }
   },
@@ -43,6 +49,10 @@
     }
   },
   "overrides": [
+    {
+      "includes": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "e2e/**"],
+      "linter": { "rules": { "complexity": { "noExcessiveLinesPerFunction": "off" } } }
+    },
     {
       "includes": ["src/**", "!src/lib/zod.ts"],
       "linter": {

@@ -1,0 +1,24 @@
+# Files with more than 400 lines from before the check (checks file-size, firsttris/workflows).
+# They may grow; split them in a pull request of their own. `checks file-size --clean` removes the
+# ones that are gone or small again.
+dev/seed-data.ts
+server/app.ts
+server/chat/routes.ts
+server/db/schema.ts
+server/mcp/writer.ts
+server/phone/admin-routes.ts
+server/phone/phone.ts
+server/phone/service.ts
+server/phone/store.ts
+server/stalwart-setup.ts
+server/tasks/store.ts
+src/features/calendar/calendar-page.tsx
+src/features/calendar/event-editor.tsx
+src/features/calendar/queries.ts
+src/features/chat/conversation.tsx
+src/features/chat/queries.ts
+src/features/mail/composer.tsx
+src/features/pgp/use-encrypted-send.tsx
+src/jmap/calendar.ts
+src/jmap/mail.ts
+src/lib/smime.ts
