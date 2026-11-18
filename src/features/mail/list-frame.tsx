@@ -2,22 +2,22 @@
  * The middle column's frame: title, search, filter and the virtualized rows. The data comes from
  * one folder (`MessageList`) or from the inboxes of all accounts (`UnifiedList`).
  */
-import { Link, useNavigate, useParams } from "@tanstack/react-router";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { Link, useParams } from "@tanstack/react-router";
+import { useVirtualizer, type Virtualizer } from "@tanstack/react-virtual";
 import { Menu, SquarePen } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, type RefObject, useEffect, useRef } from "react";
 import { TabBar } from "@/components/shell/tab-bar-slot";
 import { Button } from "@/components/ui/button";
 import { Loading, PlaceholderRows } from "@/components/ui/placeholder";
-import { useShortcuts } from "@/components/use-shortcuts";
 import type { MailSearch } from "@/features/mail/search-params";
 import { DeviceOffer } from "@/features/notifications/device-offer";
 import { usePhotoOf } from "@/features/photos/queries";
 import type { EmailSummary } from "@/jmap/types";
 import { cn } from "@/lib/cn";
-import { addRange, keepListed, type Picked, pickKey, toggleKey } from "@/lib/selection";
+import { pickKey } from "@/lib/selection";
 import { m } from "@/paraglide/messages";
 import { useFileDrop } from "./eml-import";
+import { isOpen, useListKeys, useListPicks } from "./list-picks";
 import type { DraggedMail } from "./mail-drag";
 import { MessageRow } from "./message-row";
 import { useMailAccounts } from "./queries";
@@ -26,7 +26,6 @@ import { SelectionBar } from "./selection-bar";
 import { SortMenu } from "./sort-menu";
 import { useSwipeAction } from "./swipe-action";
 import { useThreadView } from "./thread-view";
-import { useUndoShortcut } from "./undo";
 import { useThreadInfo } from "./use-thread-info";
 
 /**
@@ -110,32 +109,116 @@ export const FilterChips = ({
   </nav>
 );
 
-export const ListFrame = ({
-  title,
-  subtitle,
-  accountLabel,
-  unread,
-  rows,
-  isPending,
-  isFetchingMore,
-  onNearEnd,
-  search,
-  showRecipient,
-  isDraft,
-  filters,
-  empty,
-  folderAction,
-  listAction,
-  onDropFiles,
-  dragMail,
-  folderId,
-  inJunk = false,
-  sortable = true,
-}: Props) => {
-  const fileDrop = useFileDrop(onDropFiles);
-  // Combined lists name each row's account; a folder's list is the route's account.
-  const routeAccount = useParams({ strict: false }).accountId ?? "";
-  const accountOf = (row: Row) => row.account?.id ?? routeAccount;
+type Picks = ReturnType<typeof useListPicks>;
+
+/** Title, counts, sorting and "Auswählen" – or the selection bar while mails are picked. */
+const ListTitle = ({ props, picks, showBar }: { props: Props; picks: Picks; showBar: boolean }) => {
+  const { rows, title, subtitle, unread, sortable = true } = props;
+  if (showBar)
+    return (
+      <SelectionBar
+        picked={picks.picked}
+        allPicked={picks.picked.length === rows.length && rows.length > 0}
+        onPickAll={picks.pickAll}
+        onClear={picks.clear}
+        folderId={props.folderId}
+        inJunk={props.inJunk ?? false}
+      />
+    );
+  return (
+    <div className="flex items-baseline justify-between gap-3">
+      <h1 className="m-0 truncate text-[30px] leading-tight font-semibold md:text-[18px]">
+        {title}
+        {subtitle ? (
+          <span className="ml-2 text-[16px] font-normal text-muted md:text-[13px]">{subtitle}</span>
+        ) : null}
+      </h1>
+      <div className="flex shrink-0 items-center gap-2 self-center">
+        <span className="text-[12px] text-muted">
+          {unread > 0 ? m.mail_unread_count({ count: unread }) : ""}
+        </span>
+        {sortable ? <SortMenu /> : null}
+        {/* Phones have no hover: picking starts with this. */}
+        {rows.length ? (
+          <button
+            type="button"
+            onClick={() => picks.setSelecting(true)}
+            className="self-center text-[14px] font-medium text-accent md:hidden"
+          >
+            {m.mail_select_mode()}
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
+};
+
+/** On the phone: the folder button and "Neue E-Mail". */
+const PhoneBar = ({ accountLabel }: { accountLabel: string }) => (
+  <div className="flex items-center justify-between md:hidden">
+    <Link
+      to="."
+      search={(prev) => ({ ...prev, folders: true })}
+      data-tour="shared"
+      className="flex h-8 items-center gap-2 rounded-full border border-border px-3 text-[13px] text-fg no-underline"
+    >
+      <Menu size={14} />
+      <span className="max-w-[200px] truncate">{accountLabel}</span>
+    </Link>
+    <Button asChild variant="primary" size="iconSm" aria-label={m.mail_compose()}>
+      <Link to="." search={{ compose: "new" }} data-tour="compose">
+        <SquarePen size={16} />
+      </Link>
+    </Button>
+  </div>
+);
+
+type HeaderProps = {
+  props: Props;
+  picks: Picks;
+  showBar: boolean;
+  searchRef: RefObject<SearchBoxHandle | null>;
+};
+
+const ListHeader = ({ props, picks, showBar, searchRef }: HeaderProps) => {
+  const { search, filters, listAction } = props;
+  const chips = filters ?? (
+    <FilterChips
+      options={[
+        { label: m.mail_filter_all(), on: !search.unread, set: { unread: undefined } },
+        { label: m.mail_filter_unread(), on: Boolean(search.unread), set: { unread: true } },
+      ]}
+    />
+  );
+  return (
+    <header className="flex flex-col gap-3 px-4 pt-3 pb-3 md:pt-4">
+      <PhoneBar accountLabel={props.accountLabel} />
+      <ListTitle props={props} picks={picks} showBar={showBar} />
+      <SearchBox ref={searchRef} key={search.q ?? ""} initial={search.q} />
+      {listAction ? (
+        <div className="flex items-center justify-between gap-2">
+          {chips}
+          {listAction}
+        </div>
+      ) : (
+        chips
+      )}
+      {props.folderAction}
+    </header>
+  );
+};
+
+type RowsProps = {
+  props: Props;
+  picks: Picks;
+  showBar: boolean;
+  virtualizer: Virtualizer<HTMLDivElement, Element>;
+  accountOf: (row: Row) => string;
+  info: ReturnType<typeof useRowInfo>;
+};
+
+/** What each row shows besides its mail: answers, conversations, photos, shared; and swiping. */
+const useRowInfo = (rows: Row[], accountOf: (row: Row) => string, folderId?: string) => {
   const grouped = useThreadView();
   const swipe = useSwipeAction(folderId);
   const { answers, groups } = useThreadInfo(rows, accountOf, grouped);
@@ -146,43 +229,62 @@ export const ListFrame = ({
       .filter((account) => account.isPersonal)
       .map((account) => account.id),
   );
-  const order = rows.map((row) => pickKey(accountOf(row), row.email.id));
-  const [picks, setPicks] = useState<{ keys: Set<string>; anchor?: string }>({ keys: new Set() });
-  const [selecting, setSelecting] = useState(false);
-  const selected = keepListed(picks.keys, order);
-  const picked: Picked[] = rows
-    .filter((row) => selected.has(pickKey(accountOf(row), row.email.id)))
-    .map((row) => ({ accountId: accountOf(row), email: row.email }));
-  const clear = () => {
-    setPicks({ keys: new Set() });
-    setSelecting(false);
-  };
-  const pick = (key: string, shift: boolean) =>
-    setPicks((current) => ({
-      keys: shift
-        ? addRange(keepListed(current.keys, order), order, current.anchor, key)
-        : toggleKey(keepListed(current.keys, order), key),
-      anchor: key,
-    }));
-  // Another folder or search: start without a selection.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only the list's identity matters
-  useEffect(() => {
-    setPicks({ keys: new Set() });
-    setSelecting(false);
-  }, [title, search.q, search.unread, search.assigned]);
-  const showBar = selecting || picked.length > 0;
-  const chips = filters ?? (
-    <FilterChips
-      options={[
-        { label: m.mail_filter_all(), on: !search.unread, set: { unread: undefined } },
-        { label: m.mail_filter_unread(), on: Boolean(search.unread), set: { unread: true } },
-      ]}
-    />
+  return { swipe, answers, groups, photoOf, personal };
+};
+
+/** The rows the virtualizer shows, each with its heading where a part of the list begins. */
+const ListRows = ({ props, picks, showBar, virtualizer, accountOf, info }: RowsProps) => {
+  const { rows, title, search, dragMail } = props;
+  const { swipe, answers, groups, photoOf, personal } = info;
+  return (
+    <ul
+      aria-label={title}
+      className="relative m-0 list-none p-0"
+      style={{ height: virtualizer.getTotalSize() }}
+    >
+      {virtualizer.getVirtualItems().map((item) => {
+        const row = rows[item.index]!;
+        const key = pickKey(accountOf(row), row.email.id);
+        return (
+          <li
+            key={rowKey(row)}
+            data-index={item.index}
+            ref={virtualizer.measureElement}
+            className="absolute inset-x-0"
+            style={{ transform: `translateY(${item.start}px)` }}
+          >
+            {row.section ? (
+              <h2 className="m-0 px-3 pt-3 pb-1 text-[12px] font-medium text-muted">
+                {row.section}
+              </h2>
+            ) : null}
+            <MessageRow
+              row={row}
+              active={isOpen(row, search)}
+              showRecipient={props.showRecipient}
+              isDraft={props.isDraft}
+              drag={dragMail?.(row)}
+              selecting={showBar}
+              selected={picks.selected.has(key)}
+              onPick={(shift) => picks.pick(key, shift)}
+              answer={answers.get(key)}
+              group={groups.get(key)}
+              shared={!personal.has(accountOf(row))}
+              photoOf={photoOf}
+              onSwipe={(action) => swipe(accountOf(row), row.email, action, groups.get(key))}
+            />
+          </li>
+        );
+      })}
+    </ul>
   );
-  const navigate = useNavigate();
+};
+
+const rowKey = (row: Row) => `${row.account?.id ?? ""}/${row.email.id}/${row.section ?? ""}`;
+
+/** The rows of a long list, rendered only where they show; near the end it asks for more. */
+const useRowsVirtualizer = (rows: Row[], onNearEnd: () => void) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<SearchBoxHandle>(null);
-  const rowKey = (row: Row) => `${row.account?.id ?? ""}/${row.email.id}/${row.section ?? ""}`;
   const virtualizer = useVirtualizer({
     count: rows.length,
     // Heights follow the row, not its place: a heading above ("Wieder vorgelegt") shifts rows.
@@ -191,117 +293,35 @@ export const ListFrame = ({
     estimateSize: () => 92,
     overscan: 8,
   });
-  const items = virtualizer.getVirtualItems();
-  const lastIndex = items.at(-1)?.index ?? -1;
+  const lastIndex = virtualizer.getVirtualItems().at(-1)?.index ?? -1;
   const near = lastIndex >= rows.length - 10;
-
   useEffect(() => {
     if (near) onNearEnd();
   }, [near, onNearEnd]);
+  return { scrollRef, virtualizer };
+};
 
-  /** j / k: the next or previous mail of the list. */
-  const step = (by: 1 | -1) => {
-    const current = rows.findIndex(
-      (row) => row.email.id === search.email && (!row.account || row.account.id === search.account),
-    );
-    const next = rows[current === -1 ? 0 : current + by];
-    if (!next) return;
-    virtualizer.scrollToIndex(rows.indexOf(next), { align: "auto" });
-    void navigate({
-      to: ".",
-      search: (prev) => ({
-        ...prev,
-        email: next.email.id,
-        account: next.account?.id,
-        compose: isDraft ? "draft" : undefined,
-      }),
-    });
-  };
-  useShortcuts({
-    c: () => void navigate({ to: ".", search: { compose: "new" } }),
-    "/": () => searchRef.current?.focus(),
-    j: () => step(1),
-    k: () => step(-1),
-    // x: the open mail into the selection, as in Gmail.
-    x: () => {
-      const open = rows.find(
-        (row) =>
-          row.email.id === search.email && (!row.account || row.account.id === search.account),
-      );
-      if (open) pick(pickKey(accountOf(open), open.email.id), false);
-    },
-  });
-  useUndoShortcut();
-
+export const ListFrame = (props: Props) => {
+  const { rows, search, isPending, title } = props;
+  const fileDrop = useFileDrop(props.onDropFiles);
+  // Combined lists name each row's account; a folder's list is the route's account.
+  const routeAccount = useParams({ strict: false }).accountId ?? "";
+  const accountOf = (row: Row) => row.account?.id ?? routeAccount;
+  const picks = useListPicks(
+    rows,
+    accountOf,
+    JSON.stringify([title, search.q, search.unread, search.assigned]),
+  );
+  const showBar = picks.selecting || picks.picked.length > 0;
+  const searchRef = useRef<SearchBoxHandle>(null);
+  const { scrollRef, virtualizer } = useRowsVirtualizer(rows, props.onNearEnd);
+  const info = useRowInfo(rows, accountOf, props.folderId);
+  const pickOpen = (row: Row) => picks.pick(pickKey(accountOf(row), row.email.id), false);
+  useListKeys({ rows, search, isDraft: props.isDraft, virtualizer, searchRef, pickOpen });
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <header className="flex flex-col gap-3 px-4 pt-3 pb-3 md:pt-4">
-        <div className="flex items-center justify-between md:hidden">
-          <Link
-            to="."
-            search={(prev) => ({ ...prev, folders: true })}
-            data-tour="shared"
-            className="flex h-8 items-center gap-2 rounded-full border border-border px-3 text-[13px] text-fg no-underline"
-          >
-            <Menu size={14} />
-            <span className="max-w-[200px] truncate">{accountLabel}</span>
-          </Link>
-          <Button asChild variant="primary" size="iconSm" aria-label={m.mail_compose()}>
-            <Link to="." search={{ compose: "new" }} data-tour="compose">
-              <SquarePen size={16} />
-            </Link>
-          </Button>
-        </div>
-        {showBar ? (
-          <SelectionBar
-            picked={picked}
-            allPicked={picked.length === rows.length && rows.length > 0}
-            onPickAll={() => setPicks({ keys: new Set(order) })}
-            onClear={clear}
-            folderId={folderId}
-            inJunk={inJunk}
-          />
-        ) : (
-          <div className="flex items-baseline justify-between gap-3">
-            <h1 className="m-0 truncate text-[30px] leading-tight font-semibold md:text-[18px]">
-              {title}
-              {subtitle ? (
-                <span className="ml-2 text-[16px] font-normal text-muted md:text-[13px]">
-                  {subtitle}
-                </span>
-              ) : null}
-            </h1>
-            <div className="flex shrink-0 items-center gap-2 self-center">
-              <span className="text-[12px] text-muted">
-                {unread > 0 ? m.mail_unread_count({ count: unread }) : ""}
-              </span>
-              {sortable ? <SortMenu /> : null}
-              {/* Phones have no hover: picking starts with this. */}
-              {rows.length ? (
-                <button
-                  type="button"
-                  onClick={() => setSelecting(true)}
-                  className="self-center text-[14px] font-medium text-accent md:hidden"
-                >
-                  {m.mail_select_mode()}
-                </button>
-              ) : null}
-            </div>
-          </div>
-        )}
-        <SearchBox ref={searchRef} key={search.q ?? ""} initial={search.q} />
-        {listAction ? (
-          <div className="flex items-center justify-between gap-2">
-            {chips}
-            {listAction}
-          </div>
-        ) : (
-          chips
-        )}
-        {folderAction}
-      </header>
+      <ListHeader props={props} picks={picks} showBar={showBar} searchRef={searchRef} />
       <DeviceOffer />
-
       <div
         ref={scrollRef}
         {...fileDrop}
@@ -312,59 +332,18 @@ export const ListFrame = ({
             <PlaceholderRows />
           </Loading>
         ) : rows.length === 0 ? (
-          <p className="px-3 py-6 text-[14px] text-muted">{empty ?? m.mail_empty()}</p>
+          <p className="px-3 py-6 text-[14px] text-muted">{props.empty ?? m.mail_empty()}</p>
         ) : (
-          <ul
-            aria-label={title}
-            className="relative m-0 list-none p-0"
-            style={{ height: virtualizer.getTotalSize() }}
-          >
-            {items.map((item) => {
-              const row = rows[item.index]!;
-              return (
-                <li
-                  key={rowKey(row)}
-                  data-index={item.index}
-                  ref={virtualizer.measureElement}
-                  className="absolute inset-x-0"
-                  style={{ transform: `translateY(${item.start}px)` }}
-                >
-                  {row.section ? (
-                    <h2 className="m-0 px-3 pt-3 pb-1 text-[12px] font-medium text-muted">
-                      {row.section}
-                    </h2>
-                  ) : null}
-                  <MessageRow
-                    row={row}
-                    active={
-                      row.email.id === search.email &&
-                      (!row.account || row.account.id === search.account)
-                    }
-                    showRecipient={showRecipient}
-                    isDraft={isDraft}
-                    drag={dragMail?.(row)}
-                    selecting={showBar}
-                    selected={selected.has(pickKey(accountOf(row), row.email.id))}
-                    onPick={(shift) => pick(pickKey(accountOf(row), row.email.id), shift)}
-                    answer={answers.get(pickKey(accountOf(row), row.email.id))}
-                    group={groups.get(pickKey(accountOf(row), row.email.id))}
-                    shared={!personal.has(accountOf(row))}
-                    photoOf={photoOf}
-                    onSwipe={(action) =>
-                      swipe(
-                        accountOf(row),
-                        row.email,
-                        action,
-                        groups.get(pickKey(accountOf(row), row.email.id)),
-                      )
-                    }
-                  />
-                </li>
-              );
-            })}
-          </ul>
+          <ListRows
+            props={props}
+            picks={picks}
+            showBar={showBar}
+            virtualizer={virtualizer}
+            accountOf={accountOf}
+            info={info}
+          />
         )}
-        {isFetchingMore ? (
+        {props.isFetchingMore ? (
           <p className="px-3 py-2 text-[13px] text-muted">{m.common_loading()}</p>
         ) : null}
       </div>
