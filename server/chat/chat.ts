@@ -186,6 +186,10 @@ export const voiceType = (name: string): string | undefined =>
 /** Who is asking: their personal account and every account their JMAP session opens. */
 export type Viewer = { me: string; accountIds: string[] };
 
+/** Why a plain message or file is refused in a confidential channel. */
+export const NOT_SEALED =
+  "In einem vertraulichen Kanal gehen nur verschlüsselte Nachrichten und Dateien, ohne Karten.";
+
 export type { ChatEvent, Publisher } from "./events";
 
 export const canSee = (

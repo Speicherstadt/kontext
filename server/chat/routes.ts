@@ -5,7 +5,6 @@
  */
 
 import { Hono } from "hono";
-import { limitBody } from "../body-limit";
 import type { SessionAccount } from "../categories/routes";
 import {
   type Channel,
@@ -16,13 +15,9 @@ import {
   chatNotice,
   editMessageSchema,
   fitsConfidential,
-  INLINE_TYPES,
-  isVoice,
-  looksSealed,
-  MAIL_COPY_TYPE,
-  MAX_FILE_BYTES,
   type Message,
   muteSchema,
+  NOT_SEALED,
   newChannelSchema,
   newDirectSchema,
   newMessageSchema,
@@ -32,11 +27,10 @@ import {
   SEALED_FILE_TYPE,
   searchSchema,
   type Viewer,
-  voiceType,
 } from "./chat";
+import { createFileRoutes } from "./file-routes";
 import type { ChatFiles } from "./files";
 import type { MessageStore } from "./messages";
-import { byteRange } from "./range";
 import type { ChatStore } from "./store";
 import { createThreadRoutes, publishChanged } from "./thread-routes";
 
@@ -57,9 +51,6 @@ export type ChatDeps = {
   /** The bytes of a stored file (files.ts writes them to disk); the demo keeps them in memory. */
   openFile?: (path: string) => Blob;
 };
-
-const NOT_SEALED =
-  "In einem vertraulichen Kanal gehen nur verschlüsselte Nachrichten und Dateien, ohne Karten.";
 
 const PAGE = 50;
 
@@ -357,94 +348,6 @@ export const createChatRoutes = ({
     return c.json({ ok: true });
   });
 
-  // The file, its small picture and the form around it: read no more than that.
-  app.post("/channels/:id/files", limitBody(MAX_FILE_BYTES + 2 * 1024 * 1024), async (c) => {
-    const viewer = c.get("viewer");
-    const channel = await visible(c.req.param("id"), viewer);
-    if (!channel) return c.json({ error: "Unbekannter Kanal" }, 404);
-    const form = await c.req.formData().catch(() => null);
-    const file = form?.get("file");
-    const thumb = form?.get("thumb");
-    // A form field is text or a file.
-    if (!file || typeof file === "string" || file.size === 0) {
-      return c.json({ error: "Keine Datei." }, 400);
-    }
-    if (file.size > MAX_FILE_BYTES) {
-      return c.json({ error: "Die Datei ist größer als 25 MB." }, 413);
-    }
-    const sealed = form?.get("kind") === "sealed";
-    // In a confidential channel only encrypted files, without a readable name or small picture.
-    if (sealed !== channel.confidential) return c.json({ error: NOT_SEALED }, 400);
-    if (sealed) {
-      const [first] = new Uint8Array(await file.slice(0, 1).arrayBuffer());
-      if (!looksSealed(first)) return c.json({ error: NOT_SEALED }, 400);
-      const blind = new File([file], "verschlüsselt", { type: SEALED_FILE_TYPE });
-      return c.json(
-        { file: await files.save(channel.id, viewer.me, blind, undefined, SEALED_FILE_TYPE) },
-        201,
-      );
-    }
-    const small = thumb && typeof thumb !== "string" ? thumb : undefined;
-    // A mail shared as a copy says so; its content is shown only from its card. A voice message
-    // is audio, whatever its name makes of it.
-    const kind = form?.get("kind");
-    const type =
-      kind === "mail-copy"
-        ? MAIL_COPY_TYPE
-        : kind === "voice"
-          ? (voiceType(file.name) ?? file.type)
-          : file.type;
-    return c.json({ file: await files.save(channel.id, viewer.me, file, small, type) }, 201);
-  });
-
-  app.get("/files/:id", async (c) => {
-    const file = await files.get(c.req.param("id"));
-    const channel = file && (await visible(file.channelId, c.get("viewer")));
-    if (!file || !channel) return c.json({ error: "Unbekannte Datei" }, 404);
-    // The small picture of a photo, where there is one.
-    if (c.req.query("thumb") && file.thumbPath) {
-      return new Response(openFile(file.thumbPath), {
-        headers: {
-          "content-type": "image/jpeg",
-          "content-security-policy": "sandbox",
-          "x-content-type-options": "nosniff",
-          "cache-control": "private, max-age=31536000, immutable",
-        },
-      });
-    }
-    // Photos and voice messages show in the page; everything else is a download that cannot run
-    // in this origin.
-    const inline = INLINE_TYPES.includes(file.type) || isVoice(file.type);
-    const headers = {
-      "content-type": inline ? file.type : "application/octet-stream",
-      "content-disposition": `${inline ? "inline" : "attachment"}; filename*=UTF-8''${encodeURIComponent(file.name)}`,
-      "content-security-policy": "sandbox",
-      "x-content-type-options": "nosniff",
-      "cache-control": "private, max-age=31536000, immutable",
-      "accept-ranges": "bytes",
-    };
-    const range = byteRange(c.req.header("range"), file.size);
-    if (range === "unsatisfiable") {
-      return new Response(null, {
-        status: 416,
-        headers: { ...headers, "content-range": `bytes */${file.size}` },
-      });
-    }
-    if (!range) {
-      return new Response(openFile(file.path), {
-        headers: { ...headers, "content-length": String(file.size) },
-      });
-    }
-    return new Response(openFile(file.path).slice(range.start, range.end + 1), {
-      status: 206,
-      headers: {
-        ...headers,
-        "content-length": String(range.end - range.start + 1),
-        "content-range": `bytes ${range.start}-${range.end}/${file.size}`,
-      },
-    });
-  });
-
   /** Where a mail (or its thread) was discussed, in the channels one sees. */
   app.get("/discussed", async (c) => {
     const ref = c.req.query("ref");
@@ -464,6 +367,7 @@ export const createChatRoutes = ({
   });
 
   app.route("/", createThreadRoutes({ store, messages, hub }));
+  app.route("/", createFileRoutes({ store, files, openFile }));
 
   return app;
 };

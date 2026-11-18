@@ -3,7 +3,6 @@
 # ones that are gone or small again.
 dev/seed-data.ts
 server/app.ts
-server/chat/routes.ts
 server/db/schema.ts
 server/phone/service.ts
 server/stalwart-setup.ts
