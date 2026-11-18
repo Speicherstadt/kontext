@@ -27,12 +27,8 @@ import { CALENDAR_COLORS, calendarChanges } from "./calendar-colors";
 import { DefaultReminderButton } from "./default-reminder";
 import { useAddHolidays } from "./holiday-queries";
 import { IcsImport } from "./ics-import";
-import {
-  type CalendarRef,
-  useCalendarMutations,
-  useCalendarRefs,
-  useSetCalendarVisible,
-} from "./queries";
+import { useCalendarMutations } from "./mutations";
+import { type CalendarRef, useCalendarRefs, useSetCalendarVisible } from "./queries";
 import { Subscriptions } from "./subscriptions";
 import { TasksToggle } from "./task-chip";
 

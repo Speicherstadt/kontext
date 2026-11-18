@@ -27,6 +27,12 @@ const withRows = (form: ContactForm): ContactForm => ({
   phones: form.phones.length ? form.phones : [{ number: "", kind: "work" }],
 });
 
+/** The card to save; the photo only when it changed, so one in another format stays as it is. */
+const cardOf = (form: ContactForm, card: Props["card"], photo: string | undefined) => ({
+  ...formToCard(form, card),
+  ...(photo === (card && contactPhoto(card)) ? {} : { media: mediaWithPhoto(photo ?? null, card) }),
+});
+
 export const ContactEditor = ({ card, books, preferredBook }: Props) => {
   const [form, setForm] = useState(() => withRows(card ? toForm(card) : emptyContactForm));
   const [photo, setPhoto] = useState<string | undefined>(card ? contactPhoto(card) : undefined);
@@ -52,13 +58,7 @@ export const ContactEditor = ({ card, books, preferredBook }: Props) => {
       toast.show(m.common_error({ message: (error as Error).message }), "error");
     }
   };
-  // Only when the photo changed: a card's photo in another format stays as it is otherwise.
-  const toCard = () => ({
-    ...formToCard(form, card),
-    ...(photo === (card && contactPhoto(card))
-      ? {}
-      : { media: mediaWithPhoto(photo ?? null, card) }),
-  });
+  const toCard = () => cardOf(form, card, photo);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();

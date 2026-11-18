@@ -9,7 +9,7 @@ import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "@/components/ui/me
 import { useToast } from "@/components/ui/toast";
 import type { ChannelSummary } from "@/lib/chat";
 import { m } from "@/paraglide/messages";
-import { useChatActions } from "./queries";
+import { useChatActions } from "./actions";
 
 export const ChannelMenu = ({
   channel,

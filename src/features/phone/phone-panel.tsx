@@ -58,9 +58,27 @@ const roundButton = (active: boolean) =>
     active ? "bg-subtle text-fg hover:bg-hover" : "bg-fg text-bg hover:opacity-90",
   );
 
+/** The keys to dial into a running call (DTMF, e.g. for a menu or a door). */
+const Keypad = () => {
+  const { localParticipant } = useLocalParticipant();
+  return (
+    <fieldset aria-label={m.phone_keypad()} className="m-0 grid grid-cols-3 gap-2 border-0 p-0">
+      {KEYS.map((key) => (
+        <button
+          key={key}
+          type="button"
+          onClick={() => void localParticipant.publishDtmf(dtmfCode(key), key)}
+          className="flex size-12 items-center justify-center rounded-full bg-subtle font-mono text-[18px] hover:bg-hover"
+        >
+          {key}
+        </button>
+      ))}
+    </fieldset>
+  );
+};
+
 const Controls = ({ call }: { call: PhoneCall }) => {
   const mic = useTrackToggle({ source: Track.Source.Microphone });
-  const { localParticipant } = useLocalParticipant();
   const [keypad, setKeypad] = useState(false);
   const [transfer, setTransfer] = useState(false);
   const { canPlayAudio, startAudio } = useAudioPlayback();
@@ -71,7 +89,6 @@ const Controls = ({ call }: { call: PhoneCall }) => {
   const hold = () => void holdPhone(queryClient, call.id, !call.held).catch(failed);
   const recording = call.recording === "running";
   const record = () => void recordPhone(queryClient, call.id, !recording).catch(failed);
-  // Hanging up ends the call and the lines dialled into it.
   const me = useMe();
   // With a colleague still in the call, one only leaves; otherwise hanging up ends the call and
   // the lines dialled into it.
@@ -84,20 +101,7 @@ const Controls = ({ call }: { call: PhoneCall }) => {
   };
   return (
     <div className="flex flex-col items-center gap-4">
-      {keypad ? (
-        <fieldset aria-label={m.phone_keypad()} className="m-0 grid grid-cols-3 gap-2 border-0 p-0">
-          {KEYS.map((key) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => void localParticipant.publishDtmf(dtmfCode(key), key)}
-              className="flex size-12 items-center justify-center rounded-full bg-subtle font-mono text-[18px] hover:bg-hover"
-            >
-              {key}
-            </button>
-          ))}
-        </fieldset>
-      ) : null}
+      {keypad ? <Keypad /> : null}
       {call.door ? (
         <button
           type="button"

@@ -6,13 +6,4 @@ server/app.ts
 server/db/schema.ts
 server/phone/service.ts
 server/stalwart-setup.ts
-src/features/calendar/calendar-page.tsx
-src/features/calendar/event-editor.tsx
-src/features/calendar/queries.ts
-src/features/chat/conversation.tsx
-src/features/chat/queries.ts
 src/features/mail/composer.tsx
-src/features/pgp/use-encrypted-send.tsx
-src/jmap/calendar.ts
-src/jmap/mail.ts
-src/lib/smime.ts

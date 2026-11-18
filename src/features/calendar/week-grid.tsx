@@ -212,36 +212,8 @@ export const WeekGrid = ({
                 className={cn("relative border-l border-border", weekend && "bg-side")}
                 style={{ height: 24 * HOUR_HEIGHT, ...HOUR_LINES }}
               >
-                {weekend
-                  ? null
-                  : shaded.map(({ top, bottom }) => (
-                      <div
-                        key={top}
-                        data-off-hours
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-x-0 bg-side"
-                        style={{
-                          ...HOUR_LINES,
-                          top: (top / 60) * HOUR_HEIGHT,
-                          height: ((bottom - top) / 60) * HOUR_HEIGHT,
-                        }}
-                      />
-                    ))}
-                {HOURS.map(({ hour, label }) => (
-                  <Link
-                    key={label}
-                    to="/calendar"
-                    search={(prev) => ({
-                      ...prev,
-                      event: "new",
-                      start: `${day}T${timeLabel(hour * 60)}`,
-                    })}
-                    aria-label={`${m.calendar_new()} ${day} ${timeLabel(hour * 60)}`}
-                    tabIndex={-1}
-                    className="absolute inset-x-0 block hover:bg-hover/60"
-                    style={{ top: hour * HOUR_HEIGHT, height: HOUR_HEIGHT }}
-                  />
-                ))}
+                {weekend ? null : <OffHours shaded={shaded} />}
+                <HourLinks day={day} />
                 {placed.map(({ item, top, height, column, columns: count }) => {
                   const box = {
                     top: (top / 60) * HOUR_HEIGHT,
@@ -314,6 +286,40 @@ export const WeekGrid = ({
     </div>
   );
 };
+
+/** The hours outside one's working time, shaded. */
+const OffHours = ({ shaded }: { shaded: ReturnType<typeof offHours> }) =>
+  shaded.map(({ top, bottom }) => (
+    <div
+      key={top}
+      data-off-hours
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-x-0 bg-side"
+      style={{
+        ...HOUR_LINES,
+        top: (top / 60) * HOUR_HEIGHT,
+        height: ((bottom - top) / 60) * HOUR_HEIGHT,
+      }}
+    />
+  ));
+
+/** One link per hour of a day: a click there starts a new event at that hour. */
+const HourLinks = ({ day }: { day: string }) =>
+  HOURS.map(({ hour, label }) => (
+    <Link
+      key={label}
+      to="/calendar"
+      search={(prev) => ({
+        ...prev,
+        event: "new",
+        start: `${day}T${timeLabel(hour * 60)}`,
+      })}
+      aria-label={`${m.calendar_new()} ${day} ${timeLabel(hour * 60)}`}
+      tabIndex={-1}
+      className="absolute inset-x-0 block hover:bg-hover/60"
+      style={{ top: hour * HOUR_HEIGHT, height: HOUR_HEIGHT }}
+    />
+  ));
 
 const EventBlock = ({
   event,
