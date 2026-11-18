@@ -5,61 +5,33 @@
  * be swiped to the left or right (what that does is set per device).
  */
 import { Link, useParams } from "@tanstack/react-router";
-import {
-  AlarmClock,
-  CalendarClock,
-  CornerUpLeft,
-  ListChecks,
-  LockKeyhole,
-  Paperclip,
-  Star,
-  Users,
-} from "lucide-react";
-import type { MouseEvent } from "react";
+import type { MouseEvent, PointerEvent } from "react";
 import { Highlighted } from "@/components/highlighted";
-import { Avatar } from "@/components/ui/avatar";
 import { useLongPress } from "@/components/use-long-press";
 import { useMediaQuery } from "@/components/use-media-query";
 import { useSwipe } from "@/components/use-swipe";
 import { isFlagged, isUnread } from "@/jmap/mail";
+import type { EmailSummary } from "@/jmap/types";
 import { categoriesOn } from "@/lib/categories";
 import { cn } from "@/lib/cn";
-import { displayName, formatAddressList, listDate } from "@/lib/format";
-import { encryptedPreview } from "@/lib/pgp-mail";
+import { displayName, formatAddressList } from "@/lib/format";
 import type { PhotoKey } from "@/lib/photo";
 import { rowFace } from "@/lib/row-face";
-import { sendTimeLabel } from "@/lib/schedule";
 import { rowClick } from "@/lib/selection";
 import { directionOf, type SwipeAction } from "@/lib/swipe";
 import { tasksOfMail } from "@/lib/tasks";
 import { m } from "@/paraglide/messages";
-import { CategoryChips } from "../categories/category-chips";
 import { useCategoryMap } from "../categories/queries";
 import { useTasks } from "../tasks/queries";
-import { AssignmentChip } from "./assignment";
-import { ExternalMark } from "./external-mark";
 import type { Row } from "./list-frame";
 import { type DraggedMail, startMailDrag } from "./mail-drag";
+import { MarksLine, PickColumn, TopLine } from "./message-row-parts";
 import { useOpenedPreview, useShownSubject } from "./opened-mails";
 import { SwipeBackdrop } from "./swipe-backdrop";
 import { useSwipeSettings } from "./swipe-settings";
 import type { Answer, Group } from "./use-thread-info";
 
-export const MessageRow = ({
-  row: { email, account, folder, highlight, inAttachment, sendAt, snoozedUntil },
-  active,
-  showRecipient,
-  isDraft,
-  drag,
-  selecting,
-  selected,
-  onPick,
-  answer,
-  shared = false,
-  group,
-  photoOf,
-  onSwipe,
-}: {
+type Props = {
   row: Row;
   active: boolean;
   showRecipient: boolean;
@@ -82,26 +54,13 @@ export const MessageRow = ({
   photoOf: (person: PhotoKey) => string | undefined;
   /** A swipe on the phone let go far enough. */
   onSwipe: (action: SwipeAction) => void;
-}) => {
-  const unread = group ? group.unread : isUnread(email);
-  const subject = useShownSubject(email);
-  const openedPreview = useOpenedPreview(email.id);
-  // Combined lists name each row's account; a folder's list is the route's account.
-  const routeAccount = useParams({ strict: false }).accountId;
-  const categories = categoriesOn(
-    email.keywords,
-    useCategoryMap()[account?.id ?? routeAccount ?? ""] ?? [],
-  );
-  const task = tasksOfMail(useTasks().tasks, email.id, email.threadId).find(
-    (candidate) => candidate.status !== "done",
-  );
-  const who = showRecipient
-    ? formatAddressList(email.to)
-    : group && group.count > 1
-      ? group.names.map((name) => name.split(" ")[0]).join(", ")
-      : displayName(email.from?.[0]);
-  const face = rowFace(email, { showRecipient, latest: group?.latest });
-  const boxShown = selecting || selected;
+};
+
+/**
+ * Click, long press and swipe on the line: a click opens (or picks, with Shift/Ctrl or while
+ * picking on a phone), a long press picks, a swipe does what is set for its side.
+ */
+const useRowGestures = (selecting: boolean, onPick: Props["onPick"], onSwipe: Props["onSwipe"]) => {
   const phone = !useMediaQuery("(min-width: 768px)");
   const swipes = useSwipeSettings();
   const swipe = useSwipe(swipes, onSwipe);
@@ -127,12 +86,77 @@ export const MessageRow = ({
     event.preventDefault();
     onPick(does === "range");
   };
+  const handlers = {
+    ...pickByPress.handlers,
+    onClick,
+    onPointerDown: (event: PointerEvent<HTMLElement>) => {
+      pickByPress.handlers.onPointerDown(event);
+      swipe.handlers.onPointerDown(event);
+    },
+    onPointerMove: (event: PointerEvent<HTMLElement>) => {
+      pickByPress.handlers.onPointerMove(event);
+      swipe.handlers.onPointerMove(event);
+    },
+    onPointerUp: (event: PointerEvent<HTMLElement>) => {
+      pickByPress.handlers.onPointerUp();
+      swipe.handlers.onPointerUp(event);
+    },
+    onPointerCancel: () => {
+      pickByPress.handlers.onPointerCancel();
+      swipe.handlers.onPointerCancel();
+    },
+  };
+  return { phone, swipes, offset: swipe.offset, handlers };
+};
+
+/** The categories of the mail and an open task made from it. */
+const useRowExtras = (email: EmailSummary, accountId: string | undefined) => {
+  // Combined lists name each row's account; a folder's list is the route's account.
+  const routeAccount = useParams({ strict: false }).accountId;
+  const categories = categoriesOn(
+    email.keywords,
+    useCategoryMap()[accountId ?? routeAccount ?? ""] ?? [],
+  );
+  const task = tasksOfMail(useTasks().tasks, email.id, email.threadId).find(
+    (candidate) => candidate.status !== "done",
+  );
+  return { categories, hasTask: Boolean(task) };
+};
+
+export const MessageRow = ({
+  row,
+  active,
+  showRecipient,
+  isDraft,
+  drag,
+  selecting,
+  selected,
+  onPick,
+  answer,
+  shared = false,
+  group,
+  photoOf,
+  onSwipe,
+}: Props) => {
+  const { email, account } = row;
+  const unread = group ? group.unread : isUnread(email);
+  const subject = useShownSubject(email);
+  const openedPreview = useOpenedPreview(email.id);
+  const { categories, hasTask } = useRowExtras(email, account?.id);
+  const who = showRecipient
+    ? formatAddressList(email.to)
+    : group && group.count > 1
+      ? group.names.map((name) => name.split(" ")[0]).join(", ")
+      : displayName(email.from?.[0]);
+  const face = rowFace(email, { showRecipient, latest: group?.latest });
+  const boxShown = selecting || selected;
+  const { phone, swipes, offset, handlers } = useRowGestures(selecting, onPick, onSwipe);
   return (
     <div className="relative overflow-hidden rounded-[10px]">
-      {swipe.offset ? (
+      {offset ? (
         <SwipeBackdrop
-          action={swipes[directionOf(swipe.offset)]}
-          side={directionOf(swipe.offset)}
+          action={swipes[directionOf(offset)]}
+          side={directionOf(offset)}
           unread={unread}
           flagged={isFlagged(email)}
         />
@@ -142,43 +166,17 @@ export const MessageRow = ({
           "group relative flex rounded-[10px] hover:bg-hover",
           active && "bg-subtle",
           selected && "bg-accent/8",
-          swipe.offset !== 0 && "bg-bg",
+          offset !== 0 && "bg-bg",
         )}
-        style={swipe.offset ? { transform: `translateX(${swipe.offset}px)` } : undefined}
+        style={offset ? { transform: `translateX(${offset}px)` } : undefined}
       >
-        {/* Its own column the height of the line, beside the link: a click a bit off the box
-          still picks and never opens the mail. It shows the picture until the box is wanted. */}
-        {/* A click on the box itself bubbles here too; a label would not hand on a Shift-click
-          beside the box to it. */}
-        {/* biome-ignore lint/a11y/noStaticElementInteractions: the checkbox inside is the control */}
-        {/* biome-ignore lint/a11y/useKeyWithClickEvents: Space on the checkbox clicks it, which bubbles here */}
-        <div
-          onClick={(event) => onPick(event.shiftKey)}
-          className="relative w-10 shrink-0 cursor-pointer pt-3 pl-2"
-        >
-          {boxShown ? null : (
-            <Avatar
-              name={face.name}
-              photo={photoOf(face.photo)}
-              size={28}
-              // Not in the way of a click: the box below it takes it, the column the rest.
-              className="pointer-events-none absolute top-3 left-2 group-hover:opacity-0 group-has-[:focus-visible]:opacity-0"
-            />
-          )}
-          <input
-            type="checkbox"
-            checked={selected}
-            readOnly
-            aria-label={m.mail_select({ subject: subject || m.mail_no_subject() })}
-            className={cn(
-              // In the middle of the picture's place.
-              "mt-1.5 ml-1.5 block size-4 cursor-pointer accent-[var(--primary)]",
-              // Under the picture, still there for the keyboard; shown on hover and focus.
-              !boxShown &&
-                "opacity-0 group-hover:opacity-100 group-has-[:focus-visible]:opacity-100",
-            )}
-          />
-        </div>
+        <PickColumn
+          boxShown={boxShown}
+          selected={selected}
+          subject={subject}
+          face={{ name: face.name, photo: photoOf(face.photo) }}
+          onPick={onPick}
+        />
         <Link
           to="."
           search={(prev) => ({
@@ -194,142 +192,22 @@ export const MessageRow = ({
               ? (event) => startMailDrag(event, drag)
               : (event) => event.preventDefault()
           }
-          onClick={onClick}
-          {...pickByPress.handlers}
-          onPointerDown={(event) => {
-            pickByPress.handlers.onPointerDown(event);
-            swipe.handlers.onPointerDown(event);
-          }}
-          onPointerMove={(event) => {
-            pickByPress.handlers.onPointerMove(event);
-            swipe.handlers.onPointerMove(event);
-          }}
-          onPointerUp={(event) => {
-            pickByPress.handlers.onPointerUp();
-            swipe.handlers.onPointerUp(event);
-          }}
-          onPointerCancel={() => {
-            pickByPress.handlers.onPointerCancel();
-            swipe.handlers.onPointerCancel();
-          }}
+          {...handlers}
           className="flex min-w-0 flex-1 touch-pan-y py-3 pr-3 pl-2 text-left text-fg no-underline [-webkit-touch-callout:none]"
         >
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="flex items-baseline gap-2">
-              <span className={cn("min-w-0 flex-1 truncate", unread && "font-semibold")}>
-                {unread ? (
-                  <span
-                    aria-hidden="true"
-                    className="mr-1.5 mb-px inline-block size-1.5 rounded-full bg-accent align-middle"
-                  />
-                ) : null}
-                <Highlighted text={who || "—"} terms={highlight} />
-                {group && group.count > 1 ? (
-                  <>
-                    <span
-                      aria-hidden="true"
-                      className="ml-1.5 font-mono text-[12px] font-normal text-muted"
-                    >
-                      {group.count}
-                    </span>
-                    <span className="sr-only">, {m.mail_thread_count({ count: group.count })}</span>
-                  </>
-                ) : null}
-              </span>
-              {isFlagged(email) ? (
-                <Star
-                  size={12}
-                  className="shrink-0 fill-warn text-warn"
-                  aria-label={m.mail_flagged()}
-                />
-              ) : null}
-              <span className="shrink-0 font-mono text-[12px] text-muted">
-                {listDate(email.receivedAt, new Date())}
-              </span>
-            </span>
+            <TopLine row={row} who={who} unread={unread} group={group} />
             <span className={cn("truncate", unread && "font-semibold")}>
-              <Highlighted text={subject || m.mail_no_subject()} terms={highlight} />
+              <Highlighted text={subject || m.mail_no_subject()} terms={row.highlight} />
             </span>
-            <span className="flex items-center gap-1.5 text-[13px] text-muted">
-              {folder ? (
-                <span className="shrink-0 rounded-md border border-border px-1.5 text-[11px] text-muted">
-                  {folder}
-                </span>
-              ) : null}
-              {account?.label ? (
-                <span
-                  title={account.title}
-                  className="flex min-w-0 items-center gap-1 rounded-md bg-subtle px-1.5 text-[11px] font-medium text-muted"
-                >
-                  <Users size={12} className="shrink-0" aria-hidden="true" />
-                  <span className="truncate">{account.label}</span>
-                </span>
-              ) : null}
-              <ExternalMark address={email.from?.[0]?.email} />
-              {sendAt ? (
-                <span className="inline-flex h-[18px] shrink-0 items-center gap-1 rounded-full bg-warn/10 px-1.5 text-[11px] font-medium text-warn">
-                  <CalendarClock size={12} aria-hidden="true" />
-                  {m.mail_scheduled_at({ when: sendTimeLabel(new Date(sendAt)) })}
-                </span>
-              ) : null}
-              {snoozedUntil ? (
-                <span className="inline-flex h-[18px] shrink-0 items-center gap-1 rounded-full bg-accent/10 px-1.5 text-[11px] font-medium text-accent-ink">
-                  <AlarmClock size={12} aria-hidden="true" />
-                  {Date.parse(snoozedUntil) <= Date.now()
-                    ? m.mail_snoozed_soon()
-                    : m.mail_snoozed_until({ when: sendTimeLabel(new Date(snoozedUntil)) })}
-                </span>
-              ) : null}
-              {email.keywords.$answered ? (
-                <span
-                  title={
-                    answer
-                      ? m.mail_answered_by({
-                          name: answer.name,
-                          when: listDate(answer.at, new Date()),
-                        })
-                      : m.mail_answered()
-                  }
-                  className="inline-flex shrink-0 items-center gap-1 text-[11px] font-medium text-muted"
-                >
-                  <CornerUpLeft size={12} aria-label={m.mail_answered()} />
-                  {shared && answer
-                    ? `${answer.name.split(" ")[0]} · ${listDate(answer.at, new Date())}`
-                    : null}
-                </span>
-              ) : null}
-              {task ? (
-                <span className="inline-flex h-[18px] shrink-0 items-center gap-1 rounded-full bg-accent/10 px-1.5 text-[11px] font-medium text-accent-ink">
-                  <ListChecks size={12} aria-hidden="true" />
-                  {m.tasks_from_mail()}
-                </span>
-              ) : null}
-              {inAttachment ? (
-                <span className="inline-flex h-[18px] shrink-0 items-center gap-1 rounded-full bg-accent/10 px-1.5 text-[11px] font-medium text-accent-ink">
-                  <Paperclip size={12} aria-hidden="true" />
-                  {m.search_in_attachment()}
-                </span>
-              ) : null}
-              {shared ? <AssignmentChip email={email} compact /> : null}
-              <CategoryChips categories={categories} max={2} />
-              {encryptedPreview(email.preview, email["header:Content-Type"]) ? (
-                <>
-                  <span className="flex shrink-0 items-center gap-1 text-accent">
-                    <LockKeyhole size={12} aria-hidden="true" /> {m.pgp_encrypted()}
-                  </span>
-                  {openedPreview ? <span className="truncate">{openedPreview}</span> : null}
-                </>
-              ) : (
-                <>
-                  {email.hasAttachment ? (
-                    <Paperclip size={12} className="shrink-0" aria-label={m.mail_attachments()} />
-                  ) : null}
-                  <span className="truncate">
-                    <Highlighted text={email.preview} terms={highlight} />
-                  </span>
-                </>
-              )}
-            </span>
+            <MarksLine
+              row={row}
+              answer={answer}
+              shared={shared}
+              hasTask={hasTask}
+              categories={categories}
+              openedPreview={openedPreview}
+            />
           </span>
         </Link>
       </div>

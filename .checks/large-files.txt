@@ -6,4 +6,3 @@ server/app.ts
 server/db/schema.ts
 server/phone/service.ts
 server/stalwart-setup.ts
-src/features/mail/composer.tsx

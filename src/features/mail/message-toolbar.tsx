@@ -3,193 +3,199 @@
  * snooze, flag, assign), all alike (toolbar-button.tsx), then reply and everything else under
  * "Weitere Aktionen" (message-more-menu.tsx); the shortcuts for all of them.
  */
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Archive, ChevronLeft, Reply, ShieldAlert, ShieldCheck, Star, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
 import { usePrintKey } from "@/components/use-print-key";
 import { useShortcuts } from "@/components/use-shortcuts";
-import { isFlagged } from "@/jmap/mail";
-import type { EmailDetail, EmailSummary, Mailbox } from "@/jmap/types";
-import { emlName } from "@/lib/compose";
+import type { EmailDetail, Mailbox } from "@/jmap/types";
 import { correspondent } from "@/lib/correspondent";
-import { downloadBlob } from "@/lib/download";
-import { domainOf, isExternal } from "@/lib/external-hint";
-import { canAssignIn, mailboxRights } from "@/lib/mailboxes";
+import { canAssignIn } from "@/lib/mailboxes";
 import { moveTargets } from "@/lib/move-targets";
-import { type BlockScope, type Rule, ruleFromSender } from "@/lib/rules";
+import { type Rule, ruleFromSender } from "@/lib/rules";
 import { mailLink, plainSubject } from "@/lib/tasks";
 import { m } from "@/paraglide/messages";
 import { CategoryDialog } from "../categories/category-dialog";
 import { CategorySubmenu } from "../categories/category-menu";
 import { DiscussDialog } from "../chat/discuss-dialog";
-import { useExternalHint } from "../company/external-hint";
-import { useBlockSender } from "../rules/block-sender";
 import { OwnRuleDialog } from "../rules/rule-dialog";
 import { usePersonalAccountId } from "../settings/queries";
 import { SnoozeMenu } from "../snooze/snooze-menu";
 import { TaskDialog, type TaskStart } from "../tasks/task-dialog";
-import { useEmailActions } from "./actions";
 import { AssignMenu } from "./assignment";
-import { useThread } from "./conversation";
-import { type ComposeMode, MoreMenu } from "./message-more-menu";
-import { usePrintMail } from "./print-mail";
+import { MoreMenu } from "./message-more-menu";
+import { useBlock, useCloseMail, useMailActions, useMoreActions } from "./message-toolbar-actions";
 import { useAllMailboxes, useMailAccounts } from "./queries";
-import { useRemoteImages } from "./remote-images";
-import { useReportPhishing } from "./report-phishing";
-import { useThreadView } from "./thread-view";
 import { ToolbarButton } from "./toolbar-button";
-import { useOfferUndo } from "./undo";
 
-/** Closes the open mail (and its composer): back to the list. */
-export const useCloseMail = () => {
-  const navigate = useNavigate();
-  return () =>
-    navigate({ to: ".", search: (prev) => ({ ...prev, email: undefined, compose: undefined }) });
-};
+export { useCloseMail } from "./message-toolbar-actions";
 
-export const Toolbar = ({
+type Props = { accountId: string; mailbox: Mailbox; email: EmailDetail };
+type Mail = ReturnType<typeof useMailActions>;
+
+/** The actions used on almost every mail, as buttons that show their names where there is room. */
+const QuickActions = ({
   accountId,
   mailbox,
   email,
-}: {
-  accountId: string;
-  mailbox: Mailbox;
-  email: EmailDetail;
-}) => {
-  const actions = useEmailActions(accountId);
-  const navigate = useNavigate();
-  const toast = useToast();
-  const offerUndo = useOfferUndo();
-  const accounts = useMailAccounts();
-  const mailboxes = useAllMailboxes();
-  // Rules run on the own mailbox only, so they are offered for its mails.
-  const ownMailbox = usePersonalAccountId() === accountId;
-  const sender = email.from?.[0]?.email;
+  mail,
+  close,
+  assign,
+}: Props & { mail: Mail; close: () => unknown; assign: boolean }) => (
+  <div className="flex min-w-0 flex-1 items-center gap-1">
+    {mail.archive ? (
+      <ToolbarButton
+        label={m.mail_archive_action()}
+        shortcut="e"
+        onClick={mail.archive}
+        icon={<Archive size={16} />}
+      />
+    ) : null}
+    {mail.remove ? (
+      <ToolbarButton
+        label={m.mail_delete()}
+        shortcut="#"
+        onClick={mail.remove}
+        icon={<Trash2 size={16} />}
+      />
+    ) : null}
+    {mail.toggleSpam ? (
+      <ToolbarButton
+        label={mail.inJunk ? m.mail_spam_unmark() : m.mail_spam_mark()}
+        shortcut="!"
+        onClick={mail.toggleSpam}
+        icon={mail.inJunk ? <ShieldCheck size={16} /> : <ShieldAlert size={16} />}
+      />
+    ) : null}
+    {mail.canRemove && mailbox.role !== "drafts" && mailbox.role !== "sent" ? (
+      <SnoozeMenu
+        targets={[{ accountId, ids: mail.ids, from: mailbox.id }]}
+        onLeave={mailbox.role === "snoozed" ? undefined : close}
+        shortcut
+        labelled
+      />
+    ) : null}
+    {mail.canFlag ? (
+      <ToolbarButton
+        label={mail.flagged ? m.mail_unflag() : m.mail_flag()}
+        shortcut="s"
+        aria-pressed={mail.flagged}
+        onClick={mail.toggleFlag}
+        icon={<Star size={16} className={mail.flagged ? "fill-warn text-warn" : undefined} />}
+      />
+    ) : null}
+    {assign ? <AssignMenu accountId={accountId} email={email} /> : null}
+  </div>
+);
+
+/** The dialogs the toolbar opens: a rule, the categories, a discussion, a task. */
+type Dialogs = {
+  rule: Rule | null;
+  setRule: (rule: Rule | null) => void;
+  editingCategories: boolean;
+  setEditingCategories: (on: boolean) => void;
+  discussing: boolean;
+  setDiscussing: (on: boolean) => void;
+  task: TaskStart | null;
+  setTask: (task: TaskStart | null) => void;
+};
+
+const useDialogs = (): Dialogs => {
   const [rule, setRule] = useState<Rule | null>(null);
   const [task, setTask] = useState<TaskStart | null>(null);
   const [discussing, setDiscussing] = useState(false);
   // Outside the menu: the menu and all in it go away when the dialog opens.
   const [editingCategories, setEditingCategories] = useState(false);
-  // Grouped as conversations: what one does to the line, one does to all of it in this folder.
-  const grouped = useThreadView();
-  const thread = useThread(accountId, grouped ? email.threadId : undefined);
-  const inFolder = (thread ?? []).filter((mail) => mail.mailboxIds[mailbox.id]);
-  const targets: EmailSummary[] = grouped && inFolder.length ? inFolder : [email];
-  const ids = targets.map((mail) => mail.id);
+  return {
+    rule,
+    setRule,
+    task,
+    setTask,
+    discussing,
+    setDiscussing,
+    editingCategories,
+    setEditingCategories,
+  };
+};
+
+const ToolbarDialogs = ({
+  accountId,
+  email,
+  d,
+  mailboxLabel,
+  onArchive,
+}: {
+  accountId: string;
+  email: EmailDetail;
+  d: Dialogs;
+  mailboxLabel: string;
+  onArchive: Mail["archive"];
+}) => (
+  <>
+    {d.rule ? <OwnRuleDialog initial={d.rule} onClose={() => d.setRule(null)} /> : null}
+    {d.editingCategories ? (
+      <CategoryDialog
+        accountId={accountId}
+        mailbox={mailboxLabel}
+        onClose={() => d.setEditingCategories(false)}
+      />
+    ) : null}
+    {d.discussing ? (
+      <DiscussDialog accountId={accountId} email={email} onClose={() => d.setDiscussing(false)} />
+    ) : null}
+    {d.task ? (
+      <TaskDialog starts={[d.task]} onClose={() => d.setTask(null)} onArchive={onArchive} />
+    ) : null}
+  </>
+);
+
+/** The shortcuts of the toolbar's actions, and the print key. */
+const useToolbarKeys = (
+  mail: Mail,
+  more: ReturnType<typeof useMoreActions>,
+  newTask: () => void,
+  discuss: () => void,
+) => {
+  useShortcuts({
+    r: () => more.compose("reply"),
+    a: () => more.compose("replyAll"),
+    f: () => more.compose("forward"),
+    e: mail.archive,
+    "#": mail.remove,
+    s: mail.canFlag ? mail.toggleFlag : undefined,
+    U: mail.markUnread,
+    "!": mail.toggleSpam,
+    p: more.print,
+    t: newTask,
+    b: discuss,
+  });
+  usePrintKey(more.print);
+};
+
+export const Toolbar = ({ accountId, mailbox, email }: Props) => {
+  const accounts = useMailAccounts();
+  const mailboxes = useAllMailboxes();
+  // Rules run on the own mailbox only, so they are offered for its mails.
+  const ownMailbox = usePersonalAccountId() === accountId;
+  const sender = email.from?.[0]?.email;
+  const d = useDialogs();
+  const close = useCloseMail();
+  const mail = useMailActions(accountId, mailbox, email);
+  const block = useBlock(accountId, sender, ownMailbox, mail);
+  const more = useMoreActions(accountId, email, mailbox, mail);
+  const people = accounts.map((account) => account.name);
   const newTask = () =>
-    setTask({
+    d.setTask({
       title: plainSubject(email.subject ?? ""),
       accountId,
       link: mailLink(accountId, email),
-      person: correspondent(
-        email,
-        accounts.map((account) => account.name),
-      )?.email,
+      person: correspondent(email, people)?.email,
     });
-  const close = useCloseMail();
-
-  const run = async (action: () => Promise<unknown>, leave: boolean) => {
-    try {
-      if (leave) await close();
-      await action();
-    } catch (error) {
-      toast.show(m.common_error({ message: (error as Error).message }), "error");
-    }
-  };
-
+  useToolbarKeys(mail, more, newTask, () => d.setDiscussing(true));
   const account = accounts.find((candidate) => candidate.id === accountId);
-  const mailboxLabel = account?.name ?? "";
   const groups = moveTargets(accounts, mailboxes, { accountId, mailboxId: mailbox.id });
-  const flagged = isFlagged(email);
-  const { canRemove, canMarkSeen, canFlag } = mailboxRights(mailbox);
-  // In Spam the same action takes a mail back out; own sent mail is no spam.
-  const inJunk = mailbox.role === "junk";
-  const toggleSpam =
-    canRemove && mailbox.role !== "sent"
-      ? () =>
-          void run(async () => {
-            const move = await actions.markSpam(ids, mailbox.id, !inJunk);
-            offerUndo(inJunk ? m.mail_spam_unmarked() : m.mail_spam_marked(), [move]);
-          }, true)
-      : undefined;
-  const blockSender = useBlockSender(accountId);
-  const { data: company } = useExternalHint();
-  // Colleagues and shared mailboxes are not blocked: the company's domains and the mailboxes' own.
-  const ownDomains = [
-    ...(company?.domains ?? []),
-    ...accounts.map((candidate) => domainOf(candidate.name)),
-  ];
-  const block =
-    ownMailbox && sender && blockSender && isExternal(sender, ownDomains)
-      ? {
-          address: sender,
-          domain: domainOf(sender),
-          run: (scope: BlockScope) =>
-            void run(
-              async () => {
-                await blockSender(sender, scope);
-                const text = m.mail_sender_blocked({
-                  sender: scope === "address" ? sender : domainOf(sender),
-                });
-                if (inJunk || !toggleSpam) return toast.show(text, "info");
-                offerUndo(text, [await actions.markSpam(ids, mailbox.id, true)]);
-              },
-              Boolean(toggleSpam && !inJunk),
-            ),
-        }
-      : undefined;
-  const report = useReportPhishing(accountId, email, mailbox.id);
-  const reportPhishing = report && toggleSpam && !inJunk ? () => void run(report, true) : undefined;
-  const compose = (mode: ComposeMode) =>
-    void navigate({ to: ".", search: (prev) => ({ ...prev, compose: mode }) });
-  const printMail = usePrintMail();
-  const { allowRemote } = useRemoteImages(email);
-  const print = () => void run(() => printMail(accountId, email, allowRemote), false);
-  const client = useClient();
-  const saveEml = () =>
-    void run(async () => {
-      const name = emlName(email.subject);
-      downloadBlob(await client.download(accountId, email.blobId, name, "message/rfc822"), name);
-    }, false);
-  const archive =
-    canRemove && mailbox.role !== "archive"
-      ? () =>
-          run(
-            async () => offerUndo(m.mail_archived(), [await actions.archive(ids, mailbox.id)]),
-            true,
-          )
-      : undefined;
-  const remove = canRemove
-    ? () =>
-        void run(
-          async () => offerUndo(m.mail_trashed(), [await actions.remove(ids, mailbox.id)]),
-          true,
-        )
-    : undefined;
-  const markUnread = canMarkSeen
-    ? () => void run(() => actions.setSeen(ids, false), true)
-    : undefined;
-  const toggleFlag = () => void run(() => actions.setFlagged([email.id], !flagged), false);
-
-  useShortcuts({
-    r: () => compose("reply"),
-    a: () => compose("replyAll"),
-    f: () => compose("forward"),
-    e: archive,
-    "#": remove,
-    s: canFlag ? toggleFlag : undefined,
-    U: markUnread,
-    "!": toggleSpam,
-    p: print,
-    t: newTask,
-    b: () => setDiscussing(true),
-  });
-
-  usePrintKey(print);
-
+  const assign = Boolean(canAssignIn(mailbox) && account && !account.isPersonal);
   return (
     // A container: the names show where the pane is wide enough, whatever the screen's width.
     <div className="@container flex h-12 shrink-0 items-center gap-1 border-b border-border px-2 md:px-3">
@@ -202,110 +208,51 @@ export const Toolbar = ({
       >
         <ChevronLeft size={20} />
       </Button>
-      <div className="flex min-w-0 flex-1 items-center gap-1">
-        {archive ? (
-          <ToolbarButton
-            label={m.mail_archive_action()}
-            shortcut="e"
-            onClick={archive}
-            icon={<Archive size={16} />}
-          />
-        ) : null}
-        {remove ? (
-          <ToolbarButton
-            label={m.mail_delete()}
-            shortcut="#"
-            onClick={remove}
-            icon={<Trash2 size={16} />}
-          />
-        ) : null}
-        {toggleSpam ? (
-          <ToolbarButton
-            label={inJunk ? m.mail_spam_unmark() : m.mail_spam_mark()}
-            shortcut="!"
-            onClick={toggleSpam}
-            icon={inJunk ? <ShieldCheck size={16} /> : <ShieldAlert size={16} />}
-          />
-        ) : null}
-        {canRemove && mailbox.role !== "drafts" && mailbox.role !== "sent" ? (
-          <SnoozeMenu
-            targets={[{ accountId, ids, from: mailbox.id }]}
-            onLeave={mailbox.role === "snoozed" ? undefined : close}
-            shortcut
-            labelled
-          />
-        ) : null}
-        {canFlag ? (
-          <ToolbarButton
-            label={flagged ? m.mail_unflag() : m.mail_flag()}
-            shortcut="s"
-            aria-pressed={flagged}
-            onClick={toggleFlag}
-            icon={<Star size={16} className={flagged ? "fill-warn text-warn" : undefined} />}
-          />
-        ) : null}
-        {canAssignIn(mailbox) && account && !account.isPersonal ? (
-          <AssignMenu accountId={accountId} email={email} />
-        ) : null}
-      </div>
+      <QuickActions
+        accountId={accountId}
+        mailbox={mailbox}
+        email={email}
+        mail={mail}
+        close={close}
+        assign={assign}
+      />
       <Button asChild variant="outline" size="sm" className="hidden shrink-0 sm:inline-flex">
         <Link to="." search={(prev) => ({ ...prev, compose: "reply" })}>
           <Reply size={16} /> {m.mail_reply()}
         </Link>
       </Button>
       <MoreMenu
-        compose={compose}
-        print={print}
-        saveEml={saveEml}
-        markUnread={markUnread}
-        reportPhishing={reportPhishing}
+        compose={more.compose}
+        print={more.print}
+        saveEml={more.saveEml}
+        markUnread={mail.markUnread}
+        reportPhishing={more.reportPhishing}
         block={block}
-        move={
-          canRemove
-            ? {
-                groups,
-                onPick: (target) =>
-                  void run(async () => {
-                    const move = await actions.moveTo(targets, mailbox.id, {
-                      accountId: target.accountId,
-                      mailboxId: target.mailbox.id,
-                    });
-                    offerUndo(m.mail_moved({ folder: target.label }), [move]);
-                  }, true),
-              }
-            : undefined
-        }
+        move={mail.canRemove ? { groups, onPick: mail.moveTo } : undefined}
         categories={
-          canFlag ? (
+          mail.canFlag ? (
             <CategorySubmenu
               accountId={accountId}
               email={email}
-              onEdit={() => setEditingCategories(true)}
+              onEdit={() => d.setEditingCategories(true)}
             />
           ) : undefined
         }
         newTask={newTask}
-        discuss={() => setDiscussing(true)}
+        discuss={() => d.setDiscussing(true)}
         newRule={
           ownMailbox && sender
-            ? () => setRule(ruleFromSender(crypto.randomUUID(), sender))
+            ? () => d.setRule(ruleFromSender(crypto.randomUUID(), sender))
             : undefined
         }
       />
-      {rule ? <OwnRuleDialog initial={rule} onClose={() => setRule(null)} /> : null}
-      {editingCategories ? (
-        <CategoryDialog
-          accountId={accountId}
-          mailbox={mailboxLabel}
-          onClose={() => setEditingCategories(false)}
-        />
-      ) : null}
-      {discussing ? (
-        <DiscussDialog accountId={accountId} email={email} onClose={() => setDiscussing(false)} />
-      ) : null}
-      {task ? (
-        <TaskDialog starts={[task]} onClose={() => setTask(null)} onArchive={archive} />
-      ) : null}
+      <ToolbarDialogs
+        accountId={accountId}
+        email={email}
+        d={d}
+        mailboxLabel={account?.name ?? ""}
+        onArchive={mail.archive}
+      />
     </div>
   );
 };
