@@ -53,6 +53,17 @@ export const hashSecret = async (secret: string): Promise<string> => {
   return Buffer.from(digest).toString("base64url");
 };
 
+/** The hosts that never leave the person's own machine (RFC 8252 §7.3, §8.3). */
+const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+/**
+ * Whether a redirect over plain http is still accepted: only to the own machine, as for
+ * Schreibzeug at http://localhost in development and the e2e tests. Since 1.7.25 the provider
+ * refuses http for web clients even there unless this says yes (isRedirectUriTransportAllowed in
+ * @better-auth/oauth-provider); real installations use https and never reach it.
+ */
+export const allowsInsecureRedirect = (url: URL): boolean => LOOPBACK_HOSTS.has(url.hostname);
+
 /** The plugins: signing keys, the provider itself, and agents naming themselves by their metadata. */
 export const providerPlugins = (publicUrl: string) => [
   // Sessions keep their cookie; the provider signs its tokens with these keys, nothing else does.
@@ -64,6 +75,7 @@ export const providerPlugins = (publicUrl: string) => [
     grantTypes: ["authorization_code", "refresh_token"],
     // The login page continues the authorization after signing in (src/auth/oauth-query.ts).
     loginPage: "/login",
+    allowInsecureRedirectUri: allowsInsecureRedirect,
     storeClientSecret: { hash: hashSecret },
     // No client is created, changed or listed by a signed-in person: Schreibzeug comes from the
     // environment, agents register themselves (without a session).
