@@ -6,7 +6,7 @@
  */
 import { useNavigate } from "@tanstack/react-router";
 import { BellOff, ChevronLeft, Clock, ImageUp, LockKeyhole, Users } from "lucide-react";
-import { type DragEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { type DragEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FROM_PARENT, useBack } from "@/components/use-back";
 import { useMediaQuery } from "@/components/use-media-query";
@@ -22,6 +22,7 @@ import { useUnlockedKey } from "../pgp/queries";
 import { useChatActions } from "./actions";
 import { ChannelMenu } from "./channel-menu";
 import { ChangedKeys, ConfidentialUnlock, useSeal } from "./confidential";
+import { useKeepScrollPlace, useMarkRead, useShowMessage } from "./conversation-hooks";
 import { MessageInput } from "./message-input";
 import { Run } from "./message-run";
 import { isPending, useChannels, useMessages } from "./queries";
@@ -30,7 +31,6 @@ import { useReact } from "./thread-queries";
 import { useTyping } from "./typing";
 import { useAttachments } from "./use-attachments";
 import { useChatNames } from "./use-chat-names";
-import { useScrollPlace } from "./use-scroll-place";
 
 const subtitle = (
   channel: ChannelSummary,
@@ -105,58 +105,15 @@ export const Conversation = ({
   const [readUpTo] = useState(channel.readAt);
 
   // Read: the newest message or answer, whenever it is on screen in a visible tab.
-  const newest = newestActivity(messages.filter((message) => !isPending(message)));
-  const markRead = actions.markRead.mutate;
-  useEffect(() => {
-    if (!newest) return;
-    const mark = () => {
-      if (document.visibilityState !== "visible") return;
-      if (channel.readAt && channel.readAt >= newest) return;
-      markRead({ channelId: channel.id, at: newest });
-    };
-    mark();
-    document.addEventListener("visibilitychange", mark);
-    return () => document.removeEventListener("visibilitychange", mark);
-  }, [newest, channel.id, channel.readAt, markRead]);
+  useMarkRead(channel, newestActivity(messages.filter((message) => !isPending(message))), actions);
 
-  // Stay at the bottom while one is there; keep the place when older messages come in above.
-  const { scroller, atBottom, toBottom, scrollProps } = useScrollPlace();
-  const heightBefore = useRef<number | null>(null);
-  useLayoutEffect(() => {
-    const element = scroller.current;
-    if (!element || messages.length === 0) return;
-    if (heightBefore.current !== null) {
-      element.scrollTop += element.scrollHeight - heightBefore.current;
-      heightBefore.current = null;
-    } else if (atBottom.current) {
-      toBottom();
-    }
-  }, [messages.length, scroller, atBottom, toBottom]);
-  const older = () => {
-    heightBefore.current = scroller.current?.scrollHeight ?? null;
-    loadOlder();
-  };
-
-  // A message asked for in the URL: load older pages until it is there, then show and mark it.
-  const [highlight, setHighlight] = useState<string>();
-  const shown = useRef<string | null>(null);
-  const pagesLoaded = useRef(0);
-  useEffect(() => {
-    if (!messageId || shown.current === messageId || loading) return;
-    const element = scroller.current?.querySelector(`[data-message="${CSS.escape(messageId)}"]`);
-    if (element) {
-      shown.current = messageId;
-      atBottom.current = false;
-      element.scrollIntoView({ block: "center" });
-      setHighlight(messageId);
-      const fade = setTimeout(() => setHighlight(undefined), 2500);
-      return () => clearTimeout(fade);
-    }
-    // At most ten pages back; a removed message is not searched for in the whole history.
-    if (hasOlder && !loadingOlder && pagesLoaded.current < 10) {
-      pagesLoaded.current += 1;
-      older();
-    }
+  const { scroller, atBottom, scrollProps, older } = useKeepScrollPlace(messages.length, loadOlder);
+  const highlight = useShowMessage(messageId, {
+    scroller,
+    atBottom,
+    loading,
+    canLoadOlder: hasOlder && !loadingOlder,
+    older,
   });
 
   const seal = useSeal(channel);
