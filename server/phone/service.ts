@@ -4,7 +4,8 @@
  * on the live connection to whoever sees it; a ringing or missed call also reaches the line's
  * people with Kontext closed (Web Push).
  */
-import type { Hub } from "../live/hub";
+
+import type { Publisher } from "../chat/chat";
 import { companyDay, type NewTaskData } from "../tasks/tasks";
 import {
   choiceOf,
@@ -34,6 +35,7 @@ import {
   menuMailboxCall,
   outgoingCall,
   type PhoneCall,
+  type PhoneEvent,
   type PhoneStatus,
   phoneNotice,
   type RingPlan,
@@ -64,7 +66,7 @@ const RING_SECONDS = 60;
 
 export type PhoneDeps = {
   store: PhoneStore;
-  hub: Hub;
+  hub: Publisher<PhoneEvent>;
   /** Where the boxes reach LiveKit SIP: the server's public name and SIP port. */
   trunkHost: string;
   trunkPort: number;

@@ -4,8 +4,14 @@
  */
 import { Hono } from "hono";
 import type { SessionAccount } from "../categories/routes";
-import type { Hub } from "../live/hub";
-import { type Channel, canSee, reactionSchema, type Viewer } from "./chat";
+import {
+  type Channel,
+  type ChatEvent,
+  canSee,
+  type Publisher,
+  reactionSchema,
+  type Viewer,
+} from "./chat";
 import type { MessageStore } from "./messages";
 import type { ChatStore } from "./store";
 
@@ -16,7 +22,7 @@ export const createThreadRoutes = ({
 }: {
   store: Pick<ChatStore, "get">;
   messages: MessageStore;
-  hub: Hub;
+  hub: Publisher<ChatEvent>;
 }) => {
   const app = new Hono<{ Variables: { viewer: Viewer; accounts: SessionAccount[] } }>();
 
@@ -54,7 +60,7 @@ export const createThreadRoutes = ({
 
 /** A message changed in place (edited, deleted, reacted to, answered): to who sees the channel. */
 export const publishChanged = (
-  hub: Hub,
+  hub: Publisher<ChatEvent>,
   channel: Channel,
   message: Awaited<ReturnType<MessageStore["get"]>> & object,
 ) =>

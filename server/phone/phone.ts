@@ -77,6 +77,13 @@ export type PhoneCall = {
   recordingSeconds: number | null;
 };
 
+/** What the telephone tells the open apps through the live connection (live/hub.ts). */
+export type PhoneEvent =
+  // A phone call through the telephone box rang, was taken, ended or got a note.
+  | { type: "phone"; call: PhoneCall }
+  /** Who is on the phone now, and who does not take calls (Bitte nicht stören, Abwesend). */
+  | { type: "phone-people"; busy: string[]; unavailable: string[] };
+
 /** Phone rooms in LiveKit: "kontext-phone-<uuid>", which LiveKit SIP's dispatch rule matches. */
 export const PHONE_ROOM_PREFIX = "kontext-phone-";
 export const phoneRoom = (room: string) => `${PHONE_ROOM_PREFIX}${room}`;

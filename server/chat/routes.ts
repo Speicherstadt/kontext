@@ -7,9 +7,9 @@
 import { Hono } from "hono";
 import { limitBody } from "../body-limit";
 import type { SessionAccount } from "../categories/routes";
-import type { Hub } from "../live/hub";
 import {
   type Channel,
+  type ChatEvent,
   canSee,
   channelLabel,
   channelPatchSchema,
@@ -27,6 +27,7 @@ import {
   newDirectSchema,
   newMessageSchema,
   notifyWho,
+  type Publisher,
   readSchema,
   SEALED_FILE_TYPE,
   searchSchema,
@@ -43,7 +44,7 @@ export type ChatDeps = {
   store: ChatStore;
   messages: MessageStore;
   files: ChatFiles;
-  hub: Hub;
+  hub: Publisher<ChatEvent>;
   accountsOf: (request: Request) => Promise<SessionAccount[] | null>;
   /** Tells people of a new message on their devices (Web Push); left out, nobody is told. */
   notify?: (memberIds: string[], notice: ReturnType<typeof chatNotice>) => Promise<void>;

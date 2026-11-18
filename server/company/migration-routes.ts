@@ -8,9 +8,9 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { PIECE_SIZE } from "@/lib/chunked-upload";
 import { limitBody } from "../body-limit";
-import { bad, bodyOf, type Env, notFound, userOf } from "../company/context";
-import type { Jobs } from "./jobs";
-import { type Runner, uploadFileOf } from "./runner";
+import type { Jobs } from "../migration/jobs";
+import { type Runner, uploadFileOf } from "../migration/runner";
+import { bad, bodyOf, type Env, notFound, userOf } from "./context";
 
 export type MigrationDeps = { jobs: Jobs; runner: Runner; workDir: string };
 

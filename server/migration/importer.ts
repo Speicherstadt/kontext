@@ -5,8 +5,17 @@
  * Blob/upload (RFC 9404) where they fit into one request (Stalwart: 10 MB per request).
  */
 import type { CategoryStore } from "../categories/store";
-import type { StalwartRequest, StalwartUpload } from "../company/management";
 import { resolveCategories, type SourceCategory } from "./categories";
+
+type Invocation = [string, Record<string, unknown>, string];
+/** One JMAP request to Stalwart with the server's key (company/management.ts `createRequest`). */
+type StalwartRequest = (methodCalls: Invocation[], using?: string[]) => Promise<Invocation[]>;
+/** Uploads a blob into an account, its blobId (company/management.ts `createUpload`). */
+type StalwartUpload = (
+  accountId: string,
+  data: string | Uint8Array,
+  type: string,
+) => Promise<string>;
 
 const CORE = "urn:ietf:params:jmap:core";
 const BLOB = "urn:ietf:params:jmap:blob";

@@ -4,13 +4,13 @@
  */
 import { Hono } from "hono";
 import { z } from "zod";
-import { bad, bodyOf, type Env, notFound, userOf } from "../company/context";
 import type { Sealer } from "../crypto";
-import { openImap } from "./imap-source";
-import type { Graph, M365Credentials } from "./m365/graph";
-import { endpointFor, type ProviderId } from "./providers";
-import type { SyncRunner } from "./sync-runner";
-import type { Sync, Syncs } from "./syncs";
+import { openImap } from "../migration/imap-source";
+import type { Graph, M365Credentials } from "../migration/m365/graph";
+import { endpointFor, type ProviderId } from "../migration/providers";
+import type { SyncRunner } from "../migration/sync-runner";
+import type { Sync, Syncs } from "../migration/syncs";
+import { bad, bodyOf, type Env, notFound, userOf } from "./context";
 
 export type SyncDeps = {
   syncs: Syncs;
