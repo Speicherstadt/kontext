@@ -304,7 +304,7 @@ SMTP.
 
 ## Masked addresses { #maskierte-adressen }
 
-With Stalwart Enterprise, everyone creates addresses of their own for websites, shops and
+Everyone creates addresses of their own for websites, shops and
 newsletters under *Settings → Masked addresses*, such as `hardware.k3x9…@company.com`. Mail to
 them arrives in your own inbox; the shop never learns your real address. When spam comes, switch
 the address off (mail to it is then refused) or delete it.
@@ -316,8 +316,8 @@ the address off (mail to it is then refused) or delete it.
   accepts or refuses mail to it, "Delete" removes it for good.
 - Each person may have 5 addresses; Stalwart allows more in its email settings
   (`maxMaskedAddresses`).
-- Without an Enterprise license the item is not in the settings.
-  [More](architecture.md#firmenverwaltung)
+- This works with every edition of Stalwart from 1.1.1; an older Stalwart without an Enterprise
+  license refuses them, and the page says so. [More](architecture.md#firmenverwaltung)
 
 ## Other mailboxes: Gmail, GMX, WEB.DE & Co. { #weitere-postfacher-gmail-gmx-webde-co }
 

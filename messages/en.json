@@ -2547,7 +2547,7 @@
   "passkeys_unsupported": "This browser cannot create passkeys.",
   "settings_masked": "Masked addresses",
   "masked_hint": "An address of its own for each website, shop or newsletter. Mail to it arrives in your own inbox; nobody there learns your real address. When spam comes, the address is switched off or deleted.",
-  "masked_enterprise_only": "Masked addresses need Stalwart Enterprise. The company can enter the license in Stalwart.",
+  "masked_unavailable": "Masked addresses need Stalwart 1.1.1 or newer (or Stalwart Enterprise). The company can update Stalwart.",
   "masked_list": "Masked addresses",
   "masked_none": "No masked addresses yet.",
   "masked_add": "New address",

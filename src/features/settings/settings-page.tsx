@@ -232,12 +232,12 @@ export const SettingsPage = ({ section }: { section: Section | undefined }) => {
   const admin = useIsCompanyAdmin();
   // Other mailboxes need the server's Stalwart key; without it the entry is left out.
   const { data: external } = useExternalAccounts();
-  // Masked addresses and restoring deleted items are Stalwart Enterprise's.
+  // Restoring deleted items is Stalwart Enterprise's. Masked addresses are in every edition since
+  // Stalwart 1.1.1; their page says so where an older Stalwart refuses them.
   const enterprise = useStalwartEdition() === "enterprise";
   const own = OWN.filter(
     (entry) =>
-      (entry.id !== "accounts" || external !== null) &&
-      ((entry.id !== "masked-email" && entry.id !== "deleted") || enterprise),
+      (entry.id !== "accounts" || external !== null) && (entry.id !== "deleted" || enterprise),
   );
   // Telephony needs LiveKit on the server; without it the section has nothing to set.
   const phone = usePhone().enabled;

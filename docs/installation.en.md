@@ -514,7 +514,7 @@ in the privacy notice, with Anthropic's data processing agreement.
 
 Kontext runs fully on Stalwart's free Community edition; an Enterprise license is not needed.
 Whoever wants Stalwart's Enterprise features all the same (restoring deleted items on the server,
-the AI spam filter, SCIM, masked addresses, for example) buys the license from Stalwart Labs
+the AI spam filter, SCIM, for example) buys the license from Stalwart Labs
 ([pricing](https://stalw.art/pricing/), 30 days to try) and enters it in Stalwart, not in Kontext:
 it is the same image, only the key unlocks it.
 
@@ -537,13 +537,11 @@ the permission `sysEnterpriseGet`). This is optional: `includeSecrets` also show
 to everyone with read rights in Stalwart's management. Without it, the company admin shows only
 the mailboxes in use.
 
+Masked addresses ([Mail](mail.md#maskierte-adressen)) need no license since Stalwart 1.1.1.
 What Kontext offers in addition with Enterprise (on an existing installation only after the
 [setup command](#einrichtungsbefehl) has run once more, which gives the role `Kontext-Server` the
 permissions for it):
 
-- **Masked addresses:** everyone creates addresses of their own per website or shop under
-  *Settings → Masked addresses*, switches them off or deletes them
-  ([Mail](mail.md#maskierte-adressen)).
 - **Restoring deleted items:** Stalwart keeps what was deleted for good for as many days as the
   company admin sets under *Backup* (`archiveDeletedItemsFor` in Stalwart's *DataRetention*;
   nothing at first). Everyone brings back their own mails and those of their shared mailboxes
@@ -959,6 +957,16 @@ docker compose -f deploy/compose.yaml up -d
 Before a Stalwart update to a new major version, read Stalwart's `UPGRADING` notes and
 make a backup first. After every update, run the [setup command](#einrichtungsbefehl) again; it
 only adds what a new version needs and is still missing.
+
+### Stalwart 1.1.1 { #stalwart-111 }
+
+With Stalwart 1.1.1 **masked addresses** are in every edition, without an Enterprise license too:
+under *Settings → Masked addresses* everyone creates addresses of their own per website or shop
+([Mail](mail.md#maskierte-adressen)). The role *User* already has the rights for it; there is
+nothing to set up. Raise `STALWART_VERSION=1.1.1` in `deploy/.env` (Quadlet:
+`Image=…/stalwart:v1.1.1`) together with the new Kontext version; coming from 1.0.x, also take the
+step under [Stalwart 1.1.0](#stalwart-110). With an older Stalwart without a license, the page of
+the masked addresses says that Stalwart 1.1.1 is needed.
 
 ### Stalwart 1.1.0 { #stalwart-110 }
 
