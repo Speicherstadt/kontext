@@ -14,7 +14,7 @@ RUN bun run build
 # (cc600ee), which Wolfi's gcc needs. Only readpst, linked with libpst statically; without the
 # Python binding and pst2dii. libgsf is needed because readpst links it for .msg output (-m,
 # src/msg.cpp), which Kontext does not use. CI compares its output with Debian's pst-utils.
-FROM cgr.dev/chainguard/wolfi-base:latest@sha256:833c48f1faf32c90e6f9501a2410a9aa28ceb2c594102edd4470053c30efa089 AS readpst
+FROM cgr.dev/chainguard/wolfi-base:latest@sha256:580c9ae79c0229cc381475fbfbed0d91fab5d6606e57cd78732f9836de109e90 AS readpst
 ARG LIBPST_COMMIT=cc600ee98c4ed23b8ab0bc2cf6b6c6e9cb587e89
 # The free Wolfi repository; wolfi-base names Chainguard's, which asks for a login.
 # autoconf-archive: configure.ac uses AX_PYTHON, AX_PYTHON_DEVEL and AX_BOOST_PYTHON even with
@@ -42,7 +42,7 @@ RUN mkdir -p m4 && autopoint && libtoolize --force --copy && aclocal -I m4 && au
 # The runtime on Wolfi instead of Debian, as in Haben (firsttris/haben#588): current upstream
 # versions and few known vulnerabilities. Wolfi is rolling; the digest keeps the build reproducible
 # and Renovate raises it (group "Wolfi").
-FROM cgr.dev/chainguard/wolfi-base:latest@sha256:833c48f1faf32c90e6f9501a2410a9aa28ceb2c594102edd4470053c30efa089
+FROM cgr.dev/chainguard/wolfi-base:latest@sha256:580c9ae79c0229cc381475fbfbed0d91fab5d6606e57cd78732f9836de109e90
 # The same Bun as in the build stage (glibc build); Renovate raises oven/bun at both places.
 COPY --from=docker.io/oven/bun:1.4-slim /usr/local/bin/bun /usr/local/bin/bun
 COPY --from=readpst /usr/local/bin/readpst /usr/local/bin/readpst
