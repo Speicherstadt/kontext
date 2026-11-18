@@ -7,10 +7,10 @@
 
 import type { Publisher } from "../chat/chat";
 import { companyDay, type NewTaskData } from "../tasks/tasks";
+import { desiredConfig } from "./box-config";
 import {
   choiceOf,
   deskCall,
-  deskForBox,
   deskOf,
   everyone,
   lineOf,
@@ -18,8 +18,7 @@ import {
   ringPlanFor,
   ringPlanForCall,
 } from "./lines";
-import { TRUNK_USER } from "./livekit-sip";
-import { numberForms, toDialable, toE164 } from "./numbers";
+import { toE164 } from "./numbers";
 import {
   answeredCallbacks,
   applyCallEvent,
@@ -45,14 +44,8 @@ import {
   unavailableAt,
   withoutUnavailable,
 } from "./phone";
-import {
-  type BoxConfig,
-  type CallEvent,
-  type FromBox,
-  MAX_BLOCKED_NUMBERS,
-  type ToBox,
-} from "./protocol";
-import type { PhoneSettings, PhoneStore } from "./store";
+import { type CallEvent, type FromBox, MAX_BLOCKED_NUMBERS, type ToBox } from "./protocol";
+import type { PhoneStore } from "./store";
 import { createTransfers, type TransferTarget } from "./transfer";
 
 /** What telephony needs from the tasks: make "Zurückrufen" and tick it off. */
@@ -60,9 +53,6 @@ export type CallbackTasks = {
   create: (task: NewTaskData) => Promise<{ id: string }>;
   complete: (id: string) => Promise<void>;
 };
-
-/** How long an incoming call rings in Kontext before the box lets go of it. */
-const RING_SECONDS = 60;
 
 export type PhoneDeps = {
   store: PhoneStore;
@@ -81,100 +71,7 @@ export type PhoneDeps = {
 
 export type Problem = "not-allowed" | "offline" | "not-found" | "busy" | "bad-number" | "full";
 
-/** How long a message on the mailbox may be. */
-const MAILBOX_SECONDS = 120;
-
-/** Only sounds that still exist; a deleted greeting leaves the beep alone. */
-const knownSound = (settings: PhoneSettings, id: string | null) =>
-  id && settings.sounds.some((sound) => sound.id === id) ? id : null;
-
-/** The company's time zone; the box compares opening hours in it. */
-const TIMEZONE = "Europe/Berlin";
-
-/**
- * Closed days from today on, for the year ahead: Asterisk knows no years, so a past day would come
- * back, and one a year or more ahead would close the same date this year.
- */
-const comingDays = (days: { day: string }[], today: string) => {
-  const yearAhead = `${Number(today.slice(0, 4)) + 1}${today.slice(4)}`;
-  return days.map((entry) => entry.day).filter((day) => day >= today && day < yearAhead);
-};
-
-/** The first line's ring plan, as the app sees it. */
-export const ringPlanOf = (settings: PhoneSettings): RingPlan => ringPlanFor(settings, null);
-
-export const desiredConfig = (
-  settings: PhoneSettings,
-  trunkHost: string,
-  trunkPort: number,
-  today = companyDay(new Date()),
-  unavailable: string[] = [],
-): BoxConfig => {
-  const { mailbox, hours } = settings;
-  const greeting = knownSound(settings, mailbox.greeting);
-  const closedGreeting = knownSound(settings, hours.greeting);
-  const menuGreeting = settings.menu.enabled ? knownSound(settings, settings.menu.greeting) : null;
-  const notice = settings.recording.enabled
-    ? knownSound(settings, settings.recording.notice)
-    : null;
-  return {
-    line: settings.line,
-    extraLines: settings.line
-      ? settings.extraLines.map(({ id, username, password }) => ({ id, username, password }))
-      : [],
-    // The desk phone of someone who does not take calls stays quiet.
-    deskPhones: settings.deskPhones.map((desk) =>
-      desk.member && unavailable.includes(desk.member)
-        ? { ...deskForBox(settings, desk), lines: [] }
-        : deskForBox(settings, desk),
-    ),
-    trunk: {
-      host: trunkHost,
-      port: trunkPort,
-      username: TRUNK_USER,
-      password: settings.trunkPassword,
-    },
-    ringSeconds: mailbox.enabled ? mailbox.ringSeconds : RING_SECONDS,
-    sounds: [
-      ...new Set([
-        ...(mailbox.enabled && greeting ? [greeting] : []),
-        ...(hours.enabled && closedGreeting ? [closedGreeting] : []),
-        ...(menuGreeting ? [menuGreeting] : []),
-        ...(notice ? [notice] : []),
-      ]),
-    ],
-    mailbox: mailbox.enabled ? { greeting, maxSeconds: MAILBOX_SECONDS } : null,
-    hours: hours.enabled
-      ? {
-          timezone: TIMEZONE,
-          open: hours.open,
-          closedDays: comingDays(hours.closedDays, today).slice(0, 60),
-          greeting: closedGreeting,
-        }
-      : null,
-    fax: settings.fax.enabled && settings.fax.line ? { line: settings.fax.line } : null,
-    recording: settings.recording.enabled ? { notice } : null,
-    blocked: {
-      numbers: [...new Set(settings.blocked.numbers.flatMap((entry) => numberForms(entry.number)))],
-      anonymous: settings.blocked.anonymous,
-    },
-    // Without a greeting there is no menu to hear.
-    menu:
-      menuGreeting && settings.menu.options.length
-        ? {
-            greeting: menuGreeting,
-            options: settings.menu.options.map(({ digit, mailbox: toMailbox }) => ({
-              digit,
-              mailbox: toMailbox,
-            })),
-            waitSeconds: 5,
-          }
-        : null,
-    forward: settings.forward
-      ? { number: toDialable(settings.forward.number), afterSeconds: settings.forward.afterSeconds }
-      : null,
-  };
-};
+export { desiredConfig, ringPlanOf } from "./box-config";
 
 export const createPhoneService = (deps: PhoneDeps) => {
   const { store, hub } = deps;
