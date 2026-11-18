@@ -5,11 +5,19 @@
  * leaves a line in its conversation ("Anruf · 5 Min", "Verpasster Anruf").
  */
 import { Hono } from "hono";
-import { type CallRecord, type Channel, canSee, type Message, type Viewer } from "../chat/chat";
-import type { Hub } from "../live/hub";
+import {
+  type CallRecord,
+  type Channel,
+  type ChatEvent,
+  canSee,
+  type Message,
+  type Publisher,
+  type Viewer,
+} from "../chat/chat";
 import {
   applyRoomEvent,
   type Call,
+  type CallEvent,
   type Calls,
   callNotice,
   callRecord,
@@ -25,7 +33,7 @@ export type CallDeps = {
   livekit: LiveKitConfig;
   /** Where browsers connect; null: on Kontext's own address (Caddy passes /rtc on). */
   publicUrl: string | null;
-  hub: Hub;
+  hub: Publisher<CallEvent | ChatEvent>;
   channelOf: (id: string) => Promise<Channel | null>;
   viewerOf: (request: Request) => Promise<Viewer | null>;
   nameOf: (request: Request) => Promise<string>;

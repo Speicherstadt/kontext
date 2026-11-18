@@ -1,26 +1,11 @@
 /** Tasks in Kontext's SQLite: one row per task, its links to mails, contacts and appointments. */
-import {
-  and,
-  asc,
-  eq,
-  gte,
-  inArray,
-  isNull,
-  lte,
-  max,
-  ne,
-  notInArray,
-  or,
-  type SQL,
-} from "drizzle-orm";
+import { and, asc, eq, gte, inArray, isNull, lte, max, ne, notInArray, or } from "drizzle-orm";
 import type { Db } from "../db";
 import * as schema from "../db/schema";
 import {
   type BoardColumn,
-  type CheckItem,
   DEFAULT_COLUMNS,
   type NewTaskData,
-  type Repeat,
   type Task,
   type TaskLink,
   type TaskPatch,
@@ -67,59 +52,7 @@ export type TaskStore = {
 
 export type DavTask = { task: Task; name: string; uid: string };
 
-type Row = typeof schema.tasks.$inferSelect;
-type LinkRow = typeof schema.taskLinks.$inferSelect;
-
-const toTask = (row: Row, links: LinkRow[]): Task => ({
-  id: row.id,
-  accountId: row.accountId,
-  projectId: row.projectId,
-  title: row.title,
-  notes: row.notes,
-  status: row.status,
-  position: row.position,
-  assigneeId: row.assigneeId,
-  dueDate: row.dueDate,
-  dueTime: row.dueTime,
-  checklist: JSON.parse(row.checklist) as CheckItem[],
-  links: links.map(({ kind, accountId, ref, threadId, label, detail }) => ({
-    kind: kind as TaskLink["kind"],
-    accountId,
-    ref,
-    threadId,
-    label,
-    detail,
-  })),
-  createdBy: row.createdBy,
-  createdAt: row.createdAt.toISOString(),
-  updatedAt: row.updatedAt.toISOString(),
-  completedAt: row.completedAt?.toISOString() ?? null,
-  assignedBy: row.assignedBy,
-  assignedAt: row.assignedAt?.toISOString() ?? null,
-  remindAt: row.remindAt?.toISOString() ?? null,
-  repeat: (row.repeat as Repeat | null) ?? null,
-});
-
-const instant = (value: string | null) => (value ? new Date(value) : null);
-
-/** The tasks on a board: its project's, or the account's without a project. */
-const onBoard = ({ accountId, projectId }: Board): SQL =>
-  and(
-    eq(schema.tasks.accountId, accountId),
-    projectId ? eq(schema.tasks.projectId, projectId) : isNull(schema.tasks.projectId),
-  )!;
-
-const toProject = (row: typeof schema.taskProjects.$inferSelect): TaskProject => ({
-  id: row.id,
-  accountId: row.accountId,
-  name: row.name,
-});
-
-const davOf = (row: Row, task: Task): DavTask => ({
-  task,
-  name: row.davName ?? row.id,
-  uid: row.davUid ?? row.id,
-});
+import { davOf, instant, type LinkRow, onBoard, toProject, toTask } from "./rows";
 
 export const createTaskStore = (db: Db): TaskStore => {
   const linksOf = async (ids: string[]) => {

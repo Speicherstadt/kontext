@@ -9,7 +9,6 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { certInfo } from "../../src/lib/smime";
 import type { SessionAccount } from "../categories/routes";
-import type { Resolve } from "../company/security";
 import { mayReplace } from "../kept-keys";
 import type { AuthorityStore } from "./authorities";
 import { ocspPost } from "./net";
@@ -22,6 +21,9 @@ import {
   type Trust,
   type TrustDeps,
 } from "./trust";
+
+/** A DNS lookup of SMIMEA records (RFC 8162), e.g. company/security.ts `dohResolver`. */
+type Resolve = (name: string, type: "SMIMEA") => Promise<{ data: string[]; secure: boolean }>;
 
 /** dns: published by the recipient's domain (SMIMEA, signed with DNSSEC). */
 const SOURCES = ["mail", "import", "dns"] as const;
