@@ -230,7 +230,7 @@ over. You sign in with one click as Jonas, Anna, Sandra or Max.
 |                 | Command               |                                                                                                             |
 | --------------- | --------------------- | ----------------------------------------------------------------------------------------------------------- |
 | Types           | `bun run typecheck`   | TypeScript strict                                                                                           |
-| Format and lint | `bun run lint`        | Biome and `checks` ([firsttris/workflows](https://github.com/firsttris/workflows#checks)): files up to 400 lines, every page in `e2e/accessibility.spec.ts`, texts in both languages, all used, none in the code; what deviated before is listed in `.checks/` (`checks <check> --init`, `--clean`) |
+| Format and lint | `bun run lint`        | Biome and `checks` ([firsttris/workflows](https://github.com/firsttris/workflows#checks)): files up to 400 lines, every page in `e2e/accessibility.spec.ts`, texts in both languages, all used, none in the code, no rings of imports between modules; what deviated before is listed in `.checks/` (`checks <check> --init`, `--clean`) |
 | Unit            | `bun run test`        | Vitest, for everything in `src/lib/` and the protocol helpers                                               |
 | Components      | `bun run test`        | Vitest with Testing Library for UI pieces without a server (recipient field, keyboard shortcuts)            |
 | Integration     | `bun run e2e`         | `e2e/integration.spec.ts`: JMAP functions, IMAP (shared mailboxes), CalDAV and CardDAV against Stalwart      |
