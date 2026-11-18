@@ -12,10 +12,11 @@ import { AssistantConversation } from "@/features/assistant/assistant-conversati
 import type { Channel } from "@/lib/chat";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
+import { useChatActions } from "./actions";
 import { ChannelScreen, ChannelSidebar } from "./channel-list";
 import { ChatDialog } from "./chat-dialog";
 import { Conversation } from "./conversation";
-import { useChannels, useChatActions } from "./queries";
+import { useChannels } from "./queries";
 import { useChatNames } from "./use-chat-names";
 
 type Editing = { channel?: Channel } | null;

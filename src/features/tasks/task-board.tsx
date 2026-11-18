@@ -35,6 +35,55 @@ const OWN_DOTS = ["bg-violet-500", "bg-sky-500", "bg-rose-500", "bg-teal-500", "
 
 type Drop = { status: TaskStatus; index: number };
 
+/** What a card shows: title, the mail it came from, due date, checklist and who does it. */
+const CardBody = ({
+  task,
+  done,
+  assignee,
+  today,
+}: {
+  task: Task;
+  done: boolean;
+  assignee: string | undefined;
+  today: string;
+}) => {
+  const mail = task.links.find((link) => link.kind === "mail");
+  return (
+    <>
+      <span className={cn("leading-snug font-medium", done && "line-through")}>
+        {task.title}
+        {task.repeat ? (
+          <Repeat size={12} className="ml-1.5 inline text-muted" aria-label={m.tasks_repeat()} />
+        ) : null}
+      </span>
+      {mail ? (
+        <span className="flex min-w-0 items-center gap-1.5 text-[12px] text-muted">
+          <Mail size={12} className="shrink-0" aria-hidden="true" />
+          <span className="truncate">{mail.detail || mail.label}</span>
+        </span>
+      ) : null}
+      {task.dueDate || assignee || task.checklist.length ? (
+        <span className="flex items-center gap-2 text-[12px]">
+          {task.dueDate ? (
+            <span
+              className={cn("rounded-md bg-subtle px-1.5 py-0.5 font-medium", dueTone(task, today))}
+            >
+              {dueLabel(task.dueDate, task.dueTime, today)}
+            </span>
+          ) : null}
+          {task.checklist.length ? (
+            <span className="font-mono text-muted">
+              {task.checklist.filter((item) => item.done).length}/{task.checklist.length}
+            </span>
+          ) : null}
+          <span className="flex-1" />
+          {assignee ? <ColleagueAvatar id={task.assigneeId} name={assignee} size={22} /> : null}
+        </span>
+      ) : null}
+    </>
+  );
+};
+
 export const TaskBoard = ({
   board,
   tasks,
@@ -138,7 +187,6 @@ export const TaskBoard = ({
             <ul className="m-0 flex list-none flex-col gap-2 p-0">
               {cards.map((task, index) => {
                 const assignee = people.find((person) => person.id === task.assigneeId)?.name;
-                const mail = task.links.find((link) => link.kind === "mail");
                 return (
                   <li key={task.id} className="flex flex-col gap-2">
                     {drop?.status === status && drop.index === index ? <DropMark /> : null}
@@ -164,51 +212,12 @@ export const TaskBoard = ({
                         status === "done" && "opacity-70",
                       )}
                     >
-                      <span
-                        className={cn(
-                          "leading-snug font-medium",
-                          status === "done" && "line-through",
-                        )}
-                      >
-                        {task.title}
-                        {task.repeat ? (
-                          <Repeat
-                            size={12}
-                            className="ml-1.5 inline text-muted"
-                            aria-label={m.tasks_repeat()}
-                          />
-                        ) : null}
-                      </span>
-                      {mail ? (
-                        <span className="flex min-w-0 items-center gap-1.5 text-[12px] text-muted">
-                          <Mail size={12} className="shrink-0" aria-hidden="true" />
-                          <span className="truncate">{mail.detail || mail.label}</span>
-                        </span>
-                      ) : null}
-                      {task.dueDate || assignee || task.checklist.length ? (
-                        <span className="flex items-center gap-2 text-[12px]">
-                          {task.dueDate ? (
-                            <span
-                              className={cn(
-                                "rounded-md bg-subtle px-1.5 py-0.5 font-medium",
-                                dueTone(task, today),
-                              )}
-                            >
-                              {dueLabel(task.dueDate, task.dueTime, today)}
-                            </span>
-                          ) : null}
-                          {task.checklist.length ? (
-                            <span className="font-mono text-muted">
-                              {task.checklist.filter((item) => item.done).length}/
-                              {task.checklist.length}
-                            </span>
-                          ) : null}
-                          <span className="flex-1" />
-                          {assignee ? (
-                            <ColleagueAvatar id={task.assigneeId} name={assignee} size={22} />
-                          ) : null}
-                        </span>
-                      ) : null}
+                      <CardBody
+                        task={task}
+                        done={status === "done"}
+                        assignee={assignee}
+                        today={today}
+                      />
                     </Link>
                   </li>
                 );

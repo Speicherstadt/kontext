@@ -12,13 +12,4 @@ server/phone/service.ts
 server/phone/store.ts
 server/stalwart-setup.ts
 server/tasks/store.ts
-src/features/calendar/calendar-page.tsx
-src/features/calendar/event-editor.tsx
-src/features/calendar/queries.ts
-src/features/chat/conversation.tsx
-src/features/chat/queries.ts
 src/features/mail/composer.tsx
-src/features/pgp/use-encrypted-send.tsx
-src/jmap/calendar.ts
-src/jmap/mail.ts
-src/lib/smime.ts

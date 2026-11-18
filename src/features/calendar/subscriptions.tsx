@@ -40,6 +40,24 @@ const loadSubscriptions = async (): Promise<ShownSubscription[] | null> => {
 
 const synced = new Intl.DateTimeFormat(LOCALE, { dateStyle: "short", timeStyle: "short" });
 
+/** A subscription's name, and below it its error, when it last synced, or its address. */
+const SubscriptionLabel = ({ subscription }: { subscription: ShownSubscription }) => (
+  <span className="flex min-w-0 flex-1 flex-col leading-tight">
+    <span className="truncate">{subscription.name}</span>
+    <span
+      className={`truncate text-[12px] ${subscription.lastError ? "text-danger" : "text-muted"}`}
+      title={subscription.url}
+    >
+      {subscription.lastError ??
+        (subscription.lastSyncAt
+          ? m.calendar_subscription_synced({
+              when: synced.format(new Date(subscription.lastSyncAt)),
+            })
+          : subscription.url)}
+    </span>
+  </span>
+);
+
 export const Subscriptions = () => {
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -99,20 +117,7 @@ export const Subscriptions = () => {
         >
           {subscriptions.map((subscription) => (
             <li key={subscription.id} className="flex min-h-8 items-center gap-2.5">
-              <span className="flex min-w-0 flex-1 flex-col leading-tight">
-                <span className="truncate">{subscription.name}</span>
-                <span
-                  className={`truncate text-[12px] ${subscription.lastError ? "text-danger" : "text-muted"}`}
-                  title={subscription.url}
-                >
-                  {subscription.lastError ??
-                    (subscription.lastSyncAt
-                      ? m.calendar_subscription_synced({
-                          when: synced.format(new Date(subscription.lastSyncAt)),
-                        })
-                      : subscription.url)}
-                </span>
-              </span>
+              <SubscriptionLabel subscription={subscription} />
               <Button
                 variant="ghost"
                 size="iconSm"

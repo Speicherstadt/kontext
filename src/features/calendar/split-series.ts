@@ -8,7 +8,8 @@ import { queryEvents } from "@/jmap/calendar";
 import { type CalendarEvent, fromLocal } from "@/lib/jscalendar";
 import type { RecurrenceRule } from "@/lib/recurrence";
 import { endSeriesPatch, followingRule } from "@/lib/series-split";
-import { type CalendarRef, calendarOf, useCalendarRefs, useEventMutations } from "./queries";
+import { useEventMutations } from "./mutations";
+import { type CalendarRef, calendarOf, useCalendarRefs } from "./queries";
 
 export const useSplitSeries = () => {
   const client = useClient();
