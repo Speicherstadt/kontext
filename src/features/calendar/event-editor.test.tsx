@@ -32,11 +32,13 @@ vi.mock("./queries", () => ({
   calendarLabel: () => "Kalender",
   calendarOf: () => refs.calendars[0],
   useCalendarRefs: () => refs,
+  useMyAddresses: () => ["jonas@weber.test"],
+}));
+vi.mock("./mutations", () => ({
   useEventMutations: () => ({
     create: { mutateAsync: createEvent, isPending: false },
     update: { mutateAsync: updateEvent, isPending: false },
   }),
-  useMyAddresses: () => ["jonas@weber.test"],
 }));
 
 afterEach(cleanup);

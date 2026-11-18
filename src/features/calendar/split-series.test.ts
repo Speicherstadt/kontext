@@ -14,6 +14,8 @@ vi.mock("@/jmap/calendar", () => ({
 vi.mock("./queries", () => ({
   calendarOf: () => ({ accountId: "a", calendar: { id: "c" } }),
   useCalendarRefs: () => ({ calendars: [] }),
+}));
+vi.mock("./mutations", () => ({
   useEventMutations: () => ({
     create: { mutateAsync: create, isPending: false },
     update: { mutateAsync: update, isPending: false },

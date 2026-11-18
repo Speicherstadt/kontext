@@ -40,14 +40,9 @@ import { withNames } from "@/lib/suggestions";
 import { m } from "@/paraglide/messages";
 import { AvailabilityPanel } from "./availability-panel";
 import { attendeeList } from "./availability-queries";
+import { useEventMutations } from "./mutations";
 import { PlaceField } from "./place-field";
-import {
-  calendarLabel,
-  calendarOf,
-  useCalendarRefs,
-  useEventMutations,
-  useMyAddresses,
-} from "./queries";
+import { calendarLabel, calendarOf, useCalendarRefs, useMyAddresses } from "./queries";
 import { ReminderFields } from "./reminder-fields";
 import { RepeatFields } from "./repeat-fields";
 import { useSplitSeries } from "./split-series";

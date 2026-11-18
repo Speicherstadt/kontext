@@ -28,13 +28,13 @@ import { isFirstDate } from "@/lib/series-split";
 import { eventLink } from "@/lib/task-context";
 import { m } from "@/paraglide/messages";
 import { TaskDialog, type TaskStart } from "../tasks/task-dialog";
+import { useEventMutations } from "./mutations";
 import {
   calendarLabel,
   calendarOf,
   isOthersPrivate,
   mayEdit,
   useCalendarRefs,
-  useEventMutations,
   useMyAddresses,
 } from "./queries";
 import { useSplitSeries } from "./split-series";
