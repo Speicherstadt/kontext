@@ -173,11 +173,11 @@ video calls and screen sharing. All on your server, end-to-end encrypted if you 
 
 Edit quotes, spreadsheets and presentations in the browser, together and at the same time. File
 an attachment with one click, attach a file from your documents. With
-[Schreibzeug](https://firsttris.github.io/schreibzeug/).
+[Schreibzeug](https://schreibzeug.app/).
 </div>
 <div class="showcase-shot" markdown>
-![Editing a quote as a Word document in the browser, with a colleague's comment](https://firsttris.github.io/schreibzeug/screenshots/comments-light.png#only-light){ width="1280" height="800" loading="lazy" }
-![A quote as a Word document in the browser, dark theme](https://firsttris.github.io/schreibzeug/screenshots/comments-dark.png#only-dark){ width="1280" height="800" loading="lazy" }
+![Editing a quote as a Word document in the browser, with a colleague's comment](https://schreibzeug.app/screenshots/comments-light.png#only-light){ width="1280" height="800" loading="lazy" }
+![A quote as a Word document in the browser, dark theme](https://schreibzeug.app/screenshots/comments-dark.png#only-dark){ width="1280" height="800" loading="lazy" }
 </div>
 </div>
 
@@ -283,6 +283,6 @@ Open source code and open standards. You can take everything with you at any tim
 <p class="showcase-claim">Trades · law firms and practices · freelancers · small and mid-sized
 businesses. Made in Europe.</p>
 
-[Every feature in detail](ueberblick.md){ .md-button .md-button--primary } [Documents with Schreibzeug](https://firsttris.github.io/schreibzeug/){ .md-button }
+[Every feature in detail](ueberblick.md){ .md-button .md-button--primary } [Documents with Schreibzeug](https://schreibzeug.app/){ .md-button }
 
 </div>

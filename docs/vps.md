@@ -150,7 +150,7 @@ und braucht keinen Daemon. Die Dateien liegen in `deploy/quadlet/`. Auf dem **Se
 
 ```bash
 apt-get update && apt-get install -y git podman
-git clone https://github.com/firsttris/kontext /opt/kontext
+git clone https://github.com/Speicherstadt/kontext /opt/kontext
 ```
 
 Debian 13 bringt Podman 5.4 mit, Quadlet ist dabei. Docker nicht zusätzlich installieren: Es legt

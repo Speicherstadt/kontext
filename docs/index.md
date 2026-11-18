@@ -173,11 +173,11 @@ Videocalls und Bildschirm teilen. Alles auf deinem Server, auf Wunsch Ende-zu-En
 
 Angebote, Tabellen und Präsentationen im Browser bearbeiten, gemeinsam und gleichzeitig. Einen
 Anhang mit einem Klick ablegen, eine Datei aus den Dokumenten anhängen. Mit
-[Schreibzeug](https://firsttris.github.io/schreibzeug/de/).
+[Schreibzeug](https://schreibzeug.app/de/).
 </div>
 <div class="showcase-shot" markdown>
-![Ein Angebot als Word-Dokument im Browser bearbeiten, mit Kommentar einer Kollegin](https://firsttris.github.io/schreibzeug/screenshots/comments-light.png#only-light){ width="1280" height="800" loading="lazy" }
-![Ein Angebot als Word-Dokument im Browser, dunkles Design](https://firsttris.github.io/schreibzeug/screenshots/comments-dark.png#only-dark){ width="1280" height="800" loading="lazy" }
+![Ein Angebot als Word-Dokument im Browser bearbeiten, mit Kommentar einer Kollegin](https://schreibzeug.app/screenshots/comments-light.png#only-light){ width="1280" height="800" loading="lazy" }
+![Ein Angebot als Word-Dokument im Browser, dunkles Design](https://schreibzeug.app/screenshots/comments-dark.png#only-dark){ width="1280" height="800" loading="lazy" }
 </div>
 </div>
 
@@ -284,6 +284,6 @@ Offener Quellcode und offene Standards. Du kannst jederzeit alles mitnehmen.
 <p class="showcase-claim">Handwerk · Kanzleien und Praxen · Selbstständige · kleine und mittlere
 Betriebe. Made in Europe.</p>
 
-[Alle Funktionen im Detail](ueberblick.md){ .md-button .md-button--primary } [Dokumente mit Schreibzeug](https://firsttris.github.io/schreibzeug/de/){ .md-button }
+[Alle Funktionen im Detail](ueberblick.md){ .md-button .md-button--primary } [Dokumente mit Schreibzeug](https://schreibzeug.app/de/){ .md-button }
 
 </div>

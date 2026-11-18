@@ -2,7 +2,7 @@
 
 Die Funktionen, die als Nächstes in Kontext kommen, sortiert nach Nutzen: oben, was am meisten
 bringt. Die Reihenfolge ist ein Plan, kein Versprechen; Wünsche gern als
-[Issue](https://github.com/firsttris/kontext/issues). Was schon fertig ist, steht im
+[Issue](https://github.com/Speicherstadt/kontext/issues). Was schon fertig ist, steht im
 [Changelog](CHANGELOG.md) und in der [Dokumentation](https://kontext.email/). In English: [ROADMAP.md](ROADMAP.md).
 
 ## Neu in Stalwart
@@ -28,5 +28,5 @@ Noch nicht eingeplant; was davon kommt, entscheidet sich später.
 | --- | --- |
 | **Online-Terminbuchung** | Eine Buchungsseite für Kunden mit den freien Zeiten aus dem Kalender; der gebuchte Termin landet direkt im Kalender, mit Bestätigung per Mail. Für Praxen, Kanzleien und Handwerk; „Wer hat Zeit?“ und die Gast-Links für Videobesprechungen sind schon da. |
 | **Räume, Firmenwagen und Geräte buchen** | Buchbare Ressourcen mit eigenem Kalender, die man zum Termin einlädt und die Doppelbuchungen ablehnen. Stalwart kennt nur Benutzer- und Gruppenkonten, eine Ressource wäre ein Gruppenkonto wie ein gemeinsames Postfach. |
-| **GoBD-Mail-Archiv** | Geschäftsmails unveränderbar und jahrelang aufbewahren, wie es die deutschen Aufbewahrungsregeln verlangen; heute braucht es dafür ein Archiv daneben. Groß, eher als eigenes Modul wie [Schreibzeug](https://github.com/firsttris/schreibzeug). |
+| **GoBD-Mail-Archiv** | Geschäftsmails unveränderbar und jahrelang aufbewahren, wie es die deutschen Aufbewahrungsregeln verlangen; heute braucht es dafür ein Archiv daneben. Groß, eher als eigenes Modul wie [Schreibzeug](https://github.com/Speicherstadt/schreibzeug). |
 | **Serienmail an eine Kontaktgruppe** | Eine Mail an alle einer Gruppe, jede einzeln und persönlich mit Anrede, etwa für Betriebsurlaub oder neue Preise. |

@@ -1,7 +1,7 @@
 # Roadmap
 
 The features coming next to Kontext, sorted by benefit: the most useful first. The order is a
-plan, not a promise; wishes are welcome as an [issue](https://github.com/firsttris/kontext/issues).
+plan, not a promise; wishes are welcome as an [issue](https://github.com/Speicherstadt/kontext/issues).
 What is already done is in the [changelog](CHANGELOG.md) and the
 [documentation](https://kontext.email/en/). Auf Deutsch: [ROADMAP.de.md](ROADMAP.de.md).
 
@@ -28,5 +28,5 @@ Not planned yet; which of them come is decided later.
 | --- | --- |
 | **Online appointment booking** | A booking page for customers with the free times from the calendar; the booked appointment goes straight into the calendar, with a confirmation by mail. For practices, law firms and trades; "Wer hat Zeit?" and the guest links for video meetings are already there. |
 | **Book rooms, company cars and equipment** | Bookable resources with their own calendar, invited to an appointment and refusing double bookings. Stalwart knows only user and group accounts; a resource would be a group account like a shared mailbox. |
-| **GoBD mail archive** | Keep business mail unchangeable and for years, as the German retention rules (GoBD) require; today that takes a separate archive. Large, rather a module of its own like [Schreibzeug](https://github.com/firsttris/schreibzeug). |
+| **GoBD mail archive** | Keep business mail unchangeable and for years, as the German retention rules (GoBD) require; today that takes a separate archive. Large, rather a module of its own like [Schreibzeug](https://github.com/Speicherstadt/schreibzeug). |
 | **Mail merge to a contact group** | One mail to everyone in a group, each sent singly and personally with a salutation, for example for a company holiday or new prices. |

@@ -55,8 +55,8 @@ describe("paths", () => {
   });
 
   it("keeps the path of a Schreibzeug whose pages live after the #, and puts the page there", () => {
-    expect(frameSrcOf("https://firsttris.github.io/schreibzeug/demo/#/", "/edit/1")).toBe(
-      "https://firsttris.github.io/schreibzeug/demo/?embedded=kontext#/edit/1",
+    expect(frameSrcOf("https://schreibzeug.app/demo/#/", "/edit/1")).toBe(
+      "https://schreibzeug.app/demo/?embedded=kontext#/edit/1",
     );
   });
 });

@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        What comes next is in the [roadmap](https://github.com/firsttris/kontext/blob/main/ROADMAP.md);
+        What comes next is in the [roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.md);
         please have a look whether it is already there. German or English, both are fine.
   - type: textarea
     id: problem

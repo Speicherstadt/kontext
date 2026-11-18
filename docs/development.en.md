@@ -32,7 +32,7 @@ the frame's messages and accepts files with Kontext's tokens. Then start `bun ru
 (the secret from `dev/config.ts` that the script signs in with). With the real Schreibzeug: start its server with `OIDC_ISSUER=http://localhost:5173/api/auth`,
 `OIDC_CLIENT_ID=schreibzeug`, `OIDC_CLIENT_SECRET`, `SCHREIBZEUG_EMBED_ORIGIN=http://localhost:5173`
 and `SCHREIBZEUG_URL` (its Vite address), see
-[Schreibzeug in Kontext](https://firsttris.github.io/schreibzeug/kontext/).
+[Schreibzeug in Kontext](https://schreibzeug.app/kontext.html).
 
 ```bash
 bun install
@@ -194,7 +194,7 @@ over. You sign in with one click as Jonas, Anna, Sandra or Max.
   when planning, and the birthdays. An appointment is in the calendar of every colleague it
   concerns – as with Stalwart over iTIP; what one of them changes, the others see. The app sends
   the invitation mails itself (`Email/import`, read with postal-mime).
-- **Documents:** the frame shows the [Schreibzeug demo](https://firsttris.github.io/schreibzeug/demo/),
+- **Documents:** the frame shows the [Schreibzeug demo](https://schreibzeug.app/demo/),
   just as static and with sample files of its own. Its pages sit behind `#`; Kontext puts the
   page there and `?embedded=kontext` in front of it (`frameSrcOf`, `src/features/documents/messages.ts`).
   Moving files back and forth between mail and documents only works with both servers (`connected: false`).
@@ -330,7 +330,7 @@ steps per language:
    The video call really runs over LiveKit, with drawn people as the camera
    (`video/camera.ts`); the AI scene really calls Kontext's MCP server, only the assistant's chat
    window next to it is drawn (`video/panels.ts`), as is the card with what the server stores of
-   a confidential message – its content comes from the API. In the documents scene, Kontext's frame shows pictures of the real Schreibzeug (`video/schreibzeug/`, from `docs/screenshots/` of firsttris/schreibzeug), because the stand-in in the tests only says who is signed in.
+   a confidential message – its content comes from the API. In the documents scene, Kontext's frame shows pictures of the real Schreibzeug (`video/schreibzeug/`, from `docs/screenshots/` of Speicherstadt/schreibzeug), because the stand-in in the tests only says who is signed in.
 2. **Render** (`bun run video:render`, `video/render.ts`): the stage (`video/stage/`) puts the
    pictures into browser windows and phones, moves pointer and camera, cross-fades and sets
    titles and subtitles. It is a page in Chromium that shows a fixed picture for any point in
@@ -401,7 +401,7 @@ Actions → _Update video_ → Run workflow (or `bun run video`, needs ffmpeg an
   them.
 - **What the release publishes:** it skips CI if `main` has already tested that state green, and
   builds for `linux/amd64` and `linux/arm64` the images `docker.io/tristanteu/kontext` and
-  `ghcr.io/firsttris/kontext` (Docker Hub and GitHub Container Registry) as well as
+  `ghcr.io/speicherstadt/kontext` (Docker Hub and GitHub Container Registry) as well as
   `docker.io/tristanteu/kontext-box` (Docker Hub only; GHCR holds only its build cache), each
   with the tags `X.Y.Z`, `X.Y` and `latest` (a release candidate only `X.Y.Z-rc…` and `next`).
   It also creates the GitHub release and then sets `KONTEXT_VERSION` in `deploy/.env.example`

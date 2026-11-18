@@ -9,14 +9,14 @@ version before reporting, as described under
 
 | Version | Supported |
 | --- | --- |
-| [latest release](https://github.com/firsttris/kontext/releases/latest) | yes |
+| [latest release](https://github.com/Speicherstadt/kontext/releases/latest) | yes |
 | older releases | no |
 
 ## Reporting a vulnerability
 
 Please do **not** open a public issue for a security problem. Report it privately through
 GitHub's private vulnerability reporting:
-[Security → Report a vulnerability](https://github.com/firsttris/kontext/security/advisories/new).
+[Security → Report a vulnerability](https://github.com/Speicherstadt/kontext/security/advisories/new).
 
 A good report names the Kontext version (*Einstellungen → Darstellung → App auf diesem Gerät*
 shows the app's and the server's), how to reproduce the problem and what an attacker gains. We

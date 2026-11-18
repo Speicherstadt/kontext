@@ -1,5 +1,5 @@
 /**
- * A stand-in for Schreibzeug (firsttris/schreibzeug), just enough for the module "Dokumente" in
+ * A stand-in for Schreibzeug (Speicherstadt/schreibzeug), just enough for the module "Dokumente" in
  * development and tests, without its editing engine:
  *
  * - its sign-in through Kontext: the OpenID Connect code flow with PKCE against Kontext's provider

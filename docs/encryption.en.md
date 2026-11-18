@@ -13,7 +13,7 @@ rules, notifications with text, tasks from mails) need a server that can read th
 End-to-end is there where it counts: towards the outside and for selected confidential
 conversations.
 
-Status: all five building blocks are done ([roadmap](https://github.com/firsttris/kontext/blob/main/ROADMAP.md)).
+Status: all five building blocks are done ([roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.md)).
 
 ## What it protects against { #wovor-geschutzt-wird }
 

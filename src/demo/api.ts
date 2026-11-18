@@ -11,7 +11,7 @@ import { json } from "./respond";
 import { accountOf, type Store, visibleAccounts } from "./store";
 
 /** Schreibzeug's demo on GitHub Pages; its pages live after the "#". */
-const SCHREIBZEUG_DEMO = "https://firsttris.github.io/schreibzeug/demo/#/";
+const SCHREIBZEUG_DEMO = "https://schreibzeug.app/demo/#/";
 
 /** Better Auth's session, or null before anyone is signed in. */
 const signedIn = (store: Store) => {
@@ -50,7 +50,7 @@ const saveCategories = async (store: Store, request: Request, accountId: string)
 /** What the server answers when a module is not set up, or has nothing yet. */
 const FIXED: Record<string, (store: Store) => unknown> = {
   "GET /api/calls": () => ({ enabled: false, calls: [] }),
-  // Schreibzeug's own demo (firsttris/schreibzeug, src/demo), static like this one; not connected:
+  // Schreibzeug's own demo (Speicherstadt/schreibzeug, src/demo), static like this one; not connected:
   // files cannot go between mail and documents without both servers.
   "GET /api/documents": () => ({ url: SCHREIBZEUG_DEMO, connected: false }),
   "GET /api/photos": () => ({ photos: [] }),

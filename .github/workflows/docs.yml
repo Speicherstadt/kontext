@@ -2,7 +2,7 @@
 # both on GitHub Pages: https://kontext.email/ and https://kontext.email/demo/
 # The domain is set under Settings → Pages → Custom domain; its DNS is at Cloudflare (A/AAAA on
 # GitHub Pages, www as CNAME on firsttris.github.io, without Cloudflare's proxy, so GitHub can
-# issue the certificate). firsttris.github.io/kontext/ redirects there.
+# issue the certificate). speicherstadt.github.io/kontext/ redirects there.
 # On a push to main it runs for every change, as the demo is the app; on a pull request it only
 # builds the docs (--strict), so broken links show up before the merge – CI builds the app.
 # One-time prerequisite: Settings → Pages → Source "GitHub Actions"

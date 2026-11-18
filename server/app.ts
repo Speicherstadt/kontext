@@ -767,7 +767,7 @@ export const createApp = async (env: Env) => {
     "/api/places",
     createPlaceRoutes({
       url: env.PLACES_URL,
-      userAgent: `Kontext/${packageVersion} (+https://github.com/firsttris/kontext)`,
+      userAgent: `Kontext/${packageVersion} (+https://github.com/Speicherstadt/kontext)`,
       accountsOf,
     }),
   );

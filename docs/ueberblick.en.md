@@ -50,7 +50,7 @@ Backups go encrypted with Restic to S3 with Object Lock.
 ## What comes next { #wie-es-weitergeht }
 
 What comes next and which points are still open is in the
-[roadmap](https://github.com/firsttris/kontext/blob/main/ROADMAP.md); what changed in each
-version is in the [changelog](https://github.com/firsttris/kontext/blob/main/CHANGELOG.md).
+[roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.md); what changed in each
+version is in the [changelog](https://github.com/Speicherstadt/kontext/blob/main/CHANGELOG.md).
 
 Next: [Installation](installation.md) · [Architecture](architecture.md) · [Development](development.md)

@@ -7,7 +7,7 @@ description: >-
 
 # Documents { #dokumente }
 
-The “Documents” module is [Schreibzeug](https://github.com/firsttris/schreibzeug): open and edit
+The “Documents” module is [Schreibzeug](https://github.com/Speicherstadt/schreibzeug): open and edit
 Word, Excel, PowerPoint and PDF files in the browser, on your own server. It runs as a service of
 its own next to Kontext (optional) and appears in Kontext's window – without a second sign-in,
 light or dark like Kontext; an open document stays open while you answer a mail.

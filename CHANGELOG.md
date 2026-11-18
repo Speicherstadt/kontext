@@ -7,6 +7,12 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
 
 ## Unreleased
 
+- Kontext moved to the Speicherstadt organization: the repository is
+  `github.com/Speicherstadt/kontext` (the old address redirects), the GHCR images are
+  `ghcr.io/speicherstadt/kontext` and the box's build cache `ghcr.io/speicherstadt/kontext-box-buildcache`
+  (`ghcr.io/firsttris/kontext` gets no new versions; Docker Hub `tristanteu/kontext` stays). The demo
+  shows Schreibzeug's demo from schreibzeug.app, and the docs link Schreibzeug there; the old
+  `firsttris.github.io` addresses of both are gone since their move.
 - Docs (kontext.email): the pages no longer load anything from Google Fonts or a CDN; the fonts
   and Mermaid are downloaded at build time and served from the site (Material's `privacy`
   plugin). Every page has links to the legal notice (Impressum) and the privacy policy in the
@@ -216,7 +222,7 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
   raise `SCHREIBZEUG_VERSION` in `deploy/.env` (or the image in `schreibzeug.container`) and start
   again. Schreibzeug now thins out a file's older versions; to keep all of them, set
   `SCHREIBZEUG_VERSIONS=all` before starting it (Schreibzeug's
-  [changelog](https://github.com/firsttris/schreibzeug/blob/main/CHANGELOG.md)).
+  [changelog](https://github.com/Speicherstadt/schreibzeug/blob/main/CHANGELOG.md)).
 - Calendar: a hidden calendar stays hidden on every device, also a colleague's calendar shared to
   read: the choice is the calendar's per-person `isVisible` on the server (Stalwart 1.0), no
   longer per browser. What a device hid before is moved to the server once. Birthdays and due
@@ -487,7 +493,7 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
   the new `schreibzeug.container` (with your domain) and `systemctl daemon-reload`.
 - Documents: `deploy/.env.example` and the Quadlet use Schreibzeug 0.1.8 (was 0.1.4). **Upgrade:**
   raise `SCHREIBZEUG_VERSION` in `deploy/.env` (or the image in `schreibzeug.container`) and start
-  again; Schreibzeug's [changelog](https://github.com/firsttris/schreibzeug/blob/main/CHANGELOG.md)
+  again; Schreibzeug's [changelog](https://github.com/Speicherstadt/schreibzeug/blob/main/CHANGELOG.md)
   names its own steps.
 - A card above the mail list offers to install Kontext as an app (on phones) and to turn on
   notifications, one at a time.

@@ -7,8 +7,8 @@
 **Mail, Kalender, Chat, Dokumente und Telefon für dein Team – auf deinem eigenen Server, Open Source**<br>
 Ohne Kosten pro Benutzer. Made in Europe.
 
-[![CI](https://github.com/firsttris/kontext/actions/workflows/ci.yml/badge.svg)](https://github.com/firsttris/kontext/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/firsttris/kontext?logo=github&label=release)](https://github.com/firsttris/kontext/releases/latest)
+[![CI](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml/badge.svg)](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Speicherstadt/kontext?logo=github&label=release)](https://github.com/Speicherstadt/kontext/releases/latest)
 [![Docker Pulls](https://img.shields.io/docker/pulls/tristanteu/kontext?logo=docker&logoColor=white)](https://hub.docker.com/r/tristanteu/kontext)
 [![Platforms](https://img.shields.io/badge/platform-amd64%20%7C%20arm64-lightgrey)](https://hub.docker.com/r/tristanteu/kontext/tags)
 [![Docs](https://img.shields.io/badge/docs-kontext.email-4f46e5?logo=materialformkdocs&logoColor=white)](https://kontext.email/)
@@ -73,7 +73,7 @@ SSH-Zugang zu deinem Server und sag: „Setz Kontext auf meinem Server auf, nach
 **Von Hand:**
 
 ```bash
-git clone https://github.com/firsttris/kontext /opt/kontext && cd /opt/kontext
+git clone https://github.com/Speicherstadt/kontext /opt/kontext && cd /opt/kontext
 cp deploy/.env.example deploy/.env && chmod 600 deploy/.env
 nano deploy/.env                              # Domain, Version, Backup-Ziel, jedes change-me ersetzen
 docker compose -f deploy/compose.yaml up -d   # lädt Kontext, Stalwart und Caddy und startet sie
@@ -97,7 +97,7 @@ Kurz je Bereich; die Details stehen auf der verlinkten Seite der [Dokumentation]
 | 💬 [Team-Chat & Video](https://kontext.email/chat.html) | Kanäle und Direktnachrichten, Mails als Karten, Videocalls und Bildschirm teilen auf dem eigenen Server |
 | 📞 [Telefonie (CTI)](https://kontext.email/telephony.html) | Fritzbox und Nummern bleiben, Anrufe klingeln mit dem Kontakt des Anrufers, Anrufen per Klick |
 | 🔐 [Verschlüsselung](https://kontext.email/encryption.html) | OpenPGP und S/MIME, vertraulich senden an jeden, verschlüsselter Speicher und Backups |
-| 📄 [Dokumente](https://kontext.email/documents.html) | Word, Excel, PowerPoint und PDF im Browser mit [Schreibzeug](https://github.com/firsttris/schreibzeug) |
+| 📄 [Dokumente](https://kontext.email/documents.html) | Word, Excel, PowerPoint und PDF im Browser mit [Schreibzeug](https://github.com/Speicherstadt/schreibzeug) |
 | 🤖 [KI-Agenten (MCP)](https://kontext.email/agents.html) | Claude und andere Agenten schlagen mit deinen Rechten nach und schreiben Entwürfe |
 | 🏢 [Firmenverwaltung](https://kontext.email/company.html) | Mitarbeiter, Postfächer und Rechte ohne IT-Kenntnisse, Firmen-Signatur, Umzug von Microsoft 365 und Gmail |
 | 📱 [Auf jedem Gerät](https://kontext.email/app.html) | App ohne App Store, Push-Benachrichtigungen, Passkeys, hell und dunkel |
@@ -262,7 +262,7 @@ Jede Funktion oben verlinkt ihre Seite; dazu kommen:
 Benötigt [Bun](https://bun.sh) 1.4 und Linux oder macOS (Windows über WSL).
 
 ```bash
-git clone https://github.com/firsttris/kontext && cd kontext
+git clone https://github.com/Speicherstadt/kontext && cd kontext
 bun install
 bun run dev   # Stalwart mit Testdaten, Server und App: http://localhost:5173
 ```
@@ -273,12 +273,12 @@ Releases: [Entwicklung](https://kontext.email/development.html).
 
 ## 🧩 Mehr von uns
 
-- Word, Excel und PowerPoint ohne Microsoft 365? **[Schreibzeug](https://github.com/firsttris/schreibzeug)** bearbeitet sie im Browser und speichert sie als .docx, .xlsx und .pptx.
+- Word, Excel und PowerPoint ohne Microsoft 365? **[Schreibzeug](https://github.com/Speicherstadt/schreibzeug)** bearbeitet sie im Browser und speichert sie als .docx, .xlsx und .pptx.
 - Machst du deine Buchhaltung selbst? **[Haben](https://github.com/firsttris/haben)**: Rechnungen mit E-Rechnung, Belege, Bankabgleich und die Umsatzsteuer-Voranmeldung an ELSTER.
 
 ## 🤝 Mitmachen
 
-Fehler und Ideen gern als Issue, mit dem [Formular für Fehlerberichte](https://github.com/firsttris/kontext/issues/new?template=bug_report.yml).
+Fehler und Ideen gern als Issue, mit dem [Formular für Fehlerberichte](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml).
 Sicherheitslücken bitte vertraulich melden, siehe [SECURITY.md](SECURITY.md). Was vor einem Pull
 Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -286,8 +286,8 @@ Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <div align="center">
 
-⭐ Gefällt dir Kontext? Ein [Stern auf GitHub](https://github.com/firsttris/kontext) hilft anderen, es zu finden.<br>
-🐛 [Fehler melden](https://github.com/firsttris/kontext/issues/new?template=bug_report.yml) · 💡 [Idee vorschlagen](https://github.com/firsttris/kontext/issues/new?template=feature_request.yml)
+⭐ Gefällt dir Kontext? Ein [Stern auf GitHub](https://github.com/Speicherstadt/kontext) hilft anderen, es zu finden.<br>
+🐛 [Fehler melden](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) · 💡 [Idee vorschlagen](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
 <sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende · <a href="README.md">English version</a><br>
 Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten; eine kommerzielle Lizenz ohne diese Pflichten gibt es über <a href="https://teufel-it.de">teufel-it.de</a>.<br>

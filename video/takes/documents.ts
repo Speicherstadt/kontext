@@ -5,7 +5,7 @@ import { ADDRESS, closeAll, desktopOf, mailShown, READING } from "../screens";
 import { startTake } from "../take";
 
 /**
- * Schreibzeug in Kontext's frame, as its own pictures (docs/screenshots of firsttris/schreibzeug,
+ * Schreibzeug in Kontext's frame, as its own pictures (docs/screenshots of Speicherstadt/schreibzeug,
  * copied to video/schreibzeug/): the e2e stand-in (dev/fake-schreibzeug.ts) only says who is
  * signed in. Each request to it gets a page with the pictures; `show` picks one.
  */
