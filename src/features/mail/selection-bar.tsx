@@ -4,7 +4,6 @@
  * are offered when all are in one mailbox, as they belong to it.
  */
 
-import { useNavigate } from "@tanstack/react-router";
 import {
   Archive,
   FolderInput,
@@ -19,7 +18,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { Fragment, type ReactNode, useState } from "react";
+import { Fragment, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import {
   MenuCheckboxItem,
@@ -30,29 +29,14 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "@/components/ui/menu";
-import { useToast } from "@/components/ui/toast";
 import { COLOR_STYLES } from "@/lib/categories";
 import { cn } from "@/lib/cn";
-import { correspondent } from "@/lib/correspondent";
-import { moveTargets } from "@/lib/move-targets";
-import {
-  categoryState,
-  groupsOf,
-  marksFlagged,
-  marksRead,
-  type Picked,
-  singleAccount,
-  snoozeTargets,
-} from "@/lib/selection";
-import { mailLink, plainSubject } from "@/lib/tasks";
-import type { MailMove } from "@/lib/undo-move";
+import { categoryState, type Picked } from "@/lib/selection";
 import { m } from "@/paraglide/messages";
 import { useCategories } from "../categories/queries";
 import { SnoozeMenu } from "../snooze/snooze-menu";
-import { TaskDialog, type TaskStart } from "../tasks/task-dialog";
-import { useMailActions } from "./actions";
-import { useAllMailboxes, useMailAccounts } from "./queries";
-import { useOfferUndo } from "./undo";
+import { TaskDialog } from "../tasks/task-dialog";
+import { useSelectionActions } from "./selection-actions";
 
 const IconButton = ({
   label,
@@ -77,14 +61,181 @@ const IconButton = ({
   </Button>
 );
 
-export const SelectionBar = ({
+type Actions = ReturnType<typeof useSelectionActions>;
+
+/** The tick box for all, how many are picked, and "Auswahl aufheben". */
+const PickHeader = ({
   picked,
   allPicked,
   onPickAll,
   onClear,
-  folderId,
-  inJunk,
+}: Pick<Props, "picked" | "allPicked" | "onPickAll" | "onClear">) => (
+  <div className="flex items-center gap-1">
+    <label className="flex size-8 cursor-pointer items-center justify-center rounded-lg hover:bg-hover">
+      <input
+        type="checkbox"
+        ref={(box) => {
+          if (box) box.indeterminate = !allPicked && picked.length > 0;
+        }}
+        checked={allPicked}
+        aria-label={m.mail_select_all()}
+        onChange={allPicked ? onClear : onPickAll}
+        className="size-4 cursor-pointer accent-[var(--primary)]"
+      />
+    </label>
+    <span className="min-w-0 flex-1 truncate text-[14px] font-medium" aria-live="polite">
+      {picked.length === 1 ? m.mail_selected_one() : m.mail_selected({ count: picked.length })}
+    </span>
+    <IconButton label={m.mail_selection_clear()} disabled={false} onClick={onClear}>
+      <X size={16} />
+    </IconButton>
+  </div>
+);
+
+/** The categories of the one mailbox the picked mails are in, ticked where all or some have them. */
+const CategoryMenu = ({
+  accountId,
+  picked,
+  a,
+  disabled,
 }: {
+  accountId: string;
+  picked: Picked[];
+  a: Actions;
+  disabled: boolean;
+}) => {
+  const categories = useCategories(accountId);
+  if (!categories.length) return null;
+  return (
+    <MenuRoot>
+      <MenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="iconSm"
+          aria-label={m.categories_menu()}
+          title={m.categories_menu()}
+          disabled={disabled}
+        >
+          <Tag size={16} />
+        </Button>
+      </MenuTrigger>
+      <MenuContent>
+        {categories.map((category) => {
+          const state = categoryState(picked, category);
+          return (
+            <MenuCheckboxItem
+              key={category.keyword}
+              checked={state === "all" ? true : state === "some" ? "indeterminate" : false}
+              onCheckedChange={() => a.setCategory(accountId, category.keyword, state !== "all")}
+            >
+              <span
+                aria-hidden="true"
+                className={cn("size-2.5 rounded-full", COLOR_STYLES[category.color].dot)}
+              />
+              {category.name}
+            </MenuCheckboxItem>
+          );
+        })}
+      </MenuContent>
+    </MenuRoot>
+  );
+};
+
+/** The folders to move to, by mailbox. */
+const MoveMenu = ({ a, disabled }: { a: Actions; disabled: boolean }) => (
+  <MenuRoot>
+    <MenuTrigger asChild>
+      <Button
+        variant="ghost"
+        size="iconSm"
+        aria-label={m.mail_move()}
+        title={m.mail_move()}
+        disabled={disabled}
+      >
+        <FolderInput size={16} />
+      </Button>
+    </MenuTrigger>
+    <MenuContent>
+      {a.targets.map((group, index) => (
+        <Fragment key={group.account.id}>
+          {index > 0 ? <MenuSeparator /> : null}
+          {a.targets.length > 1 ? <MenuLabel>{group.account.name}</MenuLabel> : null}
+          {group.targets.map((target) => (
+            <MenuItem key={target.mailbox.id} onSelect={() => a.moveTo(target)}>
+              {target.label}
+            </MenuItem>
+          ))}
+        </Fragment>
+      ))}
+    </MenuContent>
+  </MenuRoot>
+);
+
+/** The actions for all picked mails at once. */
+const SelectionActions = ({
+  a,
+  picked,
+  inJunk,
+  onClear,
+}: {
+  a: Actions;
+  picked: Picked[];
+  inJunk: boolean;
+  onClear: () => void;
+}) => {
+  const none = picked.length === 0;
+  const { accountId, read, flag } = a;
+  return (
+    <div className="flex flex-wrap items-center gap-0.5">
+      <IconButton label={m.mail_archive_action()} disabled={none} onClick={a.archive}>
+        <Archive size={16} />
+      </IconButton>
+      <IconButton label={m.mail_delete()} disabled={none} onClick={a.remove}>
+        <Trash2 size={16} />
+      </IconButton>
+      {a.toSnooze ? <SnoozeMenu targets={a.toSnooze} onLeave={onClear} small /> : null}
+      <IconButton
+        label={inJunk ? m.mail_spam_unmark() : m.mail_spam_mark()}
+        disabled={none}
+        onClick={a.toggleSpam}
+      >
+        {inJunk ? <ShieldCheck size={16} /> : <ShieldAlert size={16} />}
+      </IconButton>
+      <IconButton
+        label={read ? m.mail_mark_read() : m.mail_mark_unread()}
+        disabled={none}
+        onClick={a.markRead}
+      >
+        {read ? <MailOpen size={16} /> : <Mail size={16} />}
+      </IconButton>
+      <IconButton
+        label={flag ? m.mail_flag() : m.mail_unflag()}
+        disabled={none}
+        onClick={a.markFlag}
+      >
+        <Star size={16} className={flag ? undefined : "fill-warn text-warn"} />
+      </IconButton>
+      <IconButton label={m.mail_tasks_action()} disabled={none} onClick={a.makeTasks}>
+        <ListChecks size={16} />
+      </IconButton>
+      {accountId ? (
+        <IconButton
+          label={m.mail_forward_eml()}
+          disabled={none}
+          onClick={() => a.forwardAsFiles(accountId)}
+        >
+          <Paperclip size={16} />
+        </IconButton>
+      ) : null}
+      {accountId ? (
+        <CategoryMenu accountId={accountId} picked={picked} a={a} disabled={none} />
+      ) : null}
+      {a.targets.length ? <MoveMenu a={a} disabled={none} /> : null}
+    </div>
+  );
+};
+
+type Props = {
   picked: Picked[];
   allPicked: boolean;
   onPickAll: () => void;
@@ -92,277 +243,20 @@ export const SelectionBar = ({
   /** The open folder, where mails are taken out of; none in combined lists. */
   folderId?: string;
   inJunk: boolean;
-}) => {
-  const actions = useMailActions();
-  const navigate = useNavigate();
-  const toast = useToast();
-  const offerUndo = useOfferUndo();
-  const accounts = useMailAccounts();
-  const mailboxes = useAllMailboxes();
-  const [tasks, setTasks] = useState<TaskStart[] | null>(null);
-  const groups = groupsOf(picked, folderId);
-  const accountId = singleAccount(picked);
-  const categories = useCategories(accountId ?? undefined);
-  const none = picked.length === 0;
-  const read = marksRead(picked);
-  const flag = marksFlagged(picked);
-  const byAccount = [...new Set(picked.map((entry) => entry.accountId))].map((id) => ({
-    id,
-    ids: picked.filter((entry) => entry.accountId === id).map((entry) => entry.email.id),
-  }));
-  const toSnooze = snoozeTargets(groups, mailboxes);
-  const targets =
-    accountId && groups.length === 1
-      ? moveTargets(accounts, mailboxes, { accountId, mailboxId: groups[0]!.from })
-      : [];
+};
 
-  /** Runs for every group; a refusal (e.g. a mailbox only to read) is said once. */
-  const run = async <T,>(action: () => Promise<T>[], clear: boolean) => {
-    if (clear) onClear();
-    const results = await Promise.allSettled(action());
-    const failed = results.find((result) => result.status === "rejected");
-    if (failed)
-      toast.show(
-        m.common_error({ message: String(failed.reason?.message ?? failed.reason) }),
-        "error",
-      );
-    return results;
-  };
-
-  /** Moves the mails go through, then offers to take back what did move. */
-  const runMoves = async (action: () => Promise<MailMove | undefined>[], text: string) => {
-    const results = await run(action, true);
-    offerUndo(
-      text,
-      results.flatMap((result) => (result.status === "fulfilled" ? [result.value] : [])),
-    );
-  };
-
-  const archiveAll = () =>
-    groups.map((g) =>
-      actions.archive(
-        g.accountId,
-        g.emails.map((e) => e.id),
-        g.from,
-      ),
-    );
-
-  /** All picked mails as .eml files in one new mail; the composer sends from their account. */
-  const forwardAsFiles = (account: string) => {
-    const emails = picked.map((entry) => entry.email.id).join(",");
-    onClear();
-    void navigate({
-      to: ".",
-      search: (prev) => ({ ...prev, compose: "forwardEml", emails, email: undefined, account }),
-    });
-  };
-
-  /** One task per picked mail, linked to it and to its sender's card. */
-  const makeTasks = () =>
-    setTasks(
-      picked.map(({ accountId: account, email }) => ({
-        title: plainSubject(email.subject ?? ""),
-        accountId: account,
-        link: mailLink(account, email),
-        person: correspondent(
-          email,
-          accounts.map((candidate) => candidate.name),
-        )?.email,
-      })),
-    );
-
+export const SelectionBar = (props: Props) => {
+  const { picked, folderId, inJunk, onClear } = props;
+  const a = useSelectionActions({ picked, folderId, inJunk, onClear });
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center gap-1">
-        <label className="flex size-8 cursor-pointer items-center justify-center rounded-lg hover:bg-hover">
-          <input
-            type="checkbox"
-            ref={(box) => {
-              if (box) box.indeterminate = !allPicked && !none;
-            }}
-            checked={allPicked}
-            aria-label={m.mail_select_all()}
-            onChange={allPicked ? onClear : onPickAll}
-            className="size-4 cursor-pointer accent-[var(--primary)]"
-          />
-        </label>
-        <span className="min-w-0 flex-1 truncate text-[14px] font-medium" aria-live="polite">
-          {picked.length === 1 ? m.mail_selected_one() : m.mail_selected({ count: picked.length })}
-        </span>
-        <IconButton label={m.mail_selection_clear()} disabled={false} onClick={onClear}>
-          <X size={16} />
-        </IconButton>
-      </div>
-      <div className="flex flex-wrap items-center gap-0.5">
-        <IconButton
-          label={m.mail_archive_action()}
-          disabled={none}
-          onClick={() => void runMoves(archiveAll, m.mail_archived())}
-        >
-          <Archive size={16} />
-        </IconButton>
-        <IconButton
-          label={m.mail_delete()}
-          disabled={none}
-          onClick={() =>
-            void runMoves(
-              () =>
-                groups.map((g) =>
-                  actions.remove(
-                    g.accountId,
-                    g.emails.map((e) => e.id),
-                    g.from,
-                  ),
-                ),
-              m.mail_trashed(),
-            )
-          }
-        >
-          <Trash2 size={16} />
-        </IconButton>
-        {toSnooze ? <SnoozeMenu targets={toSnooze} onLeave={onClear} small /> : null}
-        <IconButton
-          label={inJunk ? m.mail_spam_unmark() : m.mail_spam_mark()}
-          disabled={none}
-          onClick={() =>
-            void runMoves(
-              () =>
-                groups.map((g) =>
-                  actions.markSpam(
-                    g.accountId,
-                    g.emails.map((e) => e.id),
-                    g.from,
-                    !inJunk,
-                  ),
-                ),
-              inJunk ? m.mail_spam_unmarked() : m.mail_spam_marked(),
-            )
-          }
-        >
-          {inJunk ? <ShieldCheck size={16} /> : <ShieldAlert size={16} />}
-        </IconButton>
-        <IconButton
-          label={read ? m.mail_mark_read() : m.mail_mark_unread()}
-          disabled={none}
-          onClick={() =>
-            void run(() => byAccount.map((a) => actions.setSeen(a.id, a.ids, read)), false)
-          }
-        >
-          {read ? <MailOpen size={16} /> : <Mail size={16} />}
-        </IconButton>
-        <IconButton
-          label={flag ? m.mail_flag() : m.mail_unflag()}
-          disabled={none}
-          onClick={() =>
-            void run(() => byAccount.map((a) => actions.setFlagged(a.id, a.ids, flag)), false)
-          }
-        >
-          <Star size={16} className={flag ? undefined : "fill-warn text-warn"} />
-        </IconButton>
-        <IconButton label={m.mail_tasks_action()} disabled={none} onClick={makeTasks}>
-          <ListChecks size={16} />
-        </IconButton>
-        {accountId ? (
-          <IconButton
-            label={m.mail_forward_eml()}
-            disabled={none}
-            onClick={() => forwardAsFiles(accountId)}
-          >
-            <Paperclip size={16} />
-          </IconButton>
-        ) : null}
-        {accountId && categories.length ? (
-          <MenuRoot>
-            <MenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="iconSm"
-                aria-label={m.categories_menu()}
-                title={m.categories_menu()}
-                disabled={none}
-              >
-                <Tag size={16} />
-              </Button>
-            </MenuTrigger>
-            <MenuContent>
-              {categories.map((category) => {
-                const state = categoryState(picked, category);
-                return (
-                  <MenuCheckboxItem
-                    key={category.keyword}
-                    checked={state === "all" ? true : state === "some" ? "indeterminate" : false}
-                    onCheckedChange={() =>
-                      void run(
-                        () => [
-                          actions.setCategory(
-                            accountId,
-                            picked.map((entry) => entry.email.id),
-                            category.keyword,
-                            state !== "all",
-                          ),
-                        ],
-                        false,
-                      )
-                    }
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={cn("size-2.5 rounded-full", COLOR_STYLES[category.color].dot)}
-                    />
-                    {category.name}
-                  </MenuCheckboxItem>
-                );
-              })}
-            </MenuContent>
-          </MenuRoot>
-        ) : null}
-        {targets.length ? (
-          <MenuRoot>
-            <MenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="iconSm"
-                aria-label={m.mail_move()}
-                title={m.mail_move()}
-                disabled={none}
-              >
-                <FolderInput size={16} />
-              </Button>
-            </MenuTrigger>
-            <MenuContent>
-              {targets.map((group, index) => (
-                <Fragment key={group.account.id}>
-                  {index > 0 ? <MenuSeparator /> : null}
-                  {targets.length > 1 ? <MenuLabel>{group.account.name}</MenuLabel> : null}
-                  {group.targets.map((target) => (
-                    <MenuItem
-                      key={target.mailbox.id}
-                      onSelect={() =>
-                        void runMoves(
-                          () => [
-                            actions.moveTo(accountId!, groups[0]!.emails, groups[0]!.from, {
-                              accountId: target.accountId,
-                              mailboxId: target.mailbox.id,
-                            }),
-                          ],
-                          m.mail_moved({ folder: target.label }),
-                        )
-                      }
-                    >
-                      {target.label}
-                    </MenuItem>
-                  ))}
-                </Fragment>
-              ))}
-            </MenuContent>
-          </MenuRoot>
-        ) : null}
-      </div>
-      {tasks ? (
+      <PickHeader {...props} />
+      <SelectionActions a={a} picked={picked} inJunk={inJunk} onClear={onClear} />
+      {a.tasks ? (
         <TaskDialog
-          starts={tasks}
-          onClose={() => setTasks(null)}
-          onArchive={folderId ? () => run(archiveAll, true) : undefined}
+          starts={a.tasks}
+          onClose={() => a.setTasks(null)}
+          onArchive={a.archiveAndClear}
         />
       ) : null}
     </div>
