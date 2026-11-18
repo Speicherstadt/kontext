@@ -14,10 +14,11 @@ import type { ChannelSummary, Person } from "@/lib/chat";
 import { mailCard } from "@/lib/chat-cards";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
+import { useChatActions } from "./actions";
 import { useShareCopy } from "./mail-copy";
 import { MessageCard } from "./message-card";
 import { MessageInput } from "./message-input";
-import { useChannels, useChatActions, useDiscussions, useSuggestions } from "./queries";
+import { useChannels, useDiscussions, useSuggestions } from "./queries";
 import { useChatNames } from "./use-chat-names";
 
 type Target =
