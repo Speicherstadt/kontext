@@ -24,6 +24,63 @@ type Props = {
   preferredBook?: string;
 };
 
+/** The set with the uid added, or removed if it was there. */
+const toggled = (current: Set<string>, uid: string) => {
+  const next = new Set(current);
+  if (next.has(uid)) next.delete(uid);
+  else next.add(uid);
+  return next;
+};
+
+/** The search field and the contacts to tick as members. */
+const MemberPicker = ({
+  candidates,
+  members,
+  filter,
+  onFilter,
+  onToggle,
+}: {
+  candidates: Contact[];
+  members: Set<string>;
+  filter: string;
+  onFilter: (filter: string) => void;
+  onToggle: (uid: string) => void;
+}) => (
+  <>
+    <label className="flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-muted">
+      <Search size={16} />
+      <input
+        type="search"
+        aria-label={m.contacts_group_pick()}
+        placeholder={m.contacts_group_pick()}
+        value={filter}
+        onChange={(e) => onFilter(e.target.value)}
+        className="min-w-0 flex-1 border-0 bg-transparent text-[14px] text-fg outline-none"
+      />
+    </label>
+    <ul className="m-0 flex max-h-[360px] list-none flex-col overflow-y-auto rounded-lg border border-border p-1">
+      {candidates.map((card) => (
+        <li key={card.id}>
+          <label className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 hover:bg-hover">
+            <input
+              type="checkbox"
+              checked={members.has(card.uid!)}
+              onChange={() => onToggle(card.uid!)}
+              className="size-4 accent-[var(--accent)]"
+            />
+            <span className="flex min-w-0 flex-col">
+              <span className="truncate">{fullName(card)}</span>
+              {company(card) ? (
+                <span className="truncate text-[12px] text-muted">{company(card)}</span>
+              ) : null}
+            </span>
+          </label>
+        </li>
+      ))}
+    </ul>
+  </>
+);
+
 export const GroupEditor = ({ group, contacts, books, preferredBook }: Props) => {
   const writable = books.filter((book) => book.mayWrite);
   const [bookKey, setBookKey] = useState(() => startBook(writable, preferredBook));
@@ -43,13 +100,7 @@ export const GroupEditor = ({ group, contacts, books, preferredBook }: Props) =>
     .filter((card) => members.has(card.uid!) || matchesSearch(card, filter))
     .sort((a, b) => sortKey(a).localeCompare(sortKey(b), "de"));
 
-  const toggle = (uid: string) =>
-    setMembers((current) => {
-      const next = new Set(current);
-      if (next.has(uid)) next.delete(uid);
-      else next.add(uid);
-      return next;
-    });
+  const toggle = (uid: string) => setMembers((current) => toggled(current, uid));
 
   const show = (card: { id: string; accountId: string }) =>
     navigate({
@@ -140,37 +191,13 @@ export const GroupEditor = ({ group, contacts, books, preferredBook }: Props) =>
         <legend className="mb-1.5 p-0 text-[13px] text-muted">
           {m.contacts_group_members()} ({members.size})
         </legend>
-        <label className="flex h-9 items-center gap-2 rounded-lg border border-border px-3 text-muted">
-          <Search size={16} />
-          <input
-            type="search"
-            aria-label={m.contacts_group_pick()}
-            placeholder={m.contacts_group_pick()}
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="min-w-0 flex-1 border-0 bg-transparent text-[14px] text-fg outline-none"
-          />
-        </label>
-        <ul className="m-0 flex max-h-[360px] list-none flex-col overflow-y-auto rounded-lg border border-border p-1">
-          {candidates.map((card) => (
-            <li key={card.id}>
-              <label className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 hover:bg-hover">
-                <input
-                  type="checkbox"
-                  checked={members.has(card.uid!)}
-                  onChange={() => toggle(card.uid!)}
-                  className="size-4 accent-[var(--accent)]"
-                />
-                <span className="flex min-w-0 flex-col">
-                  <span className="truncate">{fullName(card)}</span>
-                  {company(card) ? (
-                    <span className="truncate text-[12px] text-muted">{company(card)}</span>
-                  ) : null}
-                </span>
-              </label>
-            </li>
-          ))}
-        </ul>
+        <MemberPicker
+          candidates={candidates}
+          members={members}
+          filter={filter}
+          onFilter={setFilter}
+          onToggle={toggle}
+        />
       </fieldset>
       {problem ? (
         <p role="alert" className="m-0 text-[13px] text-danger">
