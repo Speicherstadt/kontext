@@ -5,9 +5,6 @@
  */
 import { Hono } from "hono";
 import { retentionSchema } from "../chat/chat";
-import { migrationRoutes } from "../migration/routes";
-import { syncRoutes } from "../migration/sync-routes";
-import { authorityRoutes } from "../smime/authorities";
 import { archiveRoutes } from "./archive-routes";
 import { assistantRoutes } from "./assistant";
 import { backupRoutes } from "./backup-routes";
@@ -22,13 +19,16 @@ import { idleLogoutRoutes, readIdleLogout } from "./idle-logout";
 import { legalFooterRoutes, readLegalFooter } from "./legal-footer";
 import { readMailboxMembers } from "./mailbox-members";
 import { mailboxRoutes } from "./mailboxes";
+import { migrationRoutes } from "./migration-routes";
 import { phishingReportRoutes, readPhishingReport } from "./phishing-report";
 import { searchIndexStatus } from "./search-index";
 import { checkDomain, httpsCheck } from "./security";
 import { serverHealthRoutes } from "./server-health-routes";
 import { signatureRoutes } from "./signature-routes";
+import { authorityRoutes } from "./smime-authorities";
 import { spamAiRoutes } from "./spam-ai";
 import { ssoRoutes } from "./sso-routes";
+import { syncRoutes } from "./sync-routes";
 import { readVacationTemplates, vacationTemplateRoutes } from "./vacation-templates";
 
 export type { CompanyDeps };

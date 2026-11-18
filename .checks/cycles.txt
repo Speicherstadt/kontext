@@ -1,31 +1,16 @@
 # Imports between modules that close a ring, from before the check (checks cycles,
 # firsttris/workflows). Break them in a pull request of their own; `checks cycles --clean` drops
 # the ones that no longer close a ring. A new one is never added here.
-server/calls -> server/chat
-server/calls -> server/live
-server/chat -> server/live
-server/company -> server/chat
 server/company -> server/migration
-server/company -> server/rules
 server/company -> server/smime
 server/company -> server/tasks
 server/company -> src/lib
-server/live -> server/calls
-server/live -> server/chat
-server/live -> server/phone
-server/migration -> server/company
 server/migration -> src/lib
-server/phone -> server/calls
-server/phone -> server/chat
 server/phone -> server/company
-server/phone -> server/live
 server/phone -> server/tasks
 server/push -> src/lib
-server/rules -> server/company
-server/smime -> server/company
 server/smime -> src/lib
 server/tasks -> server/push
-server/tasks -> server/rules
 src/features/agents -> src/features/company
 src/features/agents -> src/features/settings
 src/features/calendar -> src/features/calls
@@ -136,11 +121,7 @@ src/features/tasks -> src/features/mail
 src/features/tasks -> src/features/notifications
 src/features/tasks -> src/features/photos
 src/features/tasks -> src/features/sharing
-src/jmap -> server/rules
 src/jmap -> src/lib
-src/lib -> server/calls
-src/lib -> server/chat
 src/lib -> server/phone
-src/lib -> server/rules
 src/lib -> server/tasks
 src/lib -> src/jmap

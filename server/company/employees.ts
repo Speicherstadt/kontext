@@ -5,6 +5,7 @@
  */
 import { Hono } from "hono";
 import { z } from "zod";
+import { OFFBOARDING_SCRIPT, offboardingScript } from "../rules/offboarding";
 import {
   aliasesValue,
   newPassword,
@@ -26,7 +27,6 @@ import {
   notFound,
   userOf,
 } from "./context";
-import { OFFBOARDING_SCRIPT, offboardingScript } from "./offboarding";
 import { addRulesRoutes } from "./rules-routes";
 import { FULL_ACCESS, sharePatches } from "./sharing";
 import { applySignature } from "./signature-routes";

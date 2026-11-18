@@ -22,6 +22,12 @@ export type Call = {
   answeredAt: string | null;
 };
 
+/** What calls tell the open apps through the live connection (live/hub.ts). */
+export type CallEvent =
+  // A call began, someone joined or left, or it ended (null).
+  | { type: "call"; channelId: string; call: Call | null }
+  | { type: "call-declined"; channelId: string; memberId: string };
+
 /** All calls that are running, by channel. */
 export type Calls = Record<string, Call>;
 

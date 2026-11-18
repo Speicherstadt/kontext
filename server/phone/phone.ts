@@ -77,6 +77,13 @@ export type PhoneCall = {
   recordingSeconds: number | null;
 };
 
+/** What the telephone tells the open apps through the live connection (live/hub.ts). */
+export type PhoneEvent =
+  // A phone call through the telephone box rang, was taken, ended or got a note.
+  | { type: "phone"; call: PhoneCall }
+  /** Who is on the phone now, and who does not take calls (Bitte nicht stören, Abwesend). */
+  | { type: "phone-people"; busy: string[]; unavailable: string[] };
+
 /** Phone rooms in LiveKit: "kontext-phone-<uuid>", which LiveKit SIP's dispatch rule matches. */
 export const PHONE_ROOM_PREFIX = "kontext-phone-";
 export const phoneRoom = (room: string) => `${PHONE_ROOM_PREFIX}${room}`;
@@ -86,43 +93,14 @@ export const roomOfPhoneRoom = (name: string): string | null =>
 /** The calls state of server/calls names a phone room "phone-<uuid>". */
 export const phoneCallKey = (room: string) => `phone-${room}`;
 
-/** Whether someone takes calls: Bitte nicht stören, or away (until a time, or open-ended). */
-export type PhoneStatus = {
-  memberId: string;
-  mode: "available" | "dnd" | "away";
-  until: string | null;
-};
-
-export const statusSchema = z.object({
-  mode: z.enum(["available", "dnd", "away"]),
-  until: z.iso.datetime().nullable().default(null),
-});
-
-/** Who does not take calls at `now`: an away that has run out counts as back. */
-export const unavailableAt = (statuses: PhoneStatus[], now: Date): string[] =>
-  statuses
-    .filter(
-      (status) =>
-        status.mode === "dnd" ||
-        (status.mode === "away" && (!status.until || Date.parse(status.until) > now.getTime())),
-    )
-    .map((status) => status.memberId);
-
-/** The plan without who does not take calls: the others ring (in order, as before). */
-export const withoutUnavailable = (plan: RingPlan, unavailable: string[]): RingPlan => ({
-  ...plan,
-  order: plan.order.filter((member) => !unavailable.includes(member)),
-});
-
-/** How the line's people hear a call: all at once, or one after another (then all). */
-export type RingPlan = { mode: "all" | "order"; stepSeconds: number; order: string[] };
-
-/** Who hears a ringing call `seconds` after it started. Pure. */
-export const ringingFor = (plan: RingPlan, seconds: number): string[] => {
-  if (plan.mode === "all") return plan.order;
-  const step = Math.floor(seconds / plan.stepSeconds);
-  return step >= plan.order.length ? plan.order : plan.order.slice(step, step + 1);
-};
+export {
+  type PhoneStatus,
+  type RingPlan,
+  ringingFor,
+  statusSchema,
+  unavailableAt,
+  withoutUnavailable,
+} from "./availability";
 
 /** Hangup causes (Q.850, as Asterisk passes them on). */
 const CAUSE = { busy: 17, noAnswer: 19, answeredElsewhere: 26 } as const;
@@ -293,44 +271,7 @@ export const applyCallEvent = (
   return call;
 };
 
-/** Someone took the ringing call in Kontext. */
-export const takeCall = (call: PhoneCall, member: string, room: string): PhoneCall | null =>
-  call.state === "ringing" &&
-  call.direction === "in" &&
-  !call.member &&
-  call.members.includes(member)
-    ? { ...call, member, room }
-    : null;
-
-export const canSeeCall = (call: Pick<PhoneCall, "members" | "member" | "offeredTo">, me: string) =>
-  call.members.includes(me) || call.member === me || call.offeredTo === me;
-
-/**
- * Hand a call one is talking on to a colleague, or ask them to join it (`join`); it rings for
- * them until they take it.
- */
-export const offerCall = (
-  call: PhoneCall,
-  me: string,
-  to: string,
-  join = false,
-): PhoneCall | null =>
-  call.state === "talking" && call.member === me && to !== me
-    ? { ...call, offeredTo: to, offeredBy: me, offeredJoin: join }
-    : null;
-
-/** The colleague takes the call: handed over, it is theirs now; asked to join, they are in it. */
-export const takeOffer = (call: PhoneCall, me: string): PhoneCall | null =>
-  call.state === "talking" && call.offeredTo === me
-    ? {
-        ...call,
-        member: call.offeredJoin ? call.member : me,
-        members: [...new Set([...call.members, me])],
-        offeredTo: null,
-        offeredBy: null,
-        offeredJoin: false,
-      }
-    : null;
+export { canSeeCall, offerCall, takeCall, takeOffer } from "./taking";
 
 /** Who sits in a phone room: LiveKit SIP's participants are "sip_…", the rest are people. */
 export const isPerson = (identity: string) => !identity.startsWith("sip_");

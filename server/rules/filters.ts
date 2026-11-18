@@ -10,7 +10,7 @@
  * The JMAP access is passed in, so the app (through the server's proxy) and the server (with its
  * own key) do the same.
  */
-import { OFFBOARDING_SCRIPT } from "../company/offboarding";
+import { OFFBOARDING_SCRIPT } from "./offboarding";
 import { isEffective, parseRules, RULES_SCRIPT, type Rule, rulesScript } from "./script";
 
 export type Invocation = [string, Record<string, unknown>, string];

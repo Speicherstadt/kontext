@@ -6,8 +6,6 @@
 import type { Context } from "hono";
 import { z } from "zod";
 import type { CategoryStore } from "../categories/store";
-import type { MigrationDeps } from "../migration/routes";
-import type { SyncDeps } from "../migration/sync-routes";
 import {
   type Company,
   isCompanyUser,
@@ -20,9 +18,11 @@ import type { Calendars } from "./calendars";
 import type { ExternalHintStore } from "./external-hint";
 import type { Mailstore } from "./mailstore";
 import type { Management } from "./management";
+import type { MigrationDeps } from "./migration-routes";
 import type { CompanySettings } from "./settings";
 import type { Folder } from "./sharing";
 import type { SignatureDetailsStore } from "./signature-details";
+import type { SyncDeps } from "./sync-routes";
 
 export type CompanyDeps = {
   management: Management;
