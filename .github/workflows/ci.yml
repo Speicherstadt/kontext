@@ -82,6 +82,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # the whole history, so that `checks pr` finds the merge base with main
+          fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.x
@@ -92,6 +95,11 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run typecheck
       - run: bunx biome ci .
+      # File size, pages in the accessibility test, translations (@firsttris/checks, checks.json)
+      - run: bun checks
+      # Hints on long functions, grown large files, code without docs, fix without test; never fails
+      - if: github.event_name == 'pull_request'
+        run: bun checks pr
       - run: bun run test
       - run: bun run build
       # The demo on GitHub Pages (src/demo); published by the docs workflow after the merge.

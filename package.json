@@ -18,7 +18,7 @@
     "build:demo": "vite build --mode demo",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.sw.json",
-    "lint": "biome check .",
+    "lint": "biome check . && checks",
     "format": "biome check --write .",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -86,6 +86,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@biomejs/biome": "^2.6.2",
+    "@firsttris/checks": "github:firsttris/workflows#v1",
     "@inlang/paraglide-js": "^3.1.0",
     "@inlang/plugin-message-format": "^4.5.5",
     "@playwright/test": "^1.64.1",
