@@ -47,105 +47,78 @@ Daten liegen bei einem US-Konzern. Kontext fühlt sich im Browser und am Handy g
 aber auf **deinem** Server: einem kleinen VPS ab etwa 5 € im Monat (z. B. bei IONOS oder Hetzner)
 oder einem eigenen Rechner.
 
-- **Aus Europa, für Europa**: in Europa entwickelt, Open Source, auf deinem Server. Kein
-  US-Anbieter dazwischen, also auch kein Zugriff auf deine Daten über den US CLOUD Act.
-- **Deine Daten bleiben bei dir (DSGVO)**: Mails, Termine, Kontakte, Chat und Anrufe liegen auf
-  deinem Server, in Europa oder im eigenen Büro. Kein US-Anbieter, keine Tracker.
+- **Deine Daten bleiben bei dir**: Mails, Termine, Kontakte, Chat und Anrufe liegen auf deinem
+  Server, in Europa oder im eigenen Büro. Kein US-Anbieter dazwischen, keine Tracker.
 - **Keine Kosten pro Kopf**: Zehn Mitarbeiter kosten dasselbe wie einer; bezahlt wird der Server.
 - **Alles zum Kunden an einem Ort**: seine letzten Mails, nächsten Termine, offenen Aufgaben und
   Anrufe – ein kleines CRM ohne Extra-Tool.
 - **Eine App statt fünf**: Mail, Kalender, Aufgaben, Team-Chat mit Videocalls, das Firmentelefon
   und Dokumente, mit einer Anmeldung.
-- **Auch fürs Handy gebaut**: Jede Ansicht funktioniert am Handy, eine Mail wischt man zur Seite
-  ins Archiv, und Kontext lässt sich ohne App Store als App installieren.
-- **Mit der Tastatur bedienbar**: Jede Ansicht geht ohne Maus, mit sichtbarem Fokus und
-  „Zum Inhalt springen“, hell und dunkel – [mehr zur Barrierefreiheit](https://kontext.email/accessibility.html).
+- **Für Handy und Tastatur gebaut**: Jede Ansicht funktioniert am Handy und ohne Maus, und Kontext
+  lässt sich ohne App Store als App installieren.
 - **KI, wenn du willst**: Claude und andere Assistenten finden Kunden, Mails und Termine für dich
   und schreiben Entwürfe – sie senden und löschen nie etwas.
 - **Offen, kein Lock-in**: Open Source (AGPL) und Standardprotokolle, damit Outlook, Thunderbird,
   iPhone und Android weiter funktionieren und du jederzeit alles mitnehmen kannst.
 
-**Für wen:** Selbstständige · Handwerk · Kanzleien und Praxen · kleine und mittlere Betriebe ·
-Selfhoster, die eine Weboberfläche für [Stalwart](https://stalw.art) suchen.
-
 ## 🚀 Installation
 
-### 1. Von einem Agenten aufsetzen lassen
+Du brauchst einen Server mit Docker oder Podman, eine eigene Domain und offene Ports für Mail und
+Web (25, 80, 443, 465, 587, 993). Für zehn Benutzer reicht ein VPS mit 2 vCPU und 4 GB RAM.
 
-Gib Claude Code oder einem anderen Coding-Agenten dieses Repository und SSH-Zugang zu deinem Server und sag:
-„Setz Kontext auf meinem Server auf, nach der [Installationsanleitung](https://kontext.email/installation.html).“
+**Mit einem Agenten:** Gib Claude Code oder einem anderen Coding-Agenten dieses Repository und
+SSH-Zugang zu deinem Server und sag: „Setz Kontext auf meinem Server auf, nach der
+[Installationsanleitung](https://kontext.email/installation.html).“
 
-### 2. Manuell
-
-Auf einem Server mit Docker (oder Podman), eigener Domain und offenen Ports 25, 80, 443, 465, 587 und 993:
+**Von Hand:**
 
 ```bash
-# Die Konfiguration (compose.yaml, .env.example, Caddyfile, Backups); die Programme kommen von Docker Hub
 git clone https://github.com/firsttris/kontext /opt/kontext && cd /opt/kontext
 cp deploy/.env.example deploy/.env && chmod 600 deploy/.env
 nano deploy/.env                              # Domain, Version, Backup-Ziel, jedes change-me ersetzen
-docker compose -f deploy/compose.yaml up -d   # lädt Kontext, Stalwart und Caddy und startet sie (oder Podman)
+docker compose -f deploy/compose.yaml up -d   # lädt Kontext, Stalwart und Caddy und startet sie
 ```
 
-Danach die wichtigsten Schritte in Stalwarts Verwaltung (Port 8080, nur über SSH-Tunnel oder
-Tailscale); die [Anleitung](https://kontext.email/installation.html#3-stalwart-einrichten) nennt alle:
-
-1. Domain und DKIM einrichten und das Konto des Chefs anlegen; alle anderen legt der Chef in Kontext an.
-2. Kontexts Netz `10.89.250.0/24` als erlaubte IP eintragen, damit falsche Passwörter nie Kontext
-   selbst sperren.
-3. `docker compose -f deploy/compose.yaml exec kontext bun server/setup-stalwart.ts` ausführen und
-   den Admin-Zugang von Stalwart eingeben: Der Befehl trägt Kontext als OAuth-Client `kontext` mit
-   dem Scope `full` ein, erlaubt Verzeichnisabfragen und legt Rolle, Konto und API-Schlüssel für die
-   Firmenverwaltung an ([was er tut](https://kontext.email/installation.html#einrichtungsbefehl)).
-   Er ergänzt nur, was fehlt – also nach jedem Update noch einmal ausführen.
-4. Die ausgegebene Zeile `STALWART_ADMIN_KEY=…` in `deploy/.env` eintragen und Kontext neu starten
-   (`docker compose -f deploy/compose.yaml up -d`).
-5. Unter `https://<deine Domain>` anmelden.
-
-Anrufe und Dokumente (Schreibzeug, ohne eigene Installation) sind in `.env.example` schon eingeschaltet; wer sie nicht braucht, nimmt sie
-aus `COMPOSE_PROFILES`. Für Telefonie kommt eine kleine Box ins Büro. Für zehn Benutzer reicht ein
-VPS mit 2 vCPU und 4 GB RAM. Alles Weitere – DNS, Podman, Backups, Updates – steht in der
-[Installationsanleitung](https://kontext.email/installation.html).
+Danach Stalwart einrichten (Domain, DKIM, das Konto des Chefs) und Kontext mit einem Befehl dort
+eintragen. Diese Schritte, DNS, Telefonie, Backups und Updates stehen in der
+[Installationsanleitung](https://kontext.email/installation.html); für einen frischen Server
+gibt es die Seite [VPS einrichten](https://kontext.email/vps.html).
 
 ## ✨ Funktionen
 
-| | |
-|---|---|
-| ✉️ **Mail** | **Gemeinsame Postfächer** wie info@ mit Rechten pro Person, **Mails zuweisen** mit „Mir zugewiesen“ und „Offen“, **Vertretung in einem Schritt**, **Kategorien** und **Regeln auf dem Server**, Suche wie in Gmail (auch in PDF- und Office-Anhängen), später senden und Wiedervorlage, **weitere Postfächer** (Gmail, GMX), **Warnungen vor gefälschten Absendern**, **maskierte Adressen** je Website oder Shop, mit Stalwart Enterprise **endgültig gelöschte Mails wiederherstellen** und das **Urteil des KI-Spamfilters** · [mehr →](https://kontext.email/mail.html) |
-| 📅 **Kalender** | Tag, Woche, Arbeitswoche, Monat und Serien, Arbeitszeit grau hinterlegt, **Einladungen mit einem Klick beantworten** (auch aus Outlook und Google), **Wer hat Zeit?**, **Videobesprechung pro Termin**, geteilte Kalender (auf allen Geräten ein- und ausgeblendet) und **Abos** (iCal), Feiertage und Geburtstage der Kontakte · [mehr →](https://kontext.email/calendar-contacts.html) |
-| 👥 **Kontakte** | **Der Kunde auf einen Blick**: letzte Mails, nächste Termine, offene Aufgaben und Anrufe; Gruppen, vCard und CSV-Import, Doppelte zusammenführen, mehrere Kontakte auf einmal (löschen, in eine Gruppe, in ein anderes Adressbuch, exportieren) · [mehr →](https://kontext.email/calendar-contacts.html#kontakte) |
-| ✅ **Aufgaben** | **Liste oder Kanban-Board** pro Postfach und pro Projekt, **aus einer Mail, einer Chat-Nachricht, einem Termin oder einem verpassten Anruf**, Erinnerungen, per CalDAV in Thunderbird und am Handy · [mehr →](https://kontext.email/tasks.html) |
-| 💬 **Team-Chat & Video** | Kanäle und Direktnachrichten **als Sprechblasen (die eigenen rechts)**, **Mails und Aufgaben als Karten**, Threads mit **„Auch im Kanal zeigen“**, **Reaktionen mit jedem Emoji**, Sprachnachrichten, **Videocalls und Bildschirm teilen** auf dem eigenen Server, Ende-zu-Ende verschlüsselte Unterhaltungen · [mehr →](https://kontext.email/chat.html) |
-| 📞 **Telefonie (CTI)** | **Fritzbox und Nummern bleiben**: Anrufe klingeln in Kontext mit Kontakt und letzter Mail des Anrufers, **Anrufen per Klick**, **Mailbox als Mail**, verpasste Anrufe werden Aufgaben · [mehr →](https://kontext.email/telephony.html) |
-| 🔐 **Verschlüsselung** | **OpenPGP** und **S/MIME**, **vertraulich senden an jeden** über einen Link auf den eigenen Server, **automatisch verschlüsselt versenden** an Empfänger mit bekanntem Schlüssel, Mails verschlüsselt auf dem Server, **Speicher vom Server verschlüsselt und komprimiert**, verschlüsselte Backups · [mehr →](https://kontext.email/encryption.html) |
-| 📄 **Dokumente** | **Word, Excel, PowerPoint und PDF** in Kontext mit [Schreibzeug](https://github.com/firsttris/schreibzeug), ein Ordner pro gemeinsamem Postfach · [mehr →](https://kontext.email/documents.html) |
-| 🤖 **KI-Agenten (MCP)** | Claude und andere Agenten schlagen Kunden, Mails und Termine mit deinen Rechten nach, **schreiben Entwürfe** und **laden Kollegen zu Terminen ein** – nichts geht nach draußen, kein Löschen, jede Änderung protokolliert; oder einfach den **Assistenten im Chat** fragen (mit einem Schlüssel der Claude API) · [mehr →](https://kontext.email/agents.html) |
-| 🏢 **Firmenverwaltung** | **Mitarbeiter, gemeinsame Postfächer und Rechte** ohne IT-Kenntnisse, **Mail-Regeln für jeden Mitarbeiter**, Firmen-Signatur mit Telefon und Position je Person, **Pflichtangaben unter jeder Mail**, Abmelden nach Inaktivität an gemeinsamen Rechnern, **Austritt ohne Löschen**, Datensicherung im Blick, **Umzug von Microsoft 365, Gmail und Outlook**, mit Stalwart Enterprise Konten löschen, die eine Zeit lang wiederherstellbar bleiben, Serverzustand (Mailverkehr, Zustellprobleme), Firmenlogo und eigene Vorlagen für Stalwarts Kalender-Mails, **Anmeldung über das Firmenkonto (Entra ID, Google, Keycloak) und SCIM** · [mehr →](https://kontext.email/company.html) |
-| 📱 **Auf jedem Gerät** | **Eine App am PC, unter Android und am iPhone** ohne App Store, **eine kurze Einführung beim ersten Start**, Benachrichtigungen mit **Zahlen in der Tab-Leiste, die zeigen, in welcher App es Neues gibt**, hell und dunkel, Anmeldung mit zweitem Faktor, **Anmeldung mit Passkey** (Fingerabdruck oder Gesicht, ohne Passwort), **eine Übersicht der Zugänge** (andere Geräte abmelden), **für Tastatur und Screenreader gebaut**, bei jedem Push automatisch gegen WCAG 2.2 AA geprüft ([Barrierefreiheit](https://kontext.email/accessibility.html)) · [mehr →](https://kontext.email/app.html) |
-| ♿ **Barrierefreiheit** | **Alles per Tastatur** mit „Zum Inhalt springen“ und sichtbarem Fokus, Kontraste hell und dunkel, **weniger Bewegung** · [mehr →](https://kontext.email/accessibility.html) |
+Kurz je Bereich; die Details stehen auf der verlinkten Seite der [Dokumentation](https://kontext.email/ueberblick.html).
 
-<img src="docs/screenshots/phone-call.png" alt="CTI in Kontext: ein Anruf über die Fritzbox klingelt im Browser mit Kontakt, Firma, Nummer und letzter Mail des Anrufers, neben dem Posteingang" width="900">
+| Bereich | Was Kontext kann |
+|---|---|
+| ✉️ [Mail](https://kontext.email/mail.html) | Gemeinsame Postfächer wie info@, Mails zuweisen, Vertretung, Regeln und Kategorien, Suche auch in Anhängen, maskierte Adressen |
+| 📅 [Kalender](https://kontext.email/calendar-contacts.html) | Team-Kalender, Einladungen mit einem Klick beantworten, „Wer hat Zeit?“, Videobesprechung pro Termin |
+| 👥 [Kontakte](https://kontext.email/calendar-contacts.html#kontakte) | Der Kunde auf einen Blick: letzte Mails, nächste Termine, offene Aufgaben und Anrufe |
+| ✅ [Aufgaben](https://kontext.email/tasks.html) | Liste oder Kanban-Board pro Postfach, aus Mail, Chat, Termin oder verpasstem Anruf |
+| 💬 [Team-Chat & Video](https://kontext.email/chat.html) | Kanäle und Direktnachrichten, Mails als Karten, Videocalls und Bildschirm teilen auf dem eigenen Server |
+| 📞 [Telefonie (CTI)](https://kontext.email/telephony.html) | Fritzbox und Nummern bleiben, Anrufe klingeln mit dem Kontakt des Anrufers, Anrufen per Klick |
+| 🔐 [Verschlüsselung](https://kontext.email/encryption.html) | OpenPGP und S/MIME, vertraulich senden an jeden, verschlüsselter Speicher und Backups |
+| 📄 [Dokumente](https://kontext.email/documents.html) | Word, Excel, PowerPoint und PDF im Browser mit [Schreibzeug](https://github.com/firsttris/schreibzeug) |
+| 🤖 [KI-Agenten (MCP)](https://kontext.email/agents.html) | Claude und andere Agenten schlagen mit deinen Rechten nach und schreiben Entwürfe |
+| 🏢 [Firmenverwaltung](https://kontext.email/company.html) | Mitarbeiter, Postfächer und Rechte ohne IT-Kenntnisse, Firmen-Signatur, Umzug von Microsoft 365 und Gmail |
+| 📱 [Auf jedem Gerät](https://kontext.email/app.html) | App ohne App Store, Push-Benachrichtigungen, Passkeys, hell und dunkel |
+| ♿ [Barrierefreiheit](https://kontext.email/accessibility.html) | Alles per Tastatur, bei jedem Push gegen WCAG 2.2 AA geprüft |
 
 ## 📸 Screenshots
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshots/shared-mailbox.png" alt="Gemeinsames Postfach info@ in Kontext: eine Kundenanfrage zur Wärmepumpe mit der Kategorie In Bearbeitung"><br><sub><b>Gemeinsames Postfach</b> – info@ fürs ganze Team · <a href="https://kontext.email/mail.html">Doku →</a></sub></td>
-    <td width="50%"><img src="docs/screenshots/compose.png" alt="Antwort schreiben in Kontext mit Formatierungsleiste, Zitat und Absenderwahl"><br><sub><b>Schreiben</b> – Formatierung, Zitat, Absender · <a href="https://kontext.email/mail.html#schreiben">Doku →</a></sub></td>
+    <td width="50%"><img src="docs/screenshots/shared-mailbox.png" alt="Gemeinsames Postfach info@ in Kontext: eine Kundenanfrage zur Wärmepumpe mit der Kategorie In Bearbeitung"><br><sub><b>Gemeinsames Postfach</b> – info@ fürs ganze Team</sub></td>
+    <td width="50%"><img src="docs/screenshots/contacts.png" alt="Kontakt Markus Hoffmann mit nächsten Terminen und letzten Mails, wie ein kleines CRM"><br><sub><b>Kontakte</b> – der Kunde auf einen Blick</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/calendar.png" alt="Teamkalender in der Wochenansicht mit Baubesprechung, Wartungstermin und Monatsübersicht"><br><sub><b>Kalender</b> – Woche, Monat, Verfügbarkeit · <a href="https://kontext.email/calendar-contacts.html">Doku →</a></sub></td>
-    <td><img src="docs/screenshots/contacts.png" alt="Kontakt Markus Hoffmann mit nächsten Terminen und letzten Mails, wie ein kleines CRM"><br><sub><b>Kontakte</b> – der Kunde auf einen Blick · <a href="https://kontext.email/calendar-contacts.html#kontakte">Doku →</a></sub></td>
+    <td><img src="docs/screenshots/calendar.png" alt="Teamkalender in der Wochenansicht mit Baubesprechung, Wartungstermin und Monatsübersicht"><br><sub><b>Kalender</b> – Woche, Monat, Verfügbarkeit</sub></td>
+    <td><img src="docs/screenshots/tasks-board.png" alt="Kanban-Board des gemeinsamen Postfachs info@ mit Offen, In Arbeit, Wartet und Erledigt"><br><sub><b>Aufgaben</b> – ein Kanban-Board pro Postfach</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/tasks-board.png" alt="Kanban-Board des gemeinsamen Postfachs info@ mit Offen, In Arbeit, Wartet und Erledigt"><br><sub><b>Aufgaben</b> – ein Kanban-Board pro Postfach · <a href="https://kontext.email/tasks.html">Doku →</a></sub></td>
-    <td><img src="docs/screenshots/chat.png" alt="Team-Chat-Kanal mit Baustellenbericht, einer geteilten Kundenmail als Karte und einer Aufgabe aus einer Nachricht"><br><sub><b>Team-Chat</b> – Mails als Karten, Aufgaben aus Nachrichten · <a href="https://kontext.email/chat.html">Doku →</a></sub></td>
+    <td><img src="docs/screenshots/chat.png" alt="Team-Chat-Kanal mit Baustellenbericht, einer geteilten Kundenmail als Karte und einer Aufgabe aus einer Nachricht"><br><sub><b>Team-Chat</b> – Mails als Karten, Aufgaben aus Nachrichten</sub></td>
+    <td><img src="docs/screenshots/phone-call.png" alt="CTI in Kontext: ein Anruf über die Fritzbox klingelt im Browser mit Kontakt, Firma, Nummer und letzter Mail des Anrufers"><br><sub><b>Telefonie</b> – der Anrufer mit seiner letzten Mail</sub></td>
   </tr>
 </table>
-
-<p align="center">
-  <img src="docs/screenshots/mail-dark.png" alt="Posteingang von Kontext im dunklen Design" width="720">
-</p>
 
 <p align="center">
   <img src="docs/screenshots/phone-mail.png" alt="Kontext am Handy: Posteingang mit Tab-Leiste" width="200">
@@ -154,29 +127,28 @@ VPS mit 2 vCPU und 4 GB RAM. Alles Weitere – DNS, Podman, Backups, Updates –
   <img src="docs/screenshots/phone-chat.png" alt="Team-Chat am Handy mit Sprechblasen, einer Datei und einer Mail-Karte" width="200">
 </p>
 
-## 🔀 Kontext und die Alternativen
+Mehr Bilder, gemacht zum Weiterschicken an Kunden, im [Rundgang](https://kontext.email/).
 
-Kontext ist für einen kleinen Betrieb gemacht, der den Komfort von Google Workspace auf dem
-eigenen Server will, mit Mail, Kalender, Chat und Firmentelefon an einem Ort.
+## 🔀 Kontext und die Alternativen
 
 | | Was es ist | Was Kontext anders macht |
 | --- | --- | --- |
-| [Google Workspace](https://workspace.google.com) | Gmail, Kalender, Drive und Meet im Abo pro Benutzer | eigener Server, keine Kosten pro Kopf, Daten in Europa |
-| [Microsoft 365](https://www.microsoft.com/microsoft-365) | Outlook, Teams und Office im Abo pro Benutzer | läuft im Browser ohne Outlook, Chat und Telefon inklusive, Daten auf dem eigenen Server |
-| [Nextcloud](https://nextcloud.com) | selbst gehostete Dateien mit Mail, Kalender und Talk als Apps | um Mail und den Kunden herum gebaut: gemeinsame Postfächer, Regeln und Kategorien fürs Team, das Firmentelefon; Dateien über Schreibzeug |
-| [Roundcube](https://roundcube.net), [SOGo](https://www.sogo.nu) | bewährte Webmailer und Groupware für IMAP | moderne Oberfläche fürs Handy, JMAP-Push, Kontakte mit Kundenansicht, Aufgaben und Chat |
-| [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | Groupware-Pakete für Provider und größere Firmen | ein kleiner Server pro Firma, an einem Nachmittag eingerichtet, eine Firmenverwaltung für den Chef |
-| [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | Telefonanlagen mit CTI-Apps | Fritzbox und Nummern bleiben, Anrufe stehen neben den Mails des Kunden, keine Lizenz pro Nebenstelle |
-| [Bulwark](https://www.bulwarkmail.org) | JMAP-Webmail mit Kalender und Kontakten für Stalwart | Kundenansicht, gemeinsame Postfächer fürs Team, Aufgaben, Chat, Telefonie und Firmenverwaltung |
+| [Google Workspace](https://workspace.google.com), [Microsoft 365](https://www.microsoft.com/microsoft-365) | Mail, Kalender und Office im Abo pro Benutzer | eigener Server, keine Kosten pro Kopf, Chat und Telefon inklusive |
+| [Nextcloud](https://nextcloud.com) | selbst gehostete Dateien, Mail und Kalender als Apps | um Mail und den Kunden herum gebaut, mit gemeinsamen Postfächern und Firmentelefon |
+| [Roundcube](https://roundcube.net), [SOGo](https://www.sogo.nu) | bewährte Webmailer für IMAP | moderne Oberfläche fürs Handy, Kundenansicht, Aufgaben und Chat |
+| [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | Groupware für Provider und größere Firmen | ein kleiner Server pro Firma, an einem Nachmittag eingerichtet |
+| [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | Telefonanlagen mit CTI-Apps | Fritzbox und Nummern bleiben, keine Lizenz pro Nebenstelle |
 
 ## ❓ FAQ
 
 <details>
-<summary><b>Gibt es eine Open-Source-Alternative zu Google Workspace und Microsoft 365?</b></summary>
+<summary><b>Für wen ist Kontext gedacht?</b></summary>
 
-Ja, Kontext: Mail mit gemeinsamen Postfächern, Kalender, Kontakte, Aufgaben, Team-Chat mit
-Videoanrufen und die Telefonanlage in einer Web-App auf deinem eigenen Server, Dokumente über
-[Schreibzeug](https://github.com/firsttris/schreibzeug). Siehe [Installation](https://kontext.email/installation.html).
+Für kleine Betriebe, die den Komfort von Google Workspace auf dem eigenen Server wollen:
+Selbstständige, Handwerk, Kanzleien und Praxen, kleine und mittlere Betriebe. Dazu für Selfhoster,
+die eine Weboberfläche für den Mailserver [Stalwart](https://stalw.art) suchen: Kontext ist ein
+JMAP-Client für Mail, Kalender und Kontakte auf Stalwart, siehe
+[Architektur](https://kontext.email/architecture.html).
 </details>
 
 <details>
@@ -189,101 +161,69 @@ jemanden, der ihn einrichtet und aktuell hält.
 <details>
 <summary><b>Stalwart Community oder Enterprise?</b></summary>
 
-Beides. Kontext läuft vollständig mit der kostenlosen Community-Ausgabe von Stalwart, eine Lizenz
-muss niemand kaufen. Ist eine Lizenz für Stalwart Enterprise eingetragen, erkennt Kontext sie und
-zeigt sie in der Firmenverwaltung, mit den belegten Postfächern (etwa „12 von 25“) und einer
-Warnung kurz vor der Grenze oder dem Ende der Lizenz, und bietet, was sie dazu bringt, etwa
-endgültig gelöschte Mails wiederherstellen; siehe
-[Stalwart Enterprise](https://kontext.email/installation.html#stalwart-enterprise).
-Mit der Lizenz bietet Kontext zusätzlich die Anmeldung über das Firmenkonto (SSO) und SCIM an
-([Firmenverwaltung](https://kontext.email/company.html#sso)).
-</details>
-
-<details>
-<summary><b>Gibt es eine Weboberfläche für den Mailserver Stalwart?</b></summary>
-
-Ja, das ist Kontext: ein JMAP-Webclient für Mail, Kalender und Kontakte auf
-[Stalwart](https://stalw.art), dazu Aufgaben, Chat, Telefonie und eine Firmenverwaltung, die
-Stalwarts Konten und Gruppen pflegt. Siehe [Architektur](https://kontext.email/architecture.html).
+Kontext läuft vollständig mit der kostenlosen Community-Ausgabe von Stalwart. Mit einer
+Enterprise-Lizenz kommt einiges dazu, etwa gelöschte Mails wiederherstellen und die Anmeldung über
+das Firmenkonto (SSO), siehe [Stalwart Enterprise](https://kontext.email/installation.html#stalwart-enterprise).
 </details>
 
 <details>
 <summary><b>Funktioniert Kontext mit meiner Fritzbox (CTI)?</b></summary>
 
 Ja. Eine Telefonbox im Büro meldet sich an der Fritzbox als IP-Telefon an; Anrufe klingeln dann in
-Kontext mit Kontakt, letzter Mail und nächstem Termin des Anrufers, und du rufst aus jedem Kontakt
-an. Siehe [Telefonie](https://kontext.email/telephony.html).
+Kontext mit Kontakt und letzter Mail des Anrufers. Siehe [Telefonie](https://kontext.email/telephony.html).
 </details>
 
 <details>
 <summary><b>Läuft das auf meinem eigenen PC oder NAS?</b></summary>
 
-Ja, Kontext läuft überall, wo Docker oder Podman läuft. Um Mails aus dem Internet zu empfangen,
-braucht der Rechner aber Port 25 von außen, eine feste IP-Adresse und einen Reverse-DNS-Eintrag;
-private Internetanschlüsse sperren Port 25 meist. Zu Hause geht es am besten mit einem Mail-Relay
-davor – ein kleiner VPS ist einfacher. Die Telefonbox läuft auf einem NAS, einem Raspberry Pi oder
-einem Thin Client im Büro.
+Ja, überall, wo Docker oder Podman läuft. Um Mails aus dem Internet zu empfangen, braucht der
+Rechner aber Port 25 von außen, eine feste IP-Adresse und einen Reverse-DNS-Eintrag; private
+Internetanschlüsse sperren Port 25 meist. Ein kleiner VPS ist darum einfacher.
 </details>
 
 <details>
-<summary><b>Ist das DSGVO-konform?</b></summary>
+<summary><b>Hilft Kontext bei der DSGVO?</b></summary>
 
-Es ist dafür gebaut: Die Daten bleiben auf deinem Server, ohne Tracker oder Dritte. Einen
-Auftragsverarbeitungsvertrag schließt du mit deinem Hoster; bei einem Server im eigenen Haus
-nicht einmal das.
-</details>
-
-<details>
-<summary><b>Ist Kontext GoBD-konform?</b></summary>
-
-Nein, Kontext ist kein Mailarchiv. Die GoBD verlangen, dass geschäftliche Mails über Jahre so
-aufbewahrt werden, dass niemand sie löschen oder ändern kann; in Kontext kann man Mails löschen.
-Dafür gehört ein GoBD-Archiv daneben. Kontext liefert die Bausteine drumherum: Beim Austritt wird
-nichts gelöscht, und Backups gehen verschlüsselt und unveränderbar (Object Lock) auf S3-Speicher.
+Ja, mit dem, was die Software beitragen kann: Die Daten bleiben auf deinem Server, ohne Tracker
+und ohne Dritte. Die DSGVO selbst setzt aber deine Firma um, etwa mit dem
+Auftragsverarbeitungsvertrag mit deinem Hoster und dem Verzeichnis der Verarbeitungstätigkeiten.
 </details>
 
 <details>
 <summary><b>Funktionieren iPhone, Android, Outlook und Thunderbird weiter?</b></summary>
 
 Ja. Stalwart spricht IMAP, SMTP, CalDAV und CardDAV; jedes Mailprogramm und Handy kann sich direkt
-verbinden. Kontext ist die Oberfläche im Browser obendrauf, und die Aufgaben sind auch
-CalDAV-Aufgabenlisten.
+verbinden. Kontext ist die Oberfläche im Browser obendrauf.
 </details>
 
 <details>
 <summary><b>Kann ich von Gmail, Microsoft 365 oder Outlook umziehen?</b></summary>
 
-Ja, unter *Einstellungen → Firma → Umzug*: IMAP-Postfächer (abgeglichen, bis der Umzug
-abgeschlossen ist), Microsoft 365 über eine App im Microsoft-Konto der Firma, Outlook als PST-Datei,
-Kontakte und Kalender aus dem Google-Export. Siehe [Firmenverwaltung und Umzug](https://kontext.email/company.html).
-</details>
-
-<details>
-<summary><b>Kann ich meine Gmail-Adresse weiter nutzen?</b></summary>
-
-Ja, unter *Einstellungen → Weitere Postfächer*: Neue Mails kommen in Kontext an, und du sendest als
-diese Adresse über den Server des Anbieters, damit Empfänger sie als echt sehen.
+Ja: IMAP-Postfächer, Microsoft 365, Outlook als PST-Datei und Kontakte und Kalender aus dem
+Google-Export. Eine bestehende Gmail-Adresse kannst du auch weiter nutzen. Siehe
+[Firmenverwaltung und Umzug](https://kontext.email/company.html).
 </details>
 
 <details>
 <summary><b>Kann ich Claude oder andere KI-Agenten mit meinen Mails nutzen?</b></summary>
 
-Ja. Kontext ist ein MCP-Server: Claude und andere Agenten schlagen mit deinen Rechten nach,
-schreiben Entwürfe und laden Kollegen zu Terminen ein; nach draußen schicken und löschen sie nie etwas. Siehe [KI-Agenten](https://kontext.email/agents.html).
+Ja, über MCP: Claude und andere Agenten schlagen mit deinen Rechten nach, schreiben Entwürfe und
+laden Kollegen zu Terminen ein; nach draußen schicken und löschen sie nie etwas. Siehe
+[KI-Agenten](https://kontext.email/agents.html).
 </details>
 
 <details>
 <summary><b>Welche Sprachen?</b></summary>
 
-Deutsch und Englisch, je Gerät unter *Einstellungen → Darstellung → Sprache* (sonst die Sprache des Browsers). Weitere europäische Sprachen sind geplant.
+Deutsch und Englisch, je Gerät umstellbar. Weitere europäische Sprachen sind geplant.
 </details>
 
 <details>
 <summary><b>Ist das sicher?</b></summary>
 
-Wir haben geprüft, und du kannst es auch: Der Code ist offen.
+Wir prüfen automatisiert, und du kannst es auch: Der Code ist offen. Ein unabhängiges Audit gibt es bisher nicht.
 
-- **Geprüft:** mit Cloudflares [Security Audit Skill](https://github.com/cloudflare/security-audit-skill) und
+- **Automatisiert geprüft:** mit Cloudflares [Security Audit Skill](https://github.com/cloudflare/security-audit-skill) und
   `/security-review` von Claude Code. Lass deinen Agenten gern selbst über dieses Repository laufen.
 - **Abgesichert:** Der Browser hält nur ein httpOnly-Cookie, die Stalwart-Tokens liegen verschlüsselt
   auf dem Server; Stalwarts Speicher ist verschlüsselt, Backups gehen verschlüsselt und unveränderbar
@@ -296,16 +236,26 @@ Wir haben geprüft, und du kannst es auch: Der Code ist offen.
   beschrieben.
 </details>
 
+<details>
+<summary><b>Wird Kontext mit KI entwickelt?</b></summary>
+
+Ja, zu einem großen Teil mit Coding-Agenten, aber nicht ungeprüft: Jede Änderung bringt Tests mit
+(Unit-Tests und Playwright am Desktop und am Handy), und die CI prüft sie gegen einen echten
+Stalwart. Wie gebaut und getestet wird, steht unter
+[Entwicklung](https://kontext.email/development.html).
+</details>
+
 ## 📚 Dokumentation
 
-Die Dokumentation beginnt mit einem Rundgang in Bildern, gemacht zum Weiterschicken an Kunden: **[auf Deutsch](https://kontext.email/)** und **[auf Englisch](https://kontext.email/en/)**.
+Alles im Detail, mit Suche: **[kontext.email](https://kontext.email/)** ([English](https://kontext.email/en/)).
+Jede Funktion oben verlinkt ihre Seite; dazu kommen:
 
-Die ganze Dokumentation, mit Suche, steht unter **[kontext.email](https://kontext.email/)**:
-[jede Funktion im Detail](https://kontext.email/ueberblick.html), [Installation](https://kontext.email/installation.html),
-[Architektur](https://kontext.email/architecture.html) und
-[Entwicklung](https://kontext.email/development.html). Was sich in jeder Version
-geändert hat, samt den Schritten für ein Update, steht im [Changelog](CHANGELOG.md) (Englisch); was
-als Nächstes kommt, in der [Roadmap](ROADMAP.de.md).
+- **Einstieg:** [Rundgang in Bildern](https://kontext.email/) (zum Weiterschicken an Kunden),
+  [alle Funktionen](https://kontext.email/ueberblick.html), [Installation](https://kontext.email/installation.html)
+  und [VPS einrichten](https://kontext.email/vps.html)
+- **Hintergrund:** [Architektur](https://kontext.email/architecture.html),
+  [Entwicklung](https://kontext.email/development.html), [Changelog](CHANGELOG.md) (Englisch) und
+  [Roadmap](ROADMAP.de.md)
 
 ## 🛠️ Entwicklung
 
@@ -318,12 +268,8 @@ bun run dev   # Stalwart mit Testdaten, Server und App: http://localhost:5173
 ```
 
 Anmelden als `jonas@weber-haustechnik.test` / `kaffee-werkbank-kontext` (der Chef, sieht auch die
-Firmenverwaltung); `anna@`, `sandra@` und `max@` haben dasselbe Passwort, info@ und rechnung@ sind
-gemeinsame Postfächer. `bun run dev:stalwart -- --fresh --seed` setzt die Testdaten zurück.
-
-React, TanStack Router/Query, Tailwind und Tiptap im Browser; ein kleiner Bun-Server mit Hono,
-Better Auth und SQLite (Drizzle) für Anmeldung, JMAP zu Stalwart, Chat und Aufgaben; LiveKit für
-Anrufe, Asterisk in der Telefonbox. Tests, CI und Releases: [Entwicklung](https://kontext.email/development.html).
+Firmenverwaltung); `anna@`, `sandra@` und `max@` haben dasselbe Passwort. Aufbau, Tests und
+Releases: [Entwicklung](https://kontext.email/development.html).
 
 ## 🧩 Mehr von uns
 
@@ -332,17 +278,9 @@ Anrufe, Asterisk in der Telefonbox. Tests, CI und Releases: [Entwicklung](https:
 
 ## 🤝 Mitmachen
 
-Issues und Pull Requests sind willkommen. Ein guter Fehlerbericht nennt Browser oder Handy, die
-Ansicht, was passiert ist und die Version von Kontext (ein Screenshot hilft); das
-[Formular für Fehlerberichte](https://github.com/firsttris/kontext/issues/new?template=bug_report.yml)
-fragt all das ab. Sicherheitslücken bitte vertraulich melden, siehe [SECURITY.md](SECURITY.md). Vor
-einem Pull Request bitte die Prüfungen aus [CONTRIBUTING.md](CONTRIBUTING.md) laufen lassen:
-
-```bash
-bun run typecheck && bun run lint && bun run test && bun run build   # oder: bun run check
-bun run e2e                                                          # Playwright gegen einen eigenen Stalwart
-mkdocs build --strict                                                # wenn sich docs/ geändert hat
-```
+Fehler und Ideen gern als Issue, mit dem [Formular für Fehlerberichte](https://github.com/firsttris/kontext/issues/new?template=bug_report.yml).
+Sicherheitslücken bitte vertraulich melden, siehe [SECURITY.md](SECURITY.md). Was vor einem Pull
+Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
@@ -353,6 +291,7 @@ mkdocs build --strict                                                # wenn sich
 
 <sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende · <a href="README.md">English version</a><br>
 Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten; eine kommerzielle Lizenz ohne diese Pflichten gibt es über <a href="https://teufel-it.de">teufel-it.de</a>.<br>
+Kontext ist keine Rechtsberatung: Datenschutz und Aufbewahrungspflichten setzt die Firma um, die Software unterstützt dabei.<br>
 Kontext steht in keiner Verbindung zu Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft oder Anthropic.</sub>
 
 </div>
