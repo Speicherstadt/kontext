@@ -23,44 +23,47 @@ type Props = {
   placeholder?: string;
 };
 
-export const RecipientField = ({
-  label,
+/** Escape closes the list until the text changes; up and down pick a suggestion. */
+const matchesOf = (
+  text: string,
+  suggestions: Suggestion[],
+  value: EmailAddress[],
+  dismissed: boolean,
+) => {
+  const needle = text.trim().toLowerCase();
+  if (needle.length < 1 || dismissed) return [];
+  const taken = new Set(value.map((a) => a.email.toLowerCase()));
+  return suggestions
+    .filter((a) => !taken.has(a.email.toLowerCase()))
+    .filter(
+      (a) =>
+        a.email.toLowerCase().includes(needle) || (a.name ?? "").toLowerCase().includes(needle),
+    )
+    .slice(0, 6);
+};
+
+/** The typed text, its suggestions, and turning it into chips. */
+const useRecipientInput = ({
   value,
   onChange,
   suggestions,
-  autoFocus,
-  boxed,
-  placeholder,
-}: Props) => {
+}: Pick<Props, "value" | "onChange" | "suggestions">) => {
   const [text, setText] = useState("");
   const [highlight, setHighlight] = useState(0);
   // Escape closes the list until the text changes.
   const [dismissed, setDismissed] = useState(false);
-  const listId = useId();
-
-  const matches = useMemo(() => {
-    const needle = text.trim().toLowerCase();
-    if (needle.length < 1 || dismissed) return [];
-    const taken = new Set(value.map((a) => a.email.toLowerCase()));
-    return suggestions
-      .filter((a) => !taken.has(a.email.toLowerCase()))
-      .filter(
-        (a) =>
-          a.email.toLowerCase().includes(needle) || (a.name ?? "").toLowerCase().includes(needle),
-      )
-      .slice(0, 6);
-  }, [text, suggestions, value, dismissed]);
-
-  /** A group stands for its members. */
-  const pick = (suggestion: Suggestion) => add(suggestion.members ?? [suggestion]);
-
+  const matches = useMemo(
+    () => matchesOf(text, suggestions, value, dismissed),
+    [text, suggestions, value, dismissed],
+  );
   const add = (addresses: EmailAddress[]) => {
     const known = new Set(value.map((a) => a.email.toLowerCase()));
     onChange([...value, ...addresses.filter((a) => !known.has(a.email.toLowerCase()))]);
     setText("");
     setHighlight(0);
   };
-
+  /** A group stands for its members. */
+  const pick = (suggestion: Suggestion) => add(suggestion.members ?? [suggestion]);
   /** Turns what was typed into chips; keeps text that is not an address yet. */
   const commit = (): boolean => {
     const { addresses, invalid } = parseAddresses(text);
@@ -69,7 +72,6 @@ export const RecipientField = ({
     setText(invalid.join(", "));
     return true;
   };
-
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (matches.length > 0 && event.key === "Escape") {
       setDismissed(true);
@@ -95,7 +97,95 @@ export const RecipientField = ({
       onChange(value.slice(0, -1));
     }
   };
+  const type = (next: string) => {
+    setText(next);
+    setHighlight(0);
+    setDismissed(false);
+  };
+  return { text, type, highlight, matches, pick, commit, onKeyDown };
+};
 
+/** The addresses as chips, each with its "entfernen". */
+const Chips = ({ value, onChange }: Pick<Props, "value" | "onChange">) => (
+  <>
+    {value.map((address) => (
+      <span
+        key={address.email}
+        title={address.email}
+        className="inline-flex h-6 items-center gap-1 rounded-full border border-border pr-1 pl-2.5 text-[13px]"
+      >
+        {displayName(address)}
+        <button
+          type="button"
+          aria-label={`${address.email} entfernen`}
+          onClick={() => onChange(value.filter((a) => a !== address))}
+          className="flex size-4 items-center justify-center rounded-full text-muted hover:bg-hover hover:text-fg"
+        >
+          <X size={12} />
+        </button>
+      </span>
+    ))}
+  </>
+);
+
+/** The suggestions below the field; a click picks without the field losing the focus. */
+const SuggestionList = ({
+  id,
+  boxed,
+  input,
+}: {
+  id: string;
+  boxed?: boolean;
+  input: ReturnType<typeof useRecipientInput>;
+}) => (
+  <div
+    id={id}
+    role="listbox"
+    className={cn(
+      "absolute top-full z-20 m-0 mt-1 list-none rounded-xl border border-border bg-bg p-1 shadow-lg",
+      boxed ? "left-0 w-[min(360px,100%)]" : "left-9 w-[min(360px,calc(100%-36px))]",
+    )}
+  >
+    {input.matches.map((address, index) => (
+      <div
+        key={address.email}
+        role="option"
+        tabIndex={-1}
+        aria-selected={index === input.highlight}
+        onMouseDown={(event) => {
+          event.preventDefault();
+          input.pick(address);
+        }}
+        className={cn(
+          "flex cursor-pointer flex-col rounded-lg px-2.5 py-1.5",
+          index === input.highlight && "bg-hover",
+        )}
+      >
+        <span className="text-[14px]">{address.name ?? address.email}</span>
+        {address.members ? (
+          <span className="text-[12px] text-muted">
+            {m.contacts_group_count({ count: address.members.length })}
+          </span>
+        ) : address.name ? (
+          <span className="text-[12px] text-muted">{address.email}</span>
+        ) : null}
+      </div>
+    ))}
+  </div>
+);
+
+export const RecipientField = ({
+  label,
+  value,
+  onChange,
+  suggestions,
+  autoFocus,
+  boxed,
+  placeholder,
+}: Props) => {
+  const input = useRecipientInput({ value, onChange, suggestions });
+  const listId = useId();
+  const open = input.matches.length > 0;
   const field = (
     <div
       className={cn(
@@ -108,81 +198,26 @@ export const RecipientField = ({
       {boxed ? null : (
         <span className="min-w-9 shrink-0 whitespace-nowrap text-[13px] text-muted">{label}</span>
       )}
-      {value.map((address) => (
-        <span
-          key={address.email}
-          title={address.email}
-          className="inline-flex h-6 items-center gap-1 rounded-full border border-border pr-1 pl-2.5 text-[13px]"
-        >
-          {displayName(address)}
-          <button
-            type="button"
-            aria-label={`${address.email} entfernen`}
-            onClick={() => onChange(value.filter((a) => a !== address))}
-            className="flex size-4 items-center justify-center rounded-full text-muted hover:bg-hover hover:text-fg"
-          >
-            <X size={12} />
-          </button>
-        </span>
-      ))}
+      <Chips value={value} onChange={onChange} />
       <input
         aria-label={label}
         role="combobox"
-        aria-expanded={matches.length > 0}
+        aria-expanded={open}
         aria-controls={listId}
         autoFocus={autoFocus}
         placeholder={value.length ? undefined : placeholder}
-        value={text}
-        onChange={(e) => {
-          setText(e.target.value);
-          setHighlight(0);
-          setDismissed(false);
-        }}
-        onKeyDown={onKeyDown}
+        value={input.text}
+        onChange={(e) => input.type(e.target.value)}
+        onKeyDown={input.onKeyDown}
         onBlur={() => {
-          if (text.trim()) commit();
+          if (input.text.trim()) input.commit();
         }}
         className={cn(
           "h-7 min-w-[120px] flex-1 border-0 bg-transparent text-[14px] text-fg outline-none placeholder:text-muted",
           boxed && "px-1",
         )}
       />
-      {matches.length > 0 ? (
-        <div
-          id={listId}
-          role="listbox"
-          className={cn(
-            "absolute top-full z-20 m-0 mt-1 list-none rounded-xl border border-border bg-bg p-1 shadow-lg",
-            boxed ? "left-0 w-[min(360px,100%)]" : "left-9 w-[min(360px,calc(100%-36px))]",
-          )}
-        >
-          {matches.map((address, index) => (
-            <div
-              key={address.email}
-              role="option"
-              tabIndex={-1}
-              aria-selected={index === highlight}
-              onMouseDown={(event) => {
-                event.preventDefault();
-                pick(address);
-              }}
-              className={cn(
-                "flex cursor-pointer flex-col rounded-lg px-2.5 py-1.5",
-                index === highlight && "bg-hover",
-              )}
-            >
-              <span className="text-[14px]">{address.name ?? address.email}</span>
-              {address.members ? (
-                <span className="text-[12px] text-muted">
-                  {m.contacts_group_count({ count: address.members.length })}
-                </span>
-              ) : address.name ? (
-                <span className="text-[12px] text-muted">{address.email}</span>
-              ) : null}
-            </div>
-          ))}
-        </div>
-      ) : null}
+      {open ? <SuggestionList id={listId} boxed={boxed} input={input} /> : null}
     </div>
   );
   return boxed ? (

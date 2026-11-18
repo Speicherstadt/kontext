@@ -1,71 +1,22 @@
 /** Left column: new mail, standard folders, shared mailboxes, own folders, storage. */
 import { Link, useNavigate } from "@tanstack/react-router";
-import {
-  AlarmClock,
-  Archive,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  File,
-  Folder,
-  Inbox,
-  Layers,
-  LockKeyhole,
-  type LucideIcon,
-  Plus,
-  Send,
-  ShieldAlert,
-  SquarePen,
-  Star,
-  Trash2,
-  Users,
-} from "lucide-react";
+import { ChevronLeft, SquarePen } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
-import { PlaceholderNav } from "@/components/ui/placeholder";
 import { useToast } from "@/components/ui/toast";
 import type { Mailbox } from "@/jmap/types";
 import { cn } from "@/lib/cn";
 import { formatSize } from "@/lib/format";
-import { mailboxNotice } from "@/lib/mail-accounts";
-import {
-  type FolderNode,
-  flattenTree,
-  folderTree,
-  mailboxName,
-  systemMailboxes,
-} from "@/lib/mailboxes";
+import { type FolderNode, flattenTree, folderTree } from "@/lib/mailboxes";
 import { storageLevel } from "@/lib/storage";
 import { m } from "@/paraglide/messages";
 import { CategoryNav } from "../categories/category-nav";
-import { useSecureMessages } from "../secure/queries";
-import { FolderRow, ParentSelect } from "./folder-menu";
+import { ParentSelect } from "./folder-menu";
 import { useMailDrop } from "./mail-drag";
-import { useCreateMailbox, useInboxes, useMailAccounts, useMailboxes, useQuota } from "./queries";
-
-const ROLE_ICONS: Record<string, LucideIcon> = {
-  inbox: Inbox,
-  flagged: Star,
-  snoozed: AlarmClock,
-  drafts: File,
-  sent: Send,
-  archive: Archive,
-  junk: ShieldAlert,
-  trash: Trash2,
-};
-
-const navClass = (active: boolean) =>
-  cn(
-    "flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-left text-[14px] no-underline hover:bg-hover",
-    // A mail dragged over it (mail-drag.ts).
-    "data-[drop-over]:bg-hover data-[drop-over]:text-fg data-[drop-over]:ring-1 data-[drop-over]:ring-accent",
-    active ? "bg-subtle font-medium text-fg" : "text-muted",
-  );
-
-const Count = ({ value }: { value: number }) =>
-  value > 0 ? <span className="ml-auto font-mono text-[12px] text-muted">{value}</span> : null;
+import { FolderNav, InboxNav, MailboxesNav, navClass } from "./mail-sidebar-nav";
+import { useCreateMailbox, useMailAccounts, useMailboxes, useQuota } from "./queries";
 
 type Props = {
   accountId: string;
@@ -77,66 +28,15 @@ type Props = {
 };
 
 export const MailSidebar = ({ accountId, mailbox, view, query }: Props) => {
-  const secure = useSecureMessages();
   const unified = view !== undefined;
   const { data: mailboxes = [], isPending } = useMailboxes(accountId);
   const accounts = useMailAccounts();
-  const inboxes = useInboxes();
   const account = accounts.find((candidate) => candidate.id === accountId);
   const dropTarget = useMailDrop();
   const [creating, setCreating] = useState(false);
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const tree = folderTree(mailboxes);
-
-  const toggle = (id: string) =>
-    setCollapsed((current) => {
-      const next = new Set(current);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-
-  const renderNode = (node: FolderNode) => {
-    const hasChildren = node.children.length > 0;
-    const open = !collapsed.has(node.mailbox.id);
-    return (
-      <li key={node.mailbox.id}>
-        <FolderRow
-          accountId={accountId}
-          mailbox={node.mailbox}
-          mailboxes={mailboxes}
-          activeId={mailbox?.id}
-        >
-          <Link
-            to="/mail/$accountId/$mailboxId"
-            params={{ accountId, mailboxId: node.mailbox.id }}
-            {...dropTarget({ accountId, mailboxId: node.mailbox.id }, node.mailbox.name)}
-            className={cn(navClass(node.mailbox.id === mailbox?.id), "h-8 flex-1")}
-            style={{ paddingLeft: 10 + node.depth * 18 }}
-          >
-            <Folder size={16} />
-            <span className="truncate">{node.mailbox.name}</span>
-            <Count value={node.mailbox.unreadEmails} />
-          </Link>
-          {hasChildren ? (
-            <button
-              type="button"
-              aria-expanded={open}
-              aria-label={node.mailbox.name}
-              onClick={() => toggle(node.mailbox.id)}
-              className="flex size-7 items-center justify-center rounded-md text-muted hover:bg-hover"
-            >
-              {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-            </button>
-          ) : null}
-        </FolderRow>
-        {hasChildren && open ? (
-          <ul className="m-0 list-none p-0">{node.children.map(renderNode)}</ul>
-        ) : null}
-      </li>
-    );
-  };
-
+  const folders = { accountId, mailbox, mailboxes, dropTarget };
+  const shared = account && !account.isPersonal && !unified;
   return (
     <div className="flex h-full flex-col gap-5 overflow-y-auto px-3 py-4">
       <div className="flex items-center gap-2">
@@ -160,113 +60,14 @@ export const MailSidebar = ({ accountId, mailbox, view, query }: Props) => {
           </Link>
         </Button>
       </div>
-
-      <nav aria-label={m.mail_inbox()} className="flex flex-col gap-px">
-        {inboxes.length > 1 ? (
-          <Link
-            to="/mail/$accountId/$mailboxId"
-            params={{ accountId: "all", mailboxId: "inbox" }}
-            search={{}}
-            aria-current={view === "unified" ? "page" : undefined}
-            className={navClass(view === "unified")}
-          >
-            <Layers size={16} />
-            <span>{m.mail_all_inboxes()}</span>
-            <Count value={inboxes.reduce((sum, inbox) => sum + inbox.mailbox.unreadEmails, 0)} />
-          </Link>
-        ) : null}
-        {/* Bars only: the list's placeholder says "Lädt …" once for the page. */}
-        {isPending ? <PlaceholderNav count={7} /> : null}
-        {systemMailboxes(mailboxes).map((box) => {
-          const Icon = ROLE_ICONS[box.role ?? ""] ?? Folder;
-          return (
-            <FolderRow
-              key={box.id}
-              accountId={accountId}
-              mailbox={box}
-              mailboxes={mailboxes}
-              activeId={mailbox?.id}
-            >
-              <Link
-                to="/mail/$accountId/$mailboxId"
-                params={{ accountId, mailboxId: box.id }}
-                {...(box.role === "drafts" || box.role === "flagged" || box.role === "snoozed"
-                  ? {}
-                  : dropTarget({ accountId, mailboxId: box.id }, mailboxName(box)))}
-                className={cn(navClass(box.id === mailbox?.id), "flex-1")}
-              >
-                <Icon size={16} />
-                <span>{mailboxName(box)}</span>
-                {box.role === "inbox" || box.role === "junk" ? (
-                  <Count value={box.unreadEmails} />
-                ) : null}
-                {box.role === "drafts" || box.role === "snoozed" ? (
-                  <Count value={box.totalEmails} />
-                ) : null}
-              </Link>
-            </FolderRow>
-          );
-        })}
-        {secure.length ? (
-          <Link to="/secure" search={{}} className={navClass(false)}>
-            <LockKeyhole size={16} />
-            <span>{m.secure_list_link()}</span>
-            <Count value={secure.reduce((sum, message) => sum + message.unreadReplies, 0)} />
-          </Link>
-        ) : null}
-      </nav>
-
-      {accounts.length > 1 ? (
-        <nav aria-label={m.mail_mailboxes()} className="flex flex-col gap-px">
-          <div className="px-2.5 pb-1.5 text-[12px] font-medium text-muted">
-            {m.mail_mailboxes()}
-          </div>
-          {accounts.map((entry) => {
-            const inbox = inboxes.find((candidate) => candidate.account.id === entry.id)?.mailbox;
-            // The full address, like everywhere else: a bare "info@" means nothing to most people.
-            const label = entry.name;
-            return (
-              <Link
-                key={entry.id}
-                to="/mail/$accountId/$mailboxId"
-                params={{ accountId: entry.id, mailboxId: "inbox" }}
-                data-tour={entry.kind === "shared" ? "shared" : undefined}
-                {...(inbox ? dropTarget({ accountId: entry.id, mailboxId: inbox.id }, label) : {})}
-                title={mailboxNotice(entry)}
-                className={navClass(!unified && entry.id === accountId)}
-              >
-                {entry.isPersonal ? (
-                  <span aria-hidden="true" className="size-2 rounded-full bg-accent" />
-                ) : (
-                  <Users size={16} />
-                )}
-                <span className="truncate">{label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-      ) : null}
-
-      <nav aria-label={m.mail_folders()} className="flex flex-col gap-px">
-        <div className="flex items-center pr-1 pb-1.5 pl-2.5">
-          <span className="flex-1 truncate text-[12px] font-medium text-muted">
-            {account && !account.isPersonal && !unified
-              ? m.mail_folders_of({ name: account.name })
-              : m.mail_folders()}
-          </span>
-          <button
-            type="button"
-            aria-label={m.mail_new_folder()}
-            title={m.mail_new_folder()}
-            onClick={() => setCreating(true)}
-            className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
-          >
-            <Plus size={16} />
-          </button>
-        </div>
-        <ul className="m-0 list-none p-0">{tree.map(renderNode)}</ul>
-      </nav>
-
+      <InboxNav view={view} isPending={isPending} {...folders} />
+      <MailboxesNav accountId={accountId} unified={unified} dropTarget={dropTarget} />
+      <FolderNav
+        tree={tree}
+        heading={shared ? m.mail_folders_of({ name: account.name }) : m.mail_folders()}
+        onNewFolder={() => setCreating(true)}
+        {...folders}
+      />
       {account ? (
         <CategoryNav
           accountId={account.id}
@@ -275,10 +76,9 @@ export const MailSidebar = ({ accountId, mailbox, view, query }: Props) => {
           navClass={navClass}
         />
       ) : null}
-
       <div className="flex-1" />
       {/* The own mailbox's storage is the ring around the avatar (account-avatar.tsx). */}
-      {account && !account.isPersonal && !unified ? <StorageBar accountId={accountId} /> : null}
+      {shared ? <StorageBar accountId={accountId} /> : null}
       <NewFolderDialog
         open={creating}
         onOpenChange={setCreating}

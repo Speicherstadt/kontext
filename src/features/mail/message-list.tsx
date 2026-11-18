@@ -20,12 +20,14 @@ import { useThreadView } from "./thread-view";
 
 type Props = { accountId: string; mailbox: Mailbox; search: MailSearch };
 
-export const MessageList = ({ accountId, mailbox, search }: Props) => {
-  const accounts = useMailAccounts();
-  const account = accounts.find((a) => a.id === accountId);
-  const me = usePersonalAccountId();
-  const shared = Boolean(account && !account.isPersonal);
-  const assigned = shared && me ? search.assigned : undefined;
+/** The folder's mails as rows: Wiedervorlage pinned in the inbox, its dates in its own folder, "Geplant" in Sent. */
+const useFolderRows = (
+  accountId: string,
+  mailbox: Mailbox,
+  search: MailSearch,
+  assigned: Assigned,
+  me?: string | null,
+) => {
   const filter = useMemo(
     () => ({
       mailboxId: mailbox.id,
@@ -76,16 +78,100 @@ export const MessageList = ({ accountId, mailbox, search }: Props) => {
   const onNearEnd = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  return { rows, list, onNearEnd, held, scheduled, isSnoozed, isSent };
+};
+
+type Assigned = MailSearch["assigned"];
+
+/** A shared mailbox: "Alle / Ungelesen / Mir zugewiesen / Offen"; Sent: "Alle / Geplant". */
+const folderFilters = (
+  shared: boolean,
+  isSent: boolean,
+  search: MailSearch,
+  assigned: Assigned,
+  heldCount: number,
+) => {
+  if (shared && !isSent)
+    return (
+      <FilterChips
+        options={[
+          {
+            label: m.mail_filter_all(),
+            on: !search.unread && !assigned,
+            set: { unread: undefined, assigned: undefined },
+          },
+          {
+            label: m.mail_filter_unread(),
+            on: Boolean(search.unread) && !assigned,
+            set: { unread: true, assigned: undefined },
+          },
+          {
+            label: m.mail_filter_mine(),
+            on: assigned === "mine",
+            set: { unread: undefined, assigned: "mine" },
+          },
+          {
+            label: m.mail_filter_open(),
+            on: assigned === "open",
+            set: { unread: undefined, assigned: "open" },
+          },
+        ]}
+      />
+    );
+  if (!isSent) return undefined;
+  const scheduled = Boolean(search.scheduled);
+  return (
+    <FilterChips
+      options={[
+        { label: m.mail_filter_all(), on: !scheduled, set: { scheduled: undefined } },
+        {
+          label: heldCount
+            ? m.mail_filter_scheduled_count({ count: heldCount })
+            : m.mail_filter_scheduled(),
+          on: scheduled,
+          set: { scheduled: true },
+        },
+      ]}
+    />
+  );
+};
+
+/** What an empty list says, where it is not the usual "Keine E-Mails". */
+const emptyText = (scheduled: boolean, isSnoozed: boolean, assigned: Assigned) => {
+  if (scheduled) return m.mail_scheduled_empty();
+  if (isSnoozed) return m.mail_snoozed_empty();
+  if (assigned === "mine") return m.mail_mine_empty();
+  if (assigned === "open") return m.mail_open_empty();
+  return undefined;
+};
+
+/** Files dropped on the list: .eml imported into the folder, where it takes them. */
+const useDropFiles = (accountId: string, mailbox: Mailbox) => {
+  const importEml = useEmlImport();
+  return acceptsImport(mailbox)
+    ? (files: File[]) => void importEml({ accountId, mailboxId: mailbox.id }, files)
+    : undefined;
+};
+
+export const MessageList = ({ accountId, mailbox, search }: Props) => {
+  const accounts = useMailAccounts();
+  const account = accounts.find((a) => a.id === accountId);
+  const me = usePersonalAccountId();
+  const shared = Boolean(account && !account.isPersonal);
+  const assigned = shared && me ? search.assigned : undefined;
+  const { rows, list, onNearEnd, held, scheduled, isSnoozed, isSent } = useFolderRows(
+    accountId,
+    mailbox,
+    search,
+    assigned,
+    me,
+  );
   const { canRemove } = mailboxRights(mailbox);
   const dragMail = useCallback(
     (row: Row) => (canRemove ? { accountId, from: mailbox.id, email: row.email } : undefined),
     [canRemove, accountId, mailbox.id],
   );
-  const importEml = useEmlImport();
-  const onDropFiles = acceptsImport(mailbox)
-    ? (files: File[]) => void importEml({ accountId, mailboxId: mailbox.id }, files)
-    : undefined;
-
+  const onDropFiles = useDropFiles(accountId, mailbox);
   return (
     <ListFrame
       title={mailboxName(mailbox)}
@@ -102,7 +188,7 @@ export const MessageList = ({ accountId, mailbox, search }: Props) => {
       unread={mailbox.unreadEmails}
       rows={rows}
       isPending={list.isPending}
-      isFetchingMore={isFetchingNextPage}
+      isFetchingMore={list.isFetchingNextPage}
       onNearEnd={onNearEnd}
       search={search}
       showRecipient={mailbox.role === "sent" || mailbox.role === "drafts"}
@@ -118,58 +204,8 @@ export const MessageList = ({ accountId, mailbox, search }: Props) => {
           {canEmpty(mailbox) ? <EmptyFolder accountId={accountId} mailbox={mailbox} /> : null}
         </TrashActions>
       }
-      filters={
-        shared && !isSent ? (
-          <FilterChips
-            options={[
-              {
-                label: m.mail_filter_all(),
-                on: !search.unread && !assigned,
-                set: { unread: undefined, assigned: undefined },
-              },
-              {
-                label: m.mail_filter_unread(),
-                on: Boolean(search.unread) && !assigned,
-                set: { unread: true, assigned: undefined },
-              },
-              {
-                label: m.mail_filter_mine(),
-                on: assigned === "mine",
-                set: { unread: undefined, assigned: "mine" },
-              },
-              {
-                label: m.mail_filter_open(),
-                on: assigned === "open",
-                set: { unread: undefined, assigned: "open" },
-              },
-            ]}
-          />
-        ) : isSent ? (
-          <FilterChips
-            options={[
-              { label: m.mail_filter_all(), on: !scheduled, set: { scheduled: undefined } },
-              {
-                label: held.length
-                  ? m.mail_filter_scheduled_count({ count: held.length })
-                  : m.mail_filter_scheduled(),
-                on: scheduled,
-                set: { scheduled: true },
-              },
-            ]}
-          />
-        ) : undefined
-      }
-      empty={
-        scheduled
-          ? m.mail_scheduled_empty()
-          : isSnoozed
-            ? m.mail_snoozed_empty()
-            : assigned === "mine"
-              ? m.mail_mine_empty()
-              : assigned === "open"
-                ? m.mail_open_empty()
-                : undefined
-      }
+      filters={folderFilters(shared, isSent, search, assigned, held.length)}
+      empty={emptyText(scheduled, isSnoozed, assigned)}
     />
   );
 };
