@@ -56,18 +56,11 @@ const useCopyTo = () => {
   });
 };
 
-/**
- * Read, flag, categorise, move, archive and delete, with the lists updated before the server
- * answers. Every action names its account, so a selection over several mailboxes can use one hook.
- */
-export const useMailActions = () => {
+/** Keywords on or off ($seen, $flagged, categories), shown before the server answers. */
+const useKeywordMutation = () => {
   const client = useClient();
   const queryClient = useQueryClient();
-
-  const refresh = (accountId: string) => queryClient.invalidateQueries({ queryKey: [accountId] });
-  const copyTo = useCopyTo();
-
-  const keyword = useMutation({
+  return useMutation({
     mutationFn: ({
       accountId,
       ids,
@@ -95,10 +88,16 @@ export const useMailActions = () => {
         );
       }
     },
-    onSettled: (_data, _error, { accountId }) => refresh(accountId),
+    onSettled: (_data, _error, { accountId }) =>
+      queryClient.invalidateQueries({ queryKey: [accountId] }),
   });
+};
 
-  const assign = useMutation({
+/** Who takes care of a mail in a shared mailbox, shown before the server answers. */
+const useAssignMutation = () => {
+  const client = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: ({ accountId, id, next }: { accountId: string; id: string; next: Assignment }) =>
       setAssignment(client, accountId, id, next),
     onMutate: ({ accountId, id, next }) => {
@@ -107,11 +106,16 @@ export const useMailActions = () => {
         email ? withAssignment(email, next) : email,
       );
     },
-    onSettled: (_data, _error, { accountId }) => refresh(accountId),
+    onSettled: (_data, _error, { accountId }) =>
+      queryClient.invalidateQueries({ queryKey: [accountId] }),
   });
+};
 
-  /** Answers with the move it made, so it can be taken back (`reverseMove`). */
-  const move = useMutation({
+/** Answers with the move it made, so it can be taken back (`reverseMove`). */
+const useMoveMutation = () => {
+  const client = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: async (done: MailMove) => {
       const { accountId, ids, from, to, keywords } = done;
       await moveEmails(client, accountId, ids, from, to, keywords);
@@ -121,21 +125,29 @@ export const useMailActions = () => {
     // Not awaited: mutateAsync would wait for every list to load again, and the notice with
     // "Rückgängig" and `z` (undo.ts) would come only after it.
     onSettled: (_data, _error, { accountId }) => {
-      void refresh(accountId);
+      void queryClient.invalidateQueries({ queryKey: [accountId] });
     },
   });
+};
 
-  const destroy = useMutation({
+const useDestroyMutation = () => {
+  const client = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: ({ accountId, ids }: { accountId: string; ids: string[] }) =>
       destroyEmails(client, accountId, ids),
     onMutate: ({ accountId, ids }) => patchCachedEmails(queryClient, accountId, ids, () => null),
-    onSettled: (_data, _error, { accountId }) => refresh(accountId),
+    onSettled: (_data, _error, { accountId }) =>
+      queryClient.invalidateQueries({ queryKey: [accountId] }),
   });
+};
 
+/** The mailboxes as loaded, and the archive folder: created on first use, since Stalwart does not set one up. */
+const useMailboxLookup = () => {
+  const client = useClient();
+  const queryClient = useQueryClient();
   const mailboxesOf = (accountId: string) =>
     queryClient.getQueryData<Mailbox[]>(mailboxesKey(accountId)) ?? [];
-
-  /** The archive folder; created on first use, since Stalwart does not set one up. */
   const archiveMailboxId = async (accountId: string): Promise<string> => {
     const mailboxes = await queryClient.fetchQuery({
       queryKey: mailboxesKey(accountId),
@@ -147,6 +159,21 @@ export const useMailActions = () => {
     await queryClient.invalidateQueries({ queryKey: mailboxesKey(accountId) });
     return id;
   };
+  return { mailboxesOf, archiveMailboxId };
+};
+
+/**
+ * Read, flag, categorise, move, archive and delete, with the lists updated before the server
+ * answers. Every action names its account, so a selection over several mailboxes can use one hook.
+ */
+export const useMailActions = () => {
+  const client = useClient();
+  const copyTo = useCopyTo();
+  const keyword = useKeywordMutation();
+  const assign = useAssignMutation();
+  const move = useMoveMutation();
+  const destroy = useDestroyMutation();
+  const { mailboxesOf, archiveMailboxId } = useMailboxLookup();
 
   return {
     setSeen: (accountId: string, ids: string[], seen: boolean) =>

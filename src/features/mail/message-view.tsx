@@ -50,25 +50,12 @@ import { UnsubscribeButton } from "./unsubscribe";
 
 type Props = { accountId: string; mailbox: Mailbox; emailId: string | undefined };
 
-export const MessageView = ({ accountId, mailbox, emailId }: Props) => {
-  const { data: email, isPending } = useEmail(accountId, emailId);
+type Detail = NonNullable<ReturnType<typeof useEmail>["data"]>;
+
+/** Opening a mail marks it read, once per mail (if the mailbox allows it). */
+const useMarkRead = (accountId: string, mailbox: Mailbox, email: Detail | null | undefined) => {
   const actions = useEmailActions(accountId);
   const markedFor = useRef<string | null>(null);
-  const account = useMailAccounts().find((candidate) => candidate.id === accountId);
-  const notice = account ? mailboxNotice(account) : undefined;
-  // Open for one mail; the next mail starts folded again.
-  const [detailsFor, setDetailsFor] = useState<string | null>(null);
-  const wide = useMediaQuery("(min-width: 1536px)");
-  const accountCategories = useCategories(accountId);
-  const { tasks } = useTasks();
-  const statusLabel = useStatusLabel();
-  const photoOf = usePhotoOf();
-  const subject = useShownSubject({ id: email?.id ?? "", subject: email?.subject ?? null });
-  const close = useCloseMail();
-  // Here, not in the toolbar: Esc also closes a mail that is still loading (j, k, Esc in a row).
-  useShortcuts({ esc: emailId ? () => void close() : undefined });
-
-  // Opening a mail marks it read, once per mail (if the mailbox allows it).
   const { canMarkSeen } = mailboxRights(mailbox);
   useEffect(() => {
     if (canMarkSeen && email && isUnread(email) && markedFor.current !== email.id) {
@@ -80,7 +67,218 @@ export const MessageView = ({ accountId, mailbox, emailId }: Props) => {
       }
     }
   }, [canMarkSeen, email, actions]);
+};
 
+/** The tasks made from the mail, each linking to it, with its status. */
+const MailTasks = ({ email }: { email: Detail }) => {
+  const { tasks } = useTasks();
+  const statusLabel = useStatusLabel();
+  return tasksOfMail(tasks, email.id, email.threadId).map((task) => (
+    <Link
+      key={task.id}
+      to="/tasks"
+      search={{ task: task.id }}
+      className="-mt-1 flex items-center gap-2 self-start rounded-lg border border-border px-2.5 py-1.5 text-[13px] text-fg no-underline hover:bg-hover"
+    >
+      <ListChecks size={14} className="text-accent" aria-hidden="true" />
+      <span className={task.status === "done" ? "text-muted line-through" : undefined}>
+        {m.tasks_on_mail_open({ title: task.title })}
+      </span>
+      <span className="rounded-md bg-subtle px-1.5 text-[11px] font-medium text-muted">
+        {statusLabel(task)}
+      </span>
+    </Link>
+  ));
+};
+
+type View = { accountId: string; mailbox: Mailbox; email: Detail };
+type DetailsToggle = { showDetails: boolean; toggleDetails: () => void };
+
+/** The sender with picture, the recipients, "Details", and the notes about how it came. */
+const SenderLine = ({
+  accountId,
+  mailbox,
+  email,
+  showDetails,
+  toggleDetails,
+}: View & DetailsToggle) => {
+  const photoOf = usePhotoOf();
+  return (
+    <div className="flex items-center gap-3">
+      <Avatar
+        name={displayName(email.from?.[0])}
+        photo={photoOf(mailSenderKey(email.from?.[0], email.authenticationResults))}
+        size={38}
+      />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <span className="flex min-w-0 items-center gap-2">
+          <span className="truncate font-medium">{displayName(email.from?.[0])}</span>
+          <ExternalMark address={email.from?.[0]?.email} />
+        </span>
+        <span className="truncate text-[13px] text-muted">
+          {email.from?.[0]?.email} → {formatAddressList(email.to)}
+          {email.cc?.length ? `, Cc: ${formatAddressList(email.cc)}` : ""}
+        </span>
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-3">
+          <button
+            type="button"
+            aria-expanded={showDetails}
+            onClick={toggleDetails}
+            className="flex items-center gap-1 text-[12px] text-muted hover:text-fg"
+          >
+            <ChevronDown
+              size={14}
+              aria-hidden="true"
+              className={showDetails ? "rotate-180" : undefined}
+            />
+            {showDetails ? m.mail_details_hide() : m.mail_details_show()}
+          </button>
+          <TransportNote received={email.received} />
+          <SpamAiNote headers={email.headers} />
+          <UnsubscribeButton accountId={accountId} mailboxId={mailbox.id} email={email} />
+        </div>
+      </div>
+      <span className="hidden shrink-0 text-[13px] text-muted sm:block">
+        {readingDate(email.receivedAt)}
+      </span>
+    </div>
+  );
+};
+
+/** The shared mailbox's note, the subject, assignment, tasks, categories and the sender. */
+const MailHeader = (props: View & DetailsToggle) => {
+  const { accountId, email } = props;
+  const account = useMailAccounts().find((candidate) => candidate.id === accountId);
+  const notice = account ? mailboxNotice(account) : undefined;
+  const subject = useShownSubject({ id: email.id, subject: email.subject ?? null });
+  const categories = categoriesOn(email.keywords, useCategories(accountId));
+  return (
+    <header className="flex flex-col gap-3">
+      {notice && account ? (
+        <p
+          title={m.mail_shared_mailbox_hint({ address: account.name })}
+          className="m-0 flex max-w-full items-center gap-1.5 self-start rounded-md bg-subtle px-2 py-1 text-[12px] text-muted"
+        >
+          <Users size={14} aria-hidden="true" className="shrink-0" />
+          <span className="truncate">{notice}</span>
+        </p>
+      ) : null}
+      <h2 className="m-0 text-[22px] leading-snug font-semibold">
+        {subject || m.mail_no_subject()}
+      </h2>
+      {account && !account.isPersonal ? <AssignmentChip email={email} /> : null}
+      <MailTasks email={email} />
+      <DiscussedNotice emailId={email.id} threadId={email.threadId ?? null} />
+      {categories.length ? (
+        <div className="-mt-1 flex flex-wrap gap-1">
+          <CategoryChips categories={categories} />
+        </div>
+      ) : null}
+      <EarlierMails accountId={accountId} email={email} />
+      <SenderLine {...props} />
+    </header>
+  );
+};
+
+/** The attachments to list: not pictures in the text, invitations or a delivery report's status. */
+const listedAttachments = (email: Detail) =>
+  email.attachments.filter(
+    (part) =>
+      (!part.cid || part.disposition === "attachment") &&
+      !isInlineInvitation(part) &&
+      // A delivery report's status is shown as the report (DeliveryReportCard).
+      !isStatusPart(part),
+  );
+
+/** The body: decrypted, an S/MIME wrapper, or the text with its signature notes and attachments. */
+const MailContent = ({
+  accountId,
+  email,
+  attachments,
+}: {
+  accountId: string;
+  email: Detail;
+  attachments: ReturnType<typeof listedAttachments>;
+}) => {
+  const pgp = pgpKind(email.contentType, displayBody(email).value);
+  const smime = signedOverEncrypted(email) ? "encrypted" : smimeKind(email.contentType);
+  // Signed with the content inside (not beside) the signature: no body of its own.
+  const smimeWrapped =
+    smime === "encrypted" ||
+    (smime === "signed" && !/multipart\/signed/i.test(email.contentType ?? ""));
+  if (pgp === "encrypted") return <EncryptedMail accountId={accountId} email={email} />;
+  if (smimeWrapped)
+    return <SmimeMail accountId={accountId} email={email} encrypted={smime === "encrypted"} />;
+  return (
+    <>
+      {pgp === "signed" ? <SignedNote accountId={accountId} email={email} /> : null}
+      {smime === "signed" ? <SmimeSignedNote accountId={accountId} email={email} /> : null}
+      <MailBody accountId={accountId} email={email} />
+      <Attachments accountId={accountId} parts={attachments} subject={email.subject} />
+    </>
+  );
+};
+
+/** Notes above the body: scheduled, Wiedervorlage, warnings, invitation, receipts and reports. */
+const MailNotices = ({ accountId, mailbox, email }: View) => (
+  <>
+    <ScheduledNotice accountId={accountId} emailId={email.id} />
+    {mailbox.role === "snoozed" ? (
+      <SnoozeNotice
+        accountId={accountId}
+        emailId={email.id}
+        canChange={mailboxRights(mailbox).canRemove}
+      />
+    ) : null}
+    <SenderWarnings email={email} />
+    <InvitationBar accountId={accountId} email={email} />
+    <AutocryptCollector email={email} />
+    {mailbox.role === "sent" ? (
+      <>
+        <ReceiptsReceived accountId={accountId} email={email} />
+        <DeliveryReportsReceived accountId={accountId} email={email} />
+      </>
+    ) : (
+      <ReceiptRequest accountId={accountId} email={email} />
+    )}
+    <DeliveryReportCard accountId={accountId} email={email} />
+  </>
+);
+
+/** Antworten, Allen antworten, Weiterleiten below the mail. */
+const ReplyButtons = ({ email }: { email: Detail }) => (
+  <div className="flex flex-wrap gap-2">
+    <Button
+      asChild
+      variant="outline"
+      className="h-10 basis-full justify-start rounded-[10px] font-normal text-muted sm:min-w-[200px] sm:flex-1 sm:basis-auto"
+    >
+      <Link to="." search={(prev) => ({ ...prev, compose: "reply" })}>
+        {m.mail_reply_to({ name: firstName(email.from?.[0]) })}
+      </Link>
+    </Button>
+    <Button asChild variant="outline" className="h-10 flex-1 rounded-[10px] sm:flex-none">
+      <Link to="." search={(prev) => ({ ...prev, compose: "replyAll" })}>
+        {m.mail_reply_all()}
+      </Link>
+    </Button>
+    <Button asChild variant="outline" className="h-10 flex-1 rounded-[10px] sm:flex-none">
+      <Link to="." search={(prev) => ({ ...prev, compose: "forward" })}>
+        {m.mail_forward()}
+      </Link>
+    </Button>
+  </div>
+);
+
+export const MessageView = ({ accountId, mailbox, emailId }: Props) => {
+  const { data: email, isPending } = useEmail(accountId, emailId);
+  // Open for one mail; the next mail starts folded again.
+  const [detailsFor, setDetailsFor] = useState<string | null>(null);
+  const wide = useMediaQuery("(min-width: 1536px)");
+  const close = useCloseMail();
+  // Here, not in the toolbar: Esc also closes a mail that is still loading (j, k, Esc in a row).
+  useShortcuts({ esc: emailId ? () => void close() : undefined });
+  useMarkRead(accountId, mailbox, email);
   if (!emailId) {
     return (
       <div className="flex flex-1 items-center justify-center text-[14px] text-muted">
@@ -91,22 +289,9 @@ export const MessageView = ({ accountId, mailbox, emailId }: Props) => {
   if (isPending) return <div className="p-6 text-[14px] text-muted">{m.common_loading()}</div>;
   if (!email) return <div className="p-6 text-[14px] text-muted">{m.mail_pick()}</div>;
   const showDetails = detailsFor === email.id;
-  const pgp = pgpKind(email.contentType, displayBody(email).value);
-  const smime = signedOverEncrypted(email) ? "encrypted" : smimeKind(email.contentType);
-  // Signed with the content inside (not beside) the signature: no body of its own.
-  const smimeWrapped =
-    smime === "encrypted" ||
-    (smime === "signed" && !/multipart\/signed/i.test(email.contentType ?? ""));
-  const categories = categoriesOn(email.keywords, accountCategories);
-  const mailTasks = tasksOfMail(tasks, email.id, email.threadId);
-  const attachments = email.attachments.filter(
-    (part) =>
-      (!part.cid || part.disposition === "attachment") &&
-      !isInlineInvitation(part) &&
-      // A delivery report's status is shown as the report (DeliveryReportCard).
-      !isStatusPart(part),
-  );
-
+  const toggleDetails = () => setDetailsFor(showDetails ? null : email.id);
+  const attachments = listedAttachments(email);
+  const view = { accountId, mailbox, email };
   return (
     <div className="flex h-full min-h-0 flex-col">
       <Toolbar accountId={accountId} mailbox={mailbox} email={email} />
@@ -117,139 +302,12 @@ export const MessageView = ({ accountId, mailbox, emailId }: Props) => {
         */}
         <article className="min-h-0 min-w-0 flex-1 overflow-y-auto">
           <div className="mx-auto flex w-full max-w-[780px] flex-col gap-[18px] px-5 pt-5 pb-8 md:px-6 xl:px-8">
-            <header className="flex flex-col gap-3">
-              {notice && account ? (
-                <p
-                  title={m.mail_shared_mailbox_hint({ address: account.name })}
-                  className="m-0 flex max-w-full items-center gap-1.5 self-start rounded-md bg-subtle px-2 py-1 text-[12px] text-muted"
-                >
-                  <Users size={14} aria-hidden="true" className="shrink-0" />
-                  <span className="truncate">{notice}</span>
-                </p>
-              ) : null}
-              <h2 className="m-0 text-[22px] leading-snug font-semibold">
-                {subject || m.mail_no_subject()}
-              </h2>
-              {account && !account.isPersonal ? <AssignmentChip email={email} /> : null}
-              {mailTasks.map((task) => (
-                <Link
-                  key={task.id}
-                  to="/tasks"
-                  search={{ task: task.id }}
-                  className="-mt-1 flex items-center gap-2 self-start rounded-lg border border-border px-2.5 py-1.5 text-[13px] text-fg no-underline hover:bg-hover"
-                >
-                  <ListChecks size={14} className="text-accent" aria-hidden="true" />
-                  <span className={task.status === "done" ? "text-muted line-through" : undefined}>
-                    {m.tasks_on_mail_open({ title: task.title })}
-                  </span>
-                  <span className="rounded-md bg-subtle px-1.5 text-[11px] font-medium text-muted">
-                    {statusLabel(task)}
-                  </span>
-                </Link>
-              ))}
-              <DiscussedNotice emailId={email.id} threadId={email.threadId ?? null} />
-              {categories.length ? (
-                <div className="-mt-1 flex flex-wrap gap-1">
-                  <CategoryChips categories={categories} />
-                </div>
-              ) : null}
-              <EarlierMails accountId={accountId} email={email} />
-              <div className="flex items-center gap-3">
-                <Avatar
-                  name={displayName(email.from?.[0])}
-                  photo={photoOf(mailSenderKey(email.from?.[0], email.authenticationResults))}
-                  size={38}
-                />
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <span className="flex min-w-0 items-center gap-2">
-                    <span className="truncate font-medium">{displayName(email.from?.[0])}</span>
-                    <ExternalMark address={email.from?.[0]?.email} />
-                  </span>
-                  <span className="truncate text-[13px] text-muted">
-                    {email.from?.[0]?.email} → {formatAddressList(email.to)}
-                    {email.cc?.length ? `, Cc: ${formatAddressList(email.cc)}` : ""}
-                  </span>
-                  <div className="mt-0.5 flex flex-wrap items-center gap-x-3">
-                    <button
-                      type="button"
-                      aria-expanded={showDetails}
-                      onClick={() => setDetailsFor(showDetails ? null : email.id)}
-                      className="flex items-center gap-1 text-[12px] text-muted hover:text-fg"
-                    >
-                      <ChevronDown
-                        size={14}
-                        aria-hidden="true"
-                        className={showDetails ? "rotate-180" : undefined}
-                      />
-                      {showDetails ? m.mail_details_hide() : m.mail_details_show()}
-                    </button>
-                    <TransportNote received={email.received} />
-                    <SpamAiNote headers={email.headers} />
-                    <UnsubscribeButton accountId={accountId} mailboxId={mailbox.id} email={email} />
-                  </div>
-                </div>
-                <span className="hidden shrink-0 text-[13px] text-muted sm:block">
-                  {readingDate(email.receivedAt)}
-                </span>
-              </div>
-            </header>
-            <ScheduledNotice accountId={accountId} emailId={email.id} />
-            {mailbox.role === "snoozed" ? (
-              <SnoozeNotice
-                accountId={accountId}
-                emailId={email.id}
-                canChange={mailboxRights(mailbox).canRemove}
-              />
-            ) : null}
-            <SenderWarnings email={email} />
-            <InvitationBar accountId={accountId} email={email} />
-            <AutocryptCollector email={email} />
-            {mailbox.role === "sent" ? (
-              <>
-                <ReceiptsReceived accountId={accountId} email={email} />
-                <DeliveryReportsReceived accountId={accountId} email={email} />
-              </>
-            ) : (
-              <ReceiptRequest accountId={accountId} email={email} />
-            )}
-            <DeliveryReportCard accountId={accountId} email={email} />
+            <MailHeader {...view} showDetails={showDetails} toggleDetails={toggleDetails} />
+            <MailNotices {...view} />
             {showDetails ? <MessageDetails email={email} attachments={attachments} /> : null}
-            {pgp === "encrypted" ? (
-              <EncryptedMail accountId={accountId} email={email} />
-            ) : smimeWrapped ? (
-              <SmimeMail accountId={accountId} email={email} encrypted={smime === "encrypted"} />
-            ) : (
-              <>
-                {pgp === "signed" ? <SignedNote accountId={accountId} email={email} /> : null}
-                {smime === "signed" ? (
-                  <SmimeSignedNote accountId={accountId} email={email} />
-                ) : null}
-                <MailBody accountId={accountId} email={email} />
-                <Attachments accountId={accountId} parts={attachments} subject={email.subject} />
-              </>
-            )}
+            <MailContent accountId={accountId} email={email} attachments={attachments} />
             <LaterMails accountId={accountId} email={email} />
-            <div className="flex flex-wrap gap-2">
-              <Button
-                asChild
-                variant="outline"
-                className="h-10 basis-full justify-start rounded-[10px] font-normal text-muted sm:min-w-[200px] sm:flex-1 sm:basis-auto"
-              >
-                <Link to="." search={(prev) => ({ ...prev, compose: "reply" })}>
-                  {m.mail_reply_to({ name: firstName(email.from?.[0]) })}
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="h-10 flex-1 rounded-[10px] sm:flex-none">
-                <Link to="." search={(prev) => ({ ...prev, compose: "replyAll" })}>
-                  {m.mail_reply_all()}
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="h-10 flex-1 rounded-[10px] sm:flex-none">
-                <Link to="." search={(prev) => ({ ...prev, compose: "forward" })}>
-                  {m.mail_forward()}
-                </Link>
-              </Button>
-            </div>
+            <ReplyButtons email={email} />
           </div>
         </article>
         {/* Only mounted when there is room (2xl), so smaller screens load nothing for it. */}

@@ -12,4 +12,3 @@ server/phone/service.ts
 server/phone/store.ts
 server/stalwart-setup.ts
 server/tasks/store.ts
-src/features/mail/composer.tsx

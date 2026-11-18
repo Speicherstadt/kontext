@@ -44,11 +44,9 @@ export const InvitationBar = ({ accountId, email }: { accountId: string; email: 
   return part?.blobId ? <Bar accountId={accountId} blobId={part.blobId} key={part.blobId} /> : null;
 };
 
-const Bar = ({ accountId, blobId }: { accountId: string; blobId: string }) => {
+/** The invitation, the stored event (if any), what to show, and the calendar to put it in. */
+const useInvitation = (accountId: string, blobId: string) => {
   const client = useClient();
-  const queryClient = useQueryClient();
-  const toast = useToast();
-  const [busy, setBusy] = useState(false);
   const { data: identities = [] } = useIdentities(accountId);
   const { calendars } = useCalendarRefs();
   const target =
@@ -68,17 +66,14 @@ const Bar = ({ accountId, blobId }: { accountId: string; blobId: string }) => {
   });
   const addresses = identities.map((identity) => identity.email);
   const view = invitationView(parsed ?? undefined, stored ?? undefined, addresses);
-  if (!parsed || view.kind === "none") return null;
+  return { client, identities, target, parsed, stored, view };
+};
 
-  const shown = stored ?? parsed;
-  const organizer = organizerEmail(parsed);
-  const organizerName =
-    Object.values(parsed.participants ?? {}).find(
-      (participant) => participantEmail(participant).toLowerCase() === organizer,
-    )?.name || organizer;
-  const place = locationName(shown);
-  const day = dateKey(eventTimes(shown).start);
-
+/** Runs an action on the calendar; the line is busy meanwhile, the toast says how it went. */
+const useCalendarRun = (accountId: string) => {
+  const queryClient = useQueryClient();
+  const toast = useToast();
+  const [busy, setBusy] = useState(false);
   const run = async (action: () => Promise<unknown>, done: string) => {
     setBusy(true);
     try {
@@ -91,104 +86,165 @@ const Bar = ({ accountId, blobId }: { accountId: string; blobId: string }) => {
       setBusy(false);
     }
   };
-  const answer = (status: ReplyStatus) =>
-    target &&
-    run(
-      () =>
-        answerInvitation(client, {
-          accountId,
-          calendarId: target.calendar.id,
-          parsed,
-          stored: stored ?? null,
-          status,
-          identities,
-        }),
-      m.mail_invitation_answered({ name: organizerName }),
-    );
+  return { busy, run };
+};
 
+type Invitation = ReturnType<typeof useInvitation>;
+type Parsed = NonNullable<Invitation["parsed"]>;
+type View = Exclude<Invitation["view"], { kind: "none" }>;
+
+/** Who invites (or called it off), what and when, the answer given, and where it is in the calendar. */
+const Summary = ({
+  accountId,
+  inv,
+  view,
+  parsed,
+  organizerName,
+}: {
+  accountId: string;
+  inv: Invitation;
+  view: View;
+  parsed: Parsed;
+  organizerName: string;
+}) => {
+  const { stored } = inv;
+  const shown = stored ?? parsed;
+  const place = locationName(shown);
+  return (
+    <div className="flex items-start gap-3">
+      <CalendarDays size={20} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="text-[12px] text-muted">
+          {view.kind === "cancel"
+            ? m.mail_invitation_cancelled({ name: organizerName })
+            : m.mail_invitation_from({ name: organizerName })}
+        </span>
+        <span className="font-medium">{shown.title || m.invitation_untitled()}</span>
+        <span className="text-[13px] text-muted">
+          {eventWhen(shown)}
+          {place ? ` · ${place}` : ""}
+        </span>
+        {view.kind === "request" && view.status ? (
+          <span className="text-[13px]">{STATUS[view.status]?.() ?? ""}</span>
+        ) : null}
+        {(view.kind === "request" || view.kind === "cancel") && view.outdated ? (
+          <span className="text-[13px] text-muted">{m.mail_invitation_outdated()}</span>
+        ) : null}
+        {view.inCalendar ? (
+          <Link
+            to="/calendar"
+            search={{
+              date: dateKey(eventTimes(shown).start),
+              event: stored?.id,
+              account: accountId,
+            }}
+            className="self-start text-[13px] text-accent underline-offset-2 hover:underline"
+          >
+            {m.mail_invitation_in_calendar()}
+          </Link>
+        ) : null}
+      </div>
+    </div>
+  );
+};
+
+type Actions = {
+  busy: boolean;
+  answer: (status: ReplyStatus) => void;
+  add: () => void;
+  remove: () => void;
+};
+
+/** Zusagen / Vielleicht / Absagen, "In den Kalender", or "Aus dem Kalender entfernen". */
+const Buttons = ({ view, removable, a }: { view: View; removable: boolean; a: Actions }) => (
+  <div className="flex flex-wrap gap-2">
+    {view.kind === "request" && view.status
+      ? ANSWERS.map(([status, label]) => (
+          <Button
+            key={status}
+            size="sm"
+            variant={view.status === status ? "primary" : "outline"}
+            aria-pressed={view.status === status}
+            disabled={a.busy}
+            onClick={() => a.answer(status)}
+          >
+            {label()}
+          </Button>
+        ))
+      : null}
+    {view.kind !== "cancel" && !view.inCalendar ? (
+      <Button size="sm" variant="outline" disabled={a.busy} onClick={a.add}>
+        {m.mail_invitation_add()}
+      </Button>
+    ) : null}
+    {view.kind === "cancel" && removable && !view.outdated ? (
+      <Button size="sm" variant="outline" disabled={a.busy} onClick={a.remove}>
+        {m.mail_invitation_remove()}
+      </Button>
+    ) : null}
+  </div>
+);
+
+const organizerNameOf = (parsed: Parsed) => {
+  const organizer = organizerEmail(parsed);
+  return (
+    Object.values(parsed.participants ?? {}).find(
+      (participant) => participantEmail(participant).toLowerCase() === organizer,
+    )?.name || organizer
+  );
+};
+
+const Bar = ({ accountId, blobId }: { accountId: string; blobId: string }) => {
+  const inv = useInvitation(accountId, blobId);
+  const { busy, run } = useCalendarRun(accountId);
+  const { client, identities, target, parsed, stored, view } = inv;
+  if (!parsed || view.kind === "none") return null;
+  const organizerName = organizerNameOf(parsed);
+  const a: Actions = {
+    busy,
+    answer: (status) =>
+      void (
+        target &&
+        run(
+          () =>
+            answerInvitation(client, {
+              accountId,
+              calendarId: target.calendar.id,
+              parsed,
+              stored: stored ?? null,
+              status,
+              identities,
+            }),
+          m.mail_invitation_answered({ name: organizerName }),
+        )
+      ),
+    add: () =>
+      void (
+        target &&
+        run(
+          () => addInvitation(client, accountId, target.calendar.id, parsed),
+          m.mail_invitation_added(),
+        )
+      ),
+    remove: () =>
+      void (
+        stored &&
+        run(() => removeCancelled(client, accountId, stored, parsed), m.mail_invitation_removed())
+      ),
+  };
   return (
     <section
       aria-label={m.mail_invitation()}
       className="flex flex-col gap-3 rounded-lg border border-border px-4 py-3 text-[14px]"
     >
-      <div className="flex items-start gap-3">
-        <CalendarDays size={20} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="text-[12px] text-muted">
-            {view.kind === "cancel"
-              ? m.mail_invitation_cancelled({ name: organizerName })
-              : m.mail_invitation_from({ name: organizerName })}
-          </span>
-          <span className="font-medium">{shown.title || m.invitation_untitled()}</span>
-          <span className="text-[13px] text-muted">
-            {eventWhen(shown)}
-            {place ? ` · ${place}` : ""}
-          </span>
-          {view.kind === "request" && view.status ? (
-            <span className="text-[13px]">{STATUS[view.status]?.() ?? ""}</span>
-          ) : null}
-          {(view.kind === "request" || view.kind === "cancel") && view.outdated ? (
-            <span className="text-[13px] text-muted">{m.mail_invitation_outdated()}</span>
-          ) : null}
-          {view.inCalendar ? (
-            <Link
-              to="/calendar"
-              search={{ date: day, event: stored?.id, account: accountId }}
-              className="self-start text-[13px] text-accent underline-offset-2 hover:underline"
-            >
-              {m.mail_invitation_in_calendar()}
-            </Link>
-          ) : null}
-        </div>
-      </div>
-      {target ? (
-        <div className="flex flex-wrap gap-2">
-          {view.kind === "request" && view.status
-            ? ANSWERS.map(([status, label]) => (
-                <Button
-                  key={status}
-                  size="sm"
-                  variant={view.status === status ? "primary" : "outline"}
-                  aria-pressed={view.status === status}
-                  disabled={busy}
-                  onClick={() => void answer(status)}
-                >
-                  {label()}
-                </Button>
-              ))
-            : null}
-          {view.kind !== "cancel" && !view.inCalendar ? (
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={busy}
-              onClick={() =>
-                void run(
-                  () => addInvitation(client, accountId, target.calendar.id, parsed),
-                  m.mail_invitation_added(),
-                )
-              }
-            >
-              {m.mail_invitation_add()}
-            </Button>
-          ) : null}
-          {view.kind === "cancel" && stored && !view.outdated ? (
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={busy}
-              onClick={() =>
-                void run(
-                  () => removeCancelled(client, accountId, stored, parsed),
-                  m.mail_invitation_removed(),
-                )
-              }
-            >
-              {m.mail_invitation_remove()}
-            </Button>
-          ) : null}
-        </div>
-      ) : null}
+      <Summary
+        accountId={accountId}
+        inv={inv}
+        view={view}
+        parsed={parsed}
+        organizerName={organizerName}
+      />
+      {target ? <Buttons view={view} removable={Boolean(stored)} a={a} /> : null}
     </section>
   );
 };
