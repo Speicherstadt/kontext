@@ -1,69 +1,18 @@
 /** Writing a mail: sender, recipients, subject, formatted text, attachments. */
-import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import Placeholder from "@tiptap/extension-placeholder";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { EditorContent } from "@tiptap/react";
 import { ChevronLeft, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useClient } from "@/auth/auth";
-import { useSession } from "@/auth/session";
+import type { KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
 import { AttachFromDocuments } from "@/features/documents/document-actions";
-import { externalIdOf, replyingExternal, sendThroughExternal } from "@/features/external/api";
-import {
-  displayBody,
-  draftParts,
-  type OutgoingAttachment,
-  saveDraft,
-  sendEmail,
-} from "@/jmap/mail";
-import { isRefusedError } from "@/jmap/refused";
-import type { EmailAddress, Identity } from "@/jmap/types";
-import { parseAddresses } from "@/lib/addresses";
-import { attachmentMention, ownText } from "@/lib/attachment-reminder";
-import {
-  type ComposeMode,
-  sharedSenderName,
-  startCompose,
-  startEmlForward,
-  startReplyTo,
-  switchReplyTo,
-} from "@/lib/compose";
-import { savedBlobs, withSavedBlob } from "@/lib/draft-blobs";
-import { registerDraftFlush } from "@/lib/draft-flush";
-import { formatSize } from "@/lib/format";
-import { fitsEncrypted, HELD_LIMIT } from "@/lib/held-files";
-import { htmlToText, sanitizeMailHtml, textToHtml } from "@/lib/html";
-import { markCids } from "@/lib/inline-images";
-import { withLegalFooter, withoutLegalFooter } from "@/lib/legal-footer";
-import { findRole } from "@/lib/mailboxes";
-import { pgpKind } from "@/lib/pgp-mail";
-import { holdUntil, sendTimeLabel } from "@/lib/schedule";
-import { signedOverEncrypted, smimeKind } from "@/lib/smime";
 import { m } from "@/paraglide/messages";
-import { useLegalFooter } from "../company/legal-footer";
-import { useAddressSuggestions } from "../contacts/use-suggestions";
-import { useAutocryptHeader } from "../pgp/autocrypt";
-import { useEncryptedSend } from "../pgp/use-encrypted-send";
 import { SnippetMenu } from "../snippets/snippet-menu";
 import { ComposerActions } from "./composer-actions";
 import { AttachmentList, ComposerFields } from "./composer-fields";
-import { InsertImageButton, pictures, useComposerImages } from "./composer-images";
+import { InsertImageButton } from "./composer-images";
 import { EditorToolbar } from "./editor-toolbar";
-import { useExternalQuestion } from "./external-question";
 import { ForgottenAttachment } from "./forgotten-attachment";
-import { useInlineImageUrls } from "./inline-image-urls";
 import { LegalFooterPreview } from "./legal-footer-preview";
-import { type OpenedMail, openedMail, shownSubject } from "./opened-mails";
-import { useEmail } from "./queries";
-import { useRemoteImages } from "./remote-images";
-import { richText, spellChecked } from "./rich-text";
-import { useUndoSeconds } from "./send-settings";
-import { useTakeBack } from "./take-back";
-import { useEmlForward } from "./use-eml-forward";
-import { useHeldFiles } from "./use-held-files";
-import { useSendAccount } from "./use-send-account";
+import { type ComposerProps, type Composing, useComposer } from "./use-composer";
 
 /** What a new mail starts with from outside: a contact, a mailto: link, a share. */
 export type ComposePrefill = {
@@ -74,773 +23,175 @@ export type ComposePrefill = {
   files?: File[];
 };
 
-type Props = {
-  accountId: string;
-  mode: ComposeMode;
-  sourceEmailId?: string;
-  /** "Als Anhang weiterleiten" of several picked mails; else the source mail alone. */
-  forwardIds?: string[];
-  prefill?: ComposePrefill;
+type View = { c: Composing; mode: ComposerProps["mode"] };
+
+/** Strg+Enter (Cmd+Enter on a Mac) sends, as in Gmail and Outlook; only when "Senden" could. */
+const sendOnCtrlEnter = (event: KeyboardEvent<HTMLFormElement>) => {
+  if (event.key !== "Enter" || !(event.ctrlKey || event.metaKey)) return;
+  // Not from a dialog in a portal ("Später senden"): React passes its keys up to here too.
+  if (!event.currentTarget.contains(event.target as Node)) return;
+  const submit = event.currentTarget.querySelector<HTMLButtonElement>('button[type="submit"]');
+  if (!submit || submit.disabled) return;
+  event.preventDefault();
+  submit.click();
 };
 
-/** No original (a new mail): nothing whose pictures from the internet could be allowed. */
-const NO_MAIL = { id: "", from: null, authenticationResults: null };
+/** The subject as the title, with "Zurück" on a phone and "Schließen" on a desktop. */
+const ComposerHeader = ({ c, mode }: View) => (
+  <div className="flex items-center gap-2">
+    <Button
+      variant="ghost"
+      size="icon"
+      aria-label={m.mail_back()}
+      className="md:hidden"
+      onClick={() => c.draft.close()}
+    >
+      <ChevronLeft size={20} />
+    </Button>
+    <h2 className="m-0 flex-1 truncate text-[18px] font-semibold">
+      {c.state.subject || (mode === "new" ? m.mail_compose() : m.mail_no_subject())}
+    </h2>
+    <Button
+      variant="ghost"
+      size="icon"
+      aria-label={m.common_close()}
+      className="hidden md:inline-flex"
+      onClick={() => c.draft.close()}
+    >
+      <X size={16} />
+    </Button>
+  </div>
+);
 
-/** The identity to send from: in a shared mailbox its address, else the login address. */
-const defaultIdentity = (identities: Identity[], preferred: string): Identity | undefined =>
-  identities.find((identity) => identity.email.toLowerCase() === preferred.toLowerCase()) ??
-  identities[0];
-
-/** The sender's signature as HTML, as the composer puts it below the text. */
-const signatureOf = (identity: Identity | undefined): string =>
-  identity?.htmlSignature || (identity?.textSignature ? textToHtml(identity.textSignature) : "");
-
-export const Composer = ({ accountId, mode, sourceEmailId, forwardIds, prefill }: Props) => {
-  const prefillTo = prefill?.to;
-  const client = useClient();
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const toast = useToast();
-  const { data: session } = useSession();
-  const { account, own, sendAccountId, identities, mailboxes, myName, sendersReady } =
-    useSendAccount(accountId, true);
-  // A mail forwarded as a file needs only its blob, not its content.
-  const asEml = mode === "forwardEml";
-  const source = useEmail(accountId, asEml ? undefined : sourceEmailId);
-  const eml = useEmlForward(
-    accountId,
-    asEml ? (forwardIds ?? (sourceEmailId ? [sourceEmailId] : [])) : [],
+/** The addresses and the subject. */
+const ComposerAddresses = ({ c, mode }: View) => {
+  const { state } = c;
+  return (
+    <ComposerFields
+      identities={c.sender.identities}
+      identityId={state.identityId}
+      onIdentity={c.pickIdentity}
+      to={state.to}
+      onTo={state.setTo}
+      cc={state.cc}
+      onCc={state.setCc}
+      bcc={state.bcc}
+      onBcc={state.setBcc}
+      showCopies={state.showCopies}
+      onShowCopies={() => state.setShowCopies(true)}
+      replyTo={state.replyTo}
+      onReplyTo={state.setReplyTo}
+      showReplyTo={state.showReplyTo}
+      onShowReplyTo={() => state.setShowReplyTo(true)}
+      subject={state.subject}
+      onSubject={state.setSubject}
+      suggestions={c.suggestions}
+      autoFocusTo={mode === "new" || mode === "forward" || c.asEml}
+    />
   );
-  const suggestions = useAddressSuggestions();
+};
 
-  const [identityId, setIdentityId] = useState<string>("");
-  const [to, setTo] = useState<EmailAddress[]>([]);
-  const [cc, setCc] = useState<EmailAddress[]>([]);
-  const [bcc, setBcc] = useState<EmailAddress[]>([]);
-  const [showCopies, setShowCopies] = useState(false);
-  const [replyTo, setReplyTo] = useState<EmailAddress[]>([]);
-  const [showReplyTo, setShowReplyTo] = useState(false);
-  const [subject, setSubject] = useState("");
-  const [attachments, setAttachments] = useState<OutgoingAttachment[]>([]);
-  const [uploading, setUploading] = useState(0);
-  // "Vertraulich senden": the files then stay in the browser until they are encrypted.
-  const [encrypt, setEncrypt] = useState(false);
-  const held = useHeldFiles(client, sendAccountId);
-  const [sending, setSending] = useState(false);
-  // "Anhang vergessen?": the word that asked, and when the mail was to go (now or later).
-  const [forgotten, setForgotten] = useState<{ word: string; later?: Date } | null>(null);
-  // "An externe Empfänger senden?": asked after "Anhang vergessen?", right before sending.
-  const external = useExternalQuestion("mail");
-  const undoSeconds = useUndoSeconds();
-  const takeBack = useTakeBack();
-  // A ref, not state: a send that waited for a running autosave must replace the draft that
-  // save just wrote, not the one from before it.
-  const draftId = useRef<string | null>(mode === "draft" ? (sourceEmailId ?? null) : null);
-  const [threading, setThreading] = useState<{
-    inReplyTo: string[] | null;
-    references: string[] | null;
-  }>({
-    inReplyTo: null,
-    references: null,
-  });
-  /** Bumped on every change; the autosave runs a moment after the last one. */
-  const [changes, setChanges] = useState(0);
-  const [savedAt, setSavedAt] = useState<Date | null>(null);
-  const saving = useRef<Promise<void> | null>(null);
-  const initialized = useRef(false);
-  // Pictures pasted or dropped into the text; set once the hook below has the editor.
-  const insertPictures = useRef<(files: File[]) => void>(() => {});
-
-  const editor = useEditor({
-    extensions: [
-      ...richText({ autolink: true, images: true }),
-      Placeholder.configure({ placeholder: m.mail_body_placeholder() }),
-    ],
-    onUpdate: () => {
-      if (initialized.current) setChanges((n) => n + 1);
-    },
-    editorProps: {
-      handlePaste: (_view, event) => {
-        const files = pictures(event.clipboardData?.files);
-        if (!files.length) return false;
-        insertPictures.current(files);
-        return true;
-      },
-      handleDrop: (_view, event, _slice, moved) => {
-        const files = moved ? [] : pictures(event.dataTransfer?.files);
-        if (!files.length) return false;
-        event.preventDefault();
-        insertPictures.current(files);
-        return true;
-      },
-      attributes: {
-        "aria-label": m.mail_body_placeholder(),
-        role: "textbox",
-        "aria-multiline": "true",
-        ...spellChecked(),
-      },
-    },
-  });
-
-  const pics = useComposerImages({
-    place: (file, alongside) => placeFile(file, alongside),
-    editor,
-    onError: (error) => toast.show(m.common_error({ message: error.message }), "error"),
-    onBusy: (by) => setUploading((n) => n + by),
-  });
-  insertPictures.current = (files) => void pics.insert(files);
-  // The pictures of a draft or of the original, to show them before the text goes into the editor.
-  const originalImages = useInlineImageUrls(
-    accountId,
-    mode === "new" || asEml ? undefined : (source.data ?? undefined),
+/** The text with its toolbar, the Pflichtangaben below it, and the attachments. */
+const ComposerText = ({ c }: { c: Composing }) => {
+  const { editor, state } = c;
+  return (
+    <>
+      {editor ? (
+        <EditorToolbar
+          editor={editor}
+          extra={
+            <>
+              <InsertImageButton onFiles={(files) => void c.pics.insert(files)} />
+              <SnippetMenu
+                editor={editor}
+                accountId={c.sender.sendAccountId}
+                recipient={state.to[0]}
+                sender={c.sender.myName}
+              />
+            </>
+          }
+        />
+      ) : null}
+      <EditorContent
+        editor={editor}
+        className="editor-content min-h-[160px] flex-1 overflow-y-auto"
+      />
+      <LegalFooterPreview footer={c.legalFooter} />
+      <AttachmentList
+        attachments={state.attachments}
+        uploading={state.uploading}
+        onRemove={(file) => state.setAttachments((current) => current.filter((a) => a !== file))}
+      />
+    </>
   );
-  // Pictures from the internet stay in a quote only if the original showed them (remote-images.ts).
-  const { allowRemote: originalRemote } = useRemoteImages(source.data ?? NO_MAIL);
+};
 
-  const myAddresses = useMemo(
-    () =>
-      [session?.username ?? "", ...identities.map((identity) => identity.email)].filter(Boolean),
-    [session?.username, identities],
+/** Sending, saving, attaching and the options of the mail. */
+const ComposerFooter = ({ c }: { c: Composing }) => {
+  const { state, pgp, files } = c;
+  return (
+    <ComposerActions
+      sending={state.sending}
+      onSendLater={(at) => void c.send(at)}
+      canSend={state.uploading === 0 && Boolean(c.identity && c.drafts && c.sent)}
+      savedAt={state.savedAt}
+      onAttach={(picked) => void files.upload(picked)}
+      attachMore={
+        <AttachFromDocuments
+          accountId={c.sender.sendAccountId}
+          inBrowser={state.encrypt}
+          onFile={(file) => void files.upload([file])}
+          onAttached={(attachment) => state.setAttachments((current) => [...current, attachment])}
+          onBusy={(change) => state.setUploading((n) => n + change)}
+        />
+      }
+      onSaveDraft={() => void c.draft.store()}
+      receipt={state.receipt}
+      onReceipt={state.setReceipt}
+      delivery={state.delivery}
+      onDelivery={state.setDelivery}
+      encrypt={state.encrypt}
+      onEncrypt={(on) => void files.switchEncrypt(on)}
+      encryptBlocked={pgp.reason}
+      encryptNote={pgp.note}
+      sign={state.sign}
+      onSign={state.setSign}
+      signWith={pgp.signWith}
+      linkDays={pgp.viaLink.length ? pgp.linkDays : null}
+      onLinkDays={pgp.setLinkDays}
+      onDiscard={() => void c.draft.discard()}
+    />
   );
+};
 
-  // Fill the form once the original (for reply/forward) and the identities are loaded.
-  // A form hidden by a suspending route gets a new editor when it shows again; the effect still
-  // holds the destroyed one then and waits for the render with the new one.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: runs once (initialized); toast and upload are only called
-  useEffect(() => {
-    if (initialized.current || !editor || editor.isDestroyed || identities.length === 0) return;
-    if (!sendersReady) return;
-    if (asEml ? !eml.data : sourceEmailId && !source.data) return;
-    if (!originalImages.done) return;
-    let originalHtml = "";
-    // An encrypted original, opened here before: its real content (opened-mails.ts).
-    let opened: OpenedMail | undefined;
-    let encryptedOriginal = false;
-    if (source.data) {
-      const body = displayBody(source.data);
-      // An encrypted original is quoted (and forwarded with its files) only as it was opened here,
-      // never as cipher text; the answer goes encrypted too.
-      if (
-        pgpKind(source.data.contentType, body.value) === "encrypted" ||
-        smimeKind(source.data.contentType) === "encrypted" ||
-        signedOverEncrypted(source.data)
-      ) {
-        setEncrypt(true);
-        encryptedOriginal = true;
-        opened = openedMail(source.data.id);
-        if (opened) {
-          originalHtml = sanitizeMailHtml(opened.html ?? textToHtml(opened.text), {
-            allowRemote: false,
-            cidUrls: {},
-          }).html;
-        } else if (mode === "forward") {
-          toast.show(m.mail_forward_encrypted_closed());
-        }
-      } else if (body.kind === "html") {
-        // Pictures come along: shown from local URLs, marked with their Content-ID. A mail
-        // taken back was sent with the Pflichtangaben; they go on again when it is sent.
-        const draft = mode === "draft";
-        originalHtml = sanitizeMailHtml(
-          markCids(draft ? withoutLegalFooter(body.value) : body.value),
-          { allowRemote: !draft && originalRemote, cidUrls: originalImages.urls },
-        ).html;
-      } else {
-        originalHtml = sanitizeMailHtml(textToHtml(body.value), {
-          allowRemote: false,
-          cidUrls: {},
-        }).html;
-      }
-    }
-    // An encrypted original: "Re:" to its real subject, where it was opened (not to the stand-in).
-    const original = source.data
-      ? { ...source.data, subject: shownSubject(source.data) }
-      : source.data;
-    const start =
-      mode === "forwardEml"
-        ? startEmlForward(eml.data ?? [])
-        : startCompose(mode, original, originalHtml, myAddresses);
-    const answering = (mode === "reply" || mode === "replyAll") && source.data;
-    const identity =
-      (answering ? replyingExternal(identities, source.data!) : null) ??
-      defaultIdentity(
-        identities,
-        start.from ??
-          (sendAccountId !== accountId || account?.isPersonal
-            ? (session?.username ?? "")
-            : (account?.name ?? "")),
-      );
-    if (identity) setIdentityId(identity.id);
-    // What the user typed while the identities were loading wins over the prefill.
-    const keep =
-      <T,>(prefill: T[]) =>
-      (current: T[]) =>
-        current.length ? current : prefill;
-    setTo(keep(prefillTo ? parseAddresses(prefillTo).addresses : start.to));
-    setCc(keep(prefill?.cc ? parseAddresses(prefill.cc).addresses : start.cc));
-    setBcc(keep(start.bcc));
-    if (start.cc.length || start.bcc.length || prefill?.cc) setShowCopies(true);
-    const startingReplyTo = startReplyTo(mode, start, identity);
-    setReplyTo(startingReplyTo);
-    if (startingReplyTo.length) setShowReplyTo(true);
-    setSubject((current) => current || prefill?.subject || start.subject);
-    // The parts of an encrypted original are cipher text; its real files go along instead,
-    // kept in the browser like every file of a mail to be encrypted.
-    setAttachments(
-      !encryptedOriginal
-        ? start.attachments
-        : opened && mode === "forward"
-          ? opened.attachments.map((file) =>
-              held.hold(
-                new File([file.bytes as Uint8Array<ArrayBuffer>], file.name, { type: file.type }),
-              ),
-            )
-          : [],
-    );
-    // An encrypted original's parts are cipher text too; its pictures are not quoted.
-    pics.setImages(encryptedOriginal ? [] : start.images);
-    setThreading({ inReplyTo: start.inReplyTo, references: start.references });
-    // A draft already has its signature; a new mail gets the one of the sender.
-    const signature = mode === "draft" ? "" : signatureOf(identity);
-    const text = prefill?.body ? textToHtml(prefill.body) : "";
-    editor.commands.setContent(`${text}${signature ? `<p></p>${signature}` : ""}${start.html}`);
-    // Into the text – unless one is already typing elsewhere (e.g. the recipient).
-    const active = document.activeElement;
-    const typing = active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement;
-    if (!typing) editor.commands.focus(mode === "draft" ? "end" : "start");
-    initialized.current = true;
-  }, [
-    editor,
-    identities,
-    sendersReady,
-    source.data,
-    sourceEmailId,
-    asEml,
-    eml.data,
-    mode,
-    myAddresses,
-    prefillTo,
-    prefill?.cc,
-    prefill?.subject,
-    prefill?.body,
-    account,
-    session?.username,
-    sendAccountId,
-    accountId,
-    originalImages,
-    originalRemote,
-  ]);
-
-  const identity = identities.find((i) => i.id === identityId);
-  /** Another sender: its default „Antwort an“ comes along, unless one was written by hand. */
-  const pickIdentity = (id: string) => {
-    const next = switchReplyTo(
-      replyTo,
-      identity,
-      identities.find((i) => i.id === id),
-    );
-    setReplyTo(next);
-    if (next.length) setShowReplyTo(true);
-    setIdentityId(id);
-  };
-  const drafts = findRole(mailboxes, "drafts");
-  const sent = findRole(mailboxes, "sent");
-
-  const left = useRef(false);
-  const leave = () => {
-    left.current = true;
-    return navigate({
-      to: ".",
-      search: (prev) => ({
-        ...prev,
-        compose: undefined,
-        to: undefined,
-        cc: undefined,
-        subject: undefined,
-        body: undefined,
-        shared: undefined,
-        emails: undefined,
-        email: mode === "new" || mode === "draft" ? undefined : prev.email,
-      }),
-    });
-  };
-
-  const [receipt, setReceipt] = useState(false);
-  const [delivery, setDelivery] = useState(false);
-  const autocrypt = useAutocryptHeader(identity?.email);
-  // Signed, not encrypted (an encrypted mail is signed anyway).
-  const [sign, setSign] = useState(false);
-  const pgp = useEncryptedSend(
-    identity?.email,
-    [...to, ...cc, ...bcc].map((address) => address.email),
-    held.blobOf,
-  );
-  const legalFooter = useLegalFooter();
-  const outgoing = ({ draft = false } = {}) => {
-    const { html, images } = pics.outgoing(editor?.getHTML() ?? "", { draft });
-    return {
-      accountId: sendAccountId,
-      identity:
-        sendAccountId === own?.id
-          ? identity!
-          : { ...identity!, name: sharedSenderName(myName, identity!.name) },
-      to,
-      cc,
-      bcc,
-      replyTo,
-      subject: subject.trim(),
-      html,
-      text: htmlToText(html),
-      attachments,
-      images,
-      inReplyTo: threading.inReplyTo,
-      references: threading.references,
-      draftId: draftId.current,
-      requestReceipt: receipt,
-      requestDelivery: delivery,
-      autocrypt,
-    };
-  };
-
-  /**
-   * A new file: uploaded, or kept in the browser for an encrypted mail (within its limit).
-   * `alongside`: the sizes of the files placed before it from the same choice, which this
-   * render's attachments do not show yet.
-   */
-  const placeFile = (file: File, alongside: number[] = []) => {
-    const sizes = [
-      ...[...attachments, ...pics.images, file].map((each) => each.size),
-      ...alongside,
-    ];
-    if (encrypt && !fitsEncrypted(sizes)) {
-      throw new Error(m.mail_encrypted_too_large({ size: formatSize(HELD_LIMIT) }));
-    }
-    return held.place(file, encrypt);
-  };
-
-  /** The mail with the files kept in the browser uploaded, and the form told their blobs. */
-  const released = async <T extends ReturnType<typeof outgoing>>(mail: T): Promise<T> => {
-    const { map, mail: done } = await held.release(mail);
-    if (map.size) {
-      setAttachments((current) => current.map(withSavedBlob(map)));
-      pics.setImages((current) => current.map(withSavedBlob(map)));
-    }
-    return done;
-  };
-
-  /**
-   * "Vertraulich senden" on: files that went to Stalwart already come into the browser, and the
-   * draft that held them (and the text) unencrypted goes; an encrypted mail is no draft.
-   */
-  const switchEncrypt = async (on: boolean) => {
-    if (!on) return setEncrypt(false);
-    const files = [...attachments, ...pics.images];
-    if (!fitsEncrypted(files.map((file) => file.size))) {
-      toast.show(m.mail_encrypted_too_large({ size: formatSize(HELD_LIMIT) }), "error");
-      return;
-    }
-    setEncrypt(true);
-    setUploading((n) => n + 1);
-    try {
-      if (saving.current) await saving.current;
-      const map = await held.pull(files);
-      setAttachments((current) => current.map(withSavedBlob(map)));
-      pics.setImages((current) => current.map(withSavedBlob(map)));
-      if (draftId.current) {
-        await client.call("Email/set", { accountId: sendAccountId, destroy: [draftId.current] });
-        draftId.current = null;
-        setSavedAt(null);
-        void queryClient.invalidateQueries({ queryKey: [sendAccountId, "emails"] });
-      }
-    } catch (error) {
-      setEncrypt(false);
-      toast.show(m.common_error({ message: (error as Error).message }), "error");
-    } finally {
-      setUploading((n) => n - 1);
-    }
-  };
-
-  const isEmpty = () =>
-    to.length + cc.length + bcc.length === 0 &&
-    !subject.trim() &&
-    attachments.length === 0 &&
-    pics.images.length === 0 &&
-    !(editor?.getText().trim() ?? "");
-
-  /** Saves the current state as the draft (replacing the previous one); one save at a time. */
-  const autosave = async (): Promise<void> => {
-    if (saving.current) await saving.current;
-    // Once the form is left, what is still in the editor is no longer the mail: taking the editor
-    // off the page drops its pictures (@tiptap/react resets the node views), and a save still
-    // waiting would overwrite the draft just written.
-    if (left.current) return;
-    // An encrypted mail is not kept on the server unencrypted, not even as a draft.
-    if (!identity || !drafts || isEmpty() || encrypt) return;
-    const run = (async () => {
-      const mail = await released(outgoing({ draft: true }));
-      draftId.current = await saveDraft(client, mail, drafts.id);
-      setSavedAt(new Date());
-      // Files and pictures now live in the draft just written; the one replaced took its own.
-      if (mail.attachments.length || mail.images.length) {
-        const saved = savedBlobs(
-          mail.attachments,
-          mail.images,
-          await draftParts(client, mail.accountId, draftId.current),
-        );
-        setAttachments((current) => current.map(withSavedBlob(saved)));
-        pics.setImages((current) => current.map(withSavedBlob(saved)));
-      }
-      void queryClient.invalidateQueries({ queryKey: [sendAccountId, "emails"] });
-    })();
-    saving.current = run;
-    try {
-      await run;
-    } finally {
-      saving.current = null;
-    }
-  };
-
-  // Autosave two seconds after the last change.
-  const changeKey = `${changes}|${JSON.stringify([to, cc, bcc, replyTo, subject, attachments.length, identityId])}`;
-  const lastSaved = useRef(changeKey);
-  useEffect(() => {
-    if (!initialized.current || sending || changeKey === lastSaved.current) return;
-    const timer = setTimeout(() => {
-      lastSaved.current = changeKey;
-      void autosave().catch(() => undefined);
-    }, 2000);
-    return () => clearTimeout(timer);
-  });
-
-  /** Saves what changed since the last save now, without waiting for the autosave. */
-  const saveNow = async () => {
-    if (initialized.current && changeKey !== lastSaved.current && !isEmpty()) {
-      lastSaved.current = changeKey;
-      await autosave().catch(() => undefined);
-    }
-  };
-  // Abmelden nach Inaktivität saves the mail before it signs out (draft-flush.ts), and waits for
-  // an autosave still running; the ref keeps the registered save on this render's state.
-  const flushRef = useRef(saveNow);
-  flushRef.current = async () => {
-    await saveNow();
-    await saving.current?.catch(() => undefined);
-  };
-  useEffect(() => registerDraftFlush(() => flushRef.current()), []);
-
-  /** Closing keeps the work: unsaved changes are saved as a draft first. */
-  const close = async () => {
-    await saveNow();
-    await leave();
-  };
-
-  /** Throws the mail away, including its draft. */
-  const discard = async () => {
-    lastSaved.current = changeKey;
-    if (saving.current) await saving.current;
-    if (draftId.current) {
-      await client
-        .call("Email/set", { accountId: sendAccountId, destroy: [draftId.current] })
-        .catch(() => undefined);
-      void queryClient.invalidateQueries({ queryKey: [sendAccountId] });
-    }
-    await leave();
-  };
-
-  /**
-   * Through another mailbox's server: saved as the draft, then sent by the Kontext server; the
-   * draft stays the current one, so a failed send can simply be tried again. Returns the
-   * recipients the provider turned down.
-   */
-  const sendExternal = async (
-    externalId: string,
-    mail: ReturnType<typeof outgoing>,
-    folders: { draftsId: string; sentId: string },
-  ) => {
-    const emailId = await saveDraft(client, mail, folders.draftsId);
-    draftId.current = emailId;
-    return (await sendThroughExternal(externalId, { emailId, ...folders })).refused;
-  };
-
-  /**
-   * Now (held for the seconds of "Rückgängig"), or `later` at that time. Asks first when the own
-   * text speaks of an attachment and none is there, unless `withoutAttachment`; then, unless
-   * `toOutside`, when recipients are outside the company (Hinweis „Extern“).
-   */
-  const send = async (later?: Date, withoutAttachment = false, toOutside = false) => {
-    if (to.length + cc.length + bcc.length === 0) {
-      toast.show(m.mail_recipients_missing(), "error");
-      return;
-    }
-    const word =
-      withoutAttachment || attachments.length
-        ? undefined
-        : attachmentMention(subject, ownText(editor?.getHTML() ?? "", signatureOf(identity)));
-    if (word) {
-      setForgotten({ word, later });
-      return;
-    }
-    const outside = toOutside ? [] : external.outside([...to, ...cc, ...bcc].map((a) => a.email));
-    if (outside.length) {
-      external.ask(outside, () => void send(later, true, true));
-      return;
-    }
-    if (!identity || !drafts || !sent) return;
-    // Another mailbox sends at once through its own server: no holding back, no encrypting or
-    // signing yet.
-    const externalId = externalIdOf(identity);
-    if (externalId && (later || encrypt || sign)) {
-      toast.show(later ? m.external_no_later() : m.external_no_encrypt(), "error");
-      return;
-    }
-    setSending(true);
-    try {
-      if (saving.current) await saving.current;
-      const hold = externalId
-        ? undefined
-        : later
-          ? { until: holdUntil(later) }
-          : undoSeconds > 0
-            ? { seconds: undoSeconds }
-            : undefined;
-      const folders = { draftsId: drafts.id, sentId: sent.id };
-      // The Pflichtangaben go with the mail sent, never into a draft (autosave uses `outgoing`).
-      // Signed or encrypted, the mail is built here, with the files kept in the browser.
-      const built = withLegalFooter(outgoing(), legalFooter);
-      const mail = encrypt || sign ? built : await released(built);
-      const refused = externalId ? await sendExternal(externalId, mail, folders) : [];
-      const held = externalId
-        ? null
-        : encrypt
-          ? await pgp.send(mail, folders, hold)
-          : sign
-            ? await pgp.sendSigned(mail, folders, hold)
-            : await sendEmail(client, mail, folders, hold);
-      // Links and other mailboxes go out at once: nothing to take back, nothing held.
-      const kept = held && !(encrypt && pgp.viaLink.length) ? held : null;
-      if ((mode === "reply" || mode === "replyAll") && sourceEmailId) {
-        // RFC 8621: mark the original as answered.
-        // Mailboxes shared only for reading may not allow it; the mail is sent anyway.
-        await client
-          .call("Email/set", {
-            accountId,
-            update: { [sourceEmailId]: { "keywords/$answered": true } },
-          })
-          .catch(() => undefined);
-      }
-      lastSaved.current = changeKey;
-      const back = {
-        label: later ? m.mail_unsend() : m.mail_undo(),
-        run: () => (kept ? takeBack(sendAccountId, kept, drafts.id) : Promise.resolve()),
-      };
-      if (!kept) {
-        if (refused.length)
-          toast.show(m.external_refused({ addresses: refused.join(", ") }), "error");
-        else toast.show(externalId ? m.mail_sent_toast() : m.secure_sent_toast());
-      } else if (later) {
-        toast.show(m.mail_scheduled_toast({ when: sendTimeLabel(later) }), "info", {
-          action: back,
-          duration: 8000,
-        });
-      } else {
-        toast.show(
-          m.mail_sent_toast(),
-          "info",
-          hold ? { action: back, duration: undoSeconds * 1000 } : undefined,
-        );
-      }
-      void queryClient.invalidateQueries({ queryKey: [accountId] });
-      if (sendAccountId !== accountId)
-        void queryClient.invalidateQueries({ queryKey: [sendAccountId] });
-      await leave();
-    } catch (error) {
-      if (isRefusedError(error)) {
-        // Back among the drafts (or, encrypted, only here in the form): the old draft is gone.
-        draftId.current = error.draftId;
-        toast.show(m.mail_refused({ reasons: error.message }), "error");
-      } else toast.show(m.common_error({ message: (error as Error).message }), "error");
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const storeDraft = async () => {
-    // An encrypted mail is kept nowhere on the server, not even as a draft (autosave): saying
-    // "saved" and closing would lose it, as switching on deleted the plain draft.
-    if (encrypt) {
-      toast.show(m.mail_encrypted_no_draft(), "error");
-      return;
-    }
-    try {
-      lastSaved.current = changeKey;
-      await autosave();
-      toast.show(m.mail_draft_saved());
-      await leave();
-    } catch (error) {
-      toast.show(m.common_error({ message: (error as Error).message }), "error");
-    }
-  };
-
-  const upload = async (files: FileList | File[] | null) => {
-    if (!files) return;
-    const placed: number[] = [];
-    for (const file of Array.from(files)) {
-      setUploading((n) => n + 1);
-      try {
-        const attachment = await placeFile(file, placed);
-        placed.push(attachment.size);
-        setAttachments((current) => [...current, attachment]);
-      } catch (error) {
-        toast.show(m.common_error({ message: (error as Error).message }), "error");
-      } finally {
-        setUploading((n) => n - 1);
-      }
-    }
-  };
-
-  // Files shared from another app become attachments once the form is filled (which sets the
-  // attachments of a new mail to none) and the sender is known.
-  const sharedUploaded = useRef(false);
-  useEffect(() => {
-    if (sharedUploaded.current || !initialized.current || !prefill?.files?.length) return;
-    if (!sendAccountId) return;
-    sharedUploaded.current = true;
-    void upload(prefill.files);
-  });
-
+export const Composer = (props: ComposerProps) => {
+  const c = useComposer(props);
+  const { forgotten, setForgotten } = c.state;
   return (
     <form
       aria-label={m.mail_compose()}
       onSubmit={(event) => {
         event.preventDefault();
-        void send();
+        void c.send();
       }}
-      // Strg+Enter (Cmd+Enter on a Mac) sends, as in Gmail and Outlook; only when "Senden" could.
-      onKeyDown={(event) => {
-        if (event.key !== "Enter" || !(event.ctrlKey || event.metaKey)) return;
-        // Not from a dialog in a portal ("Später senden"): React passes its keys up to here too.
-        if (!event.currentTarget.contains(event.target as Node)) return;
-        const submit =
-          event.currentTarget.querySelector<HTMLButtonElement>('button[type="submit"]');
-        if (!submit || submit.disabled) return;
-        event.preventDefault();
-        submit.click();
-      }}
+      onKeyDown={sendOnCtrlEnter}
       className="flex h-full min-h-0 flex-col gap-2.5 px-3 pt-2 pb-3 md:px-[18px] md:pt-3.5 md:pb-4"
     >
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={m.mail_back()}
-          className="md:hidden"
-          onClick={() => close()}
-        >
-          <ChevronLeft size={20} />
-        </Button>
-        <h2 className="m-0 flex-1 truncate text-[18px] font-semibold">
-          {subject || (mode === "new" ? m.mail_compose() : m.mail_no_subject())}
-        </h2>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={m.common_close()}
-          className="hidden md:inline-flex"
-          onClick={() => close()}
-        >
-          <X size={16} />
-        </Button>
-      </div>
-
+      <ComposerHeader c={c} mode={props.mode} />
       <div className="flex min-h-0 flex-1 flex-col rounded-xl border border-border shadow-sm">
-        <ComposerFields
-          identities={identities}
-          identityId={identityId}
-          onIdentity={pickIdentity}
-          to={to}
-          onTo={setTo}
-          cc={cc}
-          onCc={setCc}
-          bcc={bcc}
-          onBcc={setBcc}
-          showCopies={showCopies}
-          onShowCopies={() => setShowCopies(true)}
-          replyTo={replyTo}
-          onReplyTo={setReplyTo}
-          showReplyTo={showReplyTo}
-          onShowReplyTo={() => setShowReplyTo(true)}
-          subject={subject}
-          onSubject={setSubject}
-          suggestions={suggestions}
-          autoFocusTo={mode === "new" || mode === "forward" || asEml}
-        />
-        {editor ? (
-          <EditorToolbar
-            editor={editor}
-            extra={
-              <>
-                <InsertImageButton onFiles={(files) => void pics.insert(files)} />
-                <SnippetMenu
-                  editor={editor}
-                  accountId={sendAccountId}
-                  recipient={to[0]}
-                  sender={myName}
-                />
-              </>
-            }
-          />
-        ) : null}
-        <EditorContent
-          editor={editor}
-          className="editor-content min-h-[160px] flex-1 overflow-y-auto"
-        />
-        <LegalFooterPreview footer={legalFooter} />
-        <AttachmentList
-          attachments={attachments}
-          uploading={uploading}
-          onRemove={(file) => setAttachments((current) => current.filter((a) => a !== file))}
-        />
+        <ComposerAddresses c={c} mode={props.mode} />
+        <ComposerText c={c} />
       </div>
-
-      <ComposerActions
-        sending={sending}
-        onSendLater={(at) => void send(at)}
-        canSend={uploading === 0 && Boolean(identity && drafts && sent)}
-        savedAt={savedAt}
-        onAttach={(files) => void upload(files)}
-        attachMore={
-          <AttachFromDocuments
-            accountId={sendAccountId}
-            inBrowser={encrypt}
-            onFile={(file) => void upload([file])}
-            onAttached={(attachment) => setAttachments((current) => [...current, attachment])}
-            onBusy={(change) => setUploading((n) => n + change)}
-          />
-        }
-        onSaveDraft={() => void storeDraft()}
-        receipt={receipt}
-        onReceipt={setReceipt}
-        delivery={delivery}
-        onDelivery={setDelivery}
-        encrypt={encrypt}
-        onEncrypt={(on) => void switchEncrypt(on)}
-        encryptBlocked={pgp.reason}
-        encryptNote={pgp.note}
-        sign={sign}
-        onSign={setSign}
-        signWith={pgp.signWith}
-        linkDays={pgp.viaLink.length ? pgp.linkDays : null}
-        onLinkDays={pgp.setLinkDays}
-        onDiscard={() => void discard()}
-      />
-      {pgp.dialog}
-      {external.dialog}
+      <ComposerFooter c={c} />
+      {c.pgp.dialog}
+      {c.external.dialog}
       <ForgottenAttachment
         word={forgotten?.word ?? null}
-        onAttach={(files) => void upload(files)}
+        onAttach={(files) => void c.files.upload(files)}
         onSendAnyway={() => {
           const later = forgotten?.later;
           setForgotten(null);
-          void send(later, true);
+          void c.send(later, true);
         }}
         onClose={() => setForgotten(null)}
       />
