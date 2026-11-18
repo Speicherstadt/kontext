@@ -4,5 +4,5 @@ contact_links:
     url: https://kontext.email/
     about: Installation, every feature in detail, architecture and development (German).
   - name: Report a security vulnerability
-    url: https://github.com/firsttris/kontext/security/advisories/new
+    url: https://github.com/Speicherstadt/kontext/security/advisories/new
     about: Please report security problems privately, not as a public issue (see SECURITY.md).

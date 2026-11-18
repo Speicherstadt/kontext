@@ -10,8 +10,8 @@ site_description: >-
   selbst gehostete Alternative zu Google Workspace und Microsoft 365, mit Stalwart als Mailserver.
 site_author: Tristan Teufel
 site_url: https://kontext.email/
-repo_url: https://github.com/firsttris/kontext
-repo_name: firsttris/kontext
+repo_url: https://github.com/Speicherstadt/kontext
+repo_name: Speicherstadt/kontext
 edit_uri: edit/main/docs/
 # HTML: the legal notice and the privacy policy in the footer of every page (English below, under
 # the i18n plugin)
@@ -58,11 +58,11 @@ plugins:
   - search
   # No requests to Google Fonts or CDNs from the reader's browser: the fonts and Mermaid are
   # downloaded at build time and served from the site (cache in .cache/). The Schreibzeug
-  # screenshots stay on firsttris.github.io, GitHub Pages like this site: the plugin can't fetch
+  # screenshots stay on schreibzeug.app, GitHub Pages like this site: the plugin can't fetch
   # images with #only-light/#only-dark (it asks for the URL with the fragment, a 404)
   - privacy:
       assets_exclude:
-        - firsttris.github.io/*
+        - schreibzeug.app/*
   - i18n:
       docs_structure: suffix
       fallback_to_default: true
@@ -120,7 +120,7 @@ extra_css:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/firsttris/kontext
+      link: https://github.com/Speicherstadt/kontext
       name: Quellcode auf GitHub
 nav:
   - Start: index.md

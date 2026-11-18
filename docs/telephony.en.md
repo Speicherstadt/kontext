@@ -16,7 +16,7 @@ an IP phone and connects it to Kontext. No phone system from the cloud, no cost 
 
 !!! note "In testing"
     Telephony is being tested at the first customer. Feedback is welcome as an
-    [issue](https://github.com/firsttris/kontext/issues).
+    [issue](https://github.com/Speicherstadt/kontext/issues).
 
 ![A call over the Fritzbox rings in Kontext: a card with the contact, company, number and latest mail from Petra Keller, next to the inbox](screenshots/phone-call.png)
 
@@ -150,4 +150,4 @@ roadmap.
 Setup step by step: [Installation → Telephony](installation.md#telefonie). How the box, Asterisk,
 LiveKit SIP and Kontext work together: [Architecture → Telephony](architecture.md#telefonie).
 What comes next (a SIP trunk directly with the provider, SIP over TLS, a call queue, more desk
-phones): [Roadmap](https://github.com/firsttris/kontext/blob/main/ROADMAP.md).
+phones): [Roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.md).

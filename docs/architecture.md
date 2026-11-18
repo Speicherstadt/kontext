@@ -2427,7 +2427,7 @@ der Liste der Freigaben stehen, bis der Refresh-Token abläuft, obwohl ihn niema
 Passkeys (WebAuthn) bewahrt Stalwart auf, seit 1.1.0, neben dem Passwort (`x:Passkey`,
 `crates/jmap/src/registry/mapping/passkey.rs`); Better Auth hält weiter nur die Sitzungen. So
 gibt es keine zweite Liste neben Stalwarts Konten, und sobald sich Mailprogramme per OAuth bei
-Stalwart anmelden ([Roadmap](https://github.com/firsttris/kontext/blob/main/ROADMAP.de.md)),
+Stalwart anmelden ([Roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.de.md)),
 gelten die Passkeys auch dort.
 
 **Anmelden** (`signInWithPasskey` in `src/auth/auth.tsx`): Die App holt über den Server eine
@@ -2515,7 +2515,7 @@ unter `/api/company/sso` ändern dann nichts (403), und der Eintrag in den Einst
 
 ## Dokumente
 
-Das Modul „Dokumente“ ist [Schreibzeug](https://github.com/firsttris/schreibzeug): ein eigener
+Das Modul „Dokumente“ ist [Schreibzeug](https://github.com/Speicherstadt/schreibzeug): ein eigener
 Dienst mit eigenen Sitzungen, Daten und Releases, der auch ohne Kontext läuft. Verbunden sind beide
 nur über Standards: OpenID Connect für die Anmeldung, HTTP mit Tokens zwischen den Servern und
 `postMessage` zwischen den Seiten. Beide laufen unter derselben Domain (`kontext.firma.de`,
@@ -2557,7 +2557,7 @@ Seite, den Namen des Dokuments, ungespeicherte Änderungen (ein Punkt an „Doku
 und Kontexts Tastenkürzel, die außerhalb von Feldern und Dokument gedrückt wurden. Nachrichten
 zählen nur vom Rahmen mit Schreibzeugs Herkunft (`src/features/documents/messages.ts`); die
 Tabelle aller Nachrichten steht in
-[Schreibzeugs Doku](https://firsttris.github.io/schreibzeug/kontext/#messages).
+[Schreibzeugs Doku](https://schreibzeug.app/de/kontext.html#messages).
 
 **Dateien zwischen Mail und Dokumente.** An jedem Anhang legt „In Dokumente ablegen“ die Datei in
 einen gewählten Ordner („Ablegen und öffnen“ öffnet sie danach im Modul), beim Schreiben hängt

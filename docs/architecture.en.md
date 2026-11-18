@@ -2361,7 +2361,7 @@ refresh token expires, even though nobody has it any more.
 Stalwart keeps the passkeys (WebAuthn), since 1.1.0, beside the password (`x:Passkey`,
 `crates/jmap/src/registry/mapping/passkey.rs`); Better Auth still only holds the sessions. So
 there is no second list beside Stalwart's accounts, and once mail programs sign in to Stalwart
-with OAuth ([roadmap](https://github.com/firsttris/kontext/blob/main/ROADMAP.md)), the passkeys
+with OAuth ([roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.md)), the passkeys
 work there too.
 
 **Signing in** (`signInWithPasskey` in `src/auth/auth.tsx`): the app gets a challenge from
@@ -2448,7 +2448,7 @@ Stalwart does not use per-domain directories and refuses SCIM; the routes under
 
 ## Documents { #dokumente }
 
-The "Documents" module is [Schreibzeug](https://github.com/firsttris/schreibzeug): a service of its
+The "Documents" module is [Schreibzeug](https://github.com/Speicherstadt/schreibzeug): a service of its
 own with its own sessions, data and releases, which also runs without Kontext. The two are connected
 only through standards: OpenID Connect for sign-in, HTTP with tokens between the servers and
 `postMessage` between the pages. Both run under the same domain (`kontext.firma.de`,
@@ -2489,7 +2489,7 @@ stays empty (Schreibzeug not reachable), the tab bar stays. Kontext sends light/
 name, unsaved changes (a dot on "Documents" in the rail) and Kontext's keyboard shortcuts pressed
 outside fields and the document. Messages only count from the frame with Schreibzeug's origin
 (`src/features/documents/messages.ts`); the table of all messages is in
-[Schreibzeug's docs](https://firsttris.github.io/schreibzeug/kontext/#messages).
+[Schreibzeug's docs](https://schreibzeug.app/kontext.html#messages).
 
 **Files between mail and Documents.** On every attachment, "Save to Documents" puts the file into a
 chosen folder ("Save and open" then opens it in the module); when writing, "Attach from Documents"

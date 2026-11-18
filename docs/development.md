@@ -31,7 +31,7 @@ Rahmens und nimmt Dateien mit Kontexts Tokens an. `bun run dev` dann mit
 starten (das Geheimnis aus `dev/config.ts`, mit dem sich das Skript anmeldet). Mit dem echten Schreibzeug: dessen Server mit `OIDC_ISSUER=http://localhost:5173/api/auth`,
 `OIDC_CLIENT_ID=schreibzeug`, `OIDC_CLIENT_SECRET`, `SCHREIBZEUG_EMBED_ORIGIN=http://localhost:5173`
 und `SCHREIBZEUG_URL` (seine Vite-Adresse) starten, siehe
-[Schreibzeug in Kontext](https://firsttris.github.io/schreibzeug/kontext/).
+[Schreibzeug in Kontext](https://schreibzeug.app/de/kontext.html).
 
 ```bash
 bun install
@@ -191,7 +191,7 @@ mit einem Klick als Jonas, Anna, Sandra oder Max an.
   die Geburtstage. Ein Termin steht – wie bei Stalwart über iTIP – im Kalender jedes Kollegen, den
   er betrifft; was einer ändert, sehen die anderen. Die Einladungsmails verschickt die App selbst
   (`Email/import`, gelesen mit postal-mime).
-- **Dokumente:** Der Rahmen zeigt die [Demo von Schreibzeug](https://firsttris.github.io/schreibzeug/demo/),
+- **Dokumente:** Der Rahmen zeigt die [Demo von Schreibzeug](https://schreibzeug.app/demo/),
   ebenso statisch und mit eigenen Beispieldateien. Ihre Seiten stehen hinter `#`; Kontext setzt die
   Seite dorthin und `?embedded=kontext` davor (`frameSrcOf`, `src/features/documents/messages.ts`).
   Dateien zwischen Mail und Dokumenten hin und her geht nur mit beiden Servern (`connected: false`).
@@ -328,7 +328,7 @@ Schritte je Sprache:
    Der Videoanruf läuft wirklich über LiveKit, mit gezeichneten Personen als Kamera
    (`video/camera.ts`); die KI-Szene ruft Kontexts MCP-Server wirklich auf, nur das Chatfenster des
    Assistenten daneben ist gezeichnet (`video/panels.ts`), ebenso die Karte mit dem, was der Server
-   von einer vertraulichen Nachricht speichert – dessen Inhalt kommt aus der API. In der Dokumente-Szene zeigt Kontexts Rahmen Bilder des echten Schreibzeug (`video/schreibzeug/`, aus `docs/screenshots/` von firsttris/schreibzeug), weil der Ersatz in den Tests nur sagt, wer angemeldet ist.
+   von einer vertraulichen Nachricht speichert – dessen Inhalt kommt aus der API. In der Dokumente-Szene zeigt Kontexts Rahmen Bilder des echten Schreibzeug (`video/schreibzeug/`, aus `docs/screenshots/` von Speicherstadt/schreibzeug), weil der Ersatz in den Tests nur sagt, wer angemeldet ist.
 2. **Rendern** (`bun run video:render`, `video/render.ts`): Die Bühne (`video/stage/`) legt die Bilder
    in Browserfenster und Handys, bewegt Zeiger und Kamera, blendet über und setzt Titel und
    Untertitel. Sie ist eine Seite in Chromium, die zu jeder Zeit ein festes Bild zeigt
@@ -399,7 +399,7 @@ Actions → _Update video_ → Run workflow (oder `bun run video`, braucht ffmpe
   npm, und pushen Commit und Tag direkt auf `main` – an Pull Requests vorbei; sie nicht nehmen.
 - **Was das Release veröffentlicht:** Es überspringt die CI, wenn `main` den Stand schon grün
   getestet hat, und baut für `linux/amd64` und `linux/arm64` die Images
-  `docker.io/tristanteu/kontext` und `ghcr.io/firsttris/kontext` (Docker Hub und GitHub Container
+  `docker.io/tristanteu/kontext` und `ghcr.io/speicherstadt/kontext` (Docker Hub und GitHub Container
   Registry) sowie `docker.io/tristanteu/kontext-box` (nur Docker Hub; in GHCR liegt nur sein
   Build-Cache), jeweils mit den Tags `X.Y.Z`, `X.Y` und `latest` (ein Release Candidate nur `X.Y.Z-rc…` und
   `next`). Dazu legt es das GitHub-Release an und setzt danach `KONTEXT_VERSION` in

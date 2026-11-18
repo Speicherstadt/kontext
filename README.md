@@ -7,8 +7,8 @@
 **Mail, calendar, chat, documents and phone for your team – on your own server, open source**<br>
 No per-seat pricing. Made in Europe.
 
-[![CI](https://github.com/firsttris/kontext/actions/workflows/ci.yml/badge.svg)](https://github.com/firsttris/kontext/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/firsttris/kontext?logo=github&label=release)](https://github.com/firsttris/kontext/releases/latest)
+[![CI](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml/badge.svg)](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Speicherstadt/kontext?logo=github&label=release)](https://github.com/Speicherstadt/kontext/releases/latest)
 [![Docker Pulls](https://img.shields.io/docker/pulls/tristanteu/kontext?logo=docker&logoColor=white)](https://hub.docker.com/r/tristanteu/kontext)
 [![Platforms](https://img.shields.io/badge/platform-amd64%20%7C%20arm64-lightgrey)](https://hub.docker.com/r/tristanteu/kontext/tags)
 [![Docs](https://img.shields.io/badge/docs-kontext.email-4f46e5?logo=materialformkdocs&logoColor=white)](https://kontext.email/en/)
@@ -73,7 +73,7 @@ server and say: "Set up Kontext on my server following the
 **By hand:**
 
 ```bash
-git clone https://github.com/firsttris/kontext /opt/kontext && cd /opt/kontext
+git clone https://github.com/Speicherstadt/kontext /opt/kontext && cd /opt/kontext
 cp deploy/.env.example deploy/.env && chmod 600 deploy/.env
 nano deploy/.env                              # domain, version, backup target, replace every change-me
 docker compose -f deploy/compose.yaml up -d   # pulls Kontext, Stalwart and Caddy and starts them
@@ -97,7 +97,7 @@ In short per area; the details are on the linked page of the [documentation](htt
 | 💬 [Team chat & video](https://kontext.email/en/chat.html) | Channels and direct messages, mails as cards, video calls and screen sharing on your own server |
 | 📞 [Telephony (CTI)](https://kontext.email/en/telephony.html) | Your Fritzbox and numbers stay, calls ring with the caller's contact, click to call |
 | 🔐 [Encryption](https://kontext.email/en/encryption.html) | OpenPGP and S/MIME, send confidentially to anyone, encrypted storage and backups |
-| 📄 [Documents](https://kontext.email/en/documents.html) | Word, Excel, PowerPoint and PDF in the browser with [Schreibzeug](https://github.com/firsttris/schreibzeug) |
+| 📄 [Documents](https://kontext.email/en/documents.html) | Word, Excel, PowerPoint and PDF in the browser with [Schreibzeug](https://github.com/Speicherstadt/schreibzeug) |
 | 🤖 [AI agents (MCP)](https://kontext.email/en/agents.html) | Claude and other agents look things up with your rights and write drafts |
 | 🏢 [Company admin](https://kontext.email/en/company.html) | People, mailboxes and rights without IT skills, company signature, moving in from Microsoft 365 and Gmail |
 | 📱 [On every device](https://kontext.email/en/app.html) | An app without an app store, push notifications, passkeys, light and dark |
@@ -260,7 +260,7 @@ Every feature above links its page; besides:
 Needs [Bun](https://bun.sh) 1.4 and Linux or macOS (Windows through WSL).
 
 ```bash
-git clone https://github.com/firsttris/kontext && cd kontext
+git clone https://github.com/Speicherstadt/kontext && cd kontext
 bun install
 bun run dev   # Stalwart with test data, server and app: http://localhost:5173
 ```
@@ -271,12 +271,12 @@ admin too); `anna@`, `sandra@` and `max@` share the password. Structure, tests a
 
 ## 🧩 More from us
 
-- Word, Excel and PowerPoint without Microsoft 365? **[Schreibzeug](https://github.com/firsttris/schreibzeug)** edits them in the browser and keeps them as .docx, .xlsx and .pptx.
+- Word, Excel and PowerPoint without Microsoft 365? **[Schreibzeug](https://github.com/Speicherstadt/schreibzeug)** edits them in the browser and keeps them as .docx, .xlsx and .pptx.
 - Doing your own books in Germany? **[Haben](https://github.com/firsttris/haben)**: invoices with e-invoicing, receipts, bank reconciliation and VAT returns via ELSTER.
 
 ## 🤝 Contributing
 
-Bugs and ideas are welcome as issues, through the [bug report form](https://github.com/firsttris/kontext/issues/new?template=bug_report.yml).
+Bugs and ideas are welcome as issues, through the [bug report form](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml).
 Security problems please report privately, see [SECURITY.md](SECURITY.md). What to run before a pull
 request is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -284,8 +284,8 @@ request is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <div align="center">
 
-⭐ Like Kontext? A [star on GitHub](https://github.com/firsttris/kontext) helps others find it.<br>
-🐛 [Report a bug](https://github.com/firsttris/kontext/issues/new?template=bug_report.yml) · 💡 [Request a feature](https://github.com/firsttris/kontext/issues/new?template=feature_request.yml)
+⭐ Like Kontext? A [star on GitHub](https://github.com/Speicherstadt/kontext) helps others find it.<br>
+🐛 [Report a bug](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) · 💡 [Request a feature](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
 <sub>License: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel and contributors · <a href="README.de.md">Deutsche Version</a><br>
 Changed versions you pass on or run for others must offer their source code under the AGPL; a commercial license without these obligations is available via <a href="https://teufel-it.de">teufel-it.de</a>.<br>

@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Thanks for taking the time. Security problems please **not** here, but privately:
-        see the [security policy](https://github.com/firsttris/kontext/blob/main/SECURITY.md).
+        see the [security policy](https://github.com/Speicherstadt/kontext/blob/main/SECURITY.md).
         German or English, both are fine.
   - type: input
     id: version

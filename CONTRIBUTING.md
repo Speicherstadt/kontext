@@ -7,8 +7,8 @@ Stalwart mail server; how the pieces fit is in the
 
 ## Reporting bugs and ideas
 
-Use the issue forms: [bug report](https://github.com/firsttris/kontext/issues/new?template=bug_report.yml)
-or [feature request](https://github.com/firsttris/kontext/issues/new?template=feature_request.yml).
+Use the issue forms: [bug report](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml)
+or [feature request](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml).
 A good bug report names the browser or phone, the view, what happened and the Kontext version
 (*Einstellungen → Darstellung → App auf diesem Gerät*); a screenshot helps. Security problems go
 privately, see [SECURITY.md](SECURITY.md).

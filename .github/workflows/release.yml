@@ -44,9 +44,9 @@ jobs:
       description: Kontext telephone box – Asterisk and the box agent, next to the Fritzbox
       dockerfile: box/Dockerfile
       readme: ""
-      # Its own build cache (ghcr.io/firsttris/kontext-box-buildcache), not the app image's, and no
+      # Its own build cache (ghcr.io/speicherstadt/kontext-box-buildcache), not the app image's, and no
       # second GitHub release: the app image's call creates it.
-      ghcr-image: firsttris/kontext-box
+      ghcr-image: speicherstadt/kontext-box
       github-release: false
     secrets: inherit
     permissions:

@@ -2,7 +2,7 @@
  * Kontext and Schreibzeug in its frame talk with `postMessage`, only with each other: a message
  * counts only from the frame's window at Schreibzeug's origin, and goes only to that origin.
  * Schreibzeug keeps the same shapes on its side (apps/web/src/embed/messages.ts in
- * firsttris/schreibzeug).
+ * Speicherstadt/schreibzeug).
  */
 import { z } from "@/lib/zod";
 

@@ -7,7 +7,7 @@ description: >-
 
 # Dokumente
 
-Das Modul „Dokumente“ ist [Schreibzeug](https://github.com/firsttris/schreibzeug): Word-, Excel-,
+Das Modul „Dokumente“ ist [Schreibzeug](https://github.com/Speicherstadt/schreibzeug): Word-, Excel-,
 PowerPoint- und PDF-Dateien im Browser öffnen und bearbeiten, auf dem eigenen Server. Es läuft
 als eigener Dienst neben Kontext (optional) und erscheint in Kontexts Fenster – ohne zweite
 Anmeldung, hell oder dunkel wie Kontext; ein offenes Dokument bleibt offen, während man eine Mail

@@ -45,7 +45,7 @@ TLSA record, also from Stalwart). The company admin checks which of these are se
 
 ```bash
 # The configuration (compose.yaml, .env.example, Caddyfile, backups); the programs come from Docker Hub
-git clone https://github.com/firsttris/kontext /opt/kontext && cd /opt/kontext
+git clone https://github.com/Speicherstadt/kontext /opt/kontext && cd /opt/kontext
 cp deploy/.env.example deploy/.env
 chmod 600 deploy/.env            # only root may read the secrets
 nano deploy/.env                 # domain, mail server name, secret, backup target
@@ -267,7 +267,7 @@ the path matching the Kontext server) or with the whole repository (`git clone`,
 
 ```bash
 mkdir -p /opt/kontext-box && cd /opt/kontext-box
-curl -fsSLO https://raw.githubusercontent.com/firsttris/kontext/v0.1.6/deploy/box.compose.yaml
+curl -fsSLO https://raw.githubusercontent.com/Speicherstadt/kontext/v0.1.6/deploy/box.compose.yaml
 echo KONTEXT_VERSION=0.1.6 > .env      # the same version as the server; without this line: latest
 KONTEXT_URL=https://kontext.firma.de PAIRING_CODE=K7QM-4XPA \
   docker compose -f box.compose.yaml up -d
@@ -308,7 +308,7 @@ Building the box yourself (say, for a version that is not on Docker Hub yet), fr
 the box up to v0.1.3 does not load its configuration from Kontext and never registers with the Fritzbox:
 
 ```bash
-git clone --depth 1 --branch v0.1.4 https://github.com/firsttris/kontext.git /opt/kontext-box-src
+git clone --depth 1 --branch v0.1.4 https://github.com/Speicherstadt/kontext.git /opt/kontext-box-src
 cd /opt/kontext-box-src
 podman build -f box/Dockerfile -t kontext-box:0.1.4 .
 ```
@@ -337,7 +337,7 @@ the system's.
 
 ### Documents { #dokumente }
 
-The "Documents" module is [Schreibzeug](https://github.com/firsttris/schreibzeug), a separate
+The "Documents" module is [Schreibzeug](https://github.com/Speicherstadt/schreibzeug), a separate
 service with its own data and versions. `compose.yaml` starts it with the profile `documents`
 (`COMPOSE_PROFILES=calls,documents` in `.env`, as in `.env.example`). This needs:
 
@@ -892,7 +892,7 @@ once more, and the template of the company signature has to be entered again; ta
 ## 6. Updates { #6-updates }
 
 What changed in each version, and which versions need an extra step, is in the
-[changelog](https://github.com/firsttris/kontext/blob/main/CHANGELOG.md). Make a backup first
+[changelog](https://github.com/Speicherstadt/kontext/blob/main/CHANGELOG.md). Make a backup first
 (`systemctl start kontext-backup.service` or "Back up now" in the company admin).
 
 **With Compose:**
@@ -908,8 +908,8 @@ docker compose -f deploy/compose.yaml pull && docker compose -f deploy/compose.y
   settings are shown by `git diff ORIG_HEAD -- deploy/.env.example` (or by comparing the two
   files); take over into `.env` what is new there.
 - `KONTEXT_VERSION` raises Kontext; the current version is in `.env.example` and under
-  [Releases](https://github.com/firsttris/kontext/releases). `SCHREIBZEUG_VERSION` raises
-  Schreibzeug, which has versions of its own ([Schreibzeug's releases](https://github.com/firsttris/schreibzeug/releases));
+  [Releases](https://github.com/Speicherstadt/kontext/releases). `SCHREIBZEUG_VERSION` raises
+  Schreibzeug, which has versions of its own ([Schreibzeug's releases](https://github.com/Speicherstadt/schreibzeug/releases));
   if the line is missing, `compose.yaml` takes `latest`.
 - `STALWART_VERSION` raises Stalwart, also fixed and by hand: `git pull` never changes the mail
   server on its own. Raise it to the version in `.env.example` together with `KONTEXT_VERSION` of

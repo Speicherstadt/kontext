@@ -16,7 +16,7 @@ IP-Telefon an und verbindet sie mit Kontext. Keine Telefonanlage aus der Cloud, 
 
 !!! note "Im Test"
     Die Telefonie läuft beim ersten Kunden im Test. Rückmeldungen gern als
-    [Issue](https://github.com/firsttris/kontext/issues).
+    [Issue](https://github.com/Speicherstadt/kontext/issues).
 
 ![Ein Anruf über die Fritzbox klingelt in Kontext: Karte mit Kontakt, Firma, Nummer und letzter Mail von Petra Keller, daneben der Posteingang](screenshots/phone-call.png)
 
@@ -150,4 +150,4 @@ auf der Roadmap steht.
 Einrichtung Schritt für Schritt: [Installation → Telefonie](installation.md#telefonie). Wie Box,
 Asterisk, LiveKit SIP und Kontext zusammenspielen: [Architektur → Telefonie](architecture.md#telefonie).
 Was als Nächstes kommt (SIP-Trunk direkt beim Anbieter, SIP über TLS, Warteschleife, weitere
-Tischtelefone): [Roadmap](https://github.com/firsttris/kontext/blob/main/ROADMAP.de.md).
+Tischtelefone): [Roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.de.md).
