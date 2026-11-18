@@ -49,6 +49,22 @@ type Props = {
   groups: Contact[];
 };
 
+/** Calls through Kontext's phone where there is one, else through the device (tel:). */
+const CallButton = ({ phone }: { phone: string }) => {
+  const phoneDial = usePhoneDial();
+  return phoneDial.available ? (
+    <Button disabled={phoneDial.busy} onClick={() => void phoneDial.dial(phone)}>
+      <Phone size={16} /> {m.contacts_call()}
+    </Button>
+  ) : (
+    <Button asChild>
+      <a href={`tel:${phone.replace(/[^+\d]/g, "")}`}>
+        <Phone size={16} /> {m.contacts_call()}
+      </a>
+    </Button>
+  );
+};
+
 export const ContactDetail = ({ card, books, groups }: Props) => {
   const memberOf = groupsOf(card, groups);
   const book = bookOf(books, card);
@@ -57,7 +73,6 @@ export const ContactDetail = ({ card, books, groups }: Props) => {
   const mailAccountId = session?.primaryAccounts[CAPABILITIES.mail];
   const email = primaryEmail(card);
   const phone = primaryPhone(card);
-  const phoneDial = usePhoneDial();
   const mails = useQuery({
     queryKey: [mailAccountId, "emails", "with", email],
     queryFn: () => emailsWithAddress(client, mailAccountId!, email),
@@ -115,17 +130,7 @@ export const ContactDetail = ({ card, books, groups }: Props) => {
               </Link>
             </Button>
           ) : null}
-          {phone && phoneDial.available ? (
-            <Button disabled={phoneDial.busy} onClick={() => void phoneDial.dial(phone)}>
-              <Phone size={16} /> {m.contacts_call()}
-            </Button>
-          ) : phone ? (
-            <Button asChild>
-              <a href={`tel:${phone.replace(/[^+\d]/g, "")}`}>
-                <Phone size={16} /> {m.contacts_call()}
-              </a>
-            </Button>
-          ) : null}
+          {phone ? <CallButton phone={phone} /> : null}
           <Button asChild>
             <Link to="/calendar" search={{ event: "new", start: `${dateKey(new Date())}T09:00` }}>
               <CalendarDays size={16} /> {m.calendar_new()}
