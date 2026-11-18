@@ -367,7 +367,11 @@ Actions → _Update video_ → Run workflow (or `bun run video`, needs ffmpeg an
   pictures, `ueberblick.md` the overview. Every page needs a `description:` in its front matter,
   for search engines and link previews; the workflow checks it, as it does Open Graph on every
   page, the structured data on the start page and `robots.txt`. The date under every page comes
-  from the last commit of its file. Not with Zensical as in Haben: it ignores mkdocs-static-i18n.
+  from the last commit of its file. The pages load nothing from Google Fonts or a CDN: Material's
+  `privacy` plugin downloads the fonts and Mermaid at build time (cache in `.cache/`), and the
+  workflow checks that no page fetches them from there. The footer of every page links the legal
+  notice and the privacy policy (`copyright` in `mkdocs.yml`, the English one under the i18n
+  plugin). Not with Zensical as in Haben: it ignores mkdocs-static-i18n.
 - **New versions of Stalwart, LiveKit & Co.** (`.github/renovate.json5`): the
   [Renovate app](https://github.com/apps/renovate) opens a pull request for every new release of
   the images in `deploy/` (Stalwart, LiveKit, LiveKit SIP, Redis, Caddy) and of the Bun base

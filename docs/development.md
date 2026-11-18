@@ -365,7 +365,11 @@ Actions → _Update video_ → Run workflow (oder `bun run video`, braucht ffmpe
   `ueberblick.md` die Übersicht. Jede Seite braucht im Front Matter eine `description:`, für
   Suchmaschinen und die Vorschau beim Teilen eines Links; der Workflow prüft das, ebenso Open Graph
   auf jeder Seite, die strukturierten Daten auf der Startseite und `robots.txt`. Das Datum unter
-  jeder Seite kommt aus dem letzten Commit ihrer Datei. Nicht mit Zensical wie bei Haben: Es
+  jeder Seite kommt aus dem letzten Commit ihrer Datei. Die Seiten laden nichts von Google Fonts
+  oder einem CDN: Das `privacy`-Plugin von Material lädt Schriften und Mermaid beim Bauen herunter
+  (Cache in `.cache/`), und der Workflow prüft, dass keine Seite sie von dort holt. Im Fuß jeder
+  Seite stehen Impressum und Datenschutz (`copyright` in `mkdocs.yml`, die englische Fassung beim
+  i18n-Plugin). Nicht mit Zensical wie bei Haben: Es
   übergeht mkdocs-static-i18n.
 - **Neue Versionen von Stalwart, LiveKit & Co.** (`.github/renovate.json5`): Die
   [Renovate-App](https://github.com/apps/renovate) öffnet für jedes neue Release der Images in
