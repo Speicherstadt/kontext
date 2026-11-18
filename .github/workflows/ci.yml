@@ -53,7 +53,10 @@ jobs:
       # GHSA-86w9-cpqp-85rv (node-forge <= 1.4.0, no fixed release yet) is in forge's RSA
       # signature check, which Kontext does not use: S/MIME signatures are checked by WebCrypto
       # in the browser (src/lib/smime.ts) and by node:crypto on the server (server/smime).
-      - run: bun audit --audit-level=high --ignore GHSA-86w9-cpqp-85rv
+      # GHSA-fc5q-39xc-vjpf (picomatch <= 4.0.7, no fixed release yet) is a ReDoS on glob
+      # patterns; picomatch comes only with build tools (vite, vitest, paraglide, workbox), which
+      # match the repository's own patterns, and is not in the production install of the image.
+      - run: bun audit --audit-level=high --ignore GHSA-86w9-cpqp-85rv --ignore GHSA-fc5q-39xc-vjpf
 
   app-image:
     name: App image, started hardened
