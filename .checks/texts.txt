@@ -1,6 +1,5 @@
 # Files with interface texts in the code from before the check, with their count (checks i18n,
 # firsttris/workflows). The count may only go down; `checks i18n --clean` lowers it.
-2 src/components/shell/app-shell.tsx
 2 src/demo/api.ts
 2 src/demo/phone.ts
 1 src/demo/team.ts
@@ -54,3 +53,4 @@
 2 src/lib/smime-crypto.ts
 1 src/lib/smime.ts
 1 src/pwa/share-cache.ts
+2 src/shell/app-shell.tsx

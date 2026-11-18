@@ -1,6 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { registerDraftFlush } from "@/features/mail/draft-flush";
+import { registerDraftFlush } from "@/lib/draft-flush";
 
 type Options = { onNeedReload?: () => void };
 const registered: Options[] = [];

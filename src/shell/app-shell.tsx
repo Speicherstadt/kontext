@@ -3,6 +3,15 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Compass, Ellipsis, Keyboard, LogOut, Phone, Settings } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { useAuth } from "@/auth/auth";
+import { useSession } from "@/auth/session";
+import {
+  NavFactsProvider,
+  useMoreItems,
+  useNavItems,
+  usePhoneNav,
+  useTabItems,
+} from "@/components/shell/nav-items";
+import { TabBarProvider } from "@/components/shell/tab-bar-slot";
 import { ShortcutsDialog } from "@/components/shortcuts-dialog";
 import {
   MenuContent,
@@ -15,7 +24,9 @@ import {
 import { useShortcuts } from "@/components/use-shortcuts";
 import { useVisibleHeight } from "@/components/use-visible-height";
 import { useFrameState } from "@/features/documents/frame-store";
+import { useDocumentsUrl } from "@/features/documents/queries";
 import { useAppBadges } from "@/features/notifications/app-badges";
+import { usePhone } from "@/features/phone/queries";
 import { restartTour } from "@/features/tour/seen";
 import { Tour } from "@/features/tour/tour";
 import { cn } from "@/lib/cn";
@@ -23,10 +34,6 @@ import { type AppBadges, badgeSum } from "@/lib/notifications";
 import { appTarget, MORE_TARGET } from "@/lib/tour";
 import { m } from "@/paraglide/messages";
 import { AccountAvatar, StorageSummary, storageText, useOwnQuota } from "./account-avatar";
-import { useMoreItems, useNavItems, usePhoneNav, useTabItems } from "./nav-items";
-import { useSession } from "./session";
-
-export { useSession };
 
 /** "Einführung" in the menus: the tour again, from the inbox where it points at most. */
 const TourItem = ({ user }: { user: string }) => {
@@ -227,6 +234,16 @@ const SkipToContent = () => (
 
 /** `bell`: the notifications (features/notifications), placed in the rail by the route. */
 export const AppShell = ({ children, bell }: { children: ReactNode; bell?: ReactNode }) => {
+  const { enabled, allowed } = usePhone();
+  const facts = { documents: Boolean(useDocumentsUrl()), phone: enabled && allowed };
+  return (
+    <NavFactsProvider facts={facts}>
+      <ShellFrame bell={bell}>{children}</ShellFrame>
+    </NavFactsProvider>
+  );
+};
+
+const ShellFrame = ({ children, bell }: { children: ReactNode; bell?: ReactNode }) => {
   useVisibleHeight();
   const navigate = useNavigate();
   const [help, setHelp] = useState(false);
@@ -242,7 +259,9 @@ export const AppShell = ({ children, bell }: { children: ReactNode; bell?: React
     <div className="flex h-[var(--app-height,100dvh)] overflow-hidden bg-bg text-fg safe-top md:pt-0">
       <SkipToContent />
       <Rail onHelp={() => setHelp(true)} bell={bell} />
-      <div className="flex min-w-0 flex-1">{children}</div>
+      <div className="flex min-w-0 flex-1">
+        <TabBarProvider tabBar={<ShellTabBar />}>{children}</TabBarProvider>
+      </div>
       <ShortcutsDialog open={help} onOpenChange={setHelp} />
       <Tour />
     </div>
@@ -316,7 +335,7 @@ const MoreMenu = ({ badges }: { badges: AppBadges }) => {
  * The tab bar of the phone views; each list screen places it at its bottom. Which apps it shows
  * is chosen under Einstellungen → Darstellung (per device).
  */
-export const TabBar = () => {
+export const ShellTabBar = () => {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const badges = useAppBadges();
   const items = useTabItems();

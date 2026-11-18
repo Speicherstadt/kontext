@@ -4,10 +4,10 @@
  * order (src/lib/mail-sort.ts).
  */
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import type { MailSearch } from "@/features/mail/search-params";
 import type { EmailFilter } from "@/jmap/mail";
 import { type Feed, mergeFeeds, pinResurfaced } from "@/lib/inboxes";
 import type { MailAccount } from "@/lib/mail-accounts";
-import type { MailSearch } from "@/routes/_app/mail.$accountId.$mailboxId";
 import { useCategoryMap } from "../categories/queries";
 import { ListFrame, type Row } from "./list-frame";
 import type { DraggedMail } from "./mail-drag";

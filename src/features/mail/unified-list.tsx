@@ -3,10 +3,10 @@
  * newest first.
  */
 import { useCallback, useMemo } from "react";
+import type { MailSearch } from "@/features/mail/search-params";
 import { type Inbox, resurfacedFilter } from "@/lib/inboxes";
 import { mailboxRights } from "@/lib/mailboxes";
 import { m } from "@/paraglide/messages";
-import type { MailSearch } from "@/routes/_app/mail.$accountId.$mailboxId";
 import { RESURFACED } from "../snooze/queries";
 import type { Row } from "./list-frame";
 import { MergedList } from "./merged-list";

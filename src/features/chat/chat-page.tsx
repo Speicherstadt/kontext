@@ -5,7 +5,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { MessagesSquare } from "lucide-react";
 import { useState } from "react";
-import { TabBar } from "@/components/shell/app-shell";
+import { TabBar } from "@/components/shell/tab-bar-slot";
 import { FROM_PARENT } from "@/components/use-back";
 import { ASSISTANT_ID } from "@/features/assistant/assistant";
 import { AssistantConversation } from "@/features/assistant/assistant-conversation";

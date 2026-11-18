@@ -7,7 +7,7 @@ const server = vi.hoisted(() => ({
   call: vi.fn<(method: string, args: Record<string, unknown>) => Promise<unknown>>(),
 }));
 vi.mock("@/auth/auth", () => ({ useClient: () => server }));
-vi.mock("@/components/shell/app-shell", () => ({
+vi.mock("@/auth/session", () => ({
   useSession: () => ({
     data: {
       username: "anna@weber.test",

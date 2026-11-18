@@ -4,7 +4,7 @@
  * appointment can start as a copy of another ("Duplizieren").
  */
 import { type FormEvent, useRef, useState } from "react";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";

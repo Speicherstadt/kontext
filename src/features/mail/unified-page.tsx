@@ -2,7 +2,7 @@
  * "Alle Posteingänge" (`/mail/all/inbox`): the combined list, and the open mail read and answered
  * in the account it belongs to (`account` in the URL), so a reply from info@ goes out as info@.
  */
-import type { MailSearch } from "@/routes/_app/mail.$accountId.$mailboxId";
+import type { MailSearch } from "@/features/mail/search-params";
 import { Composer } from "./lazy-composer";
 import { MailLayout } from "./mail-layout";
 import { MailSidebar } from "./mail-sidebar";

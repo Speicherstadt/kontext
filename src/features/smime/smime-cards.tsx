@@ -4,7 +4,7 @@
  */
 import { AlertTriangle, Download, Search, Trash2, Upload } from "lucide-react";
 import { type FormEvent, useState } from "react";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";

@@ -5,7 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { CalendarDays, ChevronLeft, Download, Mail, Pencil, Phone } from "lucide-react";
 import type { ReactNode } from "react";
 import { useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { CAPABILITIES } from "@/jmap/client";

@@ -4,6 +4,7 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { useClient } from "@/auth/auth";
+import { useSession } from "@/auth/session";
 import { Avatar } from "@/components/ui/avatar";
 import { useOwnPhoto } from "@/features/photos/queries";
 import { CAPABILITIES } from "@/jmap/client";
@@ -12,7 +13,6 @@ import { cn } from "@/lib/cn";
 import { formatSize } from "@/lib/format";
 import { storageLevel } from "@/lib/storage";
 import { m } from "@/paraglide/messages";
-import { useSession } from "./session";
 
 /** The own mailbox's storage; same cache key as the mail app's useQuota. */
 export const useOwnQuota = (): Quota | null | undefined => {

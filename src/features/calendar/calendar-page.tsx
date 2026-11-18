@@ -12,8 +12,9 @@ import {
   Settings2,
 } from "lucide-react";
 import { useState } from "react";
+import { useSession } from "@/auth/session";
 import { SearchField } from "@/components/search-field";
-import { TabBar, useSession } from "@/components/shell/app-shell";
+import { TabBar } from "@/components/shell/tab-bar-slot";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useMediaQuery } from "@/components/use-media-query";

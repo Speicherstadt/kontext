@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { flushDrafts, registerDraftFlush } from "./draft-flush";
+import { flushDrafts, registerDraftFlush } from "@/lib/draft-flush";
 
 describe("flushDrafts", () => {
   it("runs every registered composer's save, even when one fails", async () => {

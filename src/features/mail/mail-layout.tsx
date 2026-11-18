@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
+import type { MailSearch } from "@/features/mail/search-params";
 import { cn } from "@/lib/cn";
-import type { MailSearch } from "@/routes/_app/mail.$accountId.$mailboxId";
 import { QuietReceipts } from "./quiet-receipts";
 
 /** The three columns, and on a phone the one screen the URL asks for. */

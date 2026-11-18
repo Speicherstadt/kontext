@@ -445,7 +445,7 @@ its own and allows only what the company admin needs.
   off; allowed are 15, 30, 60, 240 and 480), read by anyone signed in
   (`GET /api/company/idle-logout`), changed only by the company admin (`PUT`,
   `server/company/idle-logout.ts`). The app does the counting itself: `src/lib/idle-logout.ts` is
-  the state active → warning → expired over the time of the last input, `src/auth/idle-guard.tsx`
+  the state active → warning → expired over the time of the last input, `src/shell/idle-guard.tsx`
   feeds it with `pointerdown`, `pointermove`, `keydown`, `wheel`, `touchstart` and the tab becoming
   visible (which first catches up on a timer delayed in the background, then counts); a running
   call counts as input every 20 seconds. While the question is shown, input does not count, only
