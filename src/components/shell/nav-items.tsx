@@ -7,11 +7,10 @@ import {
   Phone,
   Users,
 } from "lucide-react";
-import { useDocumentsUrl } from "@/features/documents/queries";
-import { usePhone } from "@/features/phone/queries";
+import { createContext, type ReactNode, useContext } from "react";
+import { useTabChoice } from "@/components/shell/tab-bar-settings";
 import { moreModules, tabBarModules } from "@/lib/tab-bar";
 import { m } from "@/paraglide/messages";
-import { useTabChoice } from "./tab-bar-settings";
 
 /** The apps of the core suite, in the order of the rail (and of the shortcuts 1–5). */
 export const NAV_ITEMS = [
@@ -30,15 +29,25 @@ const PHONE_ITEM = { to: "/phone", label: m.nav_phone, icon: Phone } as const;
 
 export type NavItem = (typeof NAV_ITEMS)[number] | typeof DOCUMENTS_ITEM | typeof PHONE_ITEM;
 
+/**
+ * What the features say about the apps this person has: documents where the server has them, the
+ * telephone for whoever may telephone through the box. The app shell (src/shell) provides it, so
+ * that the navigation needs no feature and the settings can show it.
+ */
+export type NavFacts = { documents: boolean; phone: boolean };
+
+const NavFactsContext = createContext<NavFacts>({ documents: false, phone: false });
+
+export const NavFactsProvider = ({ facts, children }: { facts: NavFacts; children: ReactNode }) => (
+  <NavFactsContext.Provider value={facts}>{children}</NavFactsContext.Provider>
+);
+
 /** "Telefon" in the rail and on the phone, for whoever may telephone through the box. */
-export const usePhoneNav = (): boolean => {
-  const { enabled, allowed } = usePhone();
-  return enabled && allowed;
-};
+export const usePhoneNav = (): boolean => useContext(NavFactsContext).phone;
 
 /** The apps of the rail and the shortcuts: the core suite, and documents when there are. */
 export const useNavItems = (): readonly NavItem[] =>
-  useDocumentsUrl() ? [...NAV_ITEMS, DOCUMENTS_ITEM] : NAV_ITEMS;
+  useContext(NavFactsContext).documents ? [...NAV_ITEMS, DOCUMENTS_ITEM] : NAV_ITEMS;
 
 /** Every app this person has, for the phone: the rail's apps and the telephone. */
 export const usePhoneApps = (): readonly NavItem[] => {

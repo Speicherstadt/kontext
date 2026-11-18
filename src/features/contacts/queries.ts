@@ -4,7 +4,7 @@
  */
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { CAPABILITIES, type JmapClient } from "@/jmap/client";
 import {
   type AddressBook,

@@ -6,10 +6,10 @@ import { Link } from "@tanstack/react-router";
 import { CalendarDays, CheckCircle2, Plus, SquareKanban, Sun, User, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import type { TasksSearch } from "@/features/tasks/search-params";
 import { cn } from "@/lib/cn";
 import type { TaskView } from "@/lib/tasks";
 import { m } from "@/paraglide/messages";
-import type { TasksSearch } from "@/routes/_app/tasks";
 import type { Board } from "./queries";
 
 export const VIEWS: { view: TaskView; label: () => string; icon: typeof User }[] = [

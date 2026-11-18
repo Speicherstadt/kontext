@@ -26,7 +26,7 @@ vi.mock("./queries", () => ({
   keepUnlocked: () => {},
 }));
 vi.mock("@/auth/auth", () => ({ useClient: () => ({}) }));
-vi.mock("@/components/shell/app-shell", () => ({ useSession: () => ({ data: null }) }));
+vi.mock("@/auth/session", () => ({ useSession: () => ({ data: null }) }));
 vi.mock("../mail/use-send-account", () => ({ useSendAccount: () => ({ myName: "" }) }));
 vi.mock("../settings/queries", () => ({ usePersonalAccountId: () => "a" }));
 const show = vi.hoisted(() => vi.fn());

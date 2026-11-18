@@ -1,7 +1,7 @@
 /** A contact group: its members, a mail to all of them, editing. */
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft, Mail, Pencil, Users } from "lucide-react";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { CAPABILITIES } from "@/jmap/client";

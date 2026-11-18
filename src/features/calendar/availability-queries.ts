@@ -4,7 +4,7 @@
  */
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { getAvailability } from "@/jmap/availability";
 import { CAPABILITIES } from "@/jmap/client";
 import type { Principal } from "@/jmap/principals";

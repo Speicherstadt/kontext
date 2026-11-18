@@ -1,6 +1,6 @@
 /** The automatic out-of-office reply (RFC 8621 VacationResponse), optionally limited to dates. */
 import { useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { useToast } from "@/components/ui/toast";
 import { useColleagues } from "@/features/sharing/queries";
 import { principalName } from "@/jmap/principals";

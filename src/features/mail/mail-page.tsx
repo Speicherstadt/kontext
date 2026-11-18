@@ -5,12 +5,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { TabBar } from "@/components/shell/app-shell";
+import { TabBar } from "@/components/shell/tab-bar-slot";
 import { ListPlaceholder } from "@/components/ui/placeholder";
+import type { MailSearch } from "@/features/mail/search-params";
 import type { Mailbox } from "@/jmap/types";
 import { shareStart } from "@/lib/mailto";
 import { takeShared } from "@/pwa/share-cache";
-import type { MailSearch } from "@/routes/_app/mail.$accountId.$mailboxId";
 import { Composer } from "./lazy-composer";
 import { MailLayout } from "./mail-layout";
 import { MailSidebar } from "./mail-sidebar";

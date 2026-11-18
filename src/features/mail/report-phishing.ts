@@ -4,7 +4,7 @@
  * Undefined while no address is set: then the menu leaves it out.
  */
 import { useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { useToast } from "@/components/ui/toast";
 import { sendPhishingReport } from "@/jmap/phishing-report";
 import type { EmailDetail } from "@/jmap/types";

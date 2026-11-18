@@ -5,7 +5,7 @@
  * shown at once and corrected if the server says otherwise.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { CAPABILITIES } from "@/jmap/client";
 import {
   type BoardColumn,

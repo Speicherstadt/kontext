@@ -6,7 +6,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import { ChevronLeft, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "@/auth/auth";
-import { useSession } from "@/components/shell/app-shell";
+import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { AttachFromDocuments } from "@/features/documents/document-actions";

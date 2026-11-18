@@ -10,10 +10,10 @@ import { AgentConnection } from "@/features/agents/agents-section";
 import { useConnections } from "@/features/agents/api";
 import { Badge, ConfirmButton } from "@/features/company/fields";
 import { useExternalAccounts } from "@/features/external/queries";
+import type { settingsSections } from "@/features/settings/sections";
 import type { OAuthGrant } from "@/jmap/oauth-grants";
 import { readingDate } from "@/lib/format";
 import { m } from "@/paraglide/messages";
-import type { settingsSections } from "@/routes/_app/settings";
 import {
   type Device,
   useDevices,
