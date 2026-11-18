@@ -14,6 +14,20 @@ import { useColumns, useTaskActions } from "./queries";
 
 const MAX_COLUMNS = 10;
 
+/** A new column takes its id from the name it got. */
+const withNamedIds = (columns: BoardColumn[], current: BoardColumn[]) => {
+  const taken: string[] = [];
+  return columns.map((column) => {
+    if (!column.id.startsWith("c-") || current.some((c) => c.id === column.id)) {
+      taken.push(column.id);
+      return column;
+    }
+    const id = newColumnId(column.name, [...taken, ...columns.map((c) => c.id)]);
+    taken.push(id);
+    return { ...column, id };
+  });
+};
+
 export const ColumnsDialog = ({
   boardId,
   title,
@@ -54,17 +68,7 @@ export const ColumnsDialog = ({
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    // A new column takes its id from the name it got.
-    const taken: string[] = [];
-    const named = columns.map((column) => {
-      if (!column.id.startsWith("c-") || current.some((c) => c.id === column.id)) {
-        taken.push(column.id);
-        return column;
-      }
-      const id = newColumnId(column.name, [...taken, ...columns.map((c) => c.id)]);
-      taken.push(id);
-      return { ...column, id };
-    });
+    const named = withNamedIds(columns, current);
     setBusy(true);
     try {
       await actions.setColumns(boardId, named);

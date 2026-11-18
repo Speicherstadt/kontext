@@ -5,7 +5,7 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { Pause, Play } from "lucide-react";
-import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type RefObject, useEffect, useRef, useState } from "react";
 import { setAudioSession, setPlaybackSession } from "@/lib/audio-session";
 import { cn } from "@/lib/cn";
 import { formatDuration, waveform } from "@/lib/voice";
@@ -69,6 +69,38 @@ const Bars = ({
   </div>
 );
 
+/**
+ * While playing, the position follows every frame: "timeupdate" comes only about four times a
+ * second, and the waveform would fill in jumps.
+ */
+const useFollowPosition = (
+  audio: RefObject<HTMLAudioElement | null>,
+  paused: boolean,
+  setPosition: (seconds: number) => void,
+) =>
+  useEffect(() => {
+    if (paused) return;
+    let frame = 0;
+    const follow = () => {
+      if (audio.current) setPosition(audio.current.currentTime);
+      frame = requestAnimationFrame(follow);
+    };
+    frame = requestAnimationFrame(follow);
+    return () => cancelAnimationFrame(frame);
+  }, [paused, audio, setPosition]);
+
+/** A message that goes away while playing gives the audio session back to the browser. */
+const useReleaseOnUnmount = (audio: RefObject<HTMLAudioElement | null>) =>
+  useEffect(() => {
+    // The ref is empty again by the time a component's effects are cleaned up.
+    const element = audio.current;
+    return () => {
+      if (playing !== element) return;
+      playing = null;
+      setAudioSession("auto");
+    };
+  }, [audio]);
+
 /** `id` keys the waveform; `label` names it where it is not a chat's voice message (a voicemail). */
 export const VoiceMessage = ({
   id,
@@ -93,28 +125,8 @@ export const VoiceMessage = ({
     if (audio.current) audio.current.playbackRate = speed;
   }, [speed]);
 
-  // While playing, the position follows every frame: "timeupdate" comes only about four times a
-  // second, and the waveform would fill in jumps.
-  useEffect(() => {
-    if (paused) return;
-    let frame = 0;
-    const follow = () => {
-      if (audio.current) setPosition(audio.current.currentTime);
-      frame = requestAnimationFrame(follow);
-    };
-    frame = requestAnimationFrame(follow);
-    return () => cancelAnimationFrame(frame);
-  }, [paused]);
-
-  useEffect(() => {
-    // The ref is empty again by the time a component's effects are cleaned up.
-    const element = audio.current;
-    return () => {
-      if (playing !== element) return;
-      playing = null;
-      setAudioSession("auto");
-    };
-  }, []);
+  useFollowPosition(audio, paused, setPosition);
+  useReleaseOnUnmount(audio);
 
   /** The session goes back to the browser, unless another message has started meanwhile. */
   const stopped = (element: HTMLAudioElement) => {
