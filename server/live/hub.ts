@@ -5,7 +5,7 @@
  */
 import type { CallEvent } from "../calls/calls";
 import type { ChatEvent, Publisher, Viewer } from "../chat/chat";
-import type { PhoneEvent } from "../phone/phone";
+import type { PhoneEvent } from "../model/phone";
 
 /** Everything the apps hear; the modules that send name their own part (ChatEvent, CallEvent, PhoneEvent). */
 export type LiveEvent =

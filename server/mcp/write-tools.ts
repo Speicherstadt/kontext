@@ -5,7 +5,7 @@
  * connection's log.
  */
 import { z } from "zod";
-import { CLOCK_TIME } from "../tasks/tasks";
+import { CLOCK_TIME } from "../model/tasks";
 import { tool } from "./tool";
 
 const optionalText = (what: string) => z.string().max(10_000).optional().describe(what);

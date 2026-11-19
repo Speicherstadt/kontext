@@ -3,7 +3,7 @@
  * any address book. Nothing is stored; the list is read from the latest mails each time, so a
  * person disappears from it as soon as they are saved as a contact.
  */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 
 /** The part of a mail this needs. */
 export type Correspondence = {

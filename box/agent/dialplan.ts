@@ -14,7 +14,7 @@
  *   leg is up, kontext-out dials the number through the Fritzbox, with the line the agent chose
  *   (${KONTEXT_OUT}: the first IP phone, or an extra one for a direct number).
  */
-import type { BoxConfig, DeskPhone } from "../../server/phone/protocol";
+import type { BoxConfig, DeskPhone } from "../../server/model/phone-protocol";
 
 /** Where the box keeps the sounds from Kontext and the messages it records. */
 export type BoxPaths = { sounds: string; recordings: string };

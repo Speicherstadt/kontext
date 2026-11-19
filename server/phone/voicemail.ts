@@ -4,9 +4,9 @@
  * Firmenverwaltung.
  */
 import type { ImportResult } from "../jmap-server";
+import { isPhoneWav, wavInfo } from "../model/phone-sounds";
 import type { PhoneFiles } from "./files";
 import { voicemailMessage } from "./phone-mail";
-import { isPhoneWav, wavInfo } from "./sounds";
 import type { PhoneStore } from "./store";
 
 export type VoicemailDeps = {

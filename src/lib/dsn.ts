@@ -4,7 +4,7 @@
  * one is recognised, where its status part is, and what it says. Pure.
  */
 
-import type { BodyStructure } from "@/jmap/types";
+import type { BodyStructure } from "@/model/jmap";
 import { fromXtext } from "./envelope";
 
 /** What became of the mail for one recipient (RFC 3464 §2.3.3); "expanded" counts as delivered. */

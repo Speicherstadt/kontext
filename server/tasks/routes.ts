@@ -8,9 +8,6 @@
  */
 import { Hono } from "hono";
 import type { SessionAccount } from "../categories/routes";
-import type { Notice } from "../push/pusher";
-import { assignedNotice } from "./notices";
-import type { Board, TaskStore } from "./store";
 import {
   boardKey,
   columnsSchema,
@@ -21,7 +18,10 @@ import {
   projectNameSchema,
   type Task,
   taskPatchSchema,
-} from "./tasks";
+} from "../model/tasks";
+import type { Notice } from "../push/pusher";
+import { assignedNotice } from "./notices";
+import type { Board, TaskStore } from "./store";
 
 export type TaskDeps = {
   store: TaskStore;

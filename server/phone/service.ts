@@ -6,19 +6,6 @@
  */
 
 import type { Publisher } from "../chat/chat";
-import { companyDay, type NewTaskData } from "../tasks/tasks";
-import { desiredConfig } from "./box-config";
-import {
-  choiceOf,
-  deskCall,
-  deskOf,
-  everyone,
-  lineOf,
-  outLineOf,
-  ringPlanFor,
-  ringPlanForCall,
-} from "./lines";
-import { toE164 } from "./numbers";
 import {
   answeredCallbacks,
   applyCallEvent,
@@ -43,8 +30,26 @@ import {
   takeCall,
   unavailableAt,
   withoutUnavailable,
-} from "./phone";
-import { type CallEvent, type FromBox, MAX_BLOCKED_NUMBERS, type ToBox } from "./protocol";
+} from "../model/phone";
+import { toE164 } from "../model/phone-numbers";
+import {
+  type CallEvent,
+  type FromBox,
+  MAX_BLOCKED_NUMBERS,
+  type ToBox,
+} from "../model/phone-protocol";
+import { companyDay, type NewTaskData } from "../model/tasks";
+import { desiredConfig } from "./box-config";
+import {
+  choiceOf,
+  deskCall,
+  deskOf,
+  everyone,
+  lineOf,
+  outLineOf,
+  ringPlanFor,
+  ringPlanForCall,
+} from "./lines";
 import type { PhoneStore } from "./store";
 import { createTransfers, type TransferTarget } from "./transfer";
 

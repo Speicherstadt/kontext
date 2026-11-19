@@ -5,7 +5,7 @@
  * endpoint. A name is therefore resolved to IPv4 each time the configuration is written.
  */
 import { isIP } from "node:net";
-import type { BoxConfig } from "../../server/phone/protocol";
+import type { BoxConfig } from "../../server/model/phone-protocol";
 
 export type LookupIpv4 = (host: string) => Promise<string>;
 

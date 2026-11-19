@@ -11,11 +11,11 @@ import { listAddressBooks, listContacts } from "@/jmap/contacts";
 import { getEmail, listMailboxes, SUMMARY_PROPERTIES } from "@/jmap/mail";
 import { listPrincipals, principalName } from "@/jmap/principals";
 import { getThreads } from "@/jmap/threads";
-import type { EmailSummary } from "@/jmap/types";
 import { dateKey } from "@/lib/jscalendar";
 import { parseSearch, toEmailFilter } from "@/lib/mail-search";
 import { mailboxPath } from "@/lib/mailboxes";
-import type { Task, TaskProject } from "../tasks/tasks";
+import type { EmailSummary } from "@/model/jmap";
+import type { Task, TaskProject } from "../model/tasks";
 import {
   type AccountNames,
   contactMatches,

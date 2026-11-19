@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { EmailSummary, Mailbox } from "@/jmap/types";
+import type { EmailSummary, Mailbox } from "@/model/jmap";
 import {
   addRange,
   categoryState,

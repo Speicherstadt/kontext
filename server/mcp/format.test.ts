@@ -1,9 +1,9 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import type { EmailDetail, EmailSummary } from "@/jmap/types";
 import type { CalendarEvent } from "@/lib/jscalendar";
 import type { ContactCard } from "@/lib/jscontact";
-import type { Task } from "../tasks/tasks";
+import type { EmailDetail, EmailSummary } from "@/model/jmap";
+import type { Task } from "../model/tasks";
 import {
   bodyText,
   clip,

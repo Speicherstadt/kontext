@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { BodyPart, EmailDetail } from "@/jmap/types";
+import type { BodyPart, EmailDetail } from "@/model/jmap";
 import { copyAttachments, copyFileName, mailCopyOf } from "./mail-copy";
 
 const part = (patch: Partial<BodyPart>): BodyPart => ({

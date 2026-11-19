@@ -3,7 +3,7 @@
  * line per message. The agent logs in, sends actions (answer by moving the call, originate, hang
  * up, reload) and hears the dialplan's KontextCall user events and the Fritzbox registration.
  */
-import { CALL_STATES, type CallEvent } from "../../server/phone/protocol";
+import { CALL_STATES, type CallEvent } from "../../server/model/phone-protocol";
 
 export type Frame = Record<string, string>;
 

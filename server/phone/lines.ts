@@ -3,9 +3,10 @@
  * ones for direct numbers, each with its own people. Which line a call came in on decides who
  * hears it; who calls out uses their own direct number when they have one. Pure.
  */
-import { toE164 } from "./numbers";
-import { outgoingCall, type PhoneCall, type RingPlan } from "./phone";
-import type { CallEvent, DeskPhone } from "./protocol";
+
+import { outgoingCall, type PhoneCall, type RingPlan } from "../model/phone";
+import { toE164 } from "../model/phone-numbers";
+import type { CallEvent, DeskPhone } from "../model/phone-protocol";
 import type { PhoneSettings } from "./store";
 
 export type ExtraLine = PhoneSettings["extraLines"][number];

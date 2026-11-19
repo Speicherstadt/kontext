@@ -8,7 +8,7 @@ FROM docker.io/oven/bun:1.4-alpine AS build
 WORKDIR /src
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --ignore-scripts
-COPY server/phone ./server/phone
+COPY server/model/phone-protocol.ts server/model/phone-sounds.ts ./server/model/
 COPY box/agent ./box/agent
 RUN bun build box/agent/main.ts --target=bun --outfile=/out/agent.js
 

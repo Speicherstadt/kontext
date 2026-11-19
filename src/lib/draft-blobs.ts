@@ -5,7 +5,7 @@
  * pictures therefore take the parts of the draft just written: pictures by their Content-ID,
  * files in the order they were sent. Pure.
  */
-import type { BodyPart } from "@/jmap/types";
+import type { BodyPart } from "@/model/jmap";
 
 type Sent = { blobId: string; cid?: string };
 

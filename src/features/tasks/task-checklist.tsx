@@ -2,7 +2,7 @@
 import { Plus, X } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { m } from "@/paraglide/messages";
-import type { CheckItem } from "../../../server/tasks/tasks";
+import type { CheckItem } from "../../../server/model/tasks";
 
 export const TaskChecklist = ({
   items,

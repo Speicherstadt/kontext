@@ -1,8 +1,8 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Env } from "../env";
+import type { NewTaskData } from "../model/tasks";
 import { createRuleTasks, type MarkedMail, taskOfMail } from "./from-rules";
-import type { NewTaskData } from "./tasks";
 
 const env = { STALWART_URL: "http://stalwart" } as Env;
 const mail: MarkedMail = {

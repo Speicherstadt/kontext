@@ -1,5 +1,5 @@
 /** Who the open mail is with, for the panel beside it: the person, their contact card, a new card. */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 import { type ContactForm, emptyContactForm } from "./contact-form";
 import type { ContactCard } from "./jscontact";
 

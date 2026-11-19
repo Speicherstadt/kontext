@@ -7,7 +7,7 @@
  * (crates/types/src/metadata/registry.rs). Stalwart patches inside a namespace only once it
  * exists, so the whole namespace is written each time.
  */
-import type { EmailSummary } from "@/jmap/types";
+import type { EmailSummary } from "@/model/jmap";
 
 export const ASSIGNMENT_NAMESPACE = "kontext.firsttris.github.io";
 

@@ -2,7 +2,7 @@
  * JSContact cards (RFC 9553) as the contacts app reads them. The form that edits them is in
  * contact-form.ts.
  */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 import { inlinePhoto } from "./photo";
 
 export type NameComponent = { kind: string; value: string };

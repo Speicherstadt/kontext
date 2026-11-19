@@ -7,9 +7,9 @@
  *   once it is answered the one handing over leaves, and the two talk through the room.
  */
 
+import { dialTarget, offerCall, outgoingCall, type PhoneCall, takeOffer } from "../model/phone";
+import type { ToBox } from "../model/phone-protocol";
 import { everyone } from "./lines";
-import { dialTarget, offerCall, outgoingCall, type PhoneCall, takeOffer } from "./phone";
-import type { ToBox } from "./protocol";
 import type { Problem } from "./service";
 import type { PhoneStore } from "./store";
 

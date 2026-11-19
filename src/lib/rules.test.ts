@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Mailbox } from "@/jmap/types";
+import type { Mailbox } from "@/model/jmap";
 import { outcome } from "../../server/rules/match";
 import { rulesScript } from "../../server/rules/script";
 import {

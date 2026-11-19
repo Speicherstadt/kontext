@@ -3,7 +3,7 @@
  * "Setting URL" points to http://<box>:8089/snom/{mac}.xml – its SIP account at the box, German
  * language, tones and time zone. Snom's XML settings format (snom "XML provisioning"). Pure.
  */
-import type { DeskPhone } from "../../server/phone/protocol";
+import type { DeskPhone } from "../../server/model/phone-protocol";
 import { deskEndpoint } from "./dialplan";
 
 const xml = (text: string) =>

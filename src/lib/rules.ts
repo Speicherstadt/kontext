@@ -3,7 +3,7 @@
  * missing before it can be saved, and the folder in the form Sieve finds it by. Pure; the script
  * itself is server/rules/script.ts.
  */
-import type { Mailbox } from "@/jmap/types";
+import type { Mailbox } from "@/model/jmap";
 import { m } from "@/paraglide/messages";
 import type { Rule, RuleCondition, RuleField, RuleOperator } from "../../server/rules/script";
 import { domainOf } from "./external-hint";

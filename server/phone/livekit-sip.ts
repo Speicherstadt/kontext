@@ -6,7 +6,7 @@
  * without numbers, so it is replaced rather than added. Needs Redis behind LiveKit.
  */
 import { type Fetch, type LiveKitConfig, twirpCall } from "../calls/livekit";
-import { PHONE_ROOM_PREFIX } from "./phone";
+import { PHONE_ROOM_PREFIX } from "../model/phone";
 
 export const TRUNK_NAME = "kontext-boxes";
 export const TRUNK_USER = "kontext-box";

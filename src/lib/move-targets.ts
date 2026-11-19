@@ -3,7 +3,7 @@
  * mailboxes (own account, shared ones like info@). A move within a mailbox changes the mail's
  * folder; a move into another mailbox is a copy there and a delete here (mail.ts, copyEmails).
  */
-import type { Account, Mailbox } from "@/jmap/types";
+import type { Account, Mailbox } from "@/model/jmap";
 import { flattenTree, folderTree, mailboxPath, systemMailboxes } from "./mailboxes";
 
 export type MoveTarget = { accountId: string; mailbox: Mailbox; label: string };

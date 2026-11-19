@@ -1,6 +1,6 @@
 /** What the Firmenverwaltung may send to the phone settings (admin-routes.ts). */
 import { z } from "zod";
-import { calendarDay, hoursSchema, lineSchema, MAX_BLOCKED_NUMBERS } from "./protocol";
+import { calendarDay, hoursSchema, lineSchema, MAX_BLOCKED_NUMBERS } from "../model/phone-protocol";
 
 export const lineInput = lineSchema.extend({
   /** Left empty, the stored password stays. */

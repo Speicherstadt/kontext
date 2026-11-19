@@ -4,7 +4,7 @@ import { ASSIGNMENT_NAMESPACE, type AssignmentView, assignmentConditions } from 
 import type { Snippet } from "@/lib/attachment-hit";
 import type { Comparator } from "@/lib/mail-sort";
 import { CAPABILITIES, type Invocation, type JmapClient } from "./client";
-import type { BodyPart, EmailDetail, EmailSummary, Identity, Mailbox } from "./types";
+import type { EmailDetail, EmailSummary, Identity, Mailbox } from "./types";
 
 /**
  * Every Authentication-Results header (`:all`, topmost first, RFC 8621 §4.1.3): the sender check
@@ -279,20 +279,9 @@ export const getQuota = async (client: JmapClient, accountId: string): Promise<Q
   }
 };
 
+export { displayBody } from "@/model/jmap";
 export * from "./mail-change";
 export * from "./mail-send";
-
-/** The part to display: the HTML body if there is one, else the text body as HTML. */
-export const displayBody = (email: EmailDetail): { kind: "html" | "text"; value: string } => {
-  const pick = (parts: BodyPart[]) =>
-    parts
-      .map((part) => (part.partId ? email.bodyValues[part.partId]?.value : undefined))
-      .filter(Boolean)
-      .join("\n");
-  const hasHtml = email.htmlBody.some((part) => part.type === "text/html");
-  if (hasHtml) return { kind: "html", value: pick(email.htmlBody) };
-  return { kind: "text", value: pick(email.textBody) };
-};
 
 export const isUnread = (email: Pick<EmailSummary, "keywords">): boolean => !email.keywords.$seen;
 export const isFlagged = (email: Pick<EmailSummary, "keywords">): boolean =>

@@ -3,7 +3,7 @@
  * in the inboxes, invitations waiting for an answer, today's next appointments. Nothing is stored
  * on the server; "seen" is only the moment the bell was last opened on this device.
  */
-import type { EmailSummary } from "@/jmap/types";
+import type { EmailSummary } from "@/model/jmap";
 
 /** Unread mail of the last days counts as new; older unread mail is not news any more. */
 export const NEW_MAIL_DAYS = 3;

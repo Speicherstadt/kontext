@@ -26,8 +26,8 @@ import {
   type Task,
 } from "@/lib/tasks";
 import { m } from "@/paraglide/messages";
-import type { TaskPatch } from "../../../server/tasks/tasks";
-import { companyDay, nextDue } from "../../../server/tasks/tasks";
+import type { TaskPatch } from "../../../server/model/tasks";
+import { companyDay, nextDue } from "../../../server/model/tasks";
 import { DeleteTaskButton, useDeleteTask } from "./delete-task";
 import { useBoards, useColumns, useMe, useOnMyBoards, usePeople, useTaskActions } from "./queries";
 import { TaskChecklist } from "./task-checklist";

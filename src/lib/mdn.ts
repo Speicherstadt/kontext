@@ -4,7 +4,7 @@
  * is recognised. Stalwart has no JMAP MDN (RFC 9007), so the app builds it. Pure.
  */
 
-import type { BodyStructure } from "@/jmap/types";
+import type { BodyStructure } from "@/model/jmap";
 import { fieldGroups, findPart, withoutType } from "./dsn";
 import { LOCALE } from "./locale";
 import { mailbox } from "./mime";

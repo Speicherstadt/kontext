@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
+import { encodeWav } from "../model/phone-sounds";
 import { encodeWord, faxMessage, voicemailMessage } from "./phone-mail";
-import { encodeWav } from "./sounds";
 
 const decode = (bytes: Uint8Array) => new TextDecoder().decode(bytes);
 

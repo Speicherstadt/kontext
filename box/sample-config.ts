@@ -6,7 +6,7 @@
  */
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { BoxConfig } from "../server/phone/protocol";
+import type { BoxConfig } from "../server/model/phone-protocol";
 import { extensionsConf, pjsipConf } from "./agent/asterisk-config";
 
 const sound = "a1b2c3d4e5f6a1b2c3d4e5f6";

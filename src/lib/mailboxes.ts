@@ -1,5 +1,5 @@
 /** Pure helpers for mailboxes: German names for the standard folders and the folder tree. */
-import type { Mailbox } from "@/jmap/types";
+import type { Mailbox } from "@/model/jmap";
 import { m } from "@/paraglide/messages";
 
 /** The order of the standard folders in the sidebar, by JMAP role. */

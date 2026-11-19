@@ -2,7 +2,7 @@
  * Contact groups as JSContact defines them (RFC 9553 §2.1.4, §2.1.6): a card of kind "group"
  * whose `members` map holds the `uid`s of the member cards. Stalwart stores them like any card.
  */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 import { type ContactCard, fullName, primaryEmail, sortKey } from "./jscontact";
 
 export const isGroup = (card: ContactCard): boolean => card.kind === "group";

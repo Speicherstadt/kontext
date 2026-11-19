@@ -20,8 +20,8 @@ import { createBoxFiles } from "../box/agent/files";
 import { pair } from "../box/agent/link";
 import type { PbxEvents } from "../box/agent/pbx";
 import { runBox } from "../box/agent/run";
-import type { BoxConfig, ToBox } from "../server/phone/protocol";
-import { encodeWav } from "../server/phone/sounds";
+import type { BoxConfig, ToBox } from "../server/model/phone-protocol";
+import { encodeWav } from "../server/model/phone-sounds";
 
 const { values: args } = parseArgs({
   options: {

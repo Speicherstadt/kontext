@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { BodyPart } from "@/jmap/types";
+import type { BodyPart } from "@/model/jmap";
 import { savedBlobs, withSavedBlob } from "./draft-blobs";
 
 const part = (blobId: string, cid: string | null, name = "x"): BodyPart => ({

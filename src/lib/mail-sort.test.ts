@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { EmailSummary } from "@/jmap/types";
+import type { EmailSummary } from "@/model/jmap";
 import {
   compareMails,
   DEFAULT_SORT,

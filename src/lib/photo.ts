@@ -2,7 +2,7 @@
  * Pictures of people: the square a photo is cut to, and which contact photos the app shows.
  * Pure; the drawing is in features/photos/make-photo.ts.
  */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 import { fromSender } from "./sender-check";
 
 /** Side of a profile or contact photo: sharp at the largest avatar (72 px) on a 3× screen. */

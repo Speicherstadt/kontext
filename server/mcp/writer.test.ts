@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from "vitest";
 import type { JmapClient } from "@/jmap/client";
-import type { Identity } from "@/jmap/types";
+import type { Identity } from "@/model/jmap";
 import type { AccountInfo, Reader } from "./reader";
 import {
   appointmentForm,

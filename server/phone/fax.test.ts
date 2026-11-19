@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
+import { faxCall } from "../model/phone";
 import { createFaxes, isPdf } from "./fax";
-import { faxCall } from "./phone";
 import type { PhoneSettings } from "./store";
 
 const call = faxCall(

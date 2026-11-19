@@ -3,7 +3,7 @@
  * recipients (Sent, Drafts), else the sender – of a conversation shown as one line, its latest
  * mail's. Pure; the picture itself comes from features/photos (`usePhotoOf`).
  */
-import type { EmailSummary } from "@/jmap/types";
+import type { EmailSummary } from "@/model/jmap";
 import { displayName } from "./format";
 import { mailSenderKey, type PhotoKey } from "./photo";
 

@@ -1,5 +1,5 @@
 /** Parsing what people type into the To/Cc fields, and building reply recipients. */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 
 const EMAIL = /^[^\s@<>,;]+@[^\s@<>,;]+\.[^\s@<>,;]+$/;
 

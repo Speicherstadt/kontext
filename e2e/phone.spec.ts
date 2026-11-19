@@ -1,6 +1,6 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import { type Browser, expect, type Page, test } from "@playwright/test";
-import { encodeWav } from "../server/phone/sounds";
+import { encodeWav } from "../server/model/phone-sounds";
 import { login } from "./helpers";
 
 /**

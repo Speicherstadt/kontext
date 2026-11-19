@@ -1,15 +1,15 @@
 /**
  * Phone calls as the app shows them: whose number it is (from the address books), how a call
- * ended, and numbers in a readable form. Pure; what a call is: server/phone/phone.ts.
+ * ended, and numbers in a readable form. Pure; what a call is: server/model/phone.ts.
  */
 import { m } from "@/paraglide/messages";
-import { readableNumber as readable, toE164 } from "../../server/phone/numbers";
 import {
   type PhoneCall,
   type RingPlan,
   ringingFor,
   withoutUnavailable,
-} from "../../server/phone/phone";
+} from "../../server/model/phone";
+import { readableNumber as readable, toE164 } from "../../server/model/phone-numbers";
 import type { ContactCard } from "./jscontact";
 
 export type { PhoneCall, RingPlan };

@@ -2,8 +2,9 @@
  * A mail shared as a copy in the chat: what it holds (who, when, the body) and which of its
  * attachments go along – for colleagues who cannot open the mailbox. Pure.
  */
-import { displayBody } from "@/jmap/mail";
-import type { BodyPart, EmailDetail } from "@/jmap/types";
+
+import type { BodyPart, EmailDetail } from "@/model/jmap";
+import { displayBody } from "@/model/jmap";
 import type { MailCopy } from "../../server/chat/chat";
 import { MAX_FILE_BYTES, MAX_FILES } from "../../server/chat/chat";
 import { fullAddress } from "./format";
