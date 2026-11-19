@@ -25,7 +25,7 @@ No per-seat pricing. Made in Europe.
 [Development](#development) •
 [Deutsch](README.de.md)
 
-▶️ **[Watch the film (2 min)](https://kontext.email/en/)** · 🖱️ **[Try the demo](https://kontext.email/demo/)** – in your browser, nothing to install
+🖱️ **[Try the demo](https://kontext.email/demo/)** – in your browser, nothing to install
 
 </div>
 
@@ -129,6 +129,9 @@ Then set up Stalwart (domain, DKIM, the boss's account) and register Kontext the
 command. These steps, DNS, telephony, backups and updates are in the
 [installation guide](https://kontext.email/en/installation.html); for a fresh server see
 [setting up a VPS](https://kontext.email/en/vps.html).
+
+No server or IT of your own? Kontext is available hosted or through an IT service provider from the
+[partner programme](https://speicherstadt.app/en/partner/).
 
 ## FAQ
 
@@ -248,15 +251,15 @@ Every feature above links its page; besides:
 
 ## Development
 
-[![JMAP](https://img.shields.io/badge/JMAP-mail%20%7C%20calendar%20%7C%20contacts-0f766e)](https://jmap.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Bun](https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white)](https://bun.sh)
+[![Hono](https://img.shields.io/badge/Hono-e36002?logo=hono&logoColor=white)](https://hono.dev)
 [![React](https://img.shields.io/badge/React-149eca?logo=react&logoColor=white)](https://react.dev)
 [![TanStack](https://img.shields.io/badge/TanStack-Router%20%7C%20Query-ff4154?logo=reactquery&logoColor=white)](https://tanstack.com)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06b6d4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Vite](https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white)](https://vite.dev)
-[![Hono](https://img.shields.io/badge/Hono-e36002?logo=hono&logoColor=white)](https://hono.dev)
 [![SQLite](https://img.shields.io/badge/SQLite-Drizzle-003b57?logo=sqlite&logoColor=white)](https://orm.drizzle.team)
+[![JMAP](https://img.shields.io/badge/JMAP-mail%20%7C%20calendar%20%7C%20contacts-0f766e)](https://jmap.io)
 
 Needs [Bun](https://bun.sh) 1.4 and Linux or macOS (Windows through WSL).
 
@@ -298,7 +301,8 @@ request is in [CONTRIBUTING.md](CONTRIBUTING.md).
 [Report a bug](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) &nbsp;·&nbsp; [Request a feature](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
 <sub>License: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel and contributors · <a href="README.de.md">Deutsche Version</a><br>
-Changed versions you pass on or run for others must offer their source code under the AGPL. For IT service providers: partnership with a direct line to the developers, plus setup and support via <a href="https://teufel-it.de">teufel-it.de</a>.<br>
+Changed versions you pass on or run for others must offer their source code under the AGPL.<br>
+For IT service providers and hosters: <a href="https://speicherstadt.app/en/partner/">partner programme</a>.<br>
 Kontext is no legal advice: data protection and retention duties are up to the company, the software helps with them.<br>
 Kontext is not affiliated with Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic or the makers of the other products named here; the names are trademarks of their owners.</sub>
 

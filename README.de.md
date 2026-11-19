@@ -25,7 +25,7 @@ Ohne Kosten pro Benutzer. Made in Europe.
 [Entwicklung](#entwicklung) •
 [English](README.md)
 
-▶️ **[Film ansehen (2 Min.)](https://kontext.email/)** · 🖱️ **[Demo ausprobieren](https://kontext.email/demo/)** – im Browser, ohne Installation
+🖱️ **[Demo ausprobieren](https://kontext.email/demo/)** – im Browser, ohne Installation
 
 </div>
 
@@ -130,6 +130,9 @@ Danach Stalwart einrichten (Domain, DKIM, das Konto des Chefs) und Kontext mit e
 eintragen. Diese Schritte, DNS, Telefonie, Backups und Updates stehen in der
 [Installationsanleitung](https://kontext.email/installation.html); für einen frischen Server
 gibt es die Seite [VPS einrichten](https://kontext.email/vps.html).
+
+Keinen eigenen Server oder keine eigene IT? Kontext gibt es gehostet oder über einen IT-Dienstleister
+aus dem [Partnerprogramm](https://speicherstadt.app/partner/).
 
 ## FAQ
 
@@ -251,15 +254,15 @@ Jede Funktion oben verlinkt ihre Seite; dazu kommen:
 
 ## Entwicklung
 
-[![JMAP](https://img.shields.io/badge/JMAP-mail%20%7C%20calendar%20%7C%20contacts-0f766e)](https://jmap.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Bun](https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white)](https://bun.sh)
+[![Hono](https://img.shields.io/badge/Hono-e36002?logo=hono&logoColor=white)](https://hono.dev)
 [![React](https://img.shields.io/badge/React-149eca?logo=react&logoColor=white)](https://react.dev)
 [![TanStack](https://img.shields.io/badge/TanStack-Router%20%7C%20Query-ff4154?logo=reactquery&logoColor=white)](https://tanstack.com)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06b6d4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Vite](https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white)](https://vite.dev)
-[![Hono](https://img.shields.io/badge/Hono-e36002?logo=hono&logoColor=white)](https://hono.dev)
 [![SQLite](https://img.shields.io/badge/SQLite-Drizzle-003b57?logo=sqlite&logoColor=white)](https://orm.drizzle.team)
+[![JMAP](https://img.shields.io/badge/JMAP-mail%20%7C%20calendar%20%7C%20contacts-0f766e)](https://jmap.io)
 
 Benötigt [Bun](https://bun.sh) 1.4 und Linux oder macOS (Windows über WSL).
 
@@ -301,7 +304,8 @@ Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 [Fehler melden](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) &nbsp;·&nbsp; [Idee vorschlagen](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
 <sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende · <a href="README.md">English version</a><br>
-Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten. Für IT-Dienstleister: Partnerschaft mit direktem Draht zur Entwicklung, dazu Einrichtung und Support über <a href="https://teufel-it.de">teufel-it.de</a>.<br>
+Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten.<br>
+Für IT-Dienstleister und Hoster: <a href="https://speicherstadt.app/partner/">Partnerprogramm</a>.<br>
 Kontext ist keine Rechtsberatung: Datenschutz und Aufbewahrungspflichten setzt die Firma um, die Software unterstützt dabei.<br>
 Kontext steht in keiner Verbindung zu Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic oder den Anbietern der übrigen hier genannten Produkte; die Namen sind Marken ihrer Inhaber.</sub>
 
