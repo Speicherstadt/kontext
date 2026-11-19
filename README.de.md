@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>Kontext – deine eigene Alternative zu Google Workspace und Microsoft 365</h1>
+<h1>Kontext: deine eigene Alternative zu Google Workspace und Microsoft 365</h1>
 
 <a href="https://kontext.email/"><img src="docs/assets/kontext-teaser.de.webp" alt="Kontext in Bewegung: alle Module auf einen Blick, der Posteingang mit PDF-Vorschau, ein Videoanruf vom Laptop aufs Handy, Word im Browser mit Kommentaren und ein KI-Agent, der einen Kunden nachschlägt und einen Entwurf hinterlegt" width="900"></a>
 
@@ -9,25 +9,24 @@ Ohne Kosten pro Benutzer. Made in Europe.
 
 [![CI](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml/badge.svg)](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Speicherstadt/kontext?logo=github&label=release)](https://github.com/Speicherstadt/kontext/releases/latest)
-[![Docker Pulls](https://img.shields.io/docker/pulls/tristanteu/kontext?logo=docker&logoColor=white)](https://hub.docker.com/r/tristanteu/kontext)
-[![Docs](https://img.shields.io/badge/docs-kontext.email-4f46e5?logo=materialformkdocs&logoColor=white)](https://kontext.email/)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-kontext.email-4f46e5?logo=materialformkdocs&logoColor=white)](https://kontext.email/)
 [![Stalwart 1.1](https://img.shields.io/badge/Stalwart-1.1-18181b)](https://stalw.art)
+[![Docker Pulls](https://img.shields.io/docker/pulls/tristanteu/kontext?logo=docker&logoColor=white)](https://hub.docker.com/r/tristanteu/kontext)
 
-[Warum](#-warum-kontext) •
-[Installation](#-installation) •
-[Funktionen](#-funktionen) •
-[Screenshots](#-screenshots) •
-[Alternativen](#-kontext-und-die-alternativen) •
-[FAQ](#-faq) •
+[Warum?](#warum-kontext) •
+[Funktionen](#funktionen) •
+[Schnellstart](#schnellstart) •
+[FAQ](#faq) •
 [Dokumentation](https://kontext.email/) •
+[Entwicklung](#entwicklung) •
 [English](README.md)
 
 ▶️ **[Film ansehen (2 Min.)](https://kontext.email/)** · 🖱️ **[Demo ausprobieren](https://kontext.email/demo/)** – im Browser, ohne Installation
 
 </div>
 
-## 💡 Warum Kontext?
+## Warum Kontext?
 
 Google Workspace und Microsoft 365 sind bequem, aber jeder Benutzer kostet jeden Monat, und die
 Daten liegen bei einem US-Konzern. Kontext fühlt sich im Browser und am Handy genauso an, läuft
@@ -48,31 +47,7 @@ oder einem eigenen Rechner.
 - **Offen, kein Lock-in**: Open Source (AGPL) und Standardprotokolle, damit Outlook, Thunderbird,
   iPhone und Android weiter funktionieren und du jederzeit alles mitnehmen kannst.
 
-## 🚀 Installation
-
-Du brauchst einen Server (amd64 oder arm64) mit Docker oder Podman, eine eigene Domain und offene
-Ports für Mail und Web (25, 80, 443, 465, 587, 993). Für zehn Benutzer reicht ein VPS mit 2 vCPU
-und 4 GB RAM.
-
-**Mit einem Agenten:** Gib Claude Code oder einem anderen Coding-Agenten dieses Repository und
-SSH-Zugang zu deinem Server und sag: „Setz Kontext auf meinem Server auf, nach der
-[Installationsanleitung](https://kontext.email/installation.html).“
-
-**Von Hand:**
-
-```bash
-git clone https://github.com/Speicherstadt/kontext /opt/kontext && cd /opt/kontext
-cp deploy/.env.example deploy/.env && chmod 600 deploy/.env
-nano deploy/.env                              # Domain, Version, Backup-Ziel, jedes change-me ersetzen
-docker compose -f deploy/compose.yaml up -d   # lädt Kontext, Stalwart und Caddy und startet sie
-```
-
-Danach Stalwart einrichten (Domain, DKIM, das Konto des Chefs) und Kontext mit einem Befehl dort
-eintragen. Diese Schritte, DNS, Telefonie, Backups und Updates stehen in der
-[Installationsanleitung](https://kontext.email/installation.html); für einen frischen Server
-gibt es die Seite [VPS einrichten](https://kontext.email/vps.html).
-
-## ✨ Funktionen
+## Funktionen
 
 Kurz je Bereich; die Details stehen auf der verlinkten Seite der [Dokumentation](https://kontext.email/ueberblick.html).
 
@@ -91,7 +66,7 @@ Kurz je Bereich; die Details stehen auf der verlinkten Seite der [Dokumentation]
 | 📱 [Auf jedem Gerät](https://kontext.email/app.html) | App ohne App Store, Push-Benachrichtigungen, Passkeys, hell und dunkel |
 | ♿ [Barrierefreiheit](https://kontext.email/accessibility.html) | Alles per Tastatur, bei jedem Push gegen WCAG 2.2 AA geprüft |
 
-## 📸 Screenshots
+## Screenshots
 
 <table>
   <tr>
@@ -117,7 +92,7 @@ Kurz je Bereich; die Details stehen auf der verlinkten Seite der [Dokumentation]
 
 Mehr Bilder, gemacht zum Weiterschicken an Kunden, im [Rundgang](https://kontext.email/).
 
-## 🔀 Kontext und die Alternativen
+## Kontext und die Alternativen
 
 | | Was es ist | Was Kontext anders macht |
 | --- | --- | --- |
@@ -127,7 +102,33 @@ Mehr Bilder, gemacht zum Weiterschicken an Kunden, im [Rundgang](https://kontext
 | [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | Groupware für Provider und größere Firmen | ein kleiner Server pro Firma, an einem Nachmittag eingerichtet |
 | [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | Telefonanlagen mit CTI-Apps | Fritzbox und Nummern bleiben, keine Lizenz pro Nebenstelle |
 
-## ❓ FAQ
+## Schnellstart
+
+Du brauchst einen Server (amd64 oder arm64) mit Docker oder Podman, eine eigene Domain und offene
+Ports für Mail und Web (25, 80, 443, 465, 587, 993). Für zehn Benutzer reicht ein VPS mit 2 vCPU
+und 4 GB RAM.
+
+### 1. Von einem Agenten aufsetzen lassen
+
+Gib Claude Code oder einem anderen Coding-Agenten dieses Repository und
+SSH-Zugang zu deinem Server und sag: „Setz Kontext auf meinem Server auf, nach der
+[Installationsanleitung](https://kontext.email/installation.html).“
+
+### 2. Manuell
+
+```bash
+git clone https://github.com/Speicherstadt/kontext /opt/kontext && cd /opt/kontext
+cp deploy/.env.example deploy/.env && chmod 600 deploy/.env
+nano deploy/.env                              # Domain, Version, Backup-Ziel, jedes change-me ersetzen
+docker compose -f deploy/compose.yaml up -d   # lädt Kontext, Stalwart und Caddy und startet sie
+```
+
+Danach Stalwart einrichten (Domain, DKIM, das Konto des Chefs) und Kontext mit einem Befehl dort
+eintragen. Diese Schritte, DNS, Telefonie, Backups und Updates stehen in der
+[Installationsanleitung](https://kontext.email/installation.html); für einen frischen Server
+gibt es die Seite [VPS einrichten](https://kontext.email/vps.html).
+
+## FAQ
 
 <details>
 <summary><b>Für wen ist Kontext gedacht?</b></summary>
@@ -233,7 +234,7 @@ Stalwart. Wie gebaut und getestet wird, steht unter
 [Entwicklung](https://kontext.email/development.html).
 </details>
 
-## 📚 Dokumentation
+## Dokumentation
 
 Alles im Detail, mit Suche: **[kontext.email](https://kontext.email/)** ([English](https://kontext.email/en/)).
 Jede Funktion oben verlinkt ihre Seite; dazu kommen:
@@ -245,7 +246,7 @@ Jede Funktion oben verlinkt ihre Seite; dazu kommen:
   [Entwicklung](https://kontext.email/development.html), [Changelog](CHANGELOG.md) (Englisch) und
   [Roadmap](ROADMAP.de.md)
 
-## 🛠️ Entwicklung
+## Entwicklung
 
 [![JMAP](https://img.shields.io/badge/JMAP-mail%20%7C%20calendar%20%7C%20contacts-0f766e)](https://jmap.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -269,15 +270,24 @@ Anmelden als `jonas@weber-haustechnik.test` / `kaffee-werkbank-kontext` (der Che
 Firmenverwaltung); `anna@`, `sandra@` und `max@` haben dasselbe Passwort. Aufbau, Tests und
 Releases: [Entwicklung](https://kontext.email/development.html).
 
-## 🧩 Mehr von uns
+## Mehr von uns
 
 Weitere Open-Source-Apps für deinen eigenen Server, etwa für Buchhaltung, Office-Dokumente, ein Dokumentenarchiv und mehr: **[speicherstadt.app](https://speicherstadt.app)**
 
-## 🤝 Mitwirken
+## Mitwirken
 
 Fehler und Ideen gern als Issue, mit dem [Formular für Fehlerberichte](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml).
 Sicherheitslücken bitte vertraulich melden, siehe [SECURITY.md](SECURITY.md). Was vor einem Pull
 Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Sterne im Verlauf
+
+<a href="https://www.star-history.com/#Speicherstadt/kontext&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Speicherstadt/kontext&type=Date&theme=dark">
+    <img alt="Verlauf der GitHub-Sterne von Kontext" src="https://api.star-history.com/svg?repos=Speicherstadt/kontext&type=Date">
+  </picture>
+</a>
 
 ---
 
