@@ -144,7 +144,7 @@ The server stores in SQLite (by default `.dev/server/kontext.db`) everything tha
 Stalwart: sessions and the encrypted Stalwart tokens, the company's settings, moves and other
 mailboxes, categories, tasks, the chat, web push subscriptions, snippets, follow-ups, keys and
 certificates for PGP and S/MIME, confidentially sent mails, telephony, the folders in Documents,
-and the agents' keys and log. The schema is in `server/db/schema.ts`; after a change, run
+and the agents' keys and log. The schema is in `server/db/schema/` (one file per area); after a change, run
 `bunx drizzle-kit generate` – the server applies the migrations on start.
 
 ## Test data { #testdaten }
@@ -180,7 +180,7 @@ tests don't – they expect an empty chat and empty tasks, and their seed
 The [demo](https://kontext.email/demo/) is the app without a server: a build of
 its own (`bun run build:demo`, Vite mode `demo`, to `dist-demo/`) answers the requests to `/jmap`
 and `/api` inside the page itself (`src/demo/`). The data is the test data from
-`dev/seed-data.ts` without the XSS test mail, as JMAP objects in the browser; reloading starts
+`dev/seed-data.ts` and `dev/seed-pim.ts` without the XSS test mail, as JMAP objects in the browser; reloading starts
 over. You sign in with one click as Jonas, Anna, Sandra or Max.
 
 - **What works:** mail – folders, shared mailboxes, reading with attachments and PDF preview,

@@ -85,8 +85,8 @@ split it past ~400 lines, a function past ~80. A refactor changes no behaviour.
 - The demo (`src/demo/`, `bun run build:demo`, on GitHub Pages under `/demo/` of kontext.email) is the app
   without a server: it answers `/jmap` and `/api` in the page from the seed. A new `/api` route the
   app asks for on start needs an answer in `src/demo/api.ts`.
-- Test data: `dev/seed-data.ts` ("Weber Haustechnik"). Logins `jonas@`, `anna@`, `sandra@`,
-  `max@weber-haustechnik.test`, password `kaffee-werkbank-kontext` (`dev/config.ts`). Shared
-  mailboxes `info@` and `rechnung@`.
+- Test data: `dev/seed-data.ts` (mails) and `dev/seed-pim.ts` (contacts, appointments), "Weber
+  Haustechnik". Logins `jonas@`, `anna@`, `sandra@`, `max@weber-haustechnik.test`, password
+  `kaffee-werkbank-kontext` (`dev/config.ts`). Shared mailboxes `info@` and `rechnung@`.
 - Screen sizes: desktop from `md` (768 px) with list + pane, sidebar from `lg`; phones get one
   screen at a time, chosen by the URL, and the tab bar.

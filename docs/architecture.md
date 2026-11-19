@@ -47,7 +47,9 @@ flowchart LR
   antwortet. Was mit dem Sitzungs-Cookie etwas ändert (POST, PUT, PATCH, DELETE), muss von
   Kontexts eigenen Seiten kommen (`Sec-Fetch-Site`, sonst `Origin`; `server/csrf.ts`) – sonst
   könnte eine Seite unter derselben Domain, etwa Schreibzeug, mit dem Cookie Anfragen schicken.
-  Kein fremder Rahmen darf Kontext zeigen (`frame-ancestors 'self'`).
+  Kein fremder Rahmen darf Kontext zeigen (`frame-ancestors 'self'`). `server/app.ts` setzt den
+  Server zusammen; die Teile (Anmeldung, Firmenverwaltung, Anrufe, Aufgaben, Agenten …) verdrahtet
+  je eine Datei in `server/wiring/`.
 - **Caddy** holt das Zertifikat und leitet alles an den Server weiter, CalDAV/CardDAV für
   Mailprogramme direkt an Stalwart (`/dav/cal`, `/dav/card` …, `/.well-known/caldav` und
   `carddav`); der Rest von `/dav` sind Kontexts Aufgabenlisten. Unter `mta-sts.<domain>` liefert
@@ -797,7 +799,7 @@ das Manifest steht in `vite.config.ts`, der Service Worker in `src/sw/service-wo
   nach dem ersten Gebrauch im Browser-Cache).
 - **Brotli.** `bun run build` legt neben jede Text-Datei eine `.br` und eine `.gz`
   (`dev/precompress.ts`); der Server gibt die, die der Browser nimmt (`precompressed` in
-  `server/app.ts`), Caddy reicht sie unverändert weiter. Caddy selbst kann kein Brotli und
+  `server/wiring/static.ts`), Caddy reicht sie unverändert weiter. Caddy selbst kann kein Brotli und
   Safari kein zstd; JMAP-Antworten komprimiert Caddy wie bisher mit zstd oder gzip.
 - **Als Mailprogramm:** `mailto:`-Links öffnen eine neue Mail in Kontext – in der installierten
   App über das Manifest (`protocol_handlers`), im Browser über *Einstellungen → Darstellung →
@@ -2614,10 +2616,10 @@ die Person selbst es nicht darf, als das Postfach frei, in dem sie arbeitet. Ohn
 
 **Abmelden, Sperren und Austritt.** Schreibzeug fragt Kontext nach der Anmeldung nicht mehr; seine
 Sitzung hielte sonst weiter. Wer sich in Kontext abmeldet, wird deshalb vom Server aus auch in
-Dokumente abgemeldet (`POST /api/auth/sign-out` in `server/app.ts`), auch wenn der Rahmen seit dem
+Dokumente abgemeldet (`POST /api/auth/sign-out` in `server/wiring/sign-in.ts`), auch wenn der Rahmen seit dem
 Neuladen nicht offen war und seine Nachricht `logout` niemanden erreicht hätte. Wo die Firmenverwaltung Kontexts Sitzungen beendet (Sperren, Austritt, neues
 Passwort), beendet Kontexts Server deshalb auch die in Dokumente (`DELETE /api/sessions` mit dem
-Token der Person, `endSessionsOf` in `server/app.ts`); wer dort kein Konto hat, bekommt keins.
+Token der Person, `endSessionsOf` in `server/wiring/sign-in.ts`); wer dort kein Konto hat, bekommt keins.
 
 ## Agenten (MCP)
 
@@ -2710,7 +2712,7 @@ der Person, die ihn verbunden hat (`server/mcp/`).
   `server/mcp/attempts.ts`), damit ein offen gelassener, angemeldeter Browser kein Weg ist,
   Passwort oder Code zu erraten.
 - **Discovery und Caddy:** Die beiden `/.well-known/oauth-*`-Pfade liegen auf der Wurzel und gehen
-  an Better Auth (`server/app.ts`); Caddy gibt sie Kontext statt Stalwart (`deploy/Caddyfile`).
+  an Better Auth (`server/wiring/agents.ts`); Caddy gibt sie Kontext statt Stalwart (`deploy/Caddyfile`).
 
 ### Assistent im Chat
 

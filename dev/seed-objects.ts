@@ -4,7 +4,7 @@
  * in the browser. Dates are relative to `now`, so they are near whenever the seed runs.
  */
 import { DEV_DOMAIN } from "./config";
-import type { SeedContact, SeedContactGroup, SeedEvent } from "./seed-data";
+import type { SeedContact, SeedContactGroup, SeedEvent } from "./seed-pim";
 
 /** Local date-time in Europe/Berlin for "today + days" at "HH:MM", as JSCalendar LocalDateTime. */
 export const localStart = (days: number, time: string, now = Date.now()): string => {

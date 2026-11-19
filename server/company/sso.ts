@@ -13,7 +13,7 @@
  * - the provider's SCIM token: an API key of the Kontext server's own account that may do only
  *   what SCIM needs (Permission::ScimAccess and the account rights crates/scim/src checks).
  *
- * Rights: sysDirectory*, sysDomainUpdate, scimAccess (stalwart-setup.ts, SSO_RIGHTS).
+ * Rights: sysDirectory*, sysDomainUpdate, scimAccess (stalwart-rights.ts, SSO_RIGHTS).
  */
 import { firstError, type Invocation, type SetResult } from "./management";
 
