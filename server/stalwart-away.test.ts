@@ -10,13 +10,7 @@ vi.mock("./db", async () => ({
   schema: { ...(await import("./db/schema")), ...(await import("./db/oauth-schema")) },
 }));
 
-vi.mock("hono/bun", () => ({
-  serveStatic: () => async () => undefined,
-  createBunWebSocket: () => ({ websocket: {}, upgradeWebSocket: () => async () => undefined }),
-}));
-vi.stubGlobal("Bun", { file: () => null });
-
-const { createJmapProxy } = await import("./app");
+const { createJmapProxy } = await import("./jmap-proxy");
 
 /** One stored grant whose access token has run out (or runs out in `expiresIn` ms). */
 const fakeDb = (expiresIn = -1000) => {

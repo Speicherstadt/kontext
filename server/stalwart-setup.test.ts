@@ -2,20 +2,22 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Invocation } from "./company/management";
 import {
+  KONTEXT_SERVER_RIGHTS,
+  PASSKEY_RIGHTS,
+  PASSKEY_RIGHTS_HINT,
+  passkeyRightsMessage,
+  type Role,
+} from "./stalwart-rights";
+import {
   type Account,
   accountPlan,
   directoryQueriesPlan,
   ensureRole,
   ensureServerAccount,
   hasApiKey,
-  KONTEXT_SERVER_RIGHTS,
   oauthClientPlan,
-  PASSKEY_RIGHTS,
-  PASSKEY_RIGHTS_HINT,
-  passkeyRightsMessage,
   pickDomain,
   type Request,
-  type Role,
   rolePlan,
 } from "./stalwart-setup";
 

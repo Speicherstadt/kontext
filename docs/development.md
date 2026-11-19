@@ -142,7 +142,7 @@ liegt: Sitzungen und die verschlüsselten Stalwart-Tokens, Einstellungen der Fir
 weitere Postfächer, Kategorien, Aufgaben, den Chat, Web-Push-Anmeldungen, Textbausteine,
 Wiedervorlagen, Schlüssel und Zertifikate für PGP und S/MIME, vertraulich gesendete Mails, die
 Telefonie, die Ordner in Dokumente und die Schlüssel und das Protokoll der Agenten. Das Schema
-steht in `server/db/schema.ts`; nach einer Änderung `bunx drizzle-kit generate` – der Server
+steht in `server/db/schema/` (eine Datei pro Bereich); nach einer Änderung `bunx drizzle-kit generate` – der Server
 spielt die Migrationen beim Start ein.
 
 ## Testdaten
@@ -177,8 +177,8 @@ Seed (`dev/stalwart.ts --seed`) füllt nur Stalwart.
 Die [Demo](https://kontext.email/demo/) ist die App ohne Server: Ein eigener Build
 (`bun run build:demo`, Vite-Modus `demo`, nach `dist-demo/`) beantwortet die Anfragen an `/jmap`
 und `/api` in der Seite selbst (`src/demo/`). Die Daten sind die Testdaten aus `dev/seed-data.ts`
-ohne die XSS-Testmail, als JMAP-Objekte im Browser; Neu laden fängt von vorn an. Man meldet sich
-mit einem Klick als Jonas, Anna, Sandra oder Max an.
+und `dev/seed-pim.ts` ohne die XSS-Testmail, als JMAP-Objekte im Browser; Neu laden fängt von vorn
+an. Man meldet sich mit einem Klick als Jonas, Anna, Sandra oder Max an.
 
 - **Was geht:** Mail – Ordner, gemeinsame Postfächer, Lesen mit Anhängen und PDF-Vorschau,
   Suchen, Markieren, Kategorien, Verschieben (auch zwischen Postfächern), Entwürfe und Senden mit

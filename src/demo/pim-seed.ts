@@ -4,8 +4,9 @@
  * crates/registry/src/schema/structs_impl.rs). The events and cards are dev/seed-objects.ts's;
  * colleagues invited to an event have it in their calendar too, waiting for their answer.
  */
-import { contactGroups, contacts, events } from "../../dev/seed-data";
+
 import { calendarEvent, contactCard, groupCard } from "../../dev/seed-objects";
+import { contactGroups, contacts, events } from "../../dev/seed-pim";
 import { inviteColleagues } from "./events";
 import type { Store, StoredObject } from "./store";
 

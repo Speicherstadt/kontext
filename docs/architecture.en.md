@@ -48,7 +48,9 @@ flowchart LR
   answer. Anything that changes something with the session cookie (POST, PUT, PATCH, DELETE) must
   come from Kontext's own pages (`Sec-Fetch-Site`, otherwise `Origin`; `server/csrf.ts`) – or a
   page under the same domain, Schreibzeug for instance, could send requests with the cookie.
-  No other frame may show Kontext (`frame-ancestors 'self'`).
+  No other frame may show Kontext (`frame-ancestors 'self'`). `server/app.ts` puts the server
+  together; each part (sign-in, Firmenverwaltung, calls, tasks, agents …) is wired by a file of its
+  own in `server/wiring/`.
 - **Caddy** gets the certificate and forwards everything to the server, CalDAV/CardDAV for mail
   programs straight to Stalwart (`/dav/cal`, `/dav/card` …, `/.well-known/caldav` and
   `carddav`); the rest of `/dav` is Kontext's task lists. Under `mta-sts.<domain>` it serves
@@ -776,7 +778,7 @@ in `vite.config.ts`, the service worker in `src/sw/service-worker.ts`.
   for Cyrillic and Vietnamese are not (they sit in the browser cache after first use).
 - **Brotli.** `bun run build` puts a `.br` and a `.gz` next to every text file
   (`dev/precompress.ts`); the server serves the one the browser accepts (`precompressed` in
-  `server/app.ts`), and Caddy passes it on unchanged. Caddy itself cannot do Brotli and Safari
+  `server/wiring/static.ts`), and Caddy passes it on unchanged. Caddy itself cannot do Brotli and Safari
   cannot do zstd; Caddy compresses JMAP responses with zstd or gzip as before.
 - **As the mail program:** `mailto:` links open a new mail in Kontext – in the installed app through
   the manifest (`protocol_handlers`), in the browser through *Settings → Appearance → Use as email
@@ -2543,10 +2545,10 @@ mailbox folders.
 
 **Signing out, locking and leaving.** Schreibzeug does not ask Kontext again after the sign-in; its
 session would otherwise carry on. So whoever signs out of Kontext is also signed out of Documents
-from the server (`POST /api/auth/sign-out` in `server/app.ts`), even if the frame has not been open
+from the server (`POST /api/auth/sign-out` in `server/wiring/sign-in.ts`), even if the frame has not been open
 since the last reload and its `logout` message would have reached nobody. Wherever the company admin
 ends Kontext's sessions (locking, leaving, new password), Kontext's server therefore ends those in
-Documents too (`DELETE /api/sessions` with the person's token, `endSessionsOf` in `server/app.ts`);
+Documents too (`DELETE /api/sessions` with the person's token, `endSessionsOf` in `server/wiring/sign-in.ts`);
 whoever has no account there does not get one.
 
 ## Agents (MCP) { #agenten-mcp }
@@ -2638,7 +2640,7 @@ rights of the person who connected it (`server/mcp/`).
   per person against the same limit as the sign-in (`SIGN_IN_PER_MINUTE`, `server/mcp/attempts.ts`),
   so that a browser left open and signed in is no way to guess password or code.
 - **Discovery and Caddy:** the two `/.well-known/oauth-*` paths are at the root and go to Better Auth
-  (`server/app.ts`); Caddy gives them to Kontext instead of Stalwart (`deploy/Caddyfile`).
+  (`server/wiring/agents.ts`); Caddy gives them to Kontext instead of Stalwart (`deploy/Caddyfile`).
 
 ### Assistant in the chat { #assistent-im-chat }
 

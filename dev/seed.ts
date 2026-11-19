@@ -13,17 +13,9 @@ import { createManagement, createRequest } from "../server/company/management";
 import { assertSetOk, CAPABILITIES, createJmapClient, type JmapClient } from "../src/jmap/client";
 import { DEV_DOMAIN, DEV_PASSWORD, STALWART_ADMIN } from "./config";
 import { buildMessage } from "./mime";
-import {
-  contactGroups,
-  contacts,
-  events,
-  folders,
-  groups,
-  mails,
-  type SeedMail,
-  users,
-} from "./seed-data";
+import { folders, groups, mails, type SeedMail, users } from "./seed-data";
 import { calendarEvent, contactCard, groupCard } from "./seed-objects";
+import { contactGroups, contacts, events } from "./seed-pim";
 
 const ADMIN_USING = [CAPABILITIES.core, CAPABILITIES.stalwart];
 
