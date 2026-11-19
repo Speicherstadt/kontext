@@ -1,6 +1,7 @@
 # Documentation as a website: https://kontext.email/
-# Source is docs/, built with MkDocs Material (.github/workflows/docs.yml publishes it).
-# Locally: pip install -r requirements-docs.txt && mkdocs serve
+# Source is docs/, built with Zensical, the successor of MkDocs Material, which reads this file as
+# it is (https://zensical.org/docs/setup/basics/); .github/workflows/docs.yml publishes it.
+# Locally: pip install -r requirements-docs.txt && zensical serve
 # German only. The English pages that were under /en/ redirect to the German ones (redirects below).
 site_name: Kontext
 site_description: >-
@@ -56,10 +57,12 @@ plugins:
   # No requests to Google Fonts or CDNs from the reader's browser: the fonts and Mermaid are
   # downloaded at build time and served from the site (cache in .cache/). The Schreibzeug
   # screenshots stay on schreibzeug.app, GitHub Pages like this site: the plugin can't fetch
-  # images with #only-light/#only-dark (it asks for the URL with the fragment, a 404)
+  # images with #only-light/#only-dark (it asks for the URL with the fragment, a 404). The video
+  # player of the image gallery brings an ad SDK; the docs have no videos.
   - privacy:
       assets_exclude:
         - schreibzeug.app/*
+        - cdn.plyr.io/*
   # The English pages that were under /en/ until the docs became German only: links shared
   # before keep working and land on the German page
   - redirects:
@@ -83,12 +86,10 @@ plugins:
         en/telephony.md: telephony.md
         en/ueberblick.md: ueberblick.md
         en/vps.md: vps.md
-  # "Letztes Update" under every page, from the last commit of its file (the docs workflow checks
-  # out the whole history for it)
-  - git-revision-date-localized:
-      type: date
-      fallback_to_build_date: true
 markdown_extensions:
+  # "Letztes Update" under every page, from the last commit of its file (dev/docs-revision-date,
+  # installed through requirements-docs.txt; the docs workflow checks out the whole history for it)
+  - kontext_docs_revision_date
   - admonition
   - attr_list
   - md_in_html
@@ -102,6 +103,7 @@ markdown_extensions:
   - pymdownx.details
 extra_css:
   - assets/entdecken.css
+  - assets/extra.css
 extra:
   social:
     - icon: fontawesome/brands/github

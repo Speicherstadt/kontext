@@ -10,6 +10,8 @@ playwright-report
 site
 # Downloads of the docs privacy plugin (mkdocs.yml)
 .cache
+# Tests of the docs extension (dev/docs-revision-date)
+__pycache__
 .box-sample
 
 # Secrets of a deployment (deploy/.env for Compose, one env file per service for Quadlet)

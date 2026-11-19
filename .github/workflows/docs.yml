@@ -1,4 +1,4 @@
-# Builds docs/ with MkDocs Material and the demo (src/demo, `bun run build:demo`) and publishes
+# Builds docs/ with Zensical and the demo (src/demo, `bun run build:demo`) and publishes
 # both on GitHub Pages: https://kontext.email/ and https://kontext.email/demo/
 # The domain is set under Settings → Pages → Custom domain; its DNS is at Cloudflare (A/AAAA on
 # GitHub Pages, www as CNAME on firsttris.github.io, without Cloudflare's proxy, so GitHub can
@@ -18,6 +18,7 @@ on:
       - "mkdocs.yml"
       - "overrides/**"
       - "requirements-docs.txt"
+      - "dev/docs-revision-date/**"
       - ".github/workflows/docs.yml"
   workflow_dispatch:
 
@@ -44,9 +45,11 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-docs.txt
       - run: pip install -r requirements-docs.txt
-      - run: mkdocs build --strict
-        env:
-          NO_MKDOCS_2_WARNING: "1"
+      - run: python -m unittest discover -s dev/docs-revision-date
+      - run: zensical build --strict
+      # Without the git history the date is missing without failing the build; here it shows
+      - run: |
+          grep -q 'class="revision-date"' site/index.html
       # Search engines: every page with its own description in the front matter (else every page
       # had site_description), Open Graph on every page, structured data on the start page,
       # noindex only on the 404 page and the pages that moved (overrides/main.html,
@@ -57,9 +60,9 @@ jobs:
           test -z "$(grep -L 'property="og:image"' site/*.html | grep -v 'entdecken.html$')"
       - run: |
           grep -q 'application/ld+json' site/index.html
-      # The structured data points to the installation page
+      # The structured data points to the installation page (Zensical writes it without spaces)
       - run: |
-          grep -q '"installUrl": "https://kontext.email/installation.html"' site/index.html
+          grep -qE '"installUrl": ?"https://kontext.email/installation.html"' site/index.html
       # The English pages that were under /en/ until the docs became German only redirect
       - run: |
           grep -q 'mail.html' site/en/mail.html
