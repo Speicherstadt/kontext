@@ -1,32 +1,32 @@
 # Roadmap
 
-The features coming next to Kontext, sorted by benefit: the most useful first. The order is a
-plan, not a promise; wishes are welcome as an [issue](https://github.com/Speicherstadt/kontext/issues).
-What is already done is in the [changelog](CHANGELOG.md) and the
-[documentation](https://kontext.email/en/). Auf Deutsch: [ROADMAP.de.md](ROADMAP.de.md).
+Die Funktionen, die als Nächstes in Kontext kommen, sortiert nach Nutzen: oben, was am meisten
+bringt. Die Reihenfolge ist ein Plan, kein Versprechen; Wünsche gern als
+[Issue](https://github.com/Speicherstadt/kontext/issues). Was schon fertig ist, steht im
+[Changelog](CHANGELOG.md) und in der [Dokumentation](https://kontext.email/).
 
-## New in Stalwart
+## Neu in Stalwart
 
-What Stalwart 1.0.2, 1.0.3 and 1.1.0 bring and Kontext does not use yet.
+Was Stalwart 1.0.2, 1.0.3 und 1.1.0 mitbringen und Kontext noch nicht nutzt.
 
-| # | Feature | What it is about |
+| # | Funktion | Worum es geht |
 | --- | --- | --- |
-| 1 | **Mail programs without an app password** | With two-factor sign-in, Apple Mail and Thunderbird no longer need an app password: Stalwart 1.0 implements the OAuth profile for mail programs. For it, the OAuth discovery under `/.well-known` has to go to Stalwart instead of Kontext (Caddy), and Stalwart's sign-in page has to be reachable from outside. Then the passkeys (Stalwart 1.1.0, already in Kontext) work for mail programs too. |
+| 1 | **Mailprogramme ohne App-Passwort** | Mit Zwei-Faktor-Anmeldung brauchen Apple Mail und Thunderbird kein App-Passwort mehr: Stalwart 1.0 setzt das OAuth-Profil für Mailprogramme um. Dafür muss die OAuth-Erkennung unter `/.well-known` zu Stalwart statt zu Kontext (Caddy) und Stalwarts Anmeldeseite öffentlich erreichbar sein. Dann gelten auch die Passkeys (Stalwart 1.1.0, in Kontext schon da) für Mailprogramme. |
 
-## More features
+## Weitere Funktionen
 
-| # | Feature | What it is about |
+| # | Funktion | Worum es geht |
 | --- | --- | --- |
-| 2 | **The telephone box as its own phone system (SIP trunk)** | The telephone box signs in directly with the provider over a SIP trunk (such as Telekom, sipgate, easybell) instead of signing in at the Fritzbox as an IP phone. It then becomes the phone system itself, like 3CX or Placetel, but in Kontext and without a licence per extension: numbers, extensions, forwarding and desk phones hang on Kontext, and the Fritzbox is only a router or goes away. Along with it SIP over TLS, a queue with position and more desk phones (Yealink, Grandstream). The Fritzbox stays as the simple way for businesses that want to keep it. |
-| 3 | **More languages** | After German and English, more European languages. |
+| 2 | **Telefonbox als eigene Telefonanlage (SIP-Trunk)** | Die Telefonbox meldet sich per SIP-Trunk direkt beim Anbieter an (etwa Telekom, sipgate, easybell), statt sich als IP-Telefon an der Fritzbox anzumelden. Damit wird sie selbst die Telefonanlage, wie 3CX oder Placetel, aber in Kontext und ohne Lizenz pro Nebenstelle: Rufnummern, Durchwahlen, Weiterleitungen und Tischtelefone hängen an Kontext, die Fritzbox ist nur noch Router oder entfällt. Dazu SIP über TLS, eine Warteschleife mit Position und weitere Tischtelefone (Yealink, Grandstream). Die Fritzbox bleibt als einfacher Weg für Betriebe, die sie behalten wollen. |
+| 3 | **Weitere Sprachen** | Nach Deutsch und Englisch weitere europäische Sprachen. |
 
-## More ideas
+## Weitere Ideen
 
-Not planned yet; which of them come is decided later.
+Noch nicht eingeplant; was davon kommt, entscheidet sich später.
 
-| Idea | What it is about |
+| Idee | Worum es geht |
 | --- | --- |
-| **Online appointment booking** | A booking page for customers with the free times from the calendar; the booked appointment goes straight into the calendar, with a confirmation by mail. For practices, law firms and trades; "Wer hat Zeit?" and the guest links for video meetings are already there. |
-| **Book rooms, company cars and equipment** | Bookable resources with their own calendar, invited to an appointment and refusing double bookings. Stalwart knows only user and group accounts; a resource would be a group account like a shared mailbox. |
-| **GoBD mail archive** | Keep business mail unchangeable and for years, as the German retention rules (GoBD) require; today that takes a separate archive. Large, rather a module of its own like [Schreibzeug](https://github.com/Speicherstadt/schreibzeug). |
-| **Mail merge to a contact group** | One mail to everyone in a group, each sent singly and personally with a salutation, for example for a company holiday or new prices. |
+| **Online-Terminbuchung** | Eine Buchungsseite für Kunden mit den freien Zeiten aus dem Kalender; der gebuchte Termin landet direkt im Kalender, mit Bestätigung per Mail. Für Praxen, Kanzleien und Handwerk; „Wer hat Zeit?“ und die Gast-Links für Videobesprechungen sind schon da. |
+| **Räume, Firmenwagen und Geräte buchen** | Buchbare Ressourcen mit eigenem Kalender, die man zum Termin einlädt und die Doppelbuchungen ablehnen. Stalwart kennt nur Benutzer- und Gruppenkonten, eine Ressource wäre ein Gruppenkonto wie ein gemeinsames Postfach. |
+| **GoBD-Mail-Archiv** | Geschäftsmails unveränderbar und jahrelang aufbewahren, wie es die deutschen Aufbewahrungsregeln verlangen; heute braucht es dafür ein Archiv daneben. Groß, eher als eigenes Modul wie [Schreibzeug](https://github.com/Speicherstadt/schreibzeug). |
+| **Serienmail an eine Kontaktgruppe** | Eine Mail an alle einer Gruppe, jede einzeln und persönlich mit Anrede, etwa für Betriebsurlaub oder neue Preise. |

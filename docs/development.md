@@ -319,18 +319,16 @@ Integrationstests sich verbinden können.
   werden sie danach mit der Demo auf GitHub Pages unter [kontext.email](https://kontext.email/)
   veröffentlicht (einmalig: Settings → Pages → Source „GitHub Actions“ und Custom domain
   `kontext.email`; der DNS liegt bei Cloudflare, A/AAAA auf GitHub Pages, ohne Cloudflare-Proxy).
-  Lokal: `pip install -r requirements-docs.txt && mkdocs serve`. Deutsch steht unter `/`, Englisch
-  unter `/en/`: Übersetzt wird eine Seite mit einer Datei daneben (`index.en.md` zu `index.md`);
-  ohne sie zeigt die englische Seite den deutschen Text. Die Startseite ist der Rundgang in Bildern,
-  `ueberblick.md` die Übersicht. Jede Seite braucht im Front Matter eine `description:`, für
+  Lokal: `pip install -r requirements-docs.txt && mkdocs serve`. README und Dokumentation gibt es nur
+  auf Deutsch (die Oberfläche der App bleibt zweisprachig); die früheren englischen Adressen unter
+  `/en/` leiten auf die deutsche Seite weiter (`redirects` in `mkdocs.yml`). Die Startseite ist
+  der Rundgang in Bildern, `ueberblick.md` die Übersicht. Jede Seite braucht im Front Matter eine `description:`, für
   Suchmaschinen und die Vorschau beim Teilen eines Links; der Workflow prüft das, ebenso Open Graph
   auf jeder Seite, die strukturierten Daten auf der Startseite und `robots.txt`. Das Datum unter
   jeder Seite kommt aus dem letzten Commit ihrer Datei. Die Seiten laden nichts von Google Fonts
   oder einem CDN: Das `privacy`-Plugin von Material lädt Schriften und Mermaid beim Bauen herunter
   (Cache in `.cache/`), und der Workflow prüft, dass keine Seite sie von dort holt. Im Fuß jeder
-  Seite stehen Impressum und Datenschutz (`copyright` in `mkdocs.yml`, die englische Fassung beim
-  i18n-Plugin). Nicht mit Zensical wie bei Haben: Es
-  übergeht mkdocs-static-i18n.
+  Seite stehen Impressum und Datenschutz (`copyright` in `mkdocs.yml`).
 - **Neue Versionen von Stalwart, LiveKit & Co.** (`.github/renovate.json5`): Die
   [Renovate-App](https://github.com/apps/renovate) öffnet für jedes neue Release der Images in
   `deploy/` (Stalwart, LiveKit, LiveKit SIP, Redis, Caddy) und der Bun-Basis-Images in den

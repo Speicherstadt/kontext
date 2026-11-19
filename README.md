@@ -22,8 +22,7 @@ Ohne Kosten pro Benutzer. Made in Europe.
 [Schnellstart](#schnellstart) •
 [FAQ](#faq) •
 [Dokumentation](https://kontext.email/) •
-[Entwicklung](#entwicklung) •
-[English](README.en.md)
+[Entwicklung](#entwicklung)
 
 🖱️ **[Demo ausprobieren](https://kontext.email/demo/)** – im Browser, ohne Installation
 
@@ -242,7 +241,7 @@ Stalwart. Wie gebaut und getestet wird, steht unter
 
 ## Dokumentation
 
-Alles im Detail, mit Suche: **[kontext.email](https://kontext.email/)** ([English](https://kontext.email/en/)).
+Alles im Detail, mit Suche: **[kontext.email](https://kontext.email/)**.
 Jede Funktion oben verlinkt ihre Seite; dazu kommen:
 
 - **Einstieg:** [Rundgang in Bildern](https://kontext.email/) (zum Weiterschicken an Kunden),
@@ -250,7 +249,7 @@ Jede Funktion oben verlinkt ihre Seite; dazu kommen:
   und [VPS einrichten](https://kontext.email/vps.html)
 - **Hintergrund:** [Architektur](https://kontext.email/architecture.html),
   [Entwicklung](https://kontext.email/development.html), [Changelog](CHANGELOG.md) (Englisch) und
-  [Roadmap](ROADMAP.de.md)
+  [Roadmap](ROADMAP.md)
 
 ## Entwicklung
 
@@ -303,7 +302,7 @@ Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 [Fehler melden](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) &nbsp;·&nbsp; [Idee vorschlagen](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
-<sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende · <a href="README.en.md">English version</a><br>
+<sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende<br>
 Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten.<br>
 Für IT-Dienstleister und Hoster: <a href="https://speicherstadt.app/partner/">Partnerprogramm</a>.<br>
 Kontext ist keine Rechtsberatung: Datenschutz und Aufbewahrungspflichten setzt die Firma um, die Software unterstützt dabei.<br>

@@ -48,28 +48,30 @@ jobs:
         env:
           NO_MKDOCS_2_WARNING: "1"
       # Search engines: every page with its own description in the front matter (else every page
-      # had site_description), Open Graph on every page, structured data on both start pages,
+      # had site_description), Open Graph on every page, structured data on the start page,
       # noindex only on the 404 page and the pages that moved (overrides/main.html,
       # overrides/redirect.html), robots.txt with the sitemap
       - run: |
           test -z "$(grep -L '^description:' $(grep -L '^template: redirect.html' docs/*.md))"
       - run: |
-          test -z "$(grep -L 'property="og:image"' site/*.html site/en/*.html | grep -v 'entdecken.html$')"
+          test -z "$(grep -L 'property="og:image"' site/*.html | grep -v 'entdecken.html$')"
       - run: |
-          grep -q 'application/ld+json' site/index.html && grep -q 'application/ld+json' site/en/index.html
-      # The structured data points to the installation page in the start page's language
+          grep -q 'application/ld+json' site/index.html
+      # The structured data points to the installation page
       - run: |
           grep -q '"installUrl": "https://kontext.email/installation.html"' site/index.html
-          grep -q '"installUrl": "https://kontext.email/en/installation.html"' site/en/index.html
+      # The English pages that were under /en/ until the docs became German only redirect
       - run: |
-          test -z "$(grep -l 'name="robots" content="noindex"' site/*.html site/en/*.html | grep -v -e '^site/404.html$' -e 'entdecken.html$')"
+          grep -q 'mail.html' site/en/mail.html
+      - run: |
+          test -z "$(grep -l 'name="robots" content="noindex"' site/*.html | grep -v -e '^site/404.html$' -e 'entdecken.html$')"
       - run: |
           grep -q '^Sitemap: https://kontext.email/sitemap.xml' site/robots.txt
       # No fonts or scripts from Google Fonts or a CDN (the privacy plugin in mkdocs.yml serves
       # them from the site), and the legal notice and privacy policy in the footer
       - run: |
           test -z "$(grep -rlE '(src|href)="(https?:)?//(fonts\.googleapis|fonts\.gstatic|unpkg|cdn\.jsdelivr)' site --include='*.html' --include='*.css')"
-          test -z "$(grep -L 'teufel-it.de/de/impressum/' site/*.html site/en/*.html | grep -v 'entdecken.html$')"
+          test -z "$(grep -L 'teufel-it.de/de/impressum/' site/*.html | grep -v 'entdecken.html$')"
       - if: github.event_name != 'pull_request'
         uses: oven-sh/setup-bun@v2
         with:

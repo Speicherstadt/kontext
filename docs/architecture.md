@@ -2429,7 +2429,7 @@ der Liste der Freigaben stehen, bis der Refresh-Token abläuft, obwohl ihn niema
 Passkeys (WebAuthn) bewahrt Stalwart auf, seit 1.1.0, neben dem Passwort (`x:Passkey`,
 `crates/jmap/src/registry/mapping/passkey.rs`); Better Auth hält weiter nur die Sitzungen. So
 gibt es keine zweite Liste neben Stalwarts Konten, und sobald sich Mailprogramme per OAuth bei
-Stalwart anmelden ([Roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.de.md)),
+Stalwart anmelden ([Roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.md)),
 gelten die Passkeys auch dort.
 
 **Anmelden** (`signInWithPasskey` in `src/auth/auth.tsx`): Die App holt über den Server eine
