@@ -273,7 +273,7 @@ Releases: [Entwicklung](https://kontext.email/development.html).
 
 Weitere Open-Source-Apps für deinen eigenen Server, etwa für Buchhaltung, Office-Dokumente, ein Dokumentenarchiv und mehr: **[speicherstadt.app](https://speicherstadt.app)**
 
-## 🤝 Mitmachen
+## 🤝 Mitwirken
 
 Fehler und Ideen gern als Issue, mit dem [Formular für Fehlerberichte](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml).
 Sicherheitslücken bitte vertraulich melden, siehe [SECURITY.md](SECURITY.md). Was vor einem Pull
