@@ -2,8 +2,10 @@
 # What differs between Docker Compose (settings in deploy/.env) and Podman Quadlet (the units in
 # /etc/containers/systemd/; settings in deploy/backup.env, since Quadlet has no deploy/.env).
 # Sourced from deploy/ by backup.sh and backup-control.sh.
-if [ -f /etc/containers/systemd/kontext.container ]; then
+quadlet_dir="${KONTEXT_QUADLET_DIR:-/etc/containers/systemd}"
+if [ -f "$quadlet_dir/kontext.container" ]; then
   settings=backup.env
+  quadlet_units="$quadlet_dir"
   # Quadlet names the containers and volumes after the files, without a project prefix.
   run_in() { podman exec -i "$@"; }
   is_running() { systemctl is-active --quiet "$1"; }
@@ -12,6 +14,7 @@ if [ -f /etc/containers/systemd/kontext.container ]; then
   volume_path() { podman volume inspect -f '{{ .Mountpoint }}' "$1"; }
 else
   settings=.env
+  quadlet_units=
   compose="docker compose -f compose.yaml"
   run_in() { $compose exec -T "$@"; }
   is_running() { $compose ps --services --status running | grep -qx "$1"; }

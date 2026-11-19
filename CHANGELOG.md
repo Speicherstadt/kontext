@@ -7,6 +7,11 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
 
 ## Unreleased
 
+- Backups: `deploy/backup.sh` also backs up the server's settings, as a fourth snapshot tagged
+  `config`: deploy/'s `.env` files, `Caddyfile` and `livekit.yaml`, the Quadlet units and Stalwart's
+  `config.json`. The Restic password and `STALWART_BLOB_KEY` are left empty in the copy and stay
+  in the password manager. Takes effect with `git pull` in `/opt/kontext`; how to get the settings
+  back is in the installation guide ("Wiederherstellen").
 - Kontext moved to the Speicherstadt organization: the repository is
   `github.com/Speicherstadt/kontext` (the old address redirects), the GHCR images are
   `ghcr.io/speicherstadt/kontext` and the box's build cache `ghcr.io/speicherstadt/kontext-box-buildcache`

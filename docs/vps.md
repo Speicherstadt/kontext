@@ -610,7 +610,7 @@ Was außerhalb des Servers in einen Passwortmanager gehört – nicht in eine Te
 | **Stalwart-Admin** (`admin@firma.de`) | Notzugang zu Stalwarts Verwaltung | `/root/.stalwart-admin` |
 | **Konto des Chefs** | Anmeldung in Kontext und Mailprogrammen (nach dem Ändern das neue) | – |
 | **SSH-Schlüssel, Zugang zum Anbieter** | Server und Panel | – |
-| `deploy/kontext.env`, `deploy/backup.env` (als sichere Notiz) | Schnellere Wiederherstellung; das Backup sichert sie nicht | `deploy/` |
+| `deploy/kontext.env`, `deploy/backup.env` (als sichere Notiz) | Schnellere Wiederherstellung; das Backup sichert sie ohne Restic-Passwort und Speicherschlüssel (Tag `config`) | `deploy/` |
 
 Das vorläufige Passwort aus dem Log von Stalwart (Benutzer `admin`) gilt nach der Ersteinrichtung
 nicht mehr. Nicht nötig, weil jederzeit neu zu erzeugen: das Konto `kontext-server@` und sein
