@@ -1,9 +1,7 @@
 # Documentation as a website: https://kontext.email/
 # Source is docs/, built with MkDocs Material (.github/workflows/docs.yml publishes it).
-# Locally: pip install mkdocs-material mkdocs-static-i18n && mkdocs serve
-# Languages: German at /, English at /en/. Every page has its translation next to it with .en.md
-# (index.en.md), headings with the same anchor ids. A first visit opens the browser's language
-# (overrides/partials/language-redirect.html).
+# Locally: pip install -r requirements-docs.txt && mkdocs serve
+# German only. The English pages that were under /en/ redirect to the German ones (redirects below).
 site_name: Kontext
 site_description: >-
   Mail, Kalender, Kontakte, Aufgaben, Team-Chat und Telefonie (CTI) auf dem eigenen Server – die
@@ -13,8 +11,7 @@ site_url: https://kontext.email/
 repo_url: https://github.com/Speicherstadt/kontext
 repo_name: Speicherstadt/kontext
 edit_uri: edit/main/docs/
-# HTML: the legal notice and the privacy policy in the footer of every page (English below, under
-# the i18n plugin)
+# HTML: the legal notice and the privacy policy in the footer of every page
 copyright: >-
   Lizenz AGPL-3.0 · © Tristan Teufel und Mitwirkende ·
   <a href="https://teufel-it.de/de/impressum/">Impressum</a> ·
@@ -63,44 +60,31 @@ plugins:
   - privacy:
       assets_exclude:
         - schreibzeug.app/*
-  - i18n:
-      docs_structure: suffix
-      fallback_to_default: true
-      languages:
-        - locale: de
-          name: Deutsch
-          default: true
-        - locale: en
-          name: English
-          site_description: >-
-            Mail, calendar, contacts, tasks, team chat and telephony (CTI) on your own server – the
-            self-hosted alternative to Google Workspace and Microsoft 365, with Stalwart as the
-            mail server.
-          copyright: >-
-            License AGPL-3.0 · © Tristan Teufel and contributors ·
-            <a href="https://teufel-it.de/de/impressum/">Legal notice</a> ·
-            <a href="https://speicherstadt.app/en/privacy/">Privacy</a>
-          nav_translations:
-            Start: Home
-            Überblick: Overview
-            Funktionen: Features
-            Kalender und Kontakte: Calendar and contacts
-            Aufgaben: Tasks
-            Team-Chat und Videocalls: Team chat and video calls
-            Telefonie (CTI): Telephony (CTI)
-            Dokumente: Documents
-            Verschlüsselung: Encryption
-            KI-Agenten (MCP): AI agents (MCP)
-            Firmenverwaltung und Umzug: Company admin and migration
-            App, Handy und Konto: App, phone and account
-            Betrieb: Running it
-            VPS einrichten: Setting up a VPS
-            Gehostet oder mit Partner: Hosted or with a partner
-            Technik: How it is built
-            Architektur: Architecture
-            Entwicklung: Development
+  # The English pages that were under /en/ until the docs became German only: links shared
+  # before keep working and land on the German page
+  - redirects:
+      redirect_maps:
+        en/accessibility.md: accessibility.md
+        en/agents.md: agents.md
+        en/app.md: app.md
+        en/architecture.md: architecture.md
+        en/calendar-contacts.md: calendar-contacts.md
+        en/chat.md: chat.md
+        en/company.md: company.md
+        en/development.md: development.md
+        en/documents.md: documents.md
+        en/encryption.md: encryption.md
+        en/entdecken.md: index.md
+        en/hosted.md: hosted.md
+        en/index.md: index.md
+        en/installation.md: installation.md
+        en/mail.md: mail.md
+        en/tasks.md: tasks.md
+        en/telephony.md: telephony.md
+        en/ueberblick.md: ueberblick.md
+        en/vps.md: vps.md
   # "Letztes Update" under every page, from the last commit of its file (the docs workflow checks
-  # out the whole history for it); after i18n, which gives it the page's language
+  # out the whole history for it)
   - git-revision-date-localized:
       type: date
       fallback_to_build_date: true

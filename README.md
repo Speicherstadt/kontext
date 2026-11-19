@@ -1,255 +1,257 @@
 <div align="center">
 
-<h1>Kontext: your own alternative to Google Workspace and Microsoft 365</h1>
+<h1>Kontext: deine eigene Alternative zu Google Workspace und Microsoft 365</h1>
 
-<a href="https://kontext.email/en/"><picture>
+<a href="https://kontext.email/"><picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/mail-dark.png">
-  <img src="docs/screenshots/mail.png" alt="Kontext in the browser: the inbox with categories, a folder per customer and a mail with a PDF preview" width="900">
+  <img src="docs/screenshots/mail.png" alt="Kontext im Browser: der Posteingang mit Kategorien, Ordnern pro Kunde und einer Mail mit PDF-Vorschau" width="900">
 </picture></a>
 
-**Mail, calendar, chat, documents and phone for your team – on your own server, open source**<br>
-No per-seat pricing. Made in Europe.
+**Mail, Kalender, Chat, Dokumente und Telefon für dein Team – auf deinem eigenen Server, Open Source**<br>
+Ohne Kosten pro Benutzer. Made in Europe.
 
 [![CI](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml/badge.svg)](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Speicherstadt/kontext?logo=github&label=release)](https://github.com/Speicherstadt/kontext/releases/latest)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
-[![Docs](https://img.shields.io/badge/docs-kontext.email-4f46e5?logo=materialformkdocs&logoColor=white)](https://kontext.email/en/)
+[![Docs](https://img.shields.io/badge/docs-kontext.email-4f46e5?logo=materialformkdocs&logoColor=white)](https://kontext.email/)
 [![Stalwart 1.1](https://img.shields.io/badge/Stalwart-1.1-18181b)](https://stalw.art)
 [![Docker Pulls](https://img.shields.io/docker/pulls/tristanteu/kontext?logo=docker&logoColor=white)](https://hub.docker.com/r/tristanteu/kontext)
 
-[Why?](#why-kontext) •
-[Features](#features) •
-[Quick start](#quick-start) •
+[Warum?](#warum-kontext) •
+[Funktionen](#funktionen) •
+[Schnellstart](#schnellstart) •
 [FAQ](#faq) •
-[Documentation](https://kontext.email/en/) •
-[Development](#development) •
-[Deutsch](README.de.md)
+[Dokumentation](https://kontext.email/) •
+[Entwicklung](#entwicklung)
 
-🖱️ **[Try the demo](https://kontext.email/demo/)** – in your browser, nothing to install
+🖱️ **[Demo ausprobieren](https://kontext.email/demo/)** – im Browser, ohne Installation
 
 </div>
 
-## Why Kontext?
+## Warum Kontext?
 
-Google Workspace and Microsoft 365 are convenient, but every user costs money every month and the
-data sits with a US corporation. Kontext is just as convenient in the browser and on the phone, but
-runs on **your** server: a small VPS from about €5 a month (e.g. at IONOS or Hetzner) or a machine
-of your own.
+Google Workspace und Microsoft 365 sind bequem, aber jeder Benutzer kostet jeden Monat, und die
+Daten liegen bei einem US-Konzern. Kontext fühlt sich im Browser und am Handy genauso an, läuft
+aber auf **deinem** Server: einem kleinen VPS ab etwa 5 € im Monat (z. B. bei IONOS oder Hetzner)
+oder einem eigenen Rechner.
 
-- **Your data stays with you**: mails, appointments, contacts, chat and calls live on your server,
-  in Europe or in your own office. No US provider in between, no trackers.
-- **No per-seat pricing**: ten people cost the same as one; you pay for the server.
-- **Everything about a customer in one place**: their latest mails, next appointments, open tasks
-  and calls – a small CRM without another tool.
-- **One app instead of five**: mail, calendar, tasks, team chat with video calls, the office phone
-  and documents, with one sign-in.
-- **Built for the phone and the keyboard**: every view works on the phone and without a mouse, and
-  it installs as an app without an app store.
-- **AI if you want it**: Claude and other assistants find customers, mails and appointments for you
-  and write drafts – they never send or delete anything.
-- **Open, no lock-in**: open source (AGPL) and standard protocols, so Outlook, Thunderbird, iPhone
-  and Android keep working and you can take everything with you.
+- **Deine Daten bleiben bei dir**: Mails, Termine, Kontakte, Chat und Anrufe liegen auf deinem
+  Server, in Europa oder im eigenen Büro. Kein US-Anbieter dazwischen, keine Tracker.
+- **Keine Kosten pro Kopf**: Zehn Mitarbeiter kosten dasselbe wie einer; bezahlt wird der Server.
+- **Alles zum Kunden an einem Ort**: seine letzten Mails, nächsten Termine, offenen Aufgaben und
+  Anrufe – ein kleines CRM ohne Extra-Tool.
+- **Eine App statt fünf**: Mail, Kalender, Aufgaben, Team-Chat mit Videocalls, das Firmentelefon
+  und Dokumente, mit einer Anmeldung.
+- **Für Handy und Tastatur gebaut**: Jede Ansicht funktioniert am Handy und ohne Maus, und Kontext
+  lässt sich ohne App Store als App installieren.
+- **KI, wenn du willst**: Claude und andere Assistenten finden Kunden, Mails und Termine für dich
+  und schreiben Entwürfe – sie senden und löschen nie etwas.
+- **Offen, kein Lock-in**: Open Source (AGPL) und Standardprotokolle, damit Outlook, Thunderbird,
+  iPhone und Android weiter funktionieren und du jederzeit alles mitnehmen kannst.
 
-## Features
+## Funktionen
 
-In short per area; the details are on the linked page of the [documentation](https://kontext.email/en/ueberblick.html).
+Kurz je Bereich; die Details stehen auf der verlinkten Seite der [Dokumentation](https://kontext.email/ueberblick.html).
 
-| Area | What Kontext does |
+| Bereich | Was Kontext kann |
 |---|---|
-| ✉️ [Mail](https://kontext.email/en/mail.html) | Shared mailboxes like info@, assigning mails, deputies, rules and categories, search inside attachments, masked addresses |
-| 📅 [Calendar](https://kontext.email/en/calendar-contacts.html) | Team calendar, invitations answered with one click, "who is free?", a video meeting per event |
-| 👥 [Contacts](https://kontext.email/en/calendar-contacts.html#kontakte) | The customer at a glance: latest mails, next appointments, open tasks and calls |
-| ✅ [Tasks](https://kontext.email/en/tasks.html) | List or Kanban board per mailbox, from a mail, a chat message, an appointment or a missed call |
-| 💬 [Team chat & video](https://kontext.email/en/chat.html) | Channels and direct messages, mails as cards, video calls and screen sharing on your own server |
-| 📞 [Telephony (CTI)](https://kontext.email/en/telephony.html) | Your Fritzbox and numbers stay, calls ring with the caller's contact, click to call |
-| 🔐 [Encryption](https://kontext.email/en/encryption.html) | OpenPGP and S/MIME, send confidentially to anyone, encrypted storage and backups |
-| 📄 [Documents](https://kontext.email/en/documents.html) | Word, Excel, PowerPoint and PDF in the browser with [Schreibzeug](https://github.com/Speicherstadt/schreibzeug) |
-| 🤖 [AI agents (MCP)](https://kontext.email/en/agents.html) | Claude and other agents look things up with your rights and write drafts |
-| 🏢 [Company admin](https://kontext.email/en/company.html) | People, mailboxes and rights without IT skills, company signature, moving in from Microsoft 365 and Gmail |
-| 📱 [On every device](https://kontext.email/en/app.html) | An app without an app store, push notifications, passkeys, light and dark |
-| ♿ [Accessibility](https://kontext.email/en/accessibility.html) | Everything by keyboard, checked against WCAG 2.2 AA on every push |
+| ✉️ [Mail](https://kontext.email/mail.html) | Gemeinsame Postfächer wie info@, Mails zuweisen, Vertretung, Regeln und Kategorien, Suche auch in Anhängen, maskierte Adressen |
+| 📅 [Kalender](https://kontext.email/calendar-contacts.html) | Team-Kalender, Einladungen mit einem Klick beantworten, „Wer hat Zeit?“, Videobesprechung pro Termin |
+| 👥 [Kontakte](https://kontext.email/calendar-contacts.html#kontakte) | Der Kunde auf einen Blick: letzte Mails, nächste Termine, offene Aufgaben und Anrufe |
+| ✅ [Aufgaben](https://kontext.email/tasks.html) | Liste oder Kanban-Board pro Postfach, aus Mail, Chat, Termin oder verpasstem Anruf |
+| 💬 [Team-Chat & Video](https://kontext.email/chat.html) | Kanäle und Direktnachrichten, Mails als Karten, Videocalls und Bildschirm teilen auf dem eigenen Server |
+| 📞 [Telefonie (CTI)](https://kontext.email/telephony.html) | Fritzbox und Nummern bleiben, Anrufe klingeln mit dem Kontakt des Anrufers, Anrufen per Klick |
+| 🔐 [Verschlüsselung](https://kontext.email/encryption.html) | OpenPGP und S/MIME, vertraulich senden an jeden, verschlüsselter Speicher und Backups |
+| 📄 [Dokumente](https://kontext.email/documents.html) | Word, Excel, PowerPoint und PDF im Browser mit [Schreibzeug](https://github.com/Speicherstadt/schreibzeug) |
+| 🤖 [KI-Agenten (MCP)](https://kontext.email/agents.html) | Claude und andere Agenten schlagen mit deinen Rechten nach und schreiben Entwürfe |
+| 🏢 [Firmenverwaltung](https://kontext.email/company.html) | Mitarbeiter, Postfächer und Rechte ohne IT-Kenntnisse, Firmen-Signatur, Umzug von Microsoft 365 und Gmail |
+| 📱 [Auf jedem Gerät](https://kontext.email/app.html) | App ohne App Store, Push-Benachrichtigungen, Passkeys, hell und dunkel |
+| ♿ [Barrierefreiheit](https://kontext.email/accessibility.html) | Alles per Tastatur, bei jedem Push gegen WCAG 2.2 AA geprüft |
 
 ## Screenshots
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshots/shared-mailbox.png" alt="Shared mailbox info@ in Kontext: a customer enquiry about a heat pump with the category In progress"><br><sub><b>Shared mailbox</b> – info@ for the whole team</sub></td>
-    <td width="50%"><img src="docs/screenshots/contacts.png" alt="Contact Markus Hoffmann with upcoming appointments and latest mails, like a small CRM"><br><sub><b>Contacts</b> – the customer at a glance</sub></td>
+    <td width="50%"><img src="docs/screenshots/shared-mailbox.png" alt="Gemeinsames Postfach info@ in Kontext: eine Kundenanfrage zur Wärmepumpe mit der Kategorie In Bearbeitung"><br><sub><b>Gemeinsames Postfach</b> – info@ fürs ganze Team</sub></td>
+    <td width="50%"><img src="docs/screenshots/contacts.png" alt="Kontakt Markus Hoffmann mit nächsten Terminen und letzten Mails, wie ein kleines CRM"><br><sub><b>Kontakte</b> – der Kunde auf einen Blick</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/calendar.png" alt="Team calendar week view with site meeting, maintenance appointment and month overview"><br><sub><b>Calendar</b> – week, month, availability</sub></td>
-    <td><img src="docs/screenshots/tasks-board.png" alt="Kanban board of the shared mailbox info@ with Open, In progress, Waiting and Done"><br><sub><b>Tasks</b> – a Kanban board per mailbox</sub></td>
+    <td><img src="docs/screenshots/calendar.png" alt="Teamkalender in der Wochenansicht mit Baubesprechung, Wartungstermin und Monatsübersicht"><br><sub><b>Kalender</b> – Woche, Monat, Verfügbarkeit</sub></td>
+    <td><img src="docs/screenshots/tasks-board.png" alt="Kanban-Board des gemeinsamen Postfachs info@ mit Offen, In Arbeit, Wartet und Erledigt"><br><sub><b>Aufgaben</b> – ein Kanban-Board pro Postfach</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/chat.png" alt="Team chat channel with a site report, a shared customer mail as a card and a task made from a message"><br><sub><b>Team chat</b> – mails as cards, tasks from messages</sub></td>
-    <td><img src="docs/screenshots/phone-call.png" alt="CTI in Kontext: an incoming call from the Fritzbox rings in the browser with the caller's contact, company, number and last mail"><br><sub><b>Telephony</b> – the caller with their last mail</sub></td>
+    <td><img src="docs/screenshots/chat.png" alt="Team-Chat-Kanal mit Baustellenbericht, einer geteilten Kundenmail als Karte und einer Aufgabe aus einer Nachricht"><br><sub><b>Team-Chat</b> – Mails als Karten, Aufgaben aus Nachrichten</sub></td>
+    <td><img src="docs/screenshots/phone-call.png" alt="CTI in Kontext: ein Anruf über die Fritzbox klingelt im Browser mit Kontakt, Firma, Nummer und letzter Mail des Anrufers"><br><sub><b>Telefonie</b> – der Anrufer mit seiner letzten Mail</sub></td>
   </tr>
 </table>
 
 <p align="center">
-  <img src="docs/screenshots/phone-mail.png" alt="Kontext on the phone: inbox with tab bar" width="200">
-  <img src="docs/screenshots/phone-read.png" alt="Reading a mail on the phone" width="200">
-  <img src="docs/screenshots/phone-calendar.png" alt="Calendar day view on the phone" width="200">
-  <img src="docs/screenshots/phone-chat.png" alt="Team chat on the phone with bubbles, a file and a mail card" width="200">
+  <img src="docs/screenshots/phone-mail.png" alt="Kontext am Handy: Posteingang mit Tab-Leiste" width="200">
+  <img src="docs/screenshots/phone-read.png" alt="Eine Mail am Handy lesen" width="200">
+  <img src="docs/screenshots/phone-calendar.png" alt="Kalender-Tagesansicht am Handy" width="200">
+  <img src="docs/screenshots/phone-chat.png" alt="Team-Chat am Handy mit Sprechblasen, einer Datei und einer Mail-Karte" width="200">
 </p>
 
-More pictures, made to send to customers, in the [tour](https://kontext.email/en/).
+Mehr Bilder, gemacht zum Weiterschicken an Kunden, im [Rundgang](https://kontext.email/).
 
-## Kontext and the alternatives
+## Kontext und die Alternativen
 
-| | What it is | How Kontext differs |
+| | Was es ist | Was Kontext anders macht |
 | --- | --- | --- |
-| [Google Workspace](https://workspace.google.com), [Microsoft 365](https://www.microsoft.com/microsoft-365) | mail, calendar and office as a per-user subscription | your own server, no per-seat cost, chat and phone included |
-| [Nextcloud](https://nextcloud.com) | self-hosted files with mail and calendar as apps | built around mail and the customer, with shared mailboxes and the office phone |
-| [Roundcube](https://roundcube.net), [SOGo](https://www.sogo.nu) | proven webmail clients for IMAP | customer view, tasks, chat and phone in one app |
-| [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | groupware for providers and larger companies | built for one server of your own per company |
-| [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | phone systems with CTI apps | keeps using your Fritzbox and your numbers |
+| [Google Workspace](https://workspace.google.com), [Microsoft 365](https://www.microsoft.com/microsoft-365) | Mail, Kalender und Office im Abo pro Benutzer | eigener Server, keine Kosten pro Kopf, Chat und Telefon inklusive |
+| [Nextcloud](https://nextcloud.com) | selbst gehostete Dateien, Mail und Kalender als Apps | um Mail und den Kunden herum gebaut, mit gemeinsamen Postfächern und Firmentelefon |
+| [Roundcube](https://roundcube.net), [SOGo](https://www.sogo.nu) | bewährte Webmailer für IMAP | Kundenansicht, Aufgaben, Chat und Telefon in einer App |
+| [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | Groupware für Provider und größere Firmen | für einen eigenen Server pro Firma gebaut |
+| [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | Telefonanlagen mit CTI-Apps | nutzt deine Fritzbox und deine Nummern weiter |
 
-## Quick start
+## Schnellstart
 
-You need a server (amd64 or arm64) with Docker or Podman, your own domain and open ports for mail
-and web (25, 80, 443, 465, 587, 993). Ten users run fine on a VPS with 2 vCPUs and 4 GB RAM.
+Du brauchst einen Server (amd64 oder arm64) mit Docker oder Podman, eine eigene Domain und offene
+Ports für Mail und Web (25, 80, 443, 465, 587, 993). Für zehn Benutzer reicht ein VPS mit 2 vCPU
+und 4 GB RAM.
 
-### 1. Let an agent set it up
+### 1. Von einem Agenten aufsetzen lassen
 
-Give Claude Code or another coding agent this repository and SSH access to your
-server and say: "Set up Kontext on my server following the
-[installation guide](https://kontext.email/en/installation.html)."
+Gib Claude Code oder einem anderen Coding-Agenten dieses Repository und
+SSH-Zugang zu deinem Server und sag: „Setz Kontext auf meinem Server auf, nach der
+[Installationsanleitung](https://kontext.email/installation.html).“
 
-### 2. Manually
+### 2. Manuell
 
 ```bash
 git clone https://github.com/Speicherstadt/kontext /opt/kontext && cd /opt/kontext
 cp deploy/.env.example deploy/.env && chmod 600 deploy/.env
-nano deploy/.env                              # domain, version, backup target, replace every change-me
-docker compose -f deploy/compose.yaml up -d   # pulls Kontext, Stalwart and Caddy and starts them
+nano deploy/.env                              # Domain, Version, Backup-Ziel, jedes change-me ersetzen
+docker compose -f deploy/compose.yaml up -d   # lädt Kontext, Stalwart und Caddy und startet sie
 ```
 
-Then set up Stalwart (domain, DKIM, the boss's account) and register Kontext there with one
-command. These steps, DNS, telephony, backups and updates are in the
-[installation guide](https://kontext.email/en/installation.html); for a fresh server see
-[setting up a VPS](https://kontext.email/en/vps.html).
+Danach Stalwart einrichten (Domain, DKIM, das Konto des Chefs) und Kontext mit einem Befehl dort
+eintragen. Diese Schritte, DNS, Telefonie, Backups und Updates stehen in der
+[Installationsanleitung](https://kontext.email/installation.html); für einen frischen Server
+gibt es die Seite [VPS einrichten](https://kontext.email/vps.html).
 
-No server or IT of your own? Kontext is available hosted or through an IT service provider from the
-[partner programme](https://speicherstadt.app/en/partner/).
+Keinen eigenen Server oder keine eigene IT? Kontext gibt es gehostet oder über einen IT-Dienstleister
+aus dem [Partnerprogramm](https://speicherstadt.app/partner/).
 
 ## FAQ
 
 <details>
-<summary><b>Who is Kontext for?</b></summary>
+<summary><b>Für wen ist Kontext gedacht?</b></summary>
 
-For small businesses that want Google Workspace comfort on their own server: freelancers, trades,
-law firms and medical practices, small and mid-sized businesses. And for self-hosters looking for a
-web interface for the [Stalwart](https://stalw.art) mail server: Kontext is a JMAP client for mail,
-calendar and contacts on Stalwart, see the [architecture](https://kontext.email/en/architecture.html).
+Für kleine Betriebe, die den Komfort von Google Workspace auf dem eigenen Server wollen:
+Selbstständige, Handwerk, Kanzleien und Praxen, kleine und mittlere Betriebe. Dazu für Selfhoster,
+die eine Weboberfläche für den Mailserver [Stalwart](https://stalw.art) suchen: Kontext ist ein
+JMAP-Client für Mail, Kalender und Kontakte auf Stalwart, siehe
+[Architektur](https://kontext.email/architecture.html).
 </details>
 
 <details>
-<summary><b>What does it cost?</b></summary>
+<summary><b>Was kostet das?</b></summary>
 
-The software is free (AGPL). You need a server – a VPS from about €5 a month – and someone who
-sets it up and keeps it updated.
+Die Software ist kostenlos (AGPL). Du brauchst einen Server – einen VPS ab etwa 5 € im Monat – und
+jemanden, der ihn einrichtet und aktuell hält.
 </details>
 
 <details>
-<summary><b>Stalwart Community or Enterprise?</b></summary>
+<summary><b>Stalwart Community oder Enterprise?</b></summary>
 
-Kontext runs fully on Stalwart's free Community edition. An Enterprise license adds a few things,
-such as restoring deleted mails and sign-in with the company account (SSO), see
-[Stalwart Enterprise](https://kontext.email/en/installation.html#stalwart-enterprise).
+Kontext läuft vollständig mit der kostenlosen Community-Ausgabe von Stalwart. Mit einer
+Enterprise-Lizenz kommt einiges dazu, etwa gelöschte Mails wiederherstellen und die Anmeldung über
+das Firmenkonto (SSO), siehe [Stalwart Enterprise](https://kontext.email/installation.html#stalwart-enterprise).
 </details>
 
 <details>
-<summary><b>Does Kontext work with my Fritzbox (CTI)?</b></summary>
+<summary><b>Funktioniert Kontext mit meiner Fritzbox (CTI)?</b></summary>
 
-Yes. A telephone box in the office registers as an IP phone at the Fritzbox; calls then ring in
-Kontext with the caller's contact and last mail. See [Telephony](https://kontext.email/en/telephony.html).
+Ja. Eine Telefonbox im Büro meldet sich an der Fritzbox als IP-Telefon an; Anrufe klingeln dann in
+Kontext mit Kontakt und letzter Mail des Anrufers. Siehe [Telefonie](https://kontext.email/telephony.html).
 </details>
 
 <details>
-<summary><b>Can it run on my own PC or NAS?</b></summary>
+<summary><b>Läuft das auf meinem eigenen PC oder NAS?</b></summary>
 
-Yes, wherever Docker or Podman runs. To receive mail from the internet the machine needs port 25
-reachable from outside, a fixed IP address and a reverse DNS entry; home internet connections
-usually block port 25. A small VPS is simpler.
+Ja, überall, wo Docker oder Podman läuft. Um Mails aus dem Internet zu empfangen, braucht der
+Rechner aber Port 25 von außen, eine feste IP-Adresse und einen Reverse-DNS-Eintrag; private
+Internetanschlüsse sperren Port 25 meist. Ein kleiner VPS ist darum einfacher.
 </details>
 
 <details>
-<summary><b>Does Kontext help with the GDPR?</b></summary>
+<summary><b>Hilft Kontext bei der DSGVO?</b></summary>
 
-Yes, with what software can do: the data stays on your server, without trackers or third parties.
-The GDPR itself is up to your company, for example the data processing agreement with your hosting
-provider and the record of processing activities.
+Ja, mit dem, was die Software beitragen kann: Die Daten bleiben auf deinem Server, ohne Tracker
+und ohne Dritte. Die DSGVO selbst setzt aber deine Firma um, etwa mit dem
+Auftragsverarbeitungsvertrag mit deinem Hoster und dem Verzeichnis der Verarbeitungstätigkeiten.
 </details>
 
 <details>
-<summary><b>Do iPhone, Android, Outlook and Thunderbird keep working?</b></summary>
+<summary><b>Funktionieren iPhone, Android, Outlook und Thunderbird weiter?</b></summary>
 
-Yes. Stalwart speaks IMAP, SMTP, CalDAV and CardDAV; every mail program and phone can connect
-directly. Kontext is the browser interface on top.
+Ja. Stalwart spricht IMAP, SMTP, CalDAV und CardDAV; jedes Mailprogramm und Handy kann sich direkt
+verbinden. Kontext ist die Oberfläche im Browser obendrauf.
 </details>
 
 <details>
-<summary><b>Can I move from Gmail, Microsoft 365 or Outlook?</b></summary>
+<summary><b>Kann ich von Gmail, Microsoft 365 oder Outlook umziehen?</b></summary>
 
-Yes: IMAP mailboxes, Microsoft 365, Outlook as a PST file, and contacts and calendars from a Google
-export. You can also keep using an existing Gmail address. See
-[Company admin and moving in](https://kontext.email/en/company.html).
+Ja: IMAP-Postfächer, Microsoft 365, Outlook als PST-Datei und Kontakte und Kalender aus dem
+Google-Export. Eine bestehende Gmail-Adresse kannst du auch weiter nutzen. Siehe
+[Firmenverwaltung und Umzug](https://kontext.email/company.html).
 </details>
 
 <details>
-<summary><b>Can I use Claude or other AI agents with my mail?</b></summary>
+<summary><b>Kann ich Claude oder andere KI-Agenten mit meinen Mails nutzen?</b></summary>
 
-Yes, over MCP: Claude and other agents look things up with your rights, write drafts and invite
-colleagues to appointments; they never mail anyone outside or delete anything. See
-[AI agents](https://kontext.email/en/agents.html).
+Ja, über MCP: Claude und andere Agenten schlagen mit deinen Rechten nach, schreiben Entwürfe und
+laden Kollegen zu Terminen ein; nach draußen schicken und löschen sie nie etwas. Siehe
+[KI-Agenten](https://kontext.email/agents.html).
 </details>
 
 <details>
-<summary><b>Which languages?</b></summary>
+<summary><b>Welche Sprachen?</b></summary>
 
-German and English, per device. Other European languages are planned.
+Deutsch und Englisch, je Gerät umstellbar. Weitere europäische Sprachen sind geplant.
 </details>
 
 <details>
-<summary><b>Is it secure?</b></summary>
+<summary><b>Ist das sicher?</b></summary>
 
-We check automatically, and you can too: the code is open. There has been no independent audit so far.
+Wir prüfen automatisiert, und du kannst es auch: Der Code ist offen. Ein unabhängiges Audit gibt es bisher nicht.
 
-- **Checked automatically:** with Cloudflare's [Security Audit Skill](https://github.com/cloudflare/security-audit-skill) and
-  Claude Code's `/security-review`. Feel free to let your agent run them on this repository itself.
-- **Secured:** the browser holds only an httpOnly cookie, the Stalwart tokens are stored encrypted on
-  the server; Stalwart's storage is encrypted, backups go encrypted and immutable (Object Lock) to S3
-  storage; a mail loads images from the internet only when asked to; AI agents never send anything
-  out and never delete.
-- **Kept up to date:** Renovate brings dependency updates as pull requests through CI; known
-  vulnerabilities (Dependabot alerts and the OSV database) it fixes outside the schedule, see
+- **Automatisiert geprüft:** mit Cloudflares [Security Audit Skill](https://github.com/cloudflare/security-audit-skill) und
+  `/security-review` von Claude Code. Lass deinen Agenten gern selbst über dieses Repository laufen.
+- **Abgesichert:** Der Browser hält nur ein httpOnly-Cookie, die Stalwart-Tokens liegen verschlüsselt
+  auf dem Server; Stalwarts Speicher ist verschlüsselt, Backups gehen verschlüsselt und unveränderbar
+  (Object Lock) auf S3-Speicher; Bilder aus dem Internet lädt eine Mail erst auf Wunsch; KI-Agenten
+  schicken nie etwas nach draußen und löschen nichts.
+- **Aktuell gehalten:** Renovate bringt Updates der Abhängigkeiten als Pull Request durch die CI; bekannte Lücken
+  (Dependabot-Warnungen und OSV-Datenbank) behebt es außerhalb des Zeitplans, siehe
   [SECURITY.md](SECURITY.md#keeping-dependencies-up-to-date).
-- **Open to everyone:** anyone can read the code and report vulnerabilities, please privately as
-  described in [SECURITY.md](SECURITY.md).
+- **Offen für alle:** Jeder kann den Code lesen und Lücken melden, bitte vertraulich wie in [SECURITY.md](SECURITY.md)
+  beschrieben.
 </details>
 
 <details>
-<summary><b>Is Kontext developed with AI?</b></summary>
+<summary><b>Wird Kontext mit KI entwickelt?</b></summary>
 
-Yes, largely with coding agents, but not unchecked: every change comes with tests (unit tests and
-Playwright on desktop and phone), and CI runs them against a real Stalwart. How it is built and
-tested: [Development](https://kontext.email/en/development.html).
+Ja, zu einem großen Teil mit Coding-Agenten, aber nicht ungeprüft: Jede Änderung bringt Tests mit
+(Unit-Tests und Playwright am Desktop und am Handy), und die CI prüft sie gegen einen echten
+Stalwart. Wie gebaut und getestet wird, steht unter
+[Entwicklung](https://kontext.email/development.html).
 </details>
 
-## Documentation
+## Dokumentation
 
-Everything in detail, with search: **[kontext.email](https://kontext.email/en/)** ([Deutsch](https://kontext.email/)).
-Every feature above links its page; besides:
+Alles im Detail, mit Suche: **[kontext.email](https://kontext.email/)**.
+Jede Funktion oben verlinkt ihre Seite; dazu kommen:
 
-- **Getting started:** [tour in pictures](https://kontext.email/en/) (made to send to customers),
-  [all features](https://kontext.email/en/ueberblick.html), [installation](https://kontext.email/en/installation.html)
-  and [setting up a VPS](https://kontext.email/en/vps.html)
-- **Background:** [architecture](https://kontext.email/en/architecture.html),
-  [development](https://kontext.email/en/development.html), [changelog](CHANGELOG.md) and
-  [roadmap](ROADMAP.md)
+- **Einstieg:** [Rundgang in Bildern](https://kontext.email/) (zum Weiterschicken an Kunden),
+  [alle Funktionen](https://kontext.email/ueberblick.html), [Installation](https://kontext.email/installation.html)
+  und [VPS einrichten](https://kontext.email/vps.html)
+- **Hintergrund:** [Architektur](https://kontext.email/architecture.html),
+  [Entwicklung](https://kontext.email/development.html), [Changelog](CHANGELOG.md) (Englisch) und
+  [Roadmap](ROADMAP.md)
 
-## Development
+## Entwicklung
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Bun](https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white)](https://bun.sh)
@@ -261,34 +263,34 @@ Every feature above links its page; besides:
 [![SQLite](https://img.shields.io/badge/SQLite-Drizzle-003b57?logo=sqlite&logoColor=white)](https://orm.drizzle.team)
 [![JMAP](https://img.shields.io/badge/JMAP-mail%20%7C%20calendar%20%7C%20contacts-0f766e)](https://jmap.io)
 
-Needs [Bun](https://bun.sh) 1.4 and Linux or macOS (Windows through WSL).
+Benötigt [Bun](https://bun.sh) 1.4 und Linux oder macOS (Windows über WSL).
 
 ```bash
 git clone https://github.com/Speicherstadt/kontext && cd kontext
 bun install
-bun run dev   # Stalwart with test data, server and app: http://localhost:5173
+bun run dev   # Stalwart mit Testdaten, Server und App: http://localhost:5173
 ```
 
-Sign in as `jonas@weber-haustechnik.test` / `kaffee-werkbank-kontext` (the boss, sees the company
-admin too); `anna@`, `sandra@` and `max@` share the password. Structure, tests and releases:
-[Development](https://kontext.email/en/development.html).
+Anmelden als `jonas@weber-haustechnik.test` / `kaffee-werkbank-kontext` (der Chef, sieht auch die
+Firmenverwaltung); `anna@`, `sandra@` und `max@` haben dasselbe Passwort. Aufbau, Tests und
+Releases: [Entwicklung](https://kontext.email/development.html).
 
-## More from us
+## Mehr von uns
 
-More open-source apps for your own server, covering accounting, office documents, a document archive and more: **[speicherstadt.app](https://speicherstadt.app)**
+Weitere Open-Source-Apps für deinen eigenen Server, etwa für Buchhaltung, Office-Dokumente, ein Dokumentenarchiv und mehr: **[speicherstadt.app](https://speicherstadt.app)**
 
-## Contributing
+## Mitwirken
 
-Bugs and ideas are welcome as issues, through the [bug report form](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml).
-Security problems please report privately, see [SECURITY.md](SECURITY.md). What to run before a pull
-request is in [CONTRIBUTING.md](CONTRIBUTING.md).
+Fehler und Ideen gern als Issue, mit dem [Formular für Fehlerberichte](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml).
+Sicherheitslücken bitte vertraulich melden, siehe [SECURITY.md](SECURITY.md). Was vor einem Pull
+Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Star history
+## Sterne im Verlauf
 
 <a href="https://www.star-history.com/#Speicherstadt/kontext&Date">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Speicherstadt/kontext&type=Date&theme=dark">
-    <img alt="GitHub star history of Kontext" src="https://api.star-history.com/svg?repos=Speicherstadt/kontext&type=Date">
+    <img alt="Verlauf der GitHub-Sterne von Kontext" src="https://api.star-history.com/svg?repos=Speicherstadt/kontext&type=Date">
   </picture>
 </a>
 
@@ -296,14 +298,14 @@ request is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <div align="center">
 
-⭐ **Like Kontext?** A [star on GitHub](https://github.com/Speicherstadt/kontext) helps others find it.
+⭐ **Gefällt dir Kontext?** Ein [Stern auf GitHub](https://github.com/Speicherstadt/kontext) hilft anderen, es zu finden.
 
-[Report a bug](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) &nbsp;·&nbsp; [Request a feature](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
+[Fehler melden](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) &nbsp;·&nbsp; [Idee vorschlagen](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
-<sub>License: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel and contributors · <a href="README.de.md">Deutsche Version</a><br>
-Changed versions you pass on or run for others must offer their source code under the AGPL.<br>
-For IT service providers and hosters: <a href="https://speicherstadt.app/en/partner/">partner programme</a>.<br>
-Kontext is no legal advice: data protection and retention duties are up to the company, the software helps with them.<br>
-Kontext is not affiliated with Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic or the makers of the other products named here; the names are trademarks of their owners.</sub>
+<sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende<br>
+Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten.<br>
+Für IT-Dienstleister und Hoster: <a href="https://speicherstadt.app/partner/">Partnerprogramm</a>.<br>
+Kontext ist keine Rechtsberatung: Datenschutz und Aufbewahrungspflichten setzt die Firma um, die Software unterstützt dabei.<br>
+Kontext steht in keiner Verbindung zu Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic oder den Anbietern der übrigen hier genannten Produkte; die Namen sind Marken ihrer Inhaber.</sub>
 
 </div>

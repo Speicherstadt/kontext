@@ -1,6 +1,6 @@
 /**
  * Where the demo build is served: the default `base` of `vite build --mode demo` (vite.config.ts)
- * is what the development docs tell a reader to serve `dist-demo/` under, in both languages.
+ * is what the development docs tell a reader to serve `dist-demo/` under.
  */
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -16,14 +16,11 @@ const demoBase = () => {
 };
 
 describe("demo base path", () => {
-  it.each(["docs/development.md", "docs/development.en.md"])(
-    "%s names the build's default base and no other path for the demo",
-    (file) => {
-      const text = read(file);
-      const base = demoBase();
-      const paths = [...text.matchAll(/`(\/[^`\s]*demo\/)`/g)].map((m) => m[1]);
-      expect(paths.filter((path) => path !== base)).toEqual([]);
-      expect(paths).toContain(base);
-    },
-  );
+  it("docs/development.md names the build's default base and no other path for the demo", () => {
+    const text = read("docs/development.md");
+    const base = demoBase();
+    const paths = [...text.matchAll(/`(\/[^`\s]*demo\/)`/g)].map((m) => m[1]);
+    expect(paths.filter((path) => path !== base)).toEqual([]);
+    expect(paths).toContain(base);
+  });
 });

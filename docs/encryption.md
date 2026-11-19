@@ -13,7 +13,7 @@ Funktionen (Suche, Regeln, Benachrichtigungen mit Text, Aufgaben aus Mails) brau
 Server, der die Inhalte lesen kann. Ende-zu-Ende gibt es dort, wo es zählt: nach außen und für
 ausgewählte vertrauliche Unterhaltungen.
 
-Stand: alle fünf Bausteine sind umgesetzt ([Roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.de.md)).
+Stand: alle fünf Bausteine sind umgesetzt ([Roadmap](https://github.com/Speicherstadt/kontext/blob/main/ROADMAP.md)).
 
 ## Wovor geschützt wird
 

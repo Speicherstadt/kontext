@@ -23,12 +23,12 @@ privately, see [SECURITY.md](SECURITY.md).
   - the tests: Vitest next to the code for pure logic, Playwright in `e2e/` for what a user does,
     on the desktop and on the phone (`@phone`);
   - the docs in `docs/` that describe it;
-  - both READMEs (`README.md` in English, `README.de.md` in German) when a feature a user sees is
-    added, changed or removed;
+  - `README.md` (German only) when a feature a user sees is added, changed or removed;
   - the screenshots after a change to the look (`bun run screenshots`, or the *Update screenshots*
     workflow).
-- Code, comments and commit messages in English. The app's texts are German for now and live in
-  `messages/de.json`; the docs in `docs/` are German too.
+- Code, comments and commit messages in English. The README, the roadmap and the docs in `docs/`
+  are German only. The app's texts are German and English and live in `messages/de.json` and
+  `messages/en.json`; a new text goes into both.
 - Code style: functional TypeScript – small pure functions, data in and out, side effects at the
   edges, function components and hooks, no classes; errors as values. Split a file past about 400
   lines and a function past about 80.
