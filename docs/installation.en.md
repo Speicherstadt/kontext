@@ -10,6 +10,8 @@ description: >-
 One server per customer. It needs Docker (or Podman), a fixed IPv4 address and a domain.
 For ten users a small VPS is enough (2 vCPU, 4 GB RAM, 80 GB SSD).
 Secure a new VPS first: [Setting up a VPS – first steps](vps.md).
+No time for setup and operation? The developers set up Kontext or run it for you, see
+[Support and partnership](support.md).
 
 ## 1. Server and DNS { #1-server-und-dns }
 

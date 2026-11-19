@@ -22,10 +22,11 @@ No per-seat pricing. Made in Europe.
 [Quick start](#quick-start) •
 [FAQ](#faq) •
 [Documentation](https://kontext.email/en/) •
+[Support](#support-and-partnership) •
 [Development](#development) •
 [Deutsch](README.de.md)
 
-▶️ **[Watch the film (2 min)](https://kontext.email/en/)** · 🖱️ **[Try the demo](https://kontext.email/demo/)** – in your browser, nothing to install
+🖱️ **[Try the demo](https://kontext.email/demo/)** – in your browser, nothing to install
 
 </div>
 
@@ -145,7 +146,8 @@ calendar and contacts on Stalwart, see the [architecture](https://kontext.email/
 <summary><b>What does it cost?</b></summary>
 
 The software is free (AGPL). You need a server – a VPS from about €5 a month – and someone who
-sets it up and keeps it updated.
+sets it up and keeps it updated. Setup, migration, support and hosted operation are available from
+the developers if you want them, see [Support and partnership](#support-and-partnership).
 </details>
 
 <details>
@@ -248,15 +250,15 @@ Every feature above links its page; besides:
 
 ## Development
 
-[![JMAP](https://img.shields.io/badge/JMAP-mail%20%7C%20calendar%20%7C%20contacts-0f766e)](https://jmap.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Bun](https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white)](https://bun.sh)
+[![Hono](https://img.shields.io/badge/Hono-e36002?logo=hono&logoColor=white)](https://hono.dev)
 [![React](https://img.shields.io/badge/React-149eca?logo=react&logoColor=white)](https://react.dev)
 [![TanStack](https://img.shields.io/badge/TanStack-Router%20%7C%20Query-ff4154?logo=reactquery&logoColor=white)](https://tanstack.com)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06b6d4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Vite](https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white)](https://vite.dev)
-[![Hono](https://img.shields.io/badge/Hono-e36002?logo=hono&logoColor=white)](https://hono.dev)
 [![SQLite](https://img.shields.io/badge/SQLite-Drizzle-003b57?logo=sqlite&logoColor=white)](https://orm.drizzle.team)
+[![JMAP](https://img.shields.io/badge/JMAP-mail%20%7C%20calendar%20%7C%20contacts-0f766e)](https://jmap.io)
 
 Needs [Bun](https://bun.sh) 1.4 and Linux or macOS (Windows through WSL).
 
@@ -273,6 +275,17 @@ admin too); `anna@`, `sandra@` and `max@` share the password. Structure, tests a
 ## More from us
 
 More open-source apps for your own server, covering accounting, office documents, a document archive and more: **[speicherstadt.app](https://speicherstadt.app)**
+
+## Support and partnership
+
+Kontext is free (AGPL). If you'd rather not set it up or run it yourself, the developers help:
+
+- **Setup and migration** on your server, also from Microsoft 365, Gmail, Outlook (PST) and IMAP mailboxes
+- **Support** with updates, backups and questions while it runs
+- **Hosted operation** of Kontext, without a server of your own
+- **Partnership for IT service providers** who set up Kontext for their customers: a direct line to the developers
+
+More on [speicherstadt.app](https://speicherstadt.app/en/#support), enquiries to [info@teufel-it.de](mailto:info@teufel-it.de).
 
 ## Contributing
 
@@ -298,7 +311,7 @@ request is in [CONTRIBUTING.md](CONTRIBUTING.md).
 [Report a bug](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) &nbsp;·&nbsp; [Request a feature](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
 <sub>License: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel and contributors · <a href="README.de.md">Deutsche Version</a><br>
-Changed versions you pass on or run for others must offer their source code under the AGPL. For IT service providers: partnership with a direct line to the developers, plus setup and support via <a href="https://teufel-it.de">teufel-it.de</a>.<br>
+Changed versions you pass on or run for others must offer their source code under the AGPL.<br>
 Kontext is no legal advice: data protection and retention duties are up to the company, the software helps with them.<br>
 Kontext is not affiliated with Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic or the makers of the other products named here; the names are trademarks of their owners.</sub>
 
