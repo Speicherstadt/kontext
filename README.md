@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>Kontext – your own alternative to Google Workspace and Microsoft 365</h1>
+<h1>Kontext: your own alternative to Google Workspace and Microsoft 365</h1>
 
 <a href="https://kontext.email/en/"><picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/mail-dark.png">
@@ -12,25 +12,24 @@ No per-seat pricing. Made in Europe.
 
 [![CI](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml/badge.svg)](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Speicherstadt/kontext?logo=github&label=release)](https://github.com/Speicherstadt/kontext/releases/latest)
-[![Docker Pulls](https://img.shields.io/docker/pulls/tristanteu/kontext?logo=docker&logoColor=white)](https://hub.docker.com/r/tristanteu/kontext)
-[![Docs](https://img.shields.io/badge/docs-kontext.email-4f46e5?logo=materialformkdocs&logoColor=white)](https://kontext.email/en/)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-kontext.email-4f46e5?logo=materialformkdocs&logoColor=white)](https://kontext.email/en/)
 [![Stalwart 1.1](https://img.shields.io/badge/Stalwart-1.1-18181b)](https://stalw.art)
+[![Docker Pulls](https://img.shields.io/docker/pulls/tristanteu/kontext?logo=docker&logoColor=white)](https://hub.docker.com/r/tristanteu/kontext)
 
-[Why](#-why-kontext) •
-[Install](#-install) •
-[Features](#-features) •
-[Screenshots](#-screenshots) •
-[Alternatives](#-kontext-and-the-alternatives) •
-[FAQ](#-faq) •
+[Why?](#why-kontext) •
+[Features](#features) •
+[Quick start](#quick-start) •
+[FAQ](#faq) •
 [Documentation](https://kontext.email/en/) •
+[Development](#development) •
 [Deutsch](README.de.md)
 
 ▶️ **[Watch the film (2 min)](https://kontext.email/en/)** · 🖱️ **[Try the demo](https://kontext.email/demo/)** – in your browser, nothing to install
 
 </div>
 
-## 💡 Why Kontext?
+## Why Kontext?
 
 Google Workspace and Microsoft 365 are convenient, but every user costs money every month and the
 data sits with a US corporation. Kontext is just as convenient in the browser and on the phone, but
@@ -51,30 +50,7 @@ of your own.
 - **Open, no lock-in**: open source (AGPL) and standard protocols, so Outlook, Thunderbird, iPhone
   and Android keep working and you can take everything with you.
 
-## 🚀 Install
-
-You need a server (amd64 or arm64) with Docker or Podman, your own domain and open ports for mail
-and web (25, 80, 443, 465, 587, 993). Ten users run fine on a VPS with 2 vCPUs and 4 GB RAM.
-
-**With an agent:** give Claude Code or another coding agent this repository and SSH access to your
-server and say: "Set up Kontext on my server following the
-[installation guide](https://kontext.email/en/installation.html)."
-
-**By hand:**
-
-```bash
-git clone https://github.com/Speicherstadt/kontext /opt/kontext && cd /opt/kontext
-cp deploy/.env.example deploy/.env && chmod 600 deploy/.env
-nano deploy/.env                              # domain, version, backup target, replace every change-me
-docker compose -f deploy/compose.yaml up -d   # pulls Kontext, Stalwart and Caddy and starts them
-```
-
-Then set up Stalwart (domain, DKIM, the boss's account) and register Kontext there with one
-command. These steps, DNS, telephony, backups and updates are in the
-[installation guide](https://kontext.email/en/installation.html); for a fresh server see
-[setting up a VPS](https://kontext.email/en/vps.html).
-
-## ✨ Features
+## Features
 
 In short per area; the details are on the linked page of the [documentation](https://kontext.email/en/ueberblick.html).
 
@@ -93,7 +69,7 @@ In short per area; the details are on the linked page of the [documentation](htt
 | 📱 [On every device](https://kontext.email/en/app.html) | An app without an app store, push notifications, passkeys, light and dark |
 | ♿ [Accessibility](https://kontext.email/en/accessibility.html) | Everything by keyboard, checked against WCAG 2.2 AA on every push |
 
-## 📸 Screenshots
+## Screenshots
 
 <table>
   <tr>
@@ -119,17 +95,42 @@ In short per area; the details are on the linked page of the [documentation](htt
 
 More pictures, made to send to customers, in the [tour](https://kontext.email/en/).
 
-## 🔀 Kontext and the alternatives
+## Kontext and the alternatives
 
 | | What it is | How Kontext differs |
 | --- | --- | --- |
 | [Google Workspace](https://workspace.google.com), [Microsoft 365](https://www.microsoft.com/microsoft-365) | mail, calendar and office as a per-user subscription | your own server, no per-seat cost, chat and phone included |
 | [Nextcloud](https://nextcloud.com) | self-hosted files with mail and calendar as apps | built around mail and the customer, with shared mailboxes and the office phone |
-| [Roundcube](https://roundcube.net), [SOGo](https://www.sogo.nu) | proven webmail clients for IMAP | modern interface built for the phone, customer view, tasks and chat |
-| [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | groupware for providers and larger companies | one small server per company, set up in an afternoon |
-| [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | phone systems with CTI apps | keeps your Fritzbox and numbers, no licence per extension |
+| [Roundcube](https://roundcube.net), [SOGo](https://www.sogo.nu) | proven webmail clients for IMAP | customer view, tasks, chat and phone in one app |
+| [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | groupware for providers and larger companies | built for one server of your own per company |
+| [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | phone systems with CTI apps | keeps using your Fritzbox and your numbers |
 
-## ❓ FAQ
+## Quick start
+
+You need a server (amd64 or arm64) with Docker or Podman, your own domain and open ports for mail
+and web (25, 80, 443, 465, 587, 993). Ten users run fine on a VPS with 2 vCPUs and 4 GB RAM.
+
+### 1. Let an agent set it up
+
+Give Claude Code or another coding agent this repository and SSH access to your
+server and say: "Set up Kontext on my server following the
+[installation guide](https://kontext.email/en/installation.html)."
+
+### 2. Manually
+
+```bash
+git clone https://github.com/Speicherstadt/kontext /opt/kontext && cd /opt/kontext
+cp deploy/.env.example deploy/.env && chmod 600 deploy/.env
+nano deploy/.env                              # domain, version, backup target, replace every change-me
+docker compose -f deploy/compose.yaml up -d   # pulls Kontext, Stalwart and Caddy and starts them
+```
+
+Then set up Stalwart (domain, DKIM, the boss's account) and register Kontext there with one
+command. These steps, DNS, telephony, backups and updates are in the
+[installation guide](https://kontext.email/en/installation.html); for a fresh server see
+[setting up a VPS](https://kontext.email/en/vps.html).
+
+## FAQ
 
 <details>
 <summary><b>Who is Kontext for?</b></summary>
@@ -233,7 +234,7 @@ Playwright on desktop and phone), and CI runs them against a real Stalwart. How 
 tested: [Development](https://kontext.email/en/development.html).
 </details>
 
-## 📚 Documentation
+## Documentation
 
 Everything in detail, with search: **[kontext.email](https://kontext.email/en/)** ([Deutsch](https://kontext.email/)).
 Every feature above links its page; besides:
@@ -245,7 +246,7 @@ Every feature above links its page; besides:
   [development](https://kontext.email/en/development.html), [changelog](CHANGELOG.md) and
   [roadmap](ROADMAP.md)
 
-## 🛠️ Development
+## Development
 
 [![JMAP](https://img.shields.io/badge/JMAP-mail%20%7C%20calendar%20%7C%20contacts-0f766e)](https://jmap.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -269,15 +270,24 @@ Sign in as `jonas@weber-haustechnik.test` / `kaffee-werkbank-kontext` (the boss,
 admin too); `anna@`, `sandra@` and `max@` share the password. Structure, tests and releases:
 [Development](https://kontext.email/en/development.html).
 
-## 🧩 More from us
+## More from us
 
 More open-source apps for your own server, covering accounting, office documents, a document archive and more: **[speicherstadt.app](https://speicherstadt.app)**
 
-## 🤝 Contributing
+## Contributing
 
 Bugs and ideas are welcome as issues, through the [bug report form](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml).
 Security problems please report privately, see [SECURITY.md](SECURITY.md). What to run before a pull
 request is in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Star history
+
+<a href="https://www.star-history.com/#Speicherstadt/kontext&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Speicherstadt/kontext&type=Date&theme=dark">
+    <img alt="GitHub star history of Kontext" src="https://api.star-history.com/svg?repos=Speicherstadt/kontext&type=Date">
+  </picture>
+</a>
 
 ---
 
@@ -290,6 +300,6 @@ request is in [CONTRIBUTING.md](CONTRIBUTING.md).
 <sub>License: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel and contributors · <a href="README.de.md">Deutsche Version</a><br>
 Changed versions you pass on or run for others must offer their source code under the AGPL. For IT service providers: partnership with a direct line to the developers, plus setup and support via <a href="https://teufel-it.de">teufel-it.de</a>.<br>
 Kontext is no legal advice: data protection and retention duties are up to the company, the software helps with them.<br>
-Kontext is not affiliated with Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft or Anthropic.</sub>
+Kontext is not affiliated with Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic or the makers of the other products named here; the names are trademarks of their owners.</sub>
 
 </div>
