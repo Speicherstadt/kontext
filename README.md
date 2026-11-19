@@ -271,7 +271,7 @@ admin too); `anna@`, `sandra@` and `max@` share the password. Structure, tests a
 
 ## 🧩 More from us
 
-More open-source apps for your own server, for accounting, office documents, a document archive and more: **[speicherstadt.app](https://speicherstadt.app)**
+More open-source apps for your own server, covering accounting, office documents, a document archive and more: **[speicherstadt.app](https://speicherstadt.app)**
 
 ## 🤝 Contributing
 
