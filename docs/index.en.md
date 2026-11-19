@@ -23,17 +23,16 @@ hide:
 documents – in one app, in the browser and on the phone. Your data stays with you, and ten people
 cost as much as one.</p>
 
-[Take the tour](#rundgang){ .md-button .md-button--primary } [Try the demo](https://kontext.email/demo/){ .md-button } [Every feature in detail](ueberblick.md){ .md-button }
+[Try the demo](https://kontext.email/demo/){ .md-button .md-button--primary } [Take the tour](#rundgang){ .md-button } [Every feature in detail](ueberblick.md){ .md-button }
 
 </div>
 
-<!-- The film is made from the real app: bun run video (docs/development.md#film). The i18n plugin
-     publishes kontext-film.de.* as assets/kontext-film.* and kontext-film.en.* as
-     en/assets/kontext-film.*, so both pages name the file without its language. -->
-<div class="showcase-film">
-<video controls autoplay muted loop playsinline preload="metadata" poster="assets/kontext-film.jpg" width="1920" height="1080" aria-label="Kontext in two minutes: mail, calendar, contacts, phone, tasks, chat and video calls, documents, encryption, AI agents, company admin and the phone">
-<source src="assets/kontext-film.mp4" type="video/mp4">
-</video>
+<!-- Pictures, not a film: they stay sharp on a phone and match the theme; the demo shows the rest.
+     On a phone the phone's own screen, so nothing has to be read at a quarter of its size. -->
+<div class="showcase-shot showcase-cover" markdown>
+[![Kontext in the browser: the inbox with categories, a folder per customer and a mail with a PDF preview](screenshots/mail.png#only-light){ .showcase-cover-wide width="1440" height="900" }](https://kontext.email/demo/)
+[![Kontext in the browser in the dark theme: the inbox with a mail with a PDF preview](screenshots/mail-dark.png#only-dark){ .showcase-cover-wide width="1440" height="900" }](https://kontext.email/demo/)
+[![Kontext on the phone: the inbox with the tab bar](screenshots/phone-mail.png){ .showcase-cover-phone width="780" height="1688" }](https://kontext.email/demo/)
 </div>
 
 <div class="showcase-feature" id="rundgang" markdown>

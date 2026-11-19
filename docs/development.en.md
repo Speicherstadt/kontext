@@ -154,7 +154,7 @@ mailboxes info@ and rechnung@, folders, mails with attachments, an HTML newslett
 from the internet, a test mail full of XSS tricks, contacts with the groups "Lieferanten"
 (suppliers) and "Team" (three with a birthday in the coming weeks), appointments in the current
 week, a weekly team meeting and open invitations. Anna has
-an appointment of her own today from 13:30 to 15:00, so that the film and the screenshot show a
+an appointment of her own today from 13:30 to 15:00, so that the screenshot shows a
 busy colleague at any time of day: Stalwart sends no invitation for an appointment that is
 already over when the seed runs. The script is idempotent – it only adds what is missing.
 
@@ -165,7 +165,7 @@ the test data is in Stalwart and the server answers (`dev/demo-data.ts`): the ta
 and `#allgemein`, and a direct message to Jonas. For this the four sign in through
 `POST /api/auth/sign-in/stalwart`, like the sign-in form. This happens only once per database:
 if #baustelle-hoffmann is already there, everything stays as it is. To start over, delete
-`.dev/server/`. The screenshots and the film use the same data (`e2e/demo-data.ts`); the e2e
+`.dev/server/`. The screenshots use the same data (`e2e/demo-data.ts`); the e2e
 tests don't – they expect an empty chat and empty tasks, and their seed
 (`dev/stalwart.ts --seed`) only fills Stalwart.
 
@@ -241,7 +241,6 @@ over. You sign in with one click as Jonas, Anna, Sandra or Max.
 | App (PWA)       | `bun run e2e`         | `e2e/pwa.spec.ts` against the built app as in production (server on 28090 serves `dist/`): updates, offline start, cache headers, Brotli, what is precached, sharing |
 | Dependencies    | `bun audit`           | known vulnerabilities; in CI on every push and nightly                                                      |
 | Screenshots     | `bun run screenshots` | the pictures in `docs/screenshots/` and for the install dialog in `public/screenshots/`                     |
-| Film            | `bun run video`       | the film at the top of the docs' home page, German and English, `docs/assets/kontext-film.*` (see [Film](#film)) |
 
 Before the first `bun run e2e` (or `bun run screenshots`), download Playwright's Chromium once:
 `bunx playwright install chromium`. If you already have a Chromium, point to it instead with
@@ -304,45 +303,6 @@ The local instance
 allows IMAP sign-ins without TLS (only on 127.0.0.1), so that mail programs and the integration
 tests can connect.
 
-## Film { #film }
-
-The film at the top of the home page is made, like the screenshots, from the real app with the
-test data, not from a screen recording, once in German and once in English
-(`FILM_LANG=de` or `en`, `video/language.ts`): `bun run video` makes both one after the other,
-`bun run video:de` or `video:en` only one. In the English film the browser runs on `en-GB`, the
-app is in English, and titles, subtitles and typed texts come from `say("…", "…")`; Weber
-Haustechnik's test data stays German. The takes find the controls through the app's own texts
-(`ui("mail_inbox")` from `messages/*.json`), so that both languages go through the same steps.
-Each language has its own files: `docs/assets/kontext-film.de.mp4` and `.en.mp4`, the poster
-images `.jpg`, and the teasers `kontext-teaser.de.webp` (`README.de.md`) and `.en.webp`
-(`README.md`); `docs/index.md` shows the German film, `docs/index.en.md` the English one. Both
-refer to `assets/kontext-film.mp4` without the language: mkdocs-static-i18n publishes
-`kontext-film.de.mp4` as `assets/kontext-film.mp4` and `kontext-film.en.mp4` as
-`en/assets/kontext-film.mp4`; `assets/kontext-film.de.mp4` doesn't exist on the site. Two
-steps per language:
-
-1. **Record** (`bun run video:record`, the Playwright project `video`): `e2e/video.spec.ts` calls
-   a take from `video/takes/` for each scene. It operates the app step by step and takes a sharp
-   picture after each step (double pixels on desktop, triple on the phone), along with where the
-   pointer clicks and where the camera looks (`video/take.ts`). Everything goes to
-   `.dev/video/takes/<language>/<scene>/`. `TAKE=chat FILM_LANG=en bun run video:record` records
-   only one scene again.
-   The video call really runs over LiveKit, with drawn people as the camera
-   (`video/camera.ts`); the AI scene really calls Kontext's MCP server, only the assistant's chat
-   window next to it is drawn (`video/panels.ts`), as is the card with what the server stores of
-   a confidential message – its content comes from the API. In the documents scene, Kontext's frame shows pictures of the real Schreibzeug (`video/schreibzeug/`, from `docs/screenshots/` of Speicherstadt/schreibzeug), because the stand-in in the tests only says who is signed in.
-2. **Render** (`bun run video:render`, `video/render.ts`): the stage (`video/stage/`) puts the
-   pictures into browser windows and phones, moves pointer and camera, cross-fades and sets
-   titles and subtitles. It is a page in Chromium that shows a fixed picture for any point in
-   time (`window.film.render(t)`, the timing in `video/stage/timeline.ts`); it is rendered frame
-   by frame, and ffmpeg turns that into an MP4 (H.264, plays everywhere), a poster image and a short cut as an animated WebP for the READMEs (`docs/assets/kontext-teaser.<language>.webp`; GitHub doesn't play video from the repository but does show animated images). Which parts go into the cut is in `teaser` in `video/storyboard.ts`. It runs at 30 frames per second like the film – with fewer, camera and pointer judder; `--teaser` cuts it again without rendering the film again. `img2webp` from libwebp makes the WebP with a keyframe every eight frames: ffmpeg's own animated WebP has only one at the start and then misses small changes, so old blocks stayed behind during slow cross-fades and camera moves. With
-   `--stills 12,40.5`, single pictures are made in `.dev/video/stills/<language>/`; with `--from 20 --to 35
-   --out .dev/video/teil.mp4`, an excerpt.
-
-Order, titles and subtitles are in `video/storyboard.ts` and in the steps of the takes: short,
-because most people watch the film without sound. After a change to the app's look:
-Actions → _Update video_ → Run workflow (or `bun run video`, needs ffmpeg and img2webp, package
-`webp`), then watch both films.
 
 ## CI and releases { #ci-und-releases }
 
@@ -391,7 +351,6 @@ Actions → _Update video_ → Run workflow (or `bun run video`, needs ffmpeg an
   .github/renovate.json5`.
 - **Screenshots**: Actions → _Update screenshots_ → Run workflow (or `bun run screenshots`, locally
   with `PW_CHROMIUM_PATH` if Playwright's own browser is missing).
-- **Film**: Actions → _Update video_ → Run workflow (or `bun run video`, see [Film](#film)).
 - **Release**: Actions → _Bump version_ → Run workflow on `main`, choosing `patch`, `minor` or
   `major` (for a release candidate `preminor`, then `prerelease`, and finally `patch`). The run
   bumps the version in `package.json`, commits it as "Release vX.Y.Z", sets the tag and starts

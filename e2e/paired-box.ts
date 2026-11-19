@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { expect, type Page } from "@playwright/test";
 
 /**
- * Jonas' phone line with a fake box (dev/fake-box.ts) paired to it, for the pictures and the film:
+ * Jonas' phone line with a fake box (dev/fake-box.ts) paired to it, for the pictures:
  * the Fritzbox login, Jonas as the one who rings, and the box on a control port of its own.
  */
 export const pairBox = async (page: Page, controlPort: number) => {

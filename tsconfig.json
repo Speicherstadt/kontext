@@ -26,7 +26,6 @@
     "e2e",
     "server",
     "box",
-    "video",
     "deploy",
     "docker",
     "vite.config.ts",
