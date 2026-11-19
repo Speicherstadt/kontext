@@ -6,7 +6,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
+import { useSave } from "@/account/queries";
 import { useClient } from "@/auth/auth";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
@@ -23,8 +25,6 @@ import { cn } from "@/lib/cn";
 import { readingDate } from "@/lib/format";
 import { m } from "@/paraglide/messages";
 import { MASKED_KEY, NewMaskedEmailForm } from "./masked-email-form";
-import { useSave } from "./queries";
-import { SettingsCard } from "./settings-page";
 
 const CopyButton = ({ email }: { email: string }) => {
   const toast = useToast();

@@ -3,7 +3,9 @@
  * "Auf dem Server verschlüsselt ablegen"). Kontext opens them like any PGP mail.
  */
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSave } from "@/account/queries";
 import { useClient } from "@/auth/auth";
+import { SettingsCard } from "@/components/settings-card";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
 import {
@@ -14,8 +16,6 @@ import {
   setEncryptionAtRest,
 } from "@/jmap/encryption-at-rest";
 import { m } from "@/paraglide/messages";
-import { useSave } from "../settings/queries";
-import { SettingsCard } from "../settings/settings-page";
 import { type OwnKey, useOwnKey } from "./queries";
 
 const KEY = ["settings", "encryptionAtRest"];

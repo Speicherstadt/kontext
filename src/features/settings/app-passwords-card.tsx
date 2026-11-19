@@ -5,6 +5,8 @@
  * (server/dav/app-passwords.ts).
  */
 import { type FormEvent, useState } from "react";
+import { useTwoFactor } from "@/account/queries";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -19,8 +21,6 @@ import {
   useCreateAppPassword,
   useRevokeAppPassword,
 } from "./app-passwords-api";
-import { useTwoFactor } from "./queries";
-import { SettingsCard } from "./settings-page";
 
 export const AppPasswordRow = ({ entry }: { entry: AppPasswordInfo }) => {
   const revoke = useRevokeAppPassword();

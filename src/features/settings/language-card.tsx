@@ -1,10 +1,10 @@
 /** The app's language on this device: as the browser says, or German or English. */
 import { useId } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Select } from "@/components/ui/input";
 import { chooseLanguage, chosenLanguage } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
 import { getLocale, isLocale, type Locale } from "@/paraglide/runtime";
-import { SettingsCard } from "./settings-page";
 
 /** Each language in its own words, so the way back is readable whatever is set. */
 const LANGUAGES: [Locale, string][] = [

@@ -1,6 +1,7 @@
 /** The middle column for one folder of one account. */
 import { Users } from "lucide-react";
 import { useCallback, useMemo } from "react";
+import { usePersonalAccountId } from "@/account/queries";
 import type { MailSearch } from "@/features/mail/search-params";
 import type { Mailbox } from "@/jmap/types";
 import { acceptsImport } from "@/lib/eml-import";
@@ -9,7 +10,6 @@ import { mailboxNotice } from "@/lib/mail-accounts";
 import { mailboxName, mailboxRights } from "@/lib/mailboxes";
 import { m } from "@/paraglide/messages";
 import { TrashActions } from "../deleted-items/trash-actions";
-import { usePersonalAccountId } from "../settings/queries";
 import { RESURFACED, useSnoozes } from "../snooze/queries";
 import { EmlImportButton, useEmlImport } from "./eml-import";
 import { canEmpty, EmptyFolder } from "./empty-folder";

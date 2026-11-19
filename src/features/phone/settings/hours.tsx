@@ -4,11 +4,11 @@
  * on). Closed days for holidays and company holidays; the box decides by itself.
  */
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { StateSelect } from "@/components/state-select";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { SettingsCard } from "@/features/settings/settings-page";
 import { comingHolidays, type State } from "@/lib/holidays";
 import { LOCALE } from "@/lib/locale";
 import { fromWeek, type Span, toWeek, usualWeek, type WeekRow } from "@/lib/opening-hours";

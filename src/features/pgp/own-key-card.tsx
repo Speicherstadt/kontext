@@ -4,7 +4,9 @@
  */
 import { Download, KeyRound, Printer } from "lucide-react";
 import { type FormEvent, type ReactNode, useState } from "react";
+import { usePersonalAccountId } from "@/account/queries";
 import { useSession } from "@/auth/session";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Textarea } from "@/components/ui/input";
@@ -21,8 +23,6 @@ import {
 } from "@/lib/pgp";
 import { m } from "@/paraglide/messages";
 import { useSendAccount } from "../mail/use-send-account";
-import { usePersonalAccountId } from "../settings/queries";
-import { SettingsCard } from "../settings/settings-page";
 import { useStopAtRest } from "./at-rest-card";
 import { keepUnlocked, type OwnKey, useOwnKey, usePgpActions } from "./queries";
 

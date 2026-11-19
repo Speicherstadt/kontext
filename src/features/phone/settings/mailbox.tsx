@@ -4,10 +4,10 @@
  * call in Kontext.
  */
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { SettingsCard } from "@/features/settings/settings-page";
 import { m } from "@/paraglide/messages";
 import { type Admin, send, useAdminChange } from "./api";
 import { OwnerSelect } from "./owner-select";

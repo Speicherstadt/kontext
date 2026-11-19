@@ -5,11 +5,11 @@
  */
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { LOCALE } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
-import { SettingsCard } from "../settings/settings-page";
 import { ConfirmButton } from "./fields";
 import { useCompanyChange } from "./queries";
 import { createScimToken, removeScimToken, type SsoView } from "./sso-api";
