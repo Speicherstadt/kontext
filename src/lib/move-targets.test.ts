@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Account, Mailbox } from "@/jmap/types";
+import type { Account, Mailbox } from "@/model/jmap";
 import { moveTargets } from "./move-targets";
 
 const box = (

@@ -1,5 +1,5 @@
 /** What the composer starts with for a new mail, a reply, a forward or a saved draft. Pure, so it is tested. */
-import type { EmailAddress, EmailDetail, Identity } from "@/jmap/types";
+import type { EmailAddress, EmailDetail, Identity } from "@/model/jmap";
 import { m } from "@/paraglide/messages";
 import { prefixSubject, replyRecipients, sameAddress } from "./addresses";
 import { displayName, readingDate } from "./format";

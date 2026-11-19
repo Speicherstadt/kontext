@@ -11,7 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { SettingsCard } from "@/features/settings/settings-page";
 import { toPhoneWav } from "@/lib/wav";
 import { m } from "@/paraglide/messages";
-import { soundLength } from "../../../../server/phone/sounds";
+import { soundLength } from "../../../../server/model/phone-sounds";
 import { type Admin, send, useAdminChange } from "./api";
 
 const uploadSound = async (name: string, audio: Blob) => {

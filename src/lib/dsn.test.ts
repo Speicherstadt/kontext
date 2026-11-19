@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { BodyStructure } from "@/jmap/types";
+import type { BodyStructure } from "@/model/jmap";
 import {
   deliveryStatusPart,
   isDeliveryReport,

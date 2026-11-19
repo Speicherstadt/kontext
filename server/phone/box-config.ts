@@ -1,10 +1,11 @@
 /** What the telephone box should run: its configuration, derived from the line's settings. Pure. */
-import { companyDay } from "../tasks/tasks";
+
+import type { RingPlan } from "../model/phone";
+import { numberForms, toDialable } from "../model/phone-numbers";
+import type { BoxConfig } from "../model/phone-protocol";
+import { companyDay } from "../model/tasks";
 import { deskForBox, ringPlanFor } from "./lines";
 import { TRUNK_USER } from "./livekit-sip";
-import { numberForms, toDialable } from "./numbers";
-import type { RingPlan } from "./phone";
-import type { BoxConfig } from "./protocol";
 import type { PhoneSettings } from "./store";
 
 /** How long an incoming call rings in Kontext before the box lets go of it. */

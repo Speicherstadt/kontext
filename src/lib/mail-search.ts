@@ -4,7 +4,7 @@
  * `kategorie:erledigt` …). Parsed into
  * a query, turned into a JMAP Email/query filter per account (RFC 8621 §4.4.1).
  */
-import type { Mailbox } from "@/jmap/types";
+import type { Mailbox } from "@/model/jmap";
 import type { Category } from "./categories";
 import { addDays, fromLocal } from "./jscalendar";
 

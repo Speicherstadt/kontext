@@ -3,7 +3,7 @@
  * reads from it (CalendarEvent/parse gives JSCalendar with the iTIP `method`) and what the line
  * above the mail offers, measured against the event in the calendar with the same UID. Pure.
  */
-import type { BodyPart } from "@/jmap/types";
+import type { BodyPart } from "@/model/jmap";
 import type { ReplyStatus } from "./invitation-reply";
 import { type CalendarEvent, type Participant, participantEmail } from "./jscalendar";
 

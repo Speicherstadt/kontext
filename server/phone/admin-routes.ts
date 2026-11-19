@@ -4,6 +4,7 @@
  */
 import { Hono } from "hono";
 import type { Env, Loaded } from "../company/context";
+import { toE164 } from "../model/phone-numbers";
 import {
   blockedInput,
   boxSchema,
@@ -19,7 +20,6 @@ import {
   recordingInput,
   ringSchema,
 } from "./admin-schemas";
-import { toE164 } from "./numbers";
 import type { PhoneService } from "./service";
 import { type PhoneStore, randomSecret } from "./store";
 

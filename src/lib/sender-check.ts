@@ -7,7 +7,7 @@
  * header counts: anything below it came with the mail and may be forged by the sender. A mail
  * without one did not come in from outside: sent by a colleague, or brought over by a move.
  */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 
 export type MethodResult = {
   /** "pass", "fail", "softfail", "neutral", "none", "temperror", "permerror", … */

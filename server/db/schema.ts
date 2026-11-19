@@ -196,7 +196,7 @@ export const tasks = sqliteTable(
     /** When to remind the assignee by push; `remindedAt` once that happened. */
     remindAt: integer("remind_at", { mode: "timestamp_ms" }),
     remindedAt: integer("reminded_at", { mode: "timestamp_ms" }),
-    /** daily, weekdays, weekly, monthly, yearly: done, it comes again (server/tasks/tasks.ts). */
+    /** daily, weekdays, weekly, monthly, yearly: done, it comes again (server/model/tasks.ts). */
     repeat: text("repeat"),
     /**
      * Made in a CalDAV client: its file name there (without ".ics") and its UID, kept so the

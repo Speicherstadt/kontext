@@ -11,7 +11,7 @@
  * SpamAiProperties::default in crates/registry/src/schema/structs_impl.rs). Reasons and errors
  * come without `"` or `;` (push_reason), so a plain split is enough. Pure.
  */
-import type { EmailHeader } from "@/jmap/types";
+import type { EmailHeader } from "@/model/jmap";
 
 export type SpamAiVerdict =
   | {

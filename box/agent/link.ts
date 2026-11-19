@@ -10,7 +10,7 @@ import {
   parseMessage,
   type ToBox,
   toBoxSchema,
-} from "../../server/phone/protocol";
+} from "../../server/model/phone-protocol";
 
 export type Credentials = { url: string; boxId: string; token: string };
 

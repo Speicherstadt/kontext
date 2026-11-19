@@ -4,7 +4,7 @@
  * and reports every step on the manager interface (AMI, localhost only) as a UserEvent the agent
  * turns into call events; the dialplan itself is in dialplan.ts. Pure.
  */
-import type { BoxConfig, DeskPhone } from "../../server/phone/protocol";
+import type { BoxConfig, DeskPhone } from "../../server/model/phone-protocol";
 import { type BoxPaths, deskEndpoint, extensionsConf } from "./dialplan";
 
 export type { BoxPaths };

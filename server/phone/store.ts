@@ -6,7 +6,7 @@ import { and, desc, eq, gt, isNotNull } from "drizzle-orm";
 import type { Sealer } from "../crypto";
 import type { Db } from "../db";
 import * as schema from "../db/schema";
-import type { PhoneCall, PhoneStatus } from "./phone";
+import type { PhoneCall, PhoneStatus } from "../model/phone";
 import { type PhoneSettings, pairingCode, randomSecret, settingsSchema, sha256 } from "./settings";
 
 export type BoxRow = {

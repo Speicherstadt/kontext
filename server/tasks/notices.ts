@@ -2,9 +2,10 @@
  * Pushes about tasks: to whom a task was just given, and reminders when they are due – sent every
  * minute by the server, so they also reach a phone with Kontext closed.
  */
+
+import type { Task } from "../model/tasks";
 import type { Notice } from "../push/pusher";
 import type { TaskStore } from "./store";
-import type { Task } from "./tasks";
 
 const dayFormat = new Intl.DateTimeFormat("de-DE", {
   weekday: "short",

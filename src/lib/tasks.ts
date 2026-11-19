@@ -1,9 +1,9 @@
 /**
  * Tasks as the app shows them: the views (mine, today, upcoming, done), groups by due date, the
  * order on the board, the quick entry ("Rückruf Hoffmann morgen") and a task from a mail. Pure;
- * what a task is: server/tasks/tasks.ts. Days are "YYYY-MM-DD" in the company's time zone.
+ * what a task is: server/model/tasks.ts. Days are "YYYY-MM-DD" in the company's time zone.
  */
-import type { EmailSummary } from "@/jmap/types";
+import type { EmailSummary } from "@/model/jmap";
 import { m } from "@/paraglide/messages";
 import type {
   BoardColumn,
@@ -12,14 +12,14 @@ import type {
   Task,
   TaskLink,
   TaskStatus,
-} from "../../server/tasks/tasks";
+} from "../../server/model/tasks";
 import {
   boardKey,
   DEFAULT_COLUMNS,
   isCalendarDay,
   REPEATS,
   TASK_STATUSES,
-} from "../../server/tasks/tasks";
+} from "../../server/model/tasks";
 import { displayName } from "./format";
 import { addDays, dateKey } from "./jscalendar";
 import { LOCALE } from "./locale";

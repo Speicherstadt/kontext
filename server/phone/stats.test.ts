@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { incomingCall, type PhoneCall } from "./phone";
+import { incomingCall, type PhoneCall } from "../model/phone";
 import { berlinSlot, callStats } from "./stats";
 
 const call = (startedAt: string, extra: Partial<PhoneCall> = {}): PhoneCall => ({

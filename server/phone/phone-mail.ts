@@ -2,8 +2,8 @@
  * The mails telephony writes into a mailbox: a message left on the mailbox (with the recording as
  * WAV) and a fax (as PDF) – RFC 5322 with MIME, RFC 2045–2047. Pure.
  */
-import { readableNumber } from "./numbers";
-import { soundLength } from "./sounds";
+import { readableNumber } from "../model/phone-numbers";
+import { soundLength } from "../model/phone-sounds";
 
 export type Voicemail = {
   /** The caller's number in E.164, "" when withheld. */

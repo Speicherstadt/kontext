@@ -16,7 +16,7 @@ import {
   type Task,
 } from "@/lib/tasks";
 import { m } from "@/paraglide/messages";
-import type { TaskPatch, TaskProject } from "../../../server/tasks/tasks";
+import type { TaskPatch, TaskProject } from "../../../server/model/tasks";
 import { useMailAccounts } from "../mail/queries";
 import { usePrincipals } from "../sharing/queries";
 

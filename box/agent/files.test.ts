@@ -4,7 +4,7 @@ import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { encodeWav } from "../../server/phone/sounds";
+import { encodeWav } from "../../server/model/phone-sounds";
 import { createBoxFiles } from "./files";
 
 const credentials = { url: "https://kontext.firma.de", boxId: "b1", token: "secret" };

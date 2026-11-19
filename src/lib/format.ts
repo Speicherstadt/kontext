@@ -1,5 +1,5 @@
 /** German formatting of dates, sizes and names. `now` is passed in so the functions stay pure. */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 import { m } from "@/paraglide/messages";
 import { LOCALE } from "./locale";
 

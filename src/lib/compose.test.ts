@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { JmapClient } from "@/jmap/client";
 import { saveDraft } from "@/jmap/mail";
-import type { EmailDetail } from "@/jmap/types";
+import type { EmailDetail } from "@/model/jmap";
 import {
   emlName,
   safeFileName,

@@ -5,7 +5,7 @@
  * are the server's own (server/phone/stats.ts). The message on the mailbox is a recording that
  * comes with the demo (voicemail.m4a: Piper's voice "kerstin", CC0).
  */
-import type { PhoneCall } from "../../server/phone/phone";
+import type { PhoneCall } from "../../server/model/phone";
 import { callStats } from "../../server/phone/stats";
 import { json } from "./respond";
 import { type Store, visibleAccounts } from "./store";

@@ -4,7 +4,7 @@
  * mail in In-Reply-To or References, or only in its report's Original-Message-ID, which Stalwart
  * does not index – so receipts are looked for by who sent them, and their report is read.
  */
-import type { BodyStructure, EmailAddress } from "@/jmap/types";
+
 import {
   dispositionPart,
   isReceipt,
@@ -15,6 +15,7 @@ import {
 } from "@/lib/mdn";
 import type { JmapClient } from "./client";
 import { searchPages } from "./search-pages";
+import type { BodyStructure, EmailAddress } from "./types";
 
 export type Receipt = {
   id: string;

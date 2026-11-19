@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
 import type { CalendarEvent } from "@/lib/jscalendar";
-import type { Task } from "../tasks/tasks";
+import type { Task } from "../model/tasks";
 import { type ContactSummary, eventSummary } from "./format";
 import type { Reader } from "./reader";
 import { customerTerms, TOOLS } from "./tools";

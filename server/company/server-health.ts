@@ -8,7 +8,7 @@
  * PERSISTED_COUNTERS / PERSISTED_GAUGES there are kept. Pure: the calls are in
  * server-health-routes.ts.
  */
-import { berlinInstant, companyDay } from "../tasks/tasks";
+import { berlinInstant, companyDay } from "../model/tasks";
 
 /** Stalwart's names of what is counted (MetricType::as_str, crates/trc/src/event/enums_impl.rs). */
 export const METRICS = {

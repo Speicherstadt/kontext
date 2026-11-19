@@ -6,9 +6,9 @@
  */
 import type { Grants } from "../auth";
 import type { Env } from "../env";
+import type { NewTaskData, TaskLink } from "../model/tasks";
 import { TASK_KEYWORD } from "../rules/script";
 import type { TaskStore } from "./store";
-import type { NewTaskData, TaskLink } from "./tasks";
 
 const USING = ["urn:ietf:params:jmap:core", "urn:ietf:params:jmap:mail"];
 /** At most this many marked mails of one mailbox per minute. */

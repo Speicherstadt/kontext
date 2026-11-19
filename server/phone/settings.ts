@@ -1,6 +1,6 @@
 /** The phone line's stored settings and the secrets of pairing a box. */
 import { z } from "zod";
-import { hoursSchema, lineSchema } from "./protocol";
+import { hoursSchema, lineSchema } from "../model/phone-protocol";
 
 /** Stored settings; what later versions added comes with its default when it is missing. */
 export const settingsSchema = z.object({

@@ -3,7 +3,7 @@
  * a row, split in mbox.ts; an Outlook .msg is a binary container that Stalwart's Email/import does
  * not read), and the time a mail counts as received, read from its Date header.
  */
-import type { Mailbox } from "@/jmap/types";
+import type { Mailbox } from "@/model/jmap";
 
 export type FileProblem = "msg" | "type" | "empty";
 export type FileCheck = { ok: true; kind: "eml" | "mbox" } | { ok: false; problem: FileProblem };

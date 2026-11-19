@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sameNumber, toDialable, toE164 } from "./numbers";
+import { sameNumber, toDialable, toE164 } from "./phone-numbers";
 
 describe("toE164", () => {
   it("drops the trunk 0 written after the country code", () => {

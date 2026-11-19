@@ -5,7 +5,7 @@
  */
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { BoxConfig, CallEvent } from "../../server/phone/protocol";
+import type { BoxConfig, CallEvent } from "../../server/model/phone-protocol";
 import { type Ami, callEventOf, connectAmi, type Frame, refusalOf, registrationOf } from "./ami";
 import { type AmiLogin, asteriskFiles, type BoxPaths, lineEndpoint } from "./asterisk-config";
 import type { BoxFiles } from "./files";

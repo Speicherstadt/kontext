@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Mailbox } from "@/jmap/types";
+import type { Mailbox } from "@/model/jmap";
 import {
   canAssignIn,
   flattenTree,

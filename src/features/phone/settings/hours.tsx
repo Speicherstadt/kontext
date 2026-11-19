@@ -13,7 +13,7 @@ import { comingHolidays, type State } from "@/lib/holidays";
 import { LOCALE } from "@/lib/locale";
 import { fromWeek, type Span, toWeek, usualWeek, type WeekRow } from "@/lib/opening-hours";
 import { m } from "@/paraglide/messages";
-import { companyDay } from "../../../../server/tasks/tasks";
+import { companyDay } from "../../../../server/model/tasks";
 import { type Admin, send, useAdminChange } from "./api";
 import { SoundSelect } from "./sounds";
 

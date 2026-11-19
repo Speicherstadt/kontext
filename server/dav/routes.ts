@@ -10,7 +10,6 @@
  * Clients learn of changes by the ctag and, quicker, by `sync-collection` (sync.ts).
  */
 import { Hono } from "hono";
-import type { Board, TaskStore } from "../tasks/store";
 import {
   type BoardColumn,
   boardKey,
@@ -19,7 +18,8 @@ import {
   nextOccurrence,
   type Task,
   type TaskPatch,
-} from "../tasks/tasks";
+} from "../model/tasks";
+import type { Board, TaskStore } from "../tasks/store";
 import type { DavAccount, DavUser } from "./auth";
 import { type IncomingTodo, readVtodo, toVtodo } from "./ical";
 import {

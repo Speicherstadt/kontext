@@ -2,7 +2,7 @@
  * Several mails chosen in a list, as in Gmail: one by one, a range with Shift, all at once. A
  * mail is known by account and id, since "Alle Posteingänge" and the search mix mailboxes. Pure.
  */
-import type { EmailSummary, Mailbox } from "@/jmap/types";
+import type { EmailSummary, Mailbox } from "@/model/jmap";
 import type { Category } from "./categories";
 
 export type Picked = { accountId: string; email: EmailSummary };

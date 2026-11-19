@@ -4,7 +4,7 @@
  * the quoted original below a reply, to fold away when the earlier mails are right there. Pure;
  * the thread is JMAP's (RFC 8621 §3), across all folders of one account.
  */
-import type { EmailSummary } from "@/jmap/types";
+import type { EmailSummary } from "@/model/jmap";
 
 export type ThreadMail = Pick<
   EmailSummary,

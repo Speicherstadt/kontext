@@ -1,9 +1,9 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
+import { berlinInstant, nextDue, nextOccurrence } from "../model/tasks";
 import type { Notice } from "../push/pusher";
 import { assignedNotice, createTaskReminder, dueText, recipientOf } from "./notices";
 import { sampleTask } from "./sample-task";
-import { berlinInstant, nextDue, nextOccurrence } from "./tasks";
 
 describe("task notices", () => {
   it("names the day and time it is due", () => {

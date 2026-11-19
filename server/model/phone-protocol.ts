@@ -24,7 +24,7 @@ export const trunkSchema = z.object({
 });
 export type Trunk = z.infer<typeof trunkSchema>;
 
-/** A sound's id (server/phone/sounds.ts): the box fetches it once from /api/phone/box/sounds. */
+/** A sound's id (server/model/phone-sounds.ts): the box fetches it once from /api/phone/box/sounds. */
 const soundIdSchema = z.string().regex(/^[a-f0-9]{24}$/);
 
 /** After ringing unanswered: the greeting, then the caller may leave a message. */

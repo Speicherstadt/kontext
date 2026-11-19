@@ -3,8 +3,9 @@
  * then the contact groups and the contacts. Colleagues are not in anyone's address book, but they
  * are the people one invites most.
  */
-import { type Principal, principalName } from "@/jmap/principals";
-import type { EmailAddress } from "@/jmap/types";
+
+import type { EmailAddress } from "@/model/jmap";
+import { type Principal, principalName } from "@/model/jmap";
 import type { Suggestion } from "./groups";
 
 /** The people of the company with a mail address, as suggestions. */
