@@ -25,6 +25,22 @@ export const PENDING = "pending-";
 /** Shown before the server has it. */
 export const isPending = (message: Message) => message.id.startsWith(PENDING);
 
+/** The pending id each sent message was first shown under, by its server id. */
+const shownAs = new Map<string, string>();
+
+/**
+ * What a message is keyed by on screen: the id it was first shown under. The server's copy takes
+ * the place of the pending one; with a new key React would build it anew, and a voice message
+ * played meanwhile would stop.
+ */
+export const shownKey = (message: Message) => shownAs.get(message.id) ?? message.id;
+
+/** Notes the pending copy among `olds` that `message` takes the place of, if there is one. */
+const keepShownKey = (olds: Message[], message: Message, replaces?: string) => {
+  const pending = olds.find((old) => isPending(old) && givesWay(old, message, replaces));
+  if (pending && !isPending(message)) shownAs.set(message.id, shownKey(pending));
+};
+
 /** A message to send; `files` are already uploaded. */
 export type Post = {
   channelId: string;
@@ -162,16 +178,17 @@ const givesWay = (old: Message, message: Message, replaces?: string) =>
  */
 export const addMessage = (queryClient: QueryClient, message: Message, replaces?: string) => {
   if (message.parentId) {
-    queryClient.setQueryData<Thread>(threadKey(message.parentId), (data) =>
-      data
+    queryClient.setQueryData<Thread>(threadKey(message.parentId), (data) => {
+      if (data) keepShownKey(data.replies, message, replaces);
+      return data
         ? {
             ...data,
             replies: [...data.replies.filter((m) => !givesWay(m, message, replaces)), message].sort(
               (a, b) => a.createdAt.localeCompare(b.createdAt),
             ),
           }
-        : data,
-    );
+        : data;
+    });
     if (message.alsoInChannel) addToChannel(queryClient, message, replaces);
     return;
   }
@@ -186,6 +203,7 @@ const addToChannel = (queryClient: QueryClient, message: Message, replaces?: str
     if (!data) return data;
     const [first, ...rest] = data.pages;
     if (!first) return data;
+    keepShownKey(first.messages, message, replaces);
     const others = first.messages.filter((m) => !givesWay(m, message, replaces));
     const messages = [message, ...others].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     return { ...data, pages: [{ ...first, messages }, ...rest] };

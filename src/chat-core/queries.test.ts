@@ -1,7 +1,7 @@
 import { QueryClient } from "@tanstack/react-query";
 import { describe, expect, it } from "vitest";
 import type { Message } from "@/lib/chat";
-import { addMessage, messagesKey, type Thread, threadKey } from "./queries";
+import { addMessage, messagesKey, shownKey, type Thread, threadKey } from "./queries";
 
 const message = (id: string, text: string, parentId: string | null = null): Message => ({
   id,
@@ -62,5 +62,35 @@ describe("addMessage", () => {
     expect(queryClient.getQueryData<Thread>(threadKey("p1"))?.replies.map((m) => m.id)).toEqual([
       "m1",
     ]);
+  });
+
+  it("keeps the key a sent message was first shown under when the server's copy comes", () => {
+    const queryClient = loadedChannel();
+    addMessage(queryClient, message("pending-2", "Sprachnachricht"));
+    addMessage(queryClient, message("m2", "Sprachnachricht"), "pending-2");
+    // A later change to it (a reaction, an edit) keeps the key too.
+    addMessage(queryClient, {
+      ...message("m2", "Sprachnachricht"),
+      editedAt: "2026-10-29T13:01:00Z",
+    });
+    expect(channelTexts(queryClient)).toEqual(["m2"]);
+    expect(shownKey(message("m2", "Sprachnachricht"))).toBe("pending-2");
+  });
+
+  it("keys a message the person did not send here by its id", () => {
+    const queryClient = loadedChannel();
+    addMessage(queryClient, message("m3", "Von Anna"));
+    expect(shownKey(message("m3", "Von Anna"))).toBe("m3");
+  });
+
+  it("keeps the key of a sent answer in its thread", () => {
+    const queryClient = new QueryClient();
+    queryClient.setQueryData<Thread>(threadKey("p4"), {
+      message: message("p4", "Frage"),
+      replies: [],
+    });
+    addMessage(queryClient, message("pending-4", "Antwort", "p4"));
+    addMessage(queryClient, message("m4", "Antwort", "p4"));
+    expect(shownKey(message("m4", "Antwort", "p4"))).toBe("pending-4");
   });
 });

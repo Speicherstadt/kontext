@@ -6,7 +6,7 @@
  */
 import { ChevronLeft, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { isPending } from "@/chat-core/queries";
+import { isPending, shownKey } from "@/chat-core/queries";
 import { useChatNames } from "@/chat-core/use-chat-names";
 import { useMediaQuery } from "@/components/use-media-query";
 import { type ChannelSummary, firstName, type Message, timeline } from "@/lib/chat";
@@ -139,7 +139,7 @@ export const ThreadPanel = ({
             {timeline(replies, new Date())
               .filter((item) => item.kind === "run")
               .map((item) => (
-                <Run key={item.messages[0]!.id} run={item} {...shared} />
+                <Run key={shownKey(item.messages[0]!)} run={item} {...shared} />
               ))}
           </ol>
         ) : null}

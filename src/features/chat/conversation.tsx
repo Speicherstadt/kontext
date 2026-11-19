@@ -7,7 +7,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { BellOff, ChevronLeft, Clock, ImageUp, LockKeyhole, Users } from "lucide-react";
 import { type DragEvent, useState } from "react";
-import { isPending, useChannels, useMessages } from "@/chat-core/queries";
+import { isPending, shownKey, useChannels, useMessages } from "@/chat-core/queries";
 import { useChatNames } from "@/chat-core/use-chat-names";
 import { Button } from "@/components/ui/button";
 import { FROM_PARENT, useBack } from "@/components/use-back";
@@ -276,7 +276,7 @@ export const Conversation = ({
               }
               return (
                 <Run
-                  key={item.messages[0]!.id}
+                  key={shownKey(item.messages[0]!)}
                   run={item}
                   me={me}
                   people={people}
