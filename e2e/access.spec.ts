@@ -43,7 +43,9 @@ test.describe("Zugänge", () => {
       await expect(rows).toHaveCount(left - 1);
     }
     expect((await other.context().request.get("/jmap/session")).status()).toBe(401);
-    await other.reload();
+    // The other browser may already be on its way to /login, its session gone; that navigation
+    // then cuts the reload short (net::ERR_ABORTED). Where it ends up is what counts.
+    await other.reload().catch(() => undefined);
     await expect(other).toHaveURL(/\/login/);
     // This one stays signed in.
     expect((await page.context().request.get("/jmap/session")).ok()).toBe(true);
