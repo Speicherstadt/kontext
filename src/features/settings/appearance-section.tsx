@@ -4,6 +4,7 @@
  */
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useId } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { ShortcutList } from "@/components/shortcuts-dialog";
 import { setThemeChoice, useTheme } from "@/components/theme/use-theme";
 import { Select } from "@/components/ui/input";
@@ -17,7 +18,6 @@ import { setThreadView, useThreadView } from "../mail/thread-view";
 import { DeviceSwitch } from "../notifications/device-switch";
 import { AppSection } from "./app-section";
 import { LanguageCard } from "./language-card";
-import { SettingsCard } from "./settings-page";
 import { SwipeCard } from "./swipe-card";
 import { TabBarSection } from "./tab-bar-section";
 import { WorkHoursCard } from "./work-hours-card";

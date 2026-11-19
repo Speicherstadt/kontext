@@ -4,11 +4,11 @@
  * chosen people with "Tür öffnen" (the box sends the opening code) and "Sprechen".
  */
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useCompany } from "@/features/company/queries";
-import { SettingsCard } from "@/features/settings/settings-page";
 import { m } from "@/paraglide/messages";
 import { type Admin, send, useAdminChange } from "./api";
 

@@ -4,9 +4,9 @@
  */
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Badge, ConfirmButton } from "@/features/company/fields";
-import { SettingsCard } from "@/features/settings/settings-page";
 import { LOCALE } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
 import { PROVIDERS } from "../../../server/migration/providers";

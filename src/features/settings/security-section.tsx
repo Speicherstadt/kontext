@@ -7,8 +7,10 @@ import { useNavigate } from "@tanstack/react-router";
 import { ShieldCheck, ShieldOff } from "lucide-react";
 import { type FormEvent, type ReactNode, useMemo, useState } from "react";
 import { renderSVG } from "uqr";
+import { useSave, useTwoFactor } from "@/account/queries";
 import { useAuth, useClient } from "@/auth/auth";
 import { useSession } from "@/auth/session";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -18,8 +20,6 @@ import { newSecret, otpauthUrl, verifyTotp } from "@/lib/totp";
 import { m } from "@/paraglide/messages";
 import { ImageSendersCard } from "./image-senders-card";
 import { PasskeysCard } from "./passkeys-card";
-import { useSave, useTwoFactor } from "./queries";
-import { SettingsCard } from "./settings-page";
 
 const passwordInput = (
   label: string,

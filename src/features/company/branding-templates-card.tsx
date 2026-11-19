@@ -6,6 +6,7 @@
  */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDeferredValue, useMemo, useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Label, Select, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -19,7 +20,6 @@ import { previewTemplate } from "@/lib/calendar-template-preview";
 import { logoSource } from "@/lib/company-logo";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
-import { SettingsCard } from "../settings/settings-page";
 import { BRANDING_KEY, type BrandingView, saveTemplate } from "./branding";
 
 const KIND_LABEL: Record<CalendarTemplateKind, () => string> = {

@@ -1,6 +1,13 @@
 import { type FormEvent, useEffect, useState } from "react";
+import {
+  useAccountSettings,
+  usePersonalAccountId,
+  usePersonalIdentities,
+  useSave,
+} from "@/account/queries";
 import { useClient } from "@/auth/auth";
 import { useSession } from "@/auth/session";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -9,13 +16,6 @@ import { useOwnPhoto } from "@/features/photos/queries";
 import { updateAccountSettings, updateIdentity } from "@/jmap/settings";
 import { LOCALE } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
-import {
-  useAccountSettings,
-  usePersonalAccountId,
-  usePersonalIdentities,
-  useSave,
-} from "./queries";
-import { SettingsCard } from "./settings-page";
 
 /** The photo and name shown to colleagues; the name also as sender name of the own address. */
 export const ProfileSection = () => {

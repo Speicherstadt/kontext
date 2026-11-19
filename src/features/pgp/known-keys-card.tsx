@@ -4,12 +4,12 @@
  */
 import { AlertTriangle, Search, Trash2, Upload } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { groupFingerprint } from "@/lib/pgp";
 import { m } from "@/paraglide/messages";
-import { SettingsCard } from "../settings/settings-page";
 import { useKnownKeys, usePgpActions } from "./queries";
 
 const SOURCE_LABELS: Record<string, () => string> = {

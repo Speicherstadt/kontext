@@ -3,6 +3,7 @@
  * list and over the mail, and the names behind the principal ids (src/lib/assignment.ts).
  */
 import { CircleCheck, UserCheck } from "lucide-react";
+import { usePersonalAccountId } from "@/account/queries";
 import {
   MenuCheckboxItem,
   MenuContent,
@@ -20,7 +21,6 @@ import { type Assignment, assignablePeople, assignmentOf } from "@/lib/assignmen
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
 import { useMailboxMembers } from "../company/mailbox-members";
-import { usePersonalAccountId } from "../settings/queries";
 import { usePrincipals } from "../sharing/queries";
 import { useEmailActions } from "./actions";
 import { ToolbarButton } from "./toolbar-button";

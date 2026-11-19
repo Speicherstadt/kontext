@@ -5,9 +5,9 @@
 import { Check, Copy } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { useSession } from "@/auth/session";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { m } from "@/paraglide/messages";
-import { SettingsCard } from "./settings-page";
 
 const Steps = ({ title, children }: { title: string; children: ReactNode }) => (
   <div className="flex flex-col gap-1.5">

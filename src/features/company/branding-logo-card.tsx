@@ -5,11 +5,11 @@
  */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Upload } from "lucide-react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { LOGO_ACCEPT, LOGO_MAX_BYTES, logoSource } from "@/lib/company-logo";
 import { m } from "@/paraglide/messages";
-import { SettingsCard } from "../settings/settings-page";
 import { BRANDING_KEY, type BrandingView, readLogoFile, saveLogo } from "./branding";
 
 export const BrandingLogoCard = ({ logo }: { logo: string | null }) => {

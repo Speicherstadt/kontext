@@ -5,6 +5,7 @@
  */
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { useToast } from "@/components/ui/toast";
 import { AgentConnection } from "@/features/agents/agents-section";
 import { useConnections } from "@/features/agents/api";
@@ -24,7 +25,6 @@ import {
 } from "./access-api";
 import { useAppPasswords } from "./app-passwords-api";
 import { AppPasswordRow } from "./app-passwords-card";
-import { SettingsCard } from "./settings-page";
 
 const deviceName = (device: Device) =>
   device.browser && device.system

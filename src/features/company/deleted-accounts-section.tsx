@@ -3,11 +3,11 @@
  * deleted account, and those it still keeps, each with "Wiederherstellen".
  */
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
-import { SettingsCard } from "../settings/settings-page";
 import {
   type DeletedAccount,
   type DeletedAccountsView,

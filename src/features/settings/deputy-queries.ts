@@ -1,9 +1,9 @@
 /** Data for "Vertretung": the own shared objects, and giving or taking back a deputy's access. */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { usePersonalAccountId } from "@/account/queries";
 import { useClient } from "@/auth/auth";
 import { applyDeputyPatches, loadDeputyObjects } from "@/jmap/deputy";
 import type { DeputyObjects, DeputyPatches } from "@/lib/deputy";
-import { usePersonalAccountId } from "./queries";
 
 const deputyKey = (accountId: string | undefined) => [accountId, "deputies"] as const;
 

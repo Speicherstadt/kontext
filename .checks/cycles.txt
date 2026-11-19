@@ -1,8 +1,6 @@
 # Imports between modules that close a ring, from before the check (checks cycles,
 # firsttris/workflows). Break them in a pull request of their own; `checks cycles --clean` drops
 # the ones that no longer close a ring. A new one is never added here.
-src/features/agents -> src/features/company
-src/features/agents -> src/features/settings
 src/features/calendar -> src/features/calls
 src/features/calendar -> src/features/contacts
 src/features/calendar -> src/features/documents
@@ -28,7 +26,6 @@ src/features/company -> src/features/deleted-items
 src/features/company -> src/features/mail
 src/features/company -> src/features/photos
 src/features/company -> src/features/rules
-src/features/company -> src/features/settings
 src/features/contacts -> src/features/calendar
 src/features/contacts -> src/features/documents
 src/features/contacts -> src/features/mail
@@ -37,10 +34,8 @@ src/features/contacts -> src/features/photos
 src/features/contacts -> src/features/sharing
 src/features/contacts -> src/features/tasks
 src/features/deleted-items -> src/features/company
-src/features/deleted-items -> src/features/settings
 src/features/documents -> src/features/sharing
 src/features/external -> src/features/company
-src/features/external -> src/features/settings
 src/features/mail -> src/features/calendar
 src/features/mail -> src/features/categories
 src/features/mail -> src/features/chat
@@ -54,7 +49,6 @@ src/features/mail -> src/features/pgp
 src/features/mail -> src/features/photos
 src/features/mail -> src/features/rules
 src/features/mail -> src/features/secure
-src/features/mail -> src/features/settings
 src/features/mail -> src/features/sharing
 src/features/mail -> src/features/smime
 src/features/mail -> src/features/snippets
@@ -67,14 +61,12 @@ src/features/notifications -> src/features/tasks
 src/features/pgp -> src/features/company
 src/features/pgp -> src/features/mail
 src/features/pgp -> src/features/secure
-src/features/pgp -> src/features/settings
 src/features/pgp -> src/features/smime
 src/features/phone -> src/features/calendar
 src/features/phone -> src/features/calls
 src/features/phone -> src/features/chat
 src/features/phone -> src/features/company
 src/features/phone -> src/features/contacts
-src/features/phone -> src/features/settings
 src/features/phone -> src/features/tasks
 src/features/photos -> src/features/contacts
 src/features/photos -> src/features/sharing
@@ -82,28 +74,11 @@ src/features/photos -> src/features/tasks
 src/features/rules -> src/features/categories
 src/features/rules -> src/features/company
 src/features/rules -> src/features/mail
-src/features/rules -> src/features/settings
 src/features/secure -> src/features/pgp
-src/features/settings -> src/features/agents
-src/features/settings -> src/features/calendar
-src/features/settings -> src/features/company
-src/features/settings -> src/features/deleted-items
-src/features/settings -> src/features/external
-src/features/settings -> src/features/mail
-src/features/settings -> src/features/notifications
-src/features/settings -> src/features/pgp
-src/features/settings -> src/features/phone
-src/features/settings -> src/features/photos
-src/features/settings -> src/features/rules
-src/features/settings -> src/features/sharing
-src/features/settings -> src/features/smime
-src/features/settings -> src/features/snippets
 src/features/sharing -> src/features/photos
 src/features/smime -> src/features/mail
 src/features/smime -> src/features/pgp
-src/features/smime -> src/features/settings
 src/features/snippets -> src/features/mail
-src/features/snippets -> src/features/settings
 src/features/snooze -> src/features/mail
 src/features/tasks -> src/features/contacts
 src/features/tasks -> src/features/documents

@@ -2,11 +2,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
-import { VacationForm } from "@/features/settings/vacation-form";
 import { toVacation, toVacationForm } from "@/lib/vacation";
 import { m } from "@/paraglide/messages";
 import { type Company, type Employee, getEmployeeVacation, setEmployeeVacation } from "./api";
 import { useCompanyChange } from "./queries";
+import { VacationForm } from "./vacation-form";
 
 export const VacationDialog = ({
   company,

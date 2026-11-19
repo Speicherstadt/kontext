@@ -1,10 +1,10 @@
 /** Per device: the working hours the calendar's day and week start at and shade around. */
 import { useId } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Select } from "@/components/ui/input";
 import { timeLabel } from "@/lib/jscalendar";
 import { m } from "@/paraglide/messages";
 import { setWorkHours, useWorkHours } from "../calendar/work-hours-setting";
-import { SettingsCard } from "./settings-page";
 
 const HOURS = Array.from({ length: 25 }, (_, hour) => hour);
 

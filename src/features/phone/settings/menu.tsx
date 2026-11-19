@@ -4,11 +4,11 @@
  * Without a key it rings as usual.
  */
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useCompany } from "@/features/company/queries";
-import { SettingsCard } from "@/features/settings/settings-page";
 import { m } from "@/paraglide/messages";
 import { type Admin, send, useAdminChange } from "./api";
 import { SoundSelect } from "./sounds";
