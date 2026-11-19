@@ -1,8 +1,6 @@
 /** Chat actions: post, edit, delete, react, read and the channel changes, with optimistic updates. */
 import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
-import type { Channel, ChannelSummary, Message } from "@/lib/chat";
-import type { ChatFile } from "@/lib/chat-cards";
 import {
   addMessage,
   CHANNELS_KEY,
@@ -14,7 +12,9 @@ import {
   send,
   setRead,
   threadKey,
-} from "./queries";
+} from "@/chat-core/queries";
+import type { Channel, ChannelSummary, Message } from "@/lib/chat";
+import type { ChatFile } from "@/lib/chat-cards";
 
 const patchChannel = (
   queryClient: QueryClient,

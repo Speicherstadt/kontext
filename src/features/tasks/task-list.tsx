@@ -2,15 +2,17 @@
  * A list of tasks grouped by due date (overdue, today, this week, later, without date, done),
  * with the quick entry on top: "Rückruf Hoffmann morgen" makes a task due tomorrow.
  */
+
 import { Plus } from "lucide-react";
 import { type FormEvent, type ReactNode, useState } from "react";
 import { useToast } from "@/components/ui/toast";
+import { usePeople } from "@/directory/queries";
 import { dateKey } from "@/lib/jscalendar";
 import { boardKey, groupByDue, parseQuickAdd, type Task } from "@/lib/tasks";
 import { m } from "@/paraglide/messages";
 import { useDeleteTask } from "./delete-task";
 import { setHideDone } from "./hide-done";
-import { useBoards, useOnMyBoards, usePeople, useTaskActions } from "./queries";
+import { useBoards, useOnMyBoards, useTaskActions } from "./queries";
 import { TaskRow } from "./task-row";
 
 export const TaskList = ({

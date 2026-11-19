@@ -39,6 +39,8 @@ import {
   VenetianMask,
 } from "lucide-react";
 import { lazy, type ReactNode, Suspense } from "react";
+import { useStalwartEdition } from "@/company-core/edition";
+import { useIsCompanyAdmin } from "@/company-core/queries";
 import { TabBar } from "@/components/shell/tab-bar-slot";
 import { useExternalAccounts } from "@/external-accounts/queries";
 import { AgentsSection } from "@/features/agents/agents-section";
@@ -46,7 +48,6 @@ import { AssistantSection } from "@/features/company/assistant-section";
 import { BackupSection } from "@/features/company/backup-section";
 import { BrandingSection } from "@/features/company/branding-section";
 import { ChatSection } from "@/features/company/chat-section";
-import { useStalwartEdition } from "@/features/company/edition";
 import { EmployeesSection } from "@/features/company/employees-section";
 import { EncryptionGatewaySection } from "@/features/company/encryption-gateway-section";
 import { ExternalHintSection } from "@/features/company/external-hint-section";
@@ -55,7 +56,6 @@ import { LegalFooterSection } from "@/features/company/legal-footer-section";
 import { MailboxesSection } from "@/features/company/mailboxes-section";
 import { MigrationSection } from "@/features/company/migration-section";
 import { PhishingReportSection } from "@/features/company/phishing-report-section";
-import { useIsCompanyAdmin } from "@/features/company/queries";
 import { SecuritySection as CompanySecuritySection } from "@/features/company/security-section";
 import { ServerHealthSection } from "@/features/company/server-health-section";
 import { SmimeAuthoritiesSection } from "@/features/company/smime-authorities-section";

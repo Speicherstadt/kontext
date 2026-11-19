@@ -4,9 +4,9 @@
  * Nothing to set here; the key goes into Stalwart.
  */
 
+import { type Edition, useStalwartEdition } from "@/company-core/edition";
 import { SettingsCard } from "@/components/settings-card";
 import { m } from "@/paraglide/messages";
-import { type Edition, useStalwartEdition } from "./edition";
 import { LicenseDetails } from "./license-details";
 
 const LABEL: Record<Edition, () => string> = {

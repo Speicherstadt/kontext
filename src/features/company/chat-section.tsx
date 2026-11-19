@@ -4,14 +4,14 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { getChatRetention, saveChatRetention } from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
 import { Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { RETENTION_DAYS } from "@/lib/chat";
 import { retentionText } from "@/lib/chat-threads";
 import { m } from "@/paraglide/messages";
-import { getChatRetention, saveChatRetention } from "./api";
-import { useCompanyChange } from "./queries";
 
 export const ChatSection = () => {
   const { data } = useQuery({ queryKey: ["company", "chat-retention"], queryFn: getChatRetention });

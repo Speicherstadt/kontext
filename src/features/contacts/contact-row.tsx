@@ -8,12 +8,12 @@ import type { MouseEvent } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { useLongPress } from "@/components/use-long-press";
 import { useMediaQuery } from "@/components/use-media-query";
+import type { Contact } from "@/contacts-core/queries";
 import { cn } from "@/lib/cn";
 import { memberUids } from "@/lib/groups";
 import { company, contactPhoto, fullName } from "@/lib/jscontact";
 import { rowClick } from "@/lib/selection";
 import { m } from "@/paraglide/messages";
-import type { Contact } from "./queries";
 
 /** How a person's line takes part in picking; groups are not picked. */
 export type Picking = {

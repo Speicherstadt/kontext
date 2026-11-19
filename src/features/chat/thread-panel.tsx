@@ -6,6 +6,8 @@
  */
 import { ChevronLeft, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useState } from "react";
+import { isPending } from "@/chat-core/queries";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { useMediaQuery } from "@/components/use-media-query";
 import { type ChannelSummary, firstName, type Message, timeline } from "@/lib/chat";
 import { m } from "@/paraglide/messages";
@@ -14,10 +16,8 @@ import { useChatActions } from "./actions";
 import { ConfidentialUnlock, useSeal } from "./confidential";
 import { MessageInput } from "./message-input";
 import { Run } from "./message-run";
-import { isPending } from "./queries";
 import { useReact, useThread } from "./thread-queries";
 import { useAttachments } from "./use-attachments";
-import { useChatNames } from "./use-chat-names";
 import { useScrollPlace } from "./use-scroll-place";
 
 export const ThreadPanel = ({

@@ -4,11 +4,11 @@
  * Without one the entry is not in the list; opened by its address, it says why.
  */
 import { useQuery } from "@tanstack/react-query";
+import { useStalwartEdition } from "@/company-core/edition";
 import { m } from "@/paraglide/messages";
 import { BRANDING_KEY, getBranding } from "./branding";
 import { BrandingLogoCard } from "./branding-logo-card";
 import { BrandingTemplatesCard } from "./branding-templates-card";
-import { useStalwartEdition } from "./edition";
 
 const Hint = ({ text }: { text: string }) => <p className="m-0 text-[14px] text-muted">{text}</p>;
 

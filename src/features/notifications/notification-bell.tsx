@@ -4,18 +4,19 @@
  * what is due today (tasks, appointments) and the new mail, each one click away, and the switch
  * for notifications on this device.
  */
+
 import * as Popover from "@radix-ui/react-popover";
 import { Link } from "@tanstack/react-router";
 import { Bell, CalendarCheck, CalendarDays, CheckCheck, ListChecks } from "lucide-react";
 import { useState } from "react";
 import { Avatar } from "@/components/ui/avatar";
+import { usePeople } from "@/directory/queries";
 import { cn } from "@/lib/cn";
 import { displayName, listDate } from "@/lib/format";
 import { dateKey, locationName, toLocal } from "@/lib/jscalendar";
 import { unseenCount } from "@/lib/notifications";
 import { dueLabel, type Task } from "@/lib/tasks";
 import { m } from "@/paraglide/messages";
-import { usePeople } from "../tasks/queries";
 import { useAnnouncements } from "./announcements";
 import { dayFormat, row, Section } from "./bell-parts";
 import { markSeen, notificationsSupported, useSeen } from "./device-settings";

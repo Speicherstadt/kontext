@@ -3,13 +3,14 @@
  * at a time, chosen by the URL; views and boards are chips above the list. A board is a mailbox's
  * own or one of its projects.
  */
+
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Columns3, EyeOff, List, Pencil, Plus, SquareKanban } from "lucide-react";
 import { useState } from "react";
 import { SearchField } from "@/components/search-field";
 import { TabBar } from "@/components/shell/tab-bar-slot";
 import { Button } from "@/components/ui/button";
-import { useAssignedTasksSeen } from "@/features/notifications/app-badges";
+import { useMe, usePeople } from "@/directory/queries";
 import type { TasksSearch } from "@/features/tasks/search-params";
 import { cn } from "@/lib/cn";
 import { dateKey } from "@/lib/jscalendar";
@@ -18,7 +19,7 @@ import { m } from "@/paraglide/messages";
 import { BoardDialog } from "./board-dialog";
 import { ColumnsDialog } from "./columns-dialog";
 import { setHideDone, useHideDone } from "./hide-done";
-import { useBoards, useMe, usePeople, useTasks } from "./queries";
+import { useBoards, useTasks } from "./queries";
 import { TaskBoard } from "./task-board";
 import { TaskDetail } from "./task-detail";
 import { TaskDialog } from "./task-dialog";
@@ -86,7 +87,6 @@ export const TasksPage = ({ search }: { search: TasksSearch }) => {
   const [boardDialog, setBoardDialog] = useState<"new" | "edit" | null>(null);
   const [words, setWords] = useState("");
   const people = usePeople();
-  useAssignedTasksSeen();
 
   const board = search.board
     ? allBoards.find((candidate) => candidate.id === search.board)

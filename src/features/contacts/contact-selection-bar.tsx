@@ -8,13 +8,19 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import { useToast } from "@/components/ui/toast";
+import {
+  type BookRef,
+  bookOf,
+  type Contact,
+  contactKey,
+  useContactMutations,
+} from "@/contacts-core/queries";
 import { groupTargets, withMembers } from "@/lib/contact-selection";
 import { downloadText } from "@/lib/download";
 import { fullName } from "@/lib/jscontact";
 import { toVCardFile } from "@/lib/vcard";
 import { m } from "@/paraglide/messages";
 import { MoveMenu } from "./move-menu";
-import { type BookRef, bookOf, type Contact, contactKey, useContactMutations } from "./queries";
 
 const IconButton = ({
   label,

@@ -7,6 +7,7 @@
 import { type QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import { KeyRound, LockKeyhole, ShieldAlert } from "lucide-react";
 import { useEffect, useMemo } from "react";
+import { send } from "@/chat-core/queries";
 import { Button } from "@/components/ui/button";
 import { type Channel, isSealed, type Message } from "@/lib/chat";
 import type { ChatFile } from "@/lib/chat-cards";
@@ -22,7 +23,6 @@ import {
   usePgpActions,
   useUnlockedKey,
 } from "../pgp/queries";
-import { send } from "./queries";
 import { fileUrl } from "./upload";
 
 type MemberKey = { memberId: string; publicKey: string; email: string; fingerprint: string };

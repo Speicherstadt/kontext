@@ -6,8 +6,6 @@
  */
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { heardDeclined } from "@/features/calls/call-store";
-import { CALLS_KEY, setCall } from "@/features/calls/queries";
 import {
   addMessage,
   CHANNELS_KEY,
@@ -15,7 +13,9 @@ import {
   type ChannelsData,
   DISCUSSED_KEY,
   setRead,
-} from "@/features/chat/queries";
+} from "@/chat-core/queries";
+import { heardDeclined } from "@/features/calls/call-store";
+import { CALLS_KEY, setCall } from "@/features/calls/queries";
 import { startTyping, stopTyping } from "@/features/chat/typing";
 import { PHONE_KEY, setPhoneCall, setPhonePeople } from "@/features/phone/queries";
 import type { Message } from "@/lib/chat";

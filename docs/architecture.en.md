@@ -322,7 +322,7 @@ its own and allows only what the company admin needs.
   (`server/company/edition.ts`); everyone signed in reads it at `GET /api/company/edition`, the
   company admin shows it under *Employees*. Kontext needs Enterprise for nothing; what only
   Stalwart Enterprise can do, the app offers only once the license is active
-  (`useStalwartEdition`, `src/features/company/edition.ts`).
+  (`useStalwartEdition`, `src/company-core/edition.ts`).
 - **Masked addresses** are Stalwart's `x:MaskedEmail`
   (`crates/registry/src/schema/structs.rs`). The app asks Stalwart directly with the session's
   token, not with the server's key: the *User* role has `sysMaskedEmail*`

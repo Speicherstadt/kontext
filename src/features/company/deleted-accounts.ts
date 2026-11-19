@@ -3,9 +3,9 @@
  * for that long (server/company/deleted-accounts.ts). Asked only when the edition is Enterprise.
  */
 import { useQuery } from "@tanstack/react-query";
+import { type DeletedAccountsView, getDeletedAccounts } from "@/company-core/api";
+import { useStalwartEdition } from "@/company-core/edition";
 import { LOCALE } from "@/lib/locale";
-import { type DeletedAccountsView, getDeletedAccounts } from "./api";
-import { useStalwartEdition } from "./edition";
 
 export const DELETED_ACCOUNTS_KEY = ["company", "deleted-accounts"];
 

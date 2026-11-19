@@ -4,7 +4,7 @@
  * more) and who took them.
  */
 import { useQuery } from "@tanstack/react-query";
-import { useChatNames } from "@/features/chat/use-chat-names";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { m } from "@/paraglide/messages";
 import type { CallStats } from "../../../server/phone/stats";
 

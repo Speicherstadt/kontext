@@ -5,11 +5,11 @@
  */
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { useState } from "react";
+import { useCompany } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { useCompany } from "@/features/company/queries";
 import { moved } from "@/lib/move";
 import { readableNumber } from "@/lib/phone";
 import { m } from "@/paraglide/messages";

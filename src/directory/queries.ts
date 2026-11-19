@@ -26,3 +26,24 @@ export const useColleagues = () => {
     .sort((a, b) => principalName(a).localeCompare(principalName(b), "de"));
   return { colleagues, isPending };
 };
+
+/** The signed-in person: their own account id, which is also how tasks are assigned. */
+export const useMe = (): string => {
+  const { data: session } = useSession();
+  return session?.primaryAccounts[CAPABILITIES.mail] ?? "";
+};
+
+/** The company's people, to assign a task to. */
+export const usePeople = (): { id: string; name: string }[] => {
+  const { data = [] } = usePrincipals();
+  return (
+    data
+      .filter((principal) => principal.type === "individual")
+      // The full name where Stalwart has one ("Jonas Weber"), else the login.
+      .map((principal) => ({
+        id: principal.id,
+        name: principal.description || principal.name || principal.email || "",
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, "de"))
+  );
+};

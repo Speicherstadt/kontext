@@ -5,6 +5,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { MessagesSquare } from "lucide-react";
 import { useState } from "react";
+import { useChannels } from "@/chat-core/queries";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { TabBar } from "@/components/shell/tab-bar-slot";
 import { FROM_PARENT } from "@/components/use-back";
 import { ASSISTANT_ID } from "@/features/assistant/assistant";
@@ -16,8 +18,6 @@ import { useChatActions } from "./actions";
 import { ChannelScreen, ChannelSidebar } from "./channel-list";
 import { ChatDialog } from "./chat-dialog";
 import { Conversation } from "./conversation";
-import { useChannels } from "./queries";
-import { useChatNames } from "./use-chat-names";
 
 type Editing = { channel?: Channel } | null;
 

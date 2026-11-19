@@ -5,9 +5,6 @@ import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { groupToCard, isGroup, memberUids } from "@/lib/groups";
-import { company, fullName, matchesSearch, sortKey } from "@/lib/jscontact";
-import { m } from "@/paraglide/messages";
 import {
   type BookRef,
   bookLabel,
@@ -15,7 +12,10 @@ import {
   startBook,
   useContactMutations,
   useContactsAccountId,
-} from "./queries";
+} from "@/contacts-core/queries";
+import { groupToCard, isGroup, memberUids } from "@/lib/groups";
+import { company, fullName, matchesSearch, sortKey } from "@/lib/jscontact";
+import { m } from "@/paraglide/messages";
 
 type Props = {
   group?: Contact;

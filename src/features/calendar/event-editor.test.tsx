@@ -14,7 +14,7 @@ vi.mock("@/features/documents/document-actions", () => ({ EventDocuments: () => 
 vi.mock("@/features/documents/use-share-with", () => ({
   useShareWith: () => ({ event: vi.fn() }),
 }));
-vi.mock("@/features/contacts/use-suggestions", () => ({
+vi.mock("@/contacts-core/use-suggestions", () => ({
   useAddressSuggestions: () => [anna],
 }));
 const hint = vi.hoisted(() => ({ inside: null as string[] | null }));

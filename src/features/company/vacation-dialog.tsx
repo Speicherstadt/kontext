@@ -1,11 +1,16 @@
 /** A colleague's out-of-office reply set by the Firmenverwaltung. */
 import { useQuery } from "@tanstack/react-query";
+import {
+  type Company,
+  type Employee,
+  getEmployeeVacation,
+  setEmployeeVacation,
+} from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { toVacation, toVacationForm } from "@/lib/vacation";
 import { m } from "@/paraglide/messages";
-import { type Company, type Employee, getEmployeeVacation, setEmployeeVacation } from "./api";
-import { useCompanyChange } from "./queries";
 import { VacationForm } from "./vacation-form";
 
 export const VacationDialog = ({

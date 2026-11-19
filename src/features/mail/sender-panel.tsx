@@ -11,6 +11,7 @@ import { useClient } from "@/auth/auth";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { useContactMutations, useContacts } from "@/contacts-core/queries";
 import { emailsWithAddress } from "@/jmap/mail";
 import type { EmailDetail } from "@/jmap/types";
 import { formatAddressInput } from "@/lib/addresses";
@@ -24,7 +25,6 @@ import { LOCALE } from "@/lib/locale";
 import { mailSenderKey } from "@/lib/photo";
 import { m } from "@/paraglide/messages";
 import { useEventsWith } from "../calendar/queries";
-import { useContactMutations, useContacts } from "../contacts/queries";
 import { usePhotoOf } from "../photos/queries";
 import { useMailAccounts } from "./queries";
 

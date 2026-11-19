@@ -9,6 +9,15 @@ import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import {
+  type BookRef,
+  bookLabel,
+  bookOf,
+  type Contact,
+  contactKey,
+  useContactMutations,
+  useContacts,
+} from "@/contacts-core/queries";
+import {
   type DuplicateReason,
   type DuplicateSet,
   duplicateSetKey,
@@ -19,15 +28,6 @@ import { type NameFix, nameFixes } from "@/lib/contact-fixes";
 import { isGroup } from "@/lib/groups";
 import { company, contactPhoto, fullName, primaryEmail, primaryPhone } from "@/lib/jscontact";
 import { m } from "@/paraglide/messages";
-import {
-  type BookRef,
-  bookLabel,
-  bookOf,
-  type Contact,
-  contactKey,
-  useContactMutations,
-  useContacts,
-} from "./queries";
 
 const ignored = storedSet("kontext.contactsIgnored");
 

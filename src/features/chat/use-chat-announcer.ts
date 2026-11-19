@@ -4,13 +4,13 @@
  */
 import { useNavigate, useRouter } from "@tanstack/react-router";
 import { useCallback } from "react";
+import { useChannels } from "@/chat-core/queries";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { showNotification } from "@/features/notifications/announcements";
 import { useDeviceNotifications } from "@/features/notifications/device-settings";
 import type { Message } from "@/lib/chat";
 import { messageSummary } from "@/lib/chat-cards";
 import { m } from "@/paraglide/messages";
-import { useChannels } from "./queries";
-import { useChatNames } from "./use-chat-names";
 
 export const useChatAnnouncer = () => {
   const enabled = useDeviceNotifications();

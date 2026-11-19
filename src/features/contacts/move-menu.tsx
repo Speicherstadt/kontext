@@ -7,9 +7,14 @@ import { FolderInput } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import { useToast } from "@/components/ui/toast";
+import {
+  type BookRef,
+  bookLabel,
+  type Contact,
+  useContactMutations,
+} from "@/contacts-core/queries";
 import { moveTargets } from "@/lib/contact-selection";
 import { m } from "@/paraglide/messages";
-import { type BookRef, bookLabel, type Contact, useContactMutations } from "./queries";
 
 type Props = {
   cards: Contact[];

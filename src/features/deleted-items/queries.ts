@@ -3,7 +3,7 @@
  * restoring or deleting, after which the list is the server's answer.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useStalwartEdition } from "../company/edition";
+import { useStalwartEdition } from "@/company-core/edition";
 import { type ArchivedItem, destroyItems, getArchive, getItems, restoreItems } from "./api";
 
 export const ARCHIVE_KEY = ["company", "archive"];

@@ -4,8 +4,8 @@
  * employees the provider manages.
  */
 import { useQuery } from "@tanstack/react-query";
+import { useStalwartEdition } from "@/company-core/edition";
 import type { ConnectionTest, SsoView } from "../../../server/company/sso-routes";
-import { useStalwartEdition } from "./edition";
 
 export type { ConnectionTest, SsoView };
 

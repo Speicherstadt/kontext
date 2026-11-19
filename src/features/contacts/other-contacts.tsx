@@ -11,6 +11,7 @@ import { useSession } from "@/auth/session";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { startBook, useContactMutations, useContacts } from "@/contacts-core/queries";
 import { usePrincipals } from "@/directory/queries";
 import { CAPABILITIES } from "@/jmap/client";
 import { recentCorrespondence } from "@/jmap/correspondence";
@@ -22,7 +23,6 @@ import { findRole } from "@/lib/mailboxes";
 import { type OtherContact, otherContacts } from "@/lib/other-contacts";
 import { useAllMailboxes, useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";
-import { startBook, useContactMutations, useContacts } from "./queries";
 
 const useOtherContacts = (): { people: OtherContact[]; isPending: boolean } => {
   const client = useClient();

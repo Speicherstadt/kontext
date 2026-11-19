@@ -8,6 +8,7 @@ import { useClient } from "@/auth/auth";
 import { useSession } from "@/auth/session";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { type BookRef, bookOf, type Contact } from "@/contacts-core/queries";
 import { CAPABILITIES } from "@/jmap/client";
 import { emailsWithAddress } from "@/jmap/mail";
 import { formatAddressInput } from "@/lib/addresses";
@@ -26,7 +27,6 @@ import { ContactDocuments } from "./contact-documents";
 import { ContactFacts, Field } from "./contact-facts";
 import { ContactTasks } from "./contact-tasks";
 import { MoveMenu } from "./move-menu";
-import { type BookRef, bookOf, type Contact } from "./queries";
 
 const Card = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="flex flex-col gap-3 rounded-xl border border-border p-4">

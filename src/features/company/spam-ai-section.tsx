@@ -6,13 +6,13 @@
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useStalwartEdition } from "@/company-core/edition";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
-import { useStalwartEdition } from "./edition";
 import {
   canUseAssistantKey,
   initialForm,

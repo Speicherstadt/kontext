@@ -4,11 +4,14 @@
  * and to the sender's contact card, if there is one, and may archive it after. Several mails
  * picked in the list make one task each, with the same day, person and board.
  */
+
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { type Contact, useContacts } from "@/contacts-core/queries";
+import { useMe, usePeople } from "@/directory/queries";
 import { cn } from "@/lib/cn";
 import { findContact } from "@/lib/correspondent";
 import { addDays, dateKey } from "@/lib/jscalendar";
@@ -17,8 +20,7 @@ import { contactLink } from "@/lib/task-context";
 import { reminderOnDueChange } from "@/lib/task-reminders";
 import type { TaskLink } from "@/lib/tasks";
 import { m } from "@/paraglide/messages";
-import { type Contact, useContacts } from "../contacts/queries";
-import { useBoards, useMe, usePeople, useTaskActions } from "./queries";
+import { useBoards, useTaskActions } from "./queries";
 import { TaskReminder } from "./task-reminder";
 
 const ARCHIVE_KEY = "kontext.tasks.archiveMail";

@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { type BookRef, useBookMutations, useBooks } from "@/contacts-core/queries";
 import { usePrincipals } from "@/directory/queries";
 import { principalName } from "@/jmap/principals";
 import { sharedWith } from "@/lib/sharing";
 import { m } from "@/paraglide/messages";
 import { ShareDialog } from "../sharing/share-dialog";
-import { type BookRef, useBookMutations, useBooks } from "./queries";
 import { VCardSection } from "./vcard-section";
 
 type Props = { open: boolean; onOpenChange: (open: boolean) => void };

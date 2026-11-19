@@ -6,6 +6,7 @@
  */
 import { ListChecks } from "lucide-react";
 import { type KeyboardEvent, useState } from "react";
+import { isPending } from "@/chat-core/queries";
 import { Button } from "@/components/ui/button";
 import { useLongPress } from "@/components/use-long-press";
 import { useMediaQuery } from "@/components/use-media-query";
@@ -24,7 +25,6 @@ import { ActionSheet, HoverBar, type MessageActions, useCopyText } from "./messa
 import { MessageCard } from "./message-card";
 import { MessageFiles } from "./message-files";
 import { MessageText } from "./message-text";
-import { isPending } from "./queries";
 import { ReactionBar } from "./reactions";
 import { ThreadNote } from "./thread-note";
 

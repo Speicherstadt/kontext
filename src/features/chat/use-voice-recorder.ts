@@ -5,10 +5,10 @@
  * says how loud it was lately, for the waveform growing in the recorder bar.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { stopVoiceMessage } from "@/chat-core/voice-message";
 import { holdMicrophone } from "@/lib/audio-session";
 import { keepLatest, liveLevel, recordingType, voiceFile } from "@/lib/voice";
 import { m } from "@/paraglide/messages";
-import { stopVoiceMessage } from "./voice-message";
 
 /** How many levels the recorder bar shows. */
 export const LIVE_BARS = 40;

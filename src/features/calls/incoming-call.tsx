@@ -5,10 +5,10 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Phone, PhoneOff, Video } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useChannels } from "@/chat-core/queries";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
-import { useChannels } from "@/features/chat/queries";
-import { useChatNames } from "@/features/chat/use-chat-names";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
 import { ringingCall } from "@/lib/calls";
 import { m } from "@/paraglide/messages";

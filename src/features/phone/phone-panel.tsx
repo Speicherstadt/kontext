@@ -3,6 +3,7 @@
  * the box, mute, a keypad for menus ("Drücken Sie die 1"), hang up. Bottom right on a desktop,
  * the whole screen on a phone; it closes when the call has ended.
  */
+
 import {
   LiveKitRoom,
   RoomAudioRenderer,
@@ -25,10 +26,10 @@ import {
   Volume2,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { Avatar } from "@/components/ui/avatar";
 import { useToast } from "@/components/ui/toast";
-import { useChatNames } from "@/features/chat/use-chat-names";
-import { useMe } from "@/features/tasks/queries";
+import { useMe } from "@/directory/queries";
 import { holdMicrophone } from "@/lib/audio-session";
 import { callDuration } from "@/lib/calls";
 import { cn } from "@/lib/cn";

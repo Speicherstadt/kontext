@@ -11,6 +11,7 @@ import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { type BookRef, bookLabel, startBook } from "@/contacts-core/queries";
 import { createContacts, listContacts, parseVCards } from "@/jmap/contacts";
 import { decodeText, parseCsv } from "@/lib/csv";
 import { type CsvField, csvCards, guessField } from "@/lib/csv-contacts";
@@ -19,7 +20,6 @@ import type { ContactCard } from "@/lib/jscontact";
 import { freshCards, splitVCards, toVCardFile } from "@/lib/vcard";
 import { m } from "@/paraglide/messages";
 import { CsvColumns } from "./csv-columns";
-import { type BookRef, bookLabel, startBook } from "./queries";
 
 type Preview = { cards: ContactCard[]; duplicates: number; failed: number };
 type Csv = { header: string[]; rows: string[][]; mapping: CsvField[]; existing: ContactCard[] };

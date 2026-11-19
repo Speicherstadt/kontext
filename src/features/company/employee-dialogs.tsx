@@ -1,6 +1,16 @@
 /** Creating a person, and changing one: name, addresses, mailboxes, rights, password, access. */
 import { ListFilter } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import {
+  type Company,
+  createEmployee,
+  type Employee,
+  resetPassword,
+  resetTwoFactor,
+  updateEmployee,
+} from "@/company-core/api";
+import { useStalwartEdition } from "@/company-core/edition";
+import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
@@ -9,15 +19,6 @@ import { DeletedItemsButton } from "@/features/deleted-items/deleted-items-admin
 import { formatSize } from "@/lib/format";
 import { m } from "@/paraglide/messages";
 import {
-  type Company,
-  createEmployee,
-  type Employee,
-  resetPassword,
-  resetTwoFactor,
-  updateEmployee,
-} from "./api";
-import { useStalwartEdition } from "./edition";
-import {
   AddressInput,
   AliasesField,
   addressFor,
@@ -25,7 +26,6 @@ import {
   ConfirmButton,
   PasswordNotice,
 } from "./fields";
-import { useCompanyChange } from "./queries";
 import { type Managed, useManagedBy } from "./sso-api";
 
 /** What the person's dialog opens in its place. */

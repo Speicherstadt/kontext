@@ -1,6 +1,7 @@
 /** The names the chat shows: of the people, of the channels, and who one is oneself. */
+
 import { useCallback, useMemo } from "react";
-import { useMe, usePeople } from "@/features/tasks/queries";
+import { useMe, usePeople } from "@/directory/queries";
 import { type Channel, channelTitle } from "@/lib/chat";
 import { useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";

@@ -14,6 +14,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useContacts } from "@/contacts-core/queries";
 import { cn } from "@/lib/cn";
 import { contactAddresses } from "@/lib/jscontact";
 import { mailboxPath } from "@/lib/mailboxes";
@@ -24,7 +25,6 @@ import {
   suggest,
 } from "@/lib/search-suggestions";
 import { m } from "@/paraglide/messages";
-import { useContacts } from "../contacts/queries";
 import { useAllMailboxes, useMailAccounts } from "./queries";
 
 const ICONS = { contact: User, folder: Folder, operator: SlidersHorizontal, recent: Clock };

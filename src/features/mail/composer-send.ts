@@ -13,11 +13,11 @@ import { holdUntil, sendTimeLabel } from "@/lib/schedule";
 import type { useExternalQuestion } from "@/mail-core/external-question";
 import { m } from "@/paraglide/messages";
 import type { useLegalFooter } from "../company/legal-footer";
-import type { useEncryptedSend } from "../pgp/use-encrypted-send";
 import type { OutgoingMail } from "./composer-files";
 import { signatureOf } from "./composer-fill";
 import type { ComposerState } from "./composer-state";
 import type { useTakeBack } from "./take-back";
+import type { useEncryptedSend } from "./use-encrypted-send";
 
 type Toast = ReturnType<typeof useToast>;
 

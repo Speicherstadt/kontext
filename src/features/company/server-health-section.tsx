@@ -6,6 +6,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { CircleAlert, Clock, RefreshCw } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import { getServerHealth } from "@/company-core/api";
+import { useStalwartEdition } from "@/company-core/edition";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import { formatSize, listDate } from "@/lib/format";
@@ -14,8 +16,6 @@ import { m } from "@/paraglide/messages";
 import type { DeliveryProblem } from "../../../server/company/delivery-problems";
 import type { Period } from "../../../server/company/server-health";
 import type { ServerHealthView } from "../../../server/company/server-health-routes";
-import { getServerHealth } from "./api";
-import { useStalwartEdition } from "./edition";
 import { metricsState, type PartState, problemsState } from "./server-health";
 import { ServerHealthChart } from "./server-health-chart";
 

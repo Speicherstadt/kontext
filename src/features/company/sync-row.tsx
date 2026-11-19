@@ -1,13 +1,13 @@
 /** One move from Gmail & Co.: state, numbers, and what can be done with it. */
 import { useState } from "react";
+import { type Company, finishSync, type MailSync, runSync } from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { LOCALE } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
 import { PROVIDERS } from "../../../server/migration/providers";
-import { type Company, finishSync, type MailSync, runSync } from "./api";
 import { Badge, ConfirmButton } from "./fields";
-import { useCompanyChange } from "./queries";
 import { PasswordDialog } from "./sync-dialogs";
 
 const STATUS: Record<MailSync["status"], () => string> = {

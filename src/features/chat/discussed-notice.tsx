@@ -1,9 +1,9 @@
 /** In a mail: where it was discussed in the chat, with the answers since – a link to the place. */
 import { Link } from "@tanstack/react-router";
 import { MessagesSquare } from "lucide-react";
+import { useChannels, useDiscussions } from "@/chat-core/queries";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { m } from "@/paraglide/messages";
-import { useChannels, useDiscussions } from "./queries";
-import { useChatNames } from "./use-chat-names";
 
 export const DiscussedNotice = ({
   emailId,

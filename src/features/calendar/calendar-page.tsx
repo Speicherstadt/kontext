@@ -2,6 +2,7 @@
  * The calendar: on the desktop day, week, work week, month or list with a sidebar (month, calendars, open
  * invitations); on a phone one day with a strip of the week above it, the month, or the list.
  */
+
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   ChevronLeft,
@@ -20,6 +21,7 @@ import { useToast } from "@/components/ui/toast";
 import { useMediaQuery } from "@/components/use-media-query";
 import { usePrintKey } from "@/components/use-print-key";
 import { useShortcuts } from "@/components/use-shortcuts";
+import { useMe } from "@/directory/queries";
 import { cn } from "@/lib/cn";
 import { movePatch } from "@/lib/event-form";
 import {
@@ -37,7 +39,7 @@ import { LOCALE } from "@/lib/locale";
 import { calendarTasks } from "@/lib/task-context";
 import { workWeek } from "@/lib/work-hours";
 import { m } from "@/paraglide/messages";
-import { useMe, useTasks } from "../tasks/queries";
+import { useTasks } from "../tasks/queries";
 import { AGENDA_DAYS, AgendaView } from "./agenda-view";
 import { useBirthdayEvents } from "./birthdays";
 import { CalendarList, CalendarsDialog } from "./calendar-list";

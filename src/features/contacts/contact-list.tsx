@@ -1,11 +1,11 @@
 /** The list of the contacts column: groups first, then the contacts by letter. */
 import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
+import { type Contact, contactKey } from "@/contacts-core/queries";
 import { byLetter } from "@/lib/contact-selection";
 import { sortKey } from "@/lib/jscontact";
 import { m } from "@/paraglide/messages";
 import { ContactRow } from "./contact-row";
-import { type Contact, contactKey } from "./queries";
 
 type Props = {
   groups: Contact[];

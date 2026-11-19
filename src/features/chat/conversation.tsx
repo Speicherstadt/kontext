@@ -7,6 +7,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { BellOff, ChevronLeft, Clock, ImageUp, LockKeyhole, Users } from "lucide-react";
 import { type DragEvent, useState } from "react";
+import { isPending, useChannels, useMessages } from "@/chat-core/queries";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { Button } from "@/components/ui/button";
 import { FROM_PARENT, useBack } from "@/components/use-back";
 import { useMediaQuery } from "@/components/use-media-query";
@@ -25,12 +27,10 @@ import { ChangedKeys, ConfidentialUnlock, useSeal } from "./confidential";
 import { useKeepScrollPlace, useMarkRead, useShowMessage } from "./conversation-hooks";
 import { MessageInput } from "./message-input";
 import { Run } from "./message-run";
-import { isPending, useChannels, useMessages } from "./queries";
 import { ThreadPanel } from "./thread-panel";
 import { useReact } from "./thread-queries";
 import { useTyping } from "./typing";
 import { useAttachments } from "./use-attachments";
-import { useChatNames } from "./use-chat-names";
 
 const subtitle = (
   channel: ChannelSummary,

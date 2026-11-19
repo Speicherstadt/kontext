@@ -4,12 +4,12 @@ import { ChevronLeft, Mail, Pencil, Users } from "lucide-react";
 import { useSession } from "@/auth/session";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { type BookRef, bookOf, type Contact, useContactsAccountId } from "@/contacts-core/queries";
 import { CAPABILITIES } from "@/jmap/client";
 import { formatAddressInput } from "@/lib/addresses";
 import { groupAddresses, membersOf } from "@/lib/groups";
 import { company, contactPhoto, fullName, primaryEmail } from "@/lib/jscontact";
 import { m } from "@/paraglide/messages";
-import { type BookRef, bookOf, type Contact, useContactsAccountId } from "./queries";
 
 type Props = { group: Contact; contacts: Contact[]; books: BookRef[] };
 

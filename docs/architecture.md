@@ -328,7 +328,7 @@ mit einem eigenen API-Schlüssel an und erlaubt nur, was die Firmenverwaltung br
   eine (`server/company/edition.ts`); jeder Angemeldete liest sie unter
   `GET /api/company/edition`, die Firmenverwaltung zeigt sie unter *Mitarbeiter*. Kontext braucht
   Enterprise für nichts; was nur Stalwart Enterprise kann, bietet die App erst an, wenn die
-  Lizenz aktiv ist (`useStalwartEdition`, `src/features/company/edition.ts`).
+  Lizenz aktiv ist (`useStalwartEdition`, `src/company-core/edition.ts`).
 - **Maskierte Adressen** sind Stalwarts `x:MaskedEmail`
   (`crates/registry/src/schema/structs.rs`). Die App fragt Stalwart direkt mit dem Token der
   Sitzung, nicht mit dem Schlüssel des Servers: die Rolle *User* hat `sysMaskedEmail*`

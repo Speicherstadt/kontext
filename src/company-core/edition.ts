@@ -3,7 +3,7 @@
  * that need an Enterprise license ask `useStalwartEdition` before they offer anything.
  */
 import { useQuery } from "@tanstack/react-query";
-import type { Edition } from "../../../server/company/edition";
+import type { Edition } from "../../server/company/edition";
 
 export type { Edition };
 

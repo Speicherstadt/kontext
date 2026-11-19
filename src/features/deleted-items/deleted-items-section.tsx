@@ -4,9 +4,9 @@
  */
 import { useSearch } from "@tanstack/react-router";
 import { useState } from "react";
+import { useStalwartEdition } from "@/company-core/edition";
 import { Label } from "@/components/ui/input";
 import { m } from "@/paraglide/messages";
-import { useStalwartEdition } from "../company/edition";
 import { type ArchiveAccount, type ArchiveView, pickAccount, retentionDays } from "./api";
 import { DeletedItemsList } from "./deleted-items-list";
 import { useArchive } from "./queries";

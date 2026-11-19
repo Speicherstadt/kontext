@@ -4,11 +4,11 @@
  * with it, so the other side sees their direct number.
  */
 import { useState } from "react";
+import { useCompany } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { useCompany } from "@/features/company/queries";
 import { m } from "@/paraglide/messages";
 import { type Admin, send, useAdminChange } from "./api";
 

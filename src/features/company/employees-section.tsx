@@ -1,6 +1,8 @@
 /** The company's people with their state; a click opens the person. */
 import { CalendarClock, UserPlus } from "lucide-react";
 import { useState } from "react";
+import { type Company, type Employee, showAvailabilityToAll } from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
@@ -10,7 +12,6 @@ import { formatSize } from "@/lib/format";
 import { m } from "@/paraglide/messages";
 import { useCompanyRules } from "../rules/queries";
 import { RulesList } from "../rules/rules-section";
-import { type Company, type Employee, showAvailabilityToAll } from "./api";
 import { DeleteEmployeeDialog } from "./delete-employee-dialog";
 import { DeletedAccountsSection } from "./deleted-accounts-section";
 import { EditionCard } from "./edition-card";
@@ -18,7 +19,6 @@ import { EmployeeDialog, type EmployeeSubDialog, NewEmployeeDialog } from "./emp
 import { Badge } from "./fields";
 import { CompanyGate } from "./gate";
 import { OffboardingDialog } from "./offboarding-dialog";
-import { useCompanyChange } from "./queries";
 import { SearchIndexNotice } from "./search-index-notice";
 import { managedBy, useSso } from "./sso-api";
 import { VacationDialog } from "./vacation-dialog";

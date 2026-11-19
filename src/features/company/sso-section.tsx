@@ -5,14 +5,14 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { type ComponentProps, type FormEvent, useState } from "react";
+import { useStalwartEdition } from "@/company-core/edition";
+import { useCompanyChange } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
-import { useStalwartEdition } from "./edition";
 import { ConfirmButton } from "./fields";
-import { useCompanyChange } from "./queries";
 import { CopyValue, ScimCard } from "./scim-card";
 import {
   type ConnectionTest,

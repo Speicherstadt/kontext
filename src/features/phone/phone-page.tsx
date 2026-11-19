@@ -2,17 +2,18 @@
  * Telefon: dial a number, and the calls through the telephone box – who, when, how it went, a
  * note – with "Zurückrufen" and the way to the contact. Missed ones can be shown alone.
  */
+
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { PhoneIncoming, PhoneMissed, PhoneOutgoing } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { useChatNames } from "@/chat-core/use-chat-names";
+import { VoiceMessage } from "@/chat-core/voice-message";
 import { TabBar } from "@/components/shell/tab-bar-slot";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { useChatNames } from "@/features/chat/use-chat-names";
-import { VoiceMessage } from "@/features/chat/voice-message";
-import { useMe } from "@/features/tasks/queries";
+import { useMe } from "@/directory/queries";
 import { cn } from "@/lib/cn";
 import { listDate } from "@/lib/format";
 import { outcomeText, type PhoneCall, readableNumber } from "@/lib/phone";

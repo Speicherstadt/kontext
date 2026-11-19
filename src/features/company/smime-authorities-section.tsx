@@ -5,17 +5,17 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { BadgeCheck, Trash2, Upload } from "lucide-react";
-import { useToast } from "@/components/ui/toast";
-import { LOCALE } from "@/lib/locale";
-import { bytesToBase64 } from "@/lib/secure";
-import { m } from "@/paraglide/messages";
 import {
   addSmimeAuthority,
   getSmimeAuthorities,
   removeSmimeAuthority,
   type SmimeAuthority,
-} from "./api";
-import { useCompanyChange } from "./queries";
+} from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
+import { useToast } from "@/components/ui/toast";
+import { LOCALE } from "@/lib/locale";
+import { bytesToBase64 } from "@/lib/secure";
+import { m } from "@/paraglide/messages";
 
 const KEY = ["company", "smime-authorities"];
 

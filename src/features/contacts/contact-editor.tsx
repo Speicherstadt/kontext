@@ -5,13 +5,19 @@ import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import {
+  type BookRef,
+  bookLabel,
+  type Contact,
+  startBook,
+  useContactMutations,
+} from "@/contacts-core/queries";
 import { dataUri, squarePhoto } from "@/features/photos/make-photo";
 import { PhotoPicker } from "@/features/photos/photo-picker";
 import { type ContactForm, emptyContactForm, formToCard, toForm } from "@/lib/contact-form";
 import { contactPhoto, fullName, mediaWithPhoto } from "@/lib/jscontact";
 import { m } from "@/paraglide/messages";
 import { EmailRows, PhoneRows } from "./contact-rows";
-import { type BookRef, bookLabel, type Contact, startBook, useContactMutations } from "./queries";
 
 type Props = {
   card?: Contact;
