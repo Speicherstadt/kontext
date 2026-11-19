@@ -36,7 +36,7 @@ Green before every push, then check CI:
 
 ```sh
 bun run typecheck && bun run lint && bun run test && bun run build
-mkdocs build --strict    # when docs/ or mkdocs.yml changed
+zensical build --strict  # when docs/ or mkdocs.yml changed
 ```
 
 The e2e tests (`bun run e2e`) run in CI; don't run them locally before a push.

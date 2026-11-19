@@ -1,0 +1,6 @@
+/* The date of the last change under every page (dev/docs-revision-date) */
+.md-typeset .revision-date {
+  margin-top: 2.5em;
+  font-size: 0.7rem;
+  color: var(--md-default-fg-color--light);
+}
