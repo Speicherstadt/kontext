@@ -8,6 +8,7 @@ import { acceptsImport } from "@/lib/eml-import";
 import { pinResurfaced, resurfacedFilter } from "@/lib/inboxes";
 import { mailboxNotice } from "@/lib/mail-accounts";
 import { mailboxName, mailboxRights } from "@/lib/mailboxes";
+import { useThreadView } from "@/mail-core/thread-view";
 import { m } from "@/paraglide/messages";
 import { TrashActions } from "../deleted-items/trash-actions";
 import { RESURFACED, useSnoozes } from "../snooze/queries";
@@ -16,7 +17,6 @@ import { canEmpty, EmptyFolder } from "./empty-folder";
 import { FilterChips, ListFrame, type Row } from "./list-frame";
 import { useEmailList, useHeldMails, useMailAccounts } from "./queries";
 import { useMailSort } from "./sort-setting";
-import { useThreadView } from "./thread-view";
 
 type Props = { accountId: string; mailbox: Mailbox; search: MailSearch };
 

@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react";
 import { useClient } from "@/auth/auth";
 import { receiptsToFile } from "@/jmap/receipts";
 import { findRole, mailboxRights } from "@/lib/mailboxes";
-import { useMailActions } from "./actions";
+import { useMailActions } from "@/mail-core/actions";
 import { useAllMailboxes, useInboxes } from "./queries";
 
 /** One account: its inbox's new receipts, filed once each. */

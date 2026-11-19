@@ -5,7 +5,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
-import { useMailAccounts } from "@/features/mail/queries";
+import { useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";
 
 const KEY = ["push", "mailboxes"];

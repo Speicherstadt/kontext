@@ -5,7 +5,7 @@ import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { useImageSenders } from "@/features/mail/image-senders";
+import { useImageSenders } from "@/mail-core/image-senders";
 import { m } from "@/paraglide/messages";
 import { CONTACTS } from "../../../server/images/senders";
 

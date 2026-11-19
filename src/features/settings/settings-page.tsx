@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import { lazy, type ReactNode, Suspense } from "react";
 import { TabBar } from "@/components/shell/tab-bar-slot";
+import { useExternalAccounts } from "@/external-accounts/queries";
 import { AgentsSection } from "@/features/agents/agents-section";
 import { AssistantSection } from "@/features/company/assistant-section";
 import { BackupSection } from "@/features/company/backup-section";
@@ -64,7 +65,6 @@ import { VacationTemplatesSection } from "@/features/company/vacation-templates-
 import { RetentionCard } from "@/features/deleted-items/deleted-items-admin";
 import { DeletedItemsSection } from "@/features/deleted-items/deleted-items-section";
 import { ExternalSection } from "@/features/external/external-section";
-import { useExternalAccounts } from "@/features/external/queries";
 import { usePhone } from "@/features/phone/queries";
 import { RulesSection } from "@/features/rules/rules-section";
 import type { settingsSections } from "@/features/settings/sections";

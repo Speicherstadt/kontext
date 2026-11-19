@@ -9,10 +9,10 @@ import { useToast } from "@/components/ui/toast";
 import { sendPhishingReport } from "@/jmap/phishing-report";
 import type { EmailDetail } from "@/jmap/types";
 import { findRole } from "@/lib/mailboxes";
+import { useEmailActions } from "@/mail-core/actions";
+import { useSendAccount } from "@/mail-core/use-send-account";
 import { m } from "@/paraglide/messages";
 import { usePhishingReport } from "../company/phishing-report";
-import { useEmailActions } from "./actions";
-import { useSendAccount } from "./use-send-account";
 
 export const useReportPhishing = (
   accountId: string,

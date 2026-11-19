@@ -14,10 +14,10 @@ import { sendEmail, setKeyword } from "@/jmap/mail";
 import type { EmailDetail } from "@/jmap/types";
 import { displayName } from "@/lib/format";
 import { findRole } from "@/lib/mailboxes";
+import { useEmailActions } from "@/mail-core/actions";
+import { useSendAccount } from "@/mail-core/use-send-account";
 import { m } from "@/paraglide/messages";
 import { unsubscribeWay } from "../../../server/unsubscribe/unsubscribe";
-import { useEmailActions } from "./actions";
-import { useSendAccount } from "./use-send-account";
 
 /** Kept on the mail once one unsubscribed from it. */
 export const UNSUBSCRIBED = "kontext.unsubscribed";

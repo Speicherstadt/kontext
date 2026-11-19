@@ -14,8 +14,8 @@ import { LOCALE } from "@/lib/locale";
 import { base64ToBytes } from "@/lib/secure";
 import { fromSender } from "@/lib/sender-check";
 import { openP12, readSmime, type SmimeRead, type SmimeSignature } from "@/lib/smime";
+import { rememberOpened } from "@/mail-core/opened-mails";
 import { m } from "@/paraglide/messages";
-import { rememberOpened } from "../mail/opened-mails";
 import { Body, Files, useRaw } from "../pgp/pgp-mail";
 import {
   checkTrust,

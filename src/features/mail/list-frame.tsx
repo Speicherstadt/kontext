@@ -15,6 +15,7 @@ import { usePhotoOf } from "@/features/photos/queries";
 import type { EmailSummary } from "@/jmap/types";
 import { cn } from "@/lib/cn";
 import { pickKey } from "@/lib/selection";
+import { useThreadView } from "@/mail-core/thread-view";
 import { m } from "@/paraglide/messages";
 import { useFileDrop } from "./eml-import";
 import { isOpen, useListKeys, useListPicks } from "./list-picks";
@@ -25,7 +26,6 @@ import { SearchBox, type SearchBoxHandle } from "./search-box";
 import { SelectionBar } from "./selection-bar";
 import { SortMenu } from "./sort-menu";
 import { useSwipeAction } from "./swipe-action";
-import { useThreadView } from "./thread-view";
 import { useThreadInfo } from "./use-thread-info";
 
 /**

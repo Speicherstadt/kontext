@@ -4,8 +4,8 @@
  */
 
 import type { Identity } from "@/jmap/types";
-import type { MailProviderId } from "../../../server/external/providers";
-import type { ExternalAccount as Stored } from "../../../server/external/store";
+import type { MailProviderId } from "../../server/external/providers";
+import type { ExternalAccount as Stored } from "../../server/external/store";
 
 /** An account as the server sends it (no password, no state, dates as text). */
 export type ExternalAccount = Omit<

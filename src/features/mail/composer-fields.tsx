@@ -4,9 +4,9 @@ import type { OutgoingAttachment } from "@/jmap/mail";
 import type { EmailAddress, Identity } from "@/jmap/types";
 import { formatSize } from "@/lib/format";
 import type { Suggestion } from "@/lib/groups";
+import { RecipientField } from "@/mail-core/recipient-field";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
-import { RecipientField } from "./recipient-field";
 
 type FieldsProps = {
   identities: Identity[];

@@ -7,8 +7,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useClient } from "@/auth/auth";
 import { createMailbox, listMailboxes, moveEmails } from "@/jmap/mail";
 import { findRole } from "@/lib/mailboxes";
+import { mailboxesKey, patchCachedEmails } from "@/mail-core/accounts";
 import { RESURFACED, SNOOZED_NAME, type Snooze } from "../../../server/snooze/snooze";
-import { mailboxesKey, patchCachedEmails } from "../mail/queries";
 
 export { RESURFACED, type Snooze };
 

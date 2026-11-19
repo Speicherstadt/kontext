@@ -8,8 +8,8 @@ import { useToast } from "@/components/ui/toast";
 import type { EmailSummary } from "@/jmap/types";
 import { groupsOf } from "@/lib/selection";
 import type { SwipeAction } from "@/lib/swipe";
+import { useMailActions } from "@/mail-core/actions";
 import { m } from "@/paraglide/messages";
-import { useMailActions } from "./actions";
 import { useOfferUndo } from "./undo";
 import type { Group } from "./use-thread-info";
 

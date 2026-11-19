@@ -104,7 +104,7 @@ unterschreibt und entschlüsselt – und der später auch vertrauliche Chats tr�
   verschlüsselt. Wurde die Mail hier geöffnet, wird ihr Text zitiert, und beim Weiterleiten gehen
   Inhalt und Anhänge mit (nie die verschlüsselten Teile); sonst sagt Kontext, dass man sie erst
   öffnen muss. Geöffnete Mails zeigen in Liste und Unterhaltung den Anfang ihres Textes statt
-  „Verschlüsselt“ (`src/features/mail/opened-mails.ts`, nur im Speicher).
+  „Verschlüsselt“ (`src/mail-core/opened-mails.ts`, nur im Speicher).
 - **Betreff:** Er wird mitverschlüsselt (Protected Headers, wie Thunderbird es macht): Innen
   steht er im verschlüsselten Teil (`protectHeaders`, `src/lib/mime.ts`), außen nur „Vertrauliche
   Nachricht“. Sobald eine Mail geöffnet wurde, zeigen Liste, Ansicht und Antwort den echten

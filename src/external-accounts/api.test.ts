@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { Identity } from "@/jmap/types";
 import {
   type ExternalAccount,
   externalIdentity,
   externalIdOf,
   listExternalAccounts,
   replyingExternal,
-} from "./api";
+} from "@/external-accounts/api";
+import type { Identity } from "@/jmap/types";
 
 const own: Identity = {
   id: "i1",

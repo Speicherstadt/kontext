@@ -18,7 +18,7 @@ vi.mock("@/features/contacts/use-suggestions", () => ({
   useAddressSuggestions: () => [anna],
 }));
 const hint = vi.hoisted(() => ({ inside: null as string[] | null }));
-vi.mock("@/features/company/external-hint", () => ({ useInsideDomains: () => hint.inside }));
+vi.mock("@/mail-core/external-hint", () => ({ useInsideDomains: () => hint.inside }));
 vi.mock("./availability-panel", () => ({ AvailabilityPanel: () => null }));
 const changeFollowing = vi.fn(async () => {});
 const updateEvent = vi.fn(async () => {});

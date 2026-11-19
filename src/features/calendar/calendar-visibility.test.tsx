@@ -22,7 +22,7 @@ vi.mock("@/auth/session", () => ({
     },
   }),
 }));
-vi.mock("../sharing/queries", () => ({ usePrincipals: () => ({ data: [] }) }));
+vi.mock("@/directory/queries", () => ({ usePrincipals: () => ({ data: [] }) }));
 
 const calendar = { id: "c1", name: "Baustellen", isVisible: true, isDefault: false };
 const STORAGE = "kontext.hiddenCalendars";

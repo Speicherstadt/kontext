@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useClient } from "@/auth/auth";
 import { getEmlOriginals } from "@/jmap/mail";
 import type { EmlOriginal } from "@/lib/compose";
-import { shownSubject } from "./opened-mails";
+import { shownSubject } from "@/mail-core/opened-mails";
 
 export const useEmlForward = (accountId: string, ids: string[]) => {
   const client = useClient();

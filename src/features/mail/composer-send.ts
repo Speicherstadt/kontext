@@ -1,7 +1,7 @@
 /** Sending the mail: now (held for "Rückgängig"), later, encrypted, signed or through another mailbox. */
 import type { QueryClient } from "@tanstack/react-query";
 import type { useToast } from "@/components/ui/toast";
-import { externalIdOf, sendThroughExternal } from "@/features/external/api";
+import { externalIdOf, sendThroughExternal } from "@/external-accounts/api";
 import type { JmapClient } from "@/jmap/client";
 import { type Hold, saveDraft, sendEmail } from "@/jmap/mail";
 import { isRefusedError } from "@/jmap/refused";
@@ -10,13 +10,13 @@ import { attachmentMention, ownText } from "@/lib/attachment-reminder";
 import type { ComposeMode } from "@/lib/compose";
 import { withLegalFooter } from "@/lib/legal-footer";
 import { holdUntil, sendTimeLabel } from "@/lib/schedule";
+import type { useExternalQuestion } from "@/mail-core/external-question";
 import { m } from "@/paraglide/messages";
 import type { useLegalFooter } from "../company/legal-footer";
 import type { useEncryptedSend } from "../pgp/use-encrypted-send";
 import type { OutgoingMail } from "./composer-files";
 import { signatureOf } from "./composer-fill";
 import type { ComposerState } from "./composer-state";
-import type { useExternalQuestion } from "./external-question";
 import type { useTakeBack } from "./take-back";
 
 type Toast = ReturnType<typeof useToast>;

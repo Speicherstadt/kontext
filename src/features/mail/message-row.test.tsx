@@ -28,9 +28,9 @@ vi.mock("@tanstack/react-router", () => ({
 vi.mock("@/components/use-media-query", () => ({ useMediaQuery: () => false }));
 vi.mock("../categories/queries", () => ({ useCategoryMap: () => ({}) }));
 const hint = vi.hoisted(() => ({ inside: null as string[] | null }));
-vi.mock("@/features/company/external-hint", () => ({ useInsideDomains: () => hint.inside }));
+vi.mock("@/mail-core/external-hint", () => ({ useInsideDomains: () => hint.inside }));
 vi.mock("../tasks/queries", () => ({ useTasks: () => ({ tasks: [] }) }));
-vi.mock("./opened-mails", () => ({
+vi.mock("@/mail-core/opened-mails", () => ({
   useShownSubject: (email: { subject: string | null }) => email.subject,
   useOpenedPreview: () => undefined,
 }));
@@ -40,7 +40,7 @@ const actions = vi.hoisted(() => ({
   archive: vi.fn(async () => undefined),
   remove: vi.fn(async () => undefined),
 }));
-vi.mock("./actions", () => ({ useMailActions: () => actions }));
+vi.mock("@/mail-core/actions", () => ({ useMailActions: () => actions }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ show: vi.fn() }) }));
 
 const mail = (keywords: Record<string, boolean> = {}): EmailSummary => ({

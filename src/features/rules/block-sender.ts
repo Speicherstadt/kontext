@@ -9,7 +9,7 @@ import { useClient } from "@/auth/auth";
 import { getFilters, setFilters } from "@/jmap/rules";
 import { findRole } from "@/lib/mailboxes";
 import { type BlockScope, blockRule, sievePath } from "@/lib/rules";
-import { useAllMailboxes } from "../mail/queries";
+import { useAllMailboxes } from "@/mail-core/accounts";
 
 /** Blocks in the own mailbox `accountId`; undefined where it has no Spam folder. */
 export const useBlockSender = (accountId: string) => {

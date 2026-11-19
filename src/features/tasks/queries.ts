@@ -6,6 +6,7 @@
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "@/auth/session";
+import { usePrincipals } from "@/directory/queries";
 import { CAPABILITIES } from "@/jmap/client";
 import {
   type BoardColumn,
@@ -15,10 +16,9 @@ import {
   type NewTask,
   type Task,
 } from "@/lib/tasks";
+import { useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";
 import type { TaskPatch, TaskProject } from "../../../server/tasks/tasks";
-import { useMailAccounts } from "../mail/queries";
-import { usePrincipals } from "../sharing/queries";
 
 const KEY = ["tasks"];
 

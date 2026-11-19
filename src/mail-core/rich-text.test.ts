@@ -1,6 +1,6 @@
 import { Editor } from "@tiptap/core";
 import { afterEach, describe, expect, it } from "vitest";
-import { richText } from "./rich-text";
+import { richText } from "@/mail-core/rich-text";
 
 let editor: Editor | undefined;
 afterEach(() => editor?.destroy());

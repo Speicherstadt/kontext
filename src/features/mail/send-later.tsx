@@ -7,8 +7,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MenuContent, MenuItem, MenuRoot, MenuSeparator, MenuTrigger } from "@/components/ui/menu";
 import { sendChoices, sendTimeLabel, validSendTime } from "@/lib/schedule";
+import { TimeDialog } from "@/mail-core/time-dialog";
 import { m } from "@/paraglide/messages";
-import { TimeDialog } from "./time-dialog";
 
 export const SendLater = ({
   disabled,

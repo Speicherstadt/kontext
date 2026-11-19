@@ -9,7 +9,6 @@ import { type RefObject, useLayoutEffect, useRef, useState } from "react";
 import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "@/components/use-media-query";
-import { useMailAccounts } from "@/features/mail/queries";
 import { cn } from "@/lib/cn";
 import {
   type Box,
@@ -22,6 +21,7 @@ import {
   tourNext,
   tourSteps,
 } from "@/lib/tour";
+import { useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";
 import { markTourSeen, useTourSeen } from "./seen";
 

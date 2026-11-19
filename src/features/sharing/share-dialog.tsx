@@ -9,6 +9,7 @@ import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Select } from "@/components/ui/input";
+import { useColleagues } from "@/directory/queries";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
 import { principalName } from "@/jmap/principals";
 import {
@@ -22,7 +23,6 @@ import {
   withEveryone,
 } from "@/lib/sharing";
 import { m } from "@/paraglide/messages";
-import { useColleagues } from "./queries";
 
 const LABELS: Record<Access, () => string> = {
   none: m.sharing_none,

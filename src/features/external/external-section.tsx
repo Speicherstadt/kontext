@@ -6,13 +6,17 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import {
+  type ExternalAccount,
+  fetchExternalAccount,
+  removeExternalAccount,
+} from "@/external-accounts/api";
+import { useExternalAccounts, useExternalChange } from "@/external-accounts/queries";
 import { Badge, ConfirmButton } from "@/features/company/fields";
 import { LOCALE } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
 import { PROVIDERS } from "../../../server/migration/providers";
-import { type ExternalAccount, fetchExternalAccount, removeExternalAccount } from "./api";
 import { ConnectDialog, PasswordDialog } from "./external-dialogs";
-import { useExternalAccounts, useExternalChange } from "./queries";
 
 const STATUS: Record<ExternalAccount["status"], () => string> = {
   active: m.external_status_active,

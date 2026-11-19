@@ -19,7 +19,7 @@ import type { EmailDetail, EmailSummary, Mailbox } from "@/jmap/types";
 import { type Assignment, withAssignment } from "@/lib/assignment";
 import { findRole } from "@/lib/mailboxes";
 import { type MailMove, reverseMove, stillMoved } from "@/lib/undo-move";
-import { adjustUnreadCounts, mailboxesKey, patchCachedEmails } from "./queries";
+import { adjustUnreadCounts, mailboxesKey, patchCachedEmails } from "@/mail-core/accounts";
 
 export type MoveTarget = { accountId: string; mailboxId: string };
 

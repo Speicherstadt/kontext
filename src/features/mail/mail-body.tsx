@@ -11,8 +11,8 @@ import { displayBody } from "@/jmap/mail";
 import type { EmailDetail } from "@/jmap/types";
 import { splitQuote, splitTextQuote } from "@/lib/conversation";
 import { mailDocument, sanitizeMailHtml, textToHtml } from "@/lib/html";
+import { ImagesLine } from "@/mail-core/image-senders";
 import { m } from "@/paraglide/messages";
-import { ImagesLine } from "./image-senders";
 import { useInlineImages } from "./inline-image-urls";
 import { useRemoteImages } from "./remote-images";
 

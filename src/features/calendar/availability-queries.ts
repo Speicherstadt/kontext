@@ -5,12 +5,12 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useClient } from "@/auth/auth";
 import { useSession } from "@/auth/session";
+import { usePrincipals } from "@/directory/queries";
 import { getAvailability } from "@/jmap/availability";
 import { CAPABILITIES } from "@/jmap/client";
 import type { Principal } from "@/jmap/principals";
 import type { Schedule } from "@/lib/availability";
 import { attendeeEmails } from "@/lib/event-form";
-import { usePrincipals } from "../sharing/queries";
 
 /** The attendee addresses of the form, lower case and each once. */
 export const attendeeList = (text: string): string[] => [

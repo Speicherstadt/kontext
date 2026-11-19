@@ -21,8 +21,8 @@ import {
   relock,
   unlockKey,
 } from "@/lib/pgp";
+import { useSendAccount } from "@/mail-core/use-send-account";
 import { m } from "@/paraglide/messages";
-import { useSendAccount } from "../mail/use-send-account";
 import { useStopAtRest } from "./at-rest-card";
 import { keepUnlocked, type OwnKey, useOwnKey, usePgpActions } from "./queries";
 

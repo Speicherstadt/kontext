@@ -8,8 +8,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { type DragEvent, useState } from "react";
 import { useToast } from "@/components/ui/toast";
 import type { EmailSummary } from "@/jmap/types";
+import { useMailActions } from "@/mail-core/actions";
 import { m } from "@/paraglide/messages";
-import { useMailActions } from "./actions";
 import { useEmlImport } from "./eml-import";
 import { useOfferUndo } from "./undo";
 

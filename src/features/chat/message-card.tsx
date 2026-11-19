@@ -5,16 +5,16 @@
  */
 import { X } from "lucide-react";
 import { useState } from "react";
+import { usePrincipals } from "@/directory/queries";
 import { useContacts } from "@/features/contacts/queries";
 import { ItemLink, LinkIcon } from "@/features/links/item-link";
-import { useMailAccounts } from "@/features/mail/queries";
-import { usePrincipals } from "@/features/sharing/queries";
 import { useStatusLabel, useTasks } from "@/features/tasks/queries";
 import { principalName } from "@/jmap/principals";
 import type { Card } from "@/lib/chat-cards";
 import { cn } from "@/lib/cn";
 import { dateKey } from "@/lib/jscalendar";
 import { dueLabel, type Task } from "@/lib/tasks";
+import { useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";
 import { MailCopyDialog } from "./mail-copy";
 
