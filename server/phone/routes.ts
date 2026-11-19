@@ -11,9 +11,6 @@ import { participantMetadata } from "../calls/calls";
 import { joinToken, type LiveKitConfig } from "../calls/livekit";
 import type { Viewer } from "../chat/chat";
 import { createFailureLimit, type FailureLimit } from "../failures";
-import { bearer } from "./box-routes";
-import { type PhoneFiles, wavResponse } from "./files";
-import { everyone } from "./lines";
 import {
   blockSchema,
   canSeeCall,
@@ -23,8 +20,11 @@ import {
   phoneRoom,
   statusSchema,
   transferSchema,
-} from "./phone";
-import { fromBoxSchema, parseMessage } from "./protocol";
+} from "../model/phone";
+import { fromBoxSchema, parseMessage } from "../model/phone-protocol";
+import { bearer } from "./box-routes";
+import { type PhoneFiles, wavResponse } from "./files";
+import { everyone } from "./lines";
 import { type PhoneService, type Problem, ringPlanOf } from "./service";
 import { callStats } from "./stats";
 import type { PhoneStore } from "./store";

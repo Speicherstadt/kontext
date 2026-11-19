@@ -6,7 +6,7 @@
  * Kontext. Pure.
  */
 import { fold, utcStamp as utc, writeText } from "../../src/lib/ical-text";
-import { berlinInstant, isCalendarDay, type Repeat, type Task, zonedInstant } from "../tasks/tasks";
+import { berlinInstant, isCalendarDay, type Repeat, type Task, zonedInstant } from "../model/tasks";
 
 export type Prop = { name: string; params: Record<string, string>; value: string };
 

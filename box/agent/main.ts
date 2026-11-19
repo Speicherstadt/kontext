@@ -12,7 +12,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { version as packageVersion } from "../../package.json";
-import type { BoxConfig } from "../../server/phone/protocol";
+import type { BoxConfig } from "../../server/model/phone-protocol";
 import { createBoxFiles } from "./files";
 import { createHandedOut } from "./handed-out";
 import { type Credentials, pair } from "./link";

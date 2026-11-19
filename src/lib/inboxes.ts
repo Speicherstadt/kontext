@@ -1,5 +1,5 @@
 /** Lists over several accounts ("Alle Posteingänge", search): merging their paged lists. */
-import type { EmailSummary, Mailbox } from "@/jmap/types";
+import type { EmailSummary, Mailbox } from "@/model/jmap";
 import { type MailAccount, mailboxNotice } from "./mail-accounts";
 import { compareMails, DEFAULT_SORT, type MailSort } from "./mail-sort";
 

@@ -3,17 +3,12 @@
  * shared with, and which accounts in the session are shared mailboxes. In Stalwart a principal's
  * id is also its account id.
  */
+import { type Principal, principalName } from "@/model/jmap";
 import { CAPABILITIES, type JmapClient } from "./client";
 
 const USING = [CAPABILITIES.core, CAPABILITIES.principals];
 
-export type Principal = {
-  id: string;
-  type: "individual" | "group" | "resource" | "location" | "other";
-  name: string;
-  description?: string | null;
-  email?: string | null;
-};
+export type { Principal };
 
 export const listPrincipals = async (
   client: JmapClient,
@@ -33,6 +28,4 @@ export const listPrincipals = async (
   return (get![1].list as Principal[]) ?? [];
 };
 
-/** "Anna Weber" – Stalwart keeps the display name in `description`, the login in `name`. */
-export const principalName = (principal: Principal): string =>
-  principal.description || principal.email || principal.name;
+export { principalName };

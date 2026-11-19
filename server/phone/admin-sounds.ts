@@ -7,9 +7,9 @@
 import { Hono } from "hono";
 import { limitBody } from "../body-limit";
 import type { Env } from "../company/context";
+import { isPhoneWav, soundId, wavInfo } from "../model/phone-sounds";
 import { type PhoneFiles, wavResponse } from "./files";
 import type { PhoneService } from "./service";
-import { isPhoneWav, soundId, wavInfo } from "./sounds";
 import type { PhoneSettings, PhoneStore } from "./store";
 
 const MAX_BYTES = 4 * 1024 * 1024;

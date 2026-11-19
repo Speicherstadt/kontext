@@ -4,9 +4,9 @@
  * angenommen"). Pure.
  */
 import { z } from "zod";
-import { companyDay, type NewTaskData } from "../tasks/tasks";
-import { readableNumber, toDialable, toE164 } from "./numbers";
-import type { CallEvent } from "./protocol";
+import { readableNumber, toDialable, toE164 } from "./phone-numbers";
+import type { CallEvent } from "./phone-protocol";
+import { companyDay, type NewTaskData } from "./tasks";
 
 export const OUTCOMES = [
   "answered",
@@ -100,7 +100,7 @@ export {
   statusSchema,
   unavailableAt,
   withoutUnavailable,
-} from "./availability";
+} from "./phone-availability";
 
 /** Hangup causes (Q.850, as Asterisk passes them on). */
 const CAUSE = { busy: 17, noAnswer: 19, answeredElsewhere: 26 } as const;
@@ -271,7 +271,7 @@ export const applyCallEvent = (
   return call;
 };
 
-export { canSeeCall, offerCall, takeCall, takeOffer } from "./taking";
+export { canSeeCall, offerCall, takeCall, takeOffer } from "./phone-taking";
 
 /** Who sits in a phone room: LiveKit SIP's participants are "sip_…", the rest are people. */
 export const isPerson = (identity: string) => !identity.startsWith("sip_");

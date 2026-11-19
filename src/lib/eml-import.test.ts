@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Mailbox } from "@/jmap/types";
+import type { Mailbox } from "@/model/jmap";
 import { acceptsImport, checkFile, dateHeader, parseMailDate, receivedAtOf } from "./eml-import";
 
 const file = (name: string, type = "", size = 10) => ({ name, type, size });

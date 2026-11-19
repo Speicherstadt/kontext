@@ -3,10 +3,11 @@
  * of HTML, local times in Europe/Berlin, only the fields worth reading. Every result keeps the
  * ids needed to ask further (account, mail, thread). Pure.
  */
-import type { EmailAddress, EmailDetail, EmailSummary } from "@/jmap/types";
+
 import { type CalendarEvent, eventTimes, locationName, participantEmail } from "@/lib/jscalendar";
 import { type ContactCard, company, fullName, note } from "@/lib/jscontact";
-import { boardKey, type Task } from "../tasks/tasks";
+import type { EmailAddress, EmailDetail, EmailSummary } from "@/model/jmap";
+import { boardKey, type Task } from "../model/tasks";
 
 const ZONE = "Europe/Berlin";
 

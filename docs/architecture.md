@@ -1220,7 +1220,7 @@ flowchart LR
 - **Ein Anruf kommt rein:** Die Fritzbox klingelt bei der Box (und bei den Tischtelefonen). Die
   Box meldet „klingelt“; Kontext legt den Anruf an, schaut aber nicht ins Adressbuch – das macht
   die App mit den Rechten der angemeldeten Person (`contactOfNumber`, Nummern in E.164,
-  `server/phone/numbers.ts`). Bei den Personen, die unter Telefonie ausgewählt sind, erscheint
+  `server/model/phone-numbers.ts`). Bei den Personen, die unter Telefonie ausgewählt sind, erscheint
   eine Karte: Kontakt, Firma, letzte Mail, nächster Termin, „Annehmen“ – auch als Web Push.
 - **Annehmen in Kontext:** Kontext gibt dem Anruf einen Raum und sagt der Box „answer“. Erst dann
   wählt Asterisk LiveKit SIP an (`<uuid>@…`, die Dispatch-Regel macht daraus den Raum
@@ -1238,7 +1238,7 @@ flowchart LR
   die Aufgabe ab (`answeredCallbacks`). Unterdrückte Nummern bekommen keine Aufgabe.
 - **Ansagen:** In der Firmenverwaltung gesprochen (MediaRecorder) oder hochgeladen; der Browser
   macht daraus WAV mit 8 kHz, mono, 16 Bit (`src/lib/wav.ts`), der Server prüft nur
-  (`server/phone/sounds.ts`) und legt sie unter ihrer Prüfsumme neben die Datenbank
+  (`server/model/phone-sounds.ts`) und legt sie unter ihrer Prüfsumme neben die Datenbank
   (`phone/sounds/`). Die Konfiguration nennt der Box die Ansagen, die sie braucht; sie lädt jede
   einmal (`/api/phone/box/files/sounds/<id>`, mit ihrem Token), bevor sie den Rest anwendet.
 - **Mailbox:** Ist sie an, klingelt ein Anruf so lange wie eingestellt, dann nimmt die Box ab

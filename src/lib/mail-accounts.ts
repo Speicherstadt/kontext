@@ -1,5 +1,5 @@
 /** The mail accounts a user sees, and how the app names them. */
-import type { Account } from "@/jmap/types";
+import type { Account } from "@/model/jmap";
 import { m } from "@/paraglide/messages";
 
 /**

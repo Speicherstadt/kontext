@@ -2,9 +2,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { extensionsConf } from "../../box/agent/dialplan";
 import { createHub, type LiveEvent } from "../live/hub";
-import type { NewTaskData } from "../tasks/tasks";
-import type { PhoneCall, PhoneStatus } from "./phone";
-import { type CallEvent, parseMessage, type ToBox, toBoxSchema } from "./protocol";
+import type { PhoneCall, PhoneStatus } from "../model/phone";
+import { type CallEvent, parseMessage, type ToBox, toBoxSchema } from "../model/phone-protocol";
+import type { NewTaskData } from "../model/tasks";
 import { createPhoneService, desiredConfig } from "./service";
 import type { PhoneSettings, PhoneStore } from "./store";
 

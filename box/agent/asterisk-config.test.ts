@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { BoxConfig } from "../../server/phone/protocol";
+import type { BoxConfig } from "../../server/model/phone-protocol";
 import { asteriskFiles, extensionsConf, managerConf, pjsipConf } from "./asterisk-config";
 
 const config: BoxConfig = {

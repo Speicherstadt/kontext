@@ -17,7 +17,7 @@ import { cn } from "@/lib/cn";
 import { listDate } from "@/lib/format";
 import { outcomeText, type PhoneCall, readableNumber } from "@/lib/phone";
 import { m } from "@/paraglide/messages";
-import { soundLength } from "../../../server/phone/sounds";
+import { soundLength } from "../../../server/model/phone-sounds";
 import { PhoneStats } from "./phone-stats";
 import { PhoneStatus } from "./phone-status";
 import { usePhoneStore } from "./phone-store";

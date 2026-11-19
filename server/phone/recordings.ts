@@ -2,8 +2,9 @@
  * A recorded call: the box uploads the recording when recording stops or the call ends. Kontext
  * keeps it at the call (playable in the list for whoever may see the call); it does not mail it.
  */
+
+import { PHONE_WAV, wavInfo } from "../model/phone-sounds";
 import type { PhoneFiles } from "./files";
-import { PHONE_WAV, wavInfo } from "./sounds";
 import type { PhoneStore } from "./store";
 
 /** Four hours of telephone audio are about 230 MB; a call is not longer. */

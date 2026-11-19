@@ -1,5 +1,5 @@
 /** Tests only: a task with everything filled, changed where a test needs it. */
-import type { Task } from "./tasks";
+import type { Task } from "../model/tasks";
 
 export const sampleTask = (patch: Partial<Task> = {}): Task => ({
   id: "t1",

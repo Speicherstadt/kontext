@@ -1,8 +1,8 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { incomingCall } from "./phone";
+import { incomingCall } from "../model/phone";
+import { encodeWav } from "../model/phone-sounds";
 import { createRecordings } from "./recordings";
-import { encodeWav } from "./sounds";
 
 const call = {
   ...incomingCall(

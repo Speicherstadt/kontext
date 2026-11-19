@@ -1,6 +1,6 @@
 /** The event editor's form and the JSCalendar properties it becomes (RFC 8984). */
 
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 import { parseAddresses } from "./addresses";
 import { documentsOfLinks, type LinkedDocument, withDocuments } from "./document-links";
 import {

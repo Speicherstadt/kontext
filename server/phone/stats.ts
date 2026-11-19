@@ -3,7 +3,7 @@
  * how many were missed and when (weekday and hour, in the company's time zone), and who took
  * them. From the calls someone may see. Pure.
  */
-import type { PhoneCall } from "./phone";
+import type { PhoneCall } from "../model/phone";
 
 export type CallStats = {
   days: number;

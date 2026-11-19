@@ -2,7 +2,7 @@
  * Tasks outside the tasks app: on a contact, in the calendar, in the bell. Pure; days are
  * "YYYY-MM-DD" in the company's time zone.
  */
-import type { Task, TaskLink } from "../../server/tasks/tasks";
+import type { Task, TaskLink } from "../../server/model/tasks";
 import { type CalendarEvent, dateKey, eventTimes } from "./jscalendar";
 import { LOCALE } from "./locale";
 import { isMine } from "./tasks";

@@ -2,9 +2,16 @@
  * The task store in memory, enough for the routes of tasks and CalDAV: for their tests, and for
  * the demo, which runs the routes in the browser (src/demo). `start` is the first timestamp.
  */
+
+import {
+  type BoardColumn,
+  boardKey,
+  DEFAULT_COLUMNS,
+  type Task,
+  type TaskProject,
+} from "../model/tasks";
 import { sampleTask } from "./sample-task";
 import type { Board, DavTask, TaskStore } from "./store";
-import { type BoardColumn, boardKey, DEFAULT_COLUMNS, type Task, type TaskProject } from "./tasks";
 
 export const memoryTaskStore = (start = Date.parse("2026-10-25T08:00:00Z")) => {
   const tasks: Task[] = [];

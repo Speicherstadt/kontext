@@ -3,7 +3,7 @@
  * PBX and the PBX's call steps and registration back. Used by the real box (main.ts, Asterisk) and
  * the dev box (dev/fake-box.ts).
  */
-import type { BoxConfig, ToBox } from "../../server/phone/protocol";
+import type { BoxConfig, ToBox } from "../../server/model/phone-protocol";
 import { type Credentials, connect, type Link } from "./link";
 import type { Pbx, PbxEvents } from "./pbx";
 

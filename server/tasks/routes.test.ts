@@ -1,11 +1,11 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionAccount } from "../categories/routes";
+import { isCalendarDay, type Task } from "../model/tasks";
 import type { Notice } from "../push/pusher";
 import { readOnlyInbox, sampleSessionInfo } from "../sample-session";
 import { memoryTaskStore } from "./memory-store";
 import { createTaskRoutes } from "./routes";
-import { isCalendarDay, type Task } from "./tasks";
 
 const accounts: SessionAccount[] = [
   { id: "jonas", isPersonal: true, isReadOnly: false },

@@ -1,8 +1,8 @@
 /** Rows of the tasks tables turned into tasks, projects and CalDAV entries. Pure. */
 import { and, eq, isNull, type SQL } from "drizzle-orm";
 import * as schema from "../db/schema";
+import type { CheckItem, Repeat, Task, TaskLink, TaskProject } from "../model/tasks";
 import type { Board, DavTask } from "./store";
-import type { CheckItem, Repeat, Task, TaskLink, TaskProject } from "./tasks";
 
 export type Row = typeof schema.tasks.$inferSelect;
 export type LinkRow = typeof schema.taskLinks.$inferSelect;

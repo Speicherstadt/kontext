@@ -5,7 +5,7 @@
  * apart from parsing in a document of its own, which loads nothing.
  */
 
-import type { BodyPart } from "@/jmap/types";
+import type { BodyPart } from "@/model/jmap";
 
 const parse = (html: string) => new DOMParser().parseFromString(html, "text/html");
 

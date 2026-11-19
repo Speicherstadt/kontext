@@ -2,12 +2,12 @@
  * Files of Dokumente (Schreibzeug) where they belong in Kontext: as cards in the chat, as links of a
  * task, an appointment and a contact, and who should be able to open them there. Pure.
  */
-import type { Principal } from "@/jmap/principals";
+import type { Principal } from "@/model/jmap";
 import type { Card, Channel } from "../../server/chat/chat";
 
 export type { Card };
 
-import type { TaskLink } from "../../server/tasks/tasks";
+import type { TaskLink } from "../../server/model/tasks";
 
 /** The "account" of a document in cards and task links: Dokumente itself, the file's id is `ref`. */
 export const DOCUMENTS_ACCOUNT = "documents";

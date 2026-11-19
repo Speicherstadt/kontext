@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { encodeWav, isPhoneWav, soundId, soundLength, wavInfo } from "./sounds";
+import { encodeWav, isPhoneWav, soundId, soundLength, wavInfo } from "./phone-sounds";
 
 describe("WAV for the telephone", () => {
   it("reads back what it encodes", () => {

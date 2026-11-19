@@ -6,7 +6,7 @@
  * crates/jmap/src/email/query/text.rs), was found in an attachment. A mail without attachments
  * never is: Stalwart also finds stemmed forms the snippet does not mark ("Haus" in "Häuser"). Pure.
  */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 
 /** SearchSnippet/get for one mail (RFC 8621 §5): the marked subject and text, or null. */
 export type Snippet = { subject: string | null; preview: string | null };

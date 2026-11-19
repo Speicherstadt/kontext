@@ -2,7 +2,7 @@
  * Suggestions under the search box while typing: contacts for `von:`/`an:`, folders for `in:`,
  * operators by their first letters, and the last searches when the box is empty.
  */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 import { m } from "@/paraglide/messages";
 
 export type SearchSuggestion = {

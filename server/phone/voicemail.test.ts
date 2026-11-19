@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { incomingCall, type PhoneCall } from "./phone";
-import { encodeWav } from "./sounds";
+import { incomingCall, type PhoneCall } from "../model/phone";
+import { encodeWav } from "../model/phone-sounds";
 import type { PhoneSettings } from "./store";
 import { createVoicemail } from "./voicemail";
 

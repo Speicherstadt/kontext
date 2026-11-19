@@ -6,7 +6,7 @@
  * allInThreadHaveKeyword and someInThreadHaveKeyword (crates/jmap/src/email/query.rs); a keyword
  * comparator ranks the mails without it first when ascending (crates/store/src/search/local.rs).
  */
-import type { EmailSummary } from "@/jmap/types";
+import type { EmailSummary } from "@/model/jmap";
 import { displayName } from "./format";
 
 export const MAIL_SORTS = [

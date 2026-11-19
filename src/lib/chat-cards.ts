@@ -2,7 +2,7 @@
  * What the chat shares besides text: mails, tasks and contacts as cards (a snapshot of what they
  * are about), photos made smaller before sending, and a task made from a message. Pure.
  */
-import type { EmailSummary } from "@/jmap/types";
+import type { EmailSummary } from "@/model/jmap";
 import { m } from "@/paraglide/messages";
 import {
   type Card,
@@ -14,7 +14,7 @@ import {
   type Message,
   messageSummary,
 } from "../../server/chat/chat";
-import type { TaskLink } from "../../server/tasks/tasks";
+import type { TaskLink } from "../../server/model/tasks";
 import { displayName } from "./format";
 import { type ContactCard, company, fullName, primaryEmail } from "./jscontact";
 import { LOCALE } from "./locale";

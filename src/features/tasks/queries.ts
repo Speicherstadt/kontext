@@ -18,7 +18,7 @@ import {
 } from "@/lib/tasks";
 import { useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";
-import type { TaskPatch, TaskProject } from "../../../server/tasks/tasks";
+import type { TaskPatch, TaskProject } from "../../../server/model/tasks";
 
 const KEY = ["tasks"];
 

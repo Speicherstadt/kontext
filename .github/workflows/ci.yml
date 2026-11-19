@@ -35,7 +35,7 @@ jobs:
   # each job asks `!cancelled()` and compares with 'false', and a failing changes runs everything.
   #   code      anything but Markdown, docs/ and LICENSE (a deleted file counts as code)
   #   app       code outside box/: the app image (box/ is not in it)
-  #   box       the telephone box image: box/, the protocol it shares with the server (server/phone)
+  #   box       the telephone box image: box/, the protocol it shares with the server (server/model/phone-protocol.ts, phone-sounds.ts)
   #   stalwart  the Stalwart image check: its version (dev/config.ts), the hardening it copies
   #             (deploy/) and the script
   # The dependencies and this workflow always count for all of them.
@@ -64,7 +64,7 @@ jobs:
           if [ -n "$changed" ] && [ -z "$other" ] && [ -z "$deleted" ]; then code=false; else code=true; fi
           always='^(bun\.lock|package\.json|\.github/workflows/ci\.yml)$'
           if grep -Ev '^box/' <<< "$other" | grep -q . || grep -Eq "$always" <<< "$changed"; then app=true; else app=false; fi
-          if grep -Eq "^box/|^server/phone/|$always" <<< "$changed"; then box=true; else box=false; fi
+          if grep -Eq "^box/|^server/model/phone-(protocol|sounds)|$always" <<< "$changed"; then box=true; else box=false; fi
           if grep -Eq "^dev/config\.ts$|^deploy/|^docker/check-stalwart\.sh$|$always" <<< "$changed"; then stalwart=true; else stalwart=false; fi
           echo "code=$code app=$app box=$box stalwart=$stalwart"
           {

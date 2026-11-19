@@ -20,7 +20,7 @@ import {
   unavailableAt,
   withoutUnavailable,
 } from "./phone";
-import { type CallEvent, calendarDay } from "./protocol";
+import { type CallEvent, calendarDay } from "./phone-protocol";
 
 const event = (state: CallEvent["state"], extra: Partial<CallEvent> = {}): CallEvent => ({
   type: "event",

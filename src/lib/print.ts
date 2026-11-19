@@ -4,7 +4,7 @@
  * internet are printed only when they were allowed for the mail; even then the page's CSP lets in
  * images and nothing else from outside (no styles, fonts or media). Pure.
  */
-import type { EmailAddress } from "@/jmap/types";
+import type { EmailAddress } from "@/model/jmap";
 import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
 import { escapeHtml } from "./html";

@@ -1,8 +1,8 @@
 /**
  * Greetings for the telephone: whatever the browser recorded or someone uploaded (WebM, MP3,
- * M4A, WAV …) becomes the WAV the box plays – 8 kHz, mono, 16-bit (server/phone/sounds.ts).
+ * M4A, WAV …) becomes the WAV the box plays – 8 kHz, mono, 16-bit (server/model/phone-sounds.ts).
  */
-import { encodeWav, PHONE_WAV } from "../../server/phone/sounds";
+import { encodeWav, PHONE_WAV } from "../../server/model/phone-sounds";
 
 /** Samples from -1…1 to 16-bit, clipped. Pure. */
 export const floatToInt16 = (samples: Float32Array): Int16Array =>

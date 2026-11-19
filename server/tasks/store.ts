@@ -10,7 +10,7 @@ import {
   type TaskLink,
   type TaskPatch,
   type TaskProject,
-} from "./tasks";
+} from "../model/tasks";
 
 /** A board: an account's own (`projectId` null) or one of its projects. */
 export type Board = { accountId: string; projectId: string | null };

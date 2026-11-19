@@ -3,7 +3,7 @@
  * same distance before when the due day moves. Pure; times in the company's time zone.
  */
 import { m } from "@/paraglide/messages";
-import type { Task } from "../../server/tasks/tasks";
+import type { Task } from "../../server/model/tasks";
 import { addDays, fromLocal } from "./jscalendar";
 import { LOCALE } from "./locale";
 

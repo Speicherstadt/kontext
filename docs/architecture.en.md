@@ -1174,7 +1174,7 @@ flowchart LR
   seconds as long as a box is waiting, offline or not registered.
 - **A call comes in:** the Fritzbox rings the box (and the desk phones). The box reports "ringing";
   Kontext creates the call but does not look into the address book – the app does that with the
-  rights of the signed-in person (`contactOfNumber`, numbers in E.164, `server/phone/numbers.ts`).
+  rights of the signed-in person (`contactOfNumber`, numbers in E.164, `server/model/phone-numbers.ts`).
   For the people selected under Telephony a card appears: contact, company, latest mail, next
   appointment, "Answer" – as Web Push too.
 - **Answering in Kontext:** Kontext gives the call a room and tells the box "answer". Only then does
@@ -1192,7 +1192,7 @@ flowchart LR
   Withheld numbers get no task.
 - **Announcements:** spoken in the company admin (MediaRecorder) or uploaded; the browser turns them
   into WAV with 8 kHz, mono, 16 bit (`src/lib/wav.ts`), the server only checks
-  (`server/phone/sounds.ts`) and stores them under their checksum next to the database
+  (`server/model/phone-sounds.ts`) and stores them under their checksum next to the database
   (`phone/sounds/`). The configuration names the announcements the box needs; it downloads each one
   once (`/api/phone/box/files/sounds/<id>`, with its token) before applying the rest.
 - **Voicemail:** if it is on, a call rings for as long as set, then the box picks up
