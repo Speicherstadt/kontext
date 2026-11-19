@@ -22,7 +22,6 @@ Ohne Kosten pro Benutzer. Made in Europe.
 [Schnellstart](#schnellstart) •
 [FAQ](#faq) •
 [Dokumentation](https://kontext.email/) •
-[Support und Partnerschaft](#support-und-partnerschaft) •
 [Entwicklung](#entwicklung) •
 [English](README.md)
 
@@ -132,6 +131,9 @@ eintragen. Diese Schritte, DNS, Telefonie, Backups und Updates stehen in der
 [Installationsanleitung](https://kontext.email/installation.html); für einen frischen Server
 gibt es die Seite [VPS einrichten](https://kontext.email/vps.html).
 
+Keinen eigenen Server oder keine eigene IT? Kontext gibt es gehostet oder über einen IT-Dienstleister
+aus dem [Partnerprogramm](https://speicherstadt.app/partner/).
+
 ## FAQ
 
 <details>
@@ -148,8 +150,7 @@ JMAP-Client für Mail, Kalender und Kontakte auf Stalwart, siehe
 <summary><b>Was kostet das?</b></summary>
 
 Die Software ist kostenlos (AGPL). Du brauchst einen Server – einen VPS ab etwa 5 € im Monat – und
-jemanden, der ihn einrichtet und aktuell hält. Einrichtung, Umzug, Support und Betrieb gibt es auf
-Wunsch von den Entwicklern, siehe [Support und Partnerschaft](#support-und-partnerschaft).
+jemanden, der ihn einrichtet und aktuell hält.
 </details>
 
 <details>
@@ -279,18 +280,6 @@ Releases: [Entwicklung](https://kontext.email/development.html).
 
 Weitere Open-Source-Apps für deinen eigenen Server, etwa für Buchhaltung, Office-Dokumente, ein Dokumentenarchiv und mehr: **[speicherstadt.app](https://speicherstadt.app)**
 
-## Support und Partnerschaft
-
-Kontext ist kostenlos (AGPL). Wer es nicht selbst einrichten oder betreiben will, bekommt Hilfe von den
-Entwicklern:
-
-- **Einrichtung und Umzug** auf deinem Server, auch aus Microsoft 365, Gmail, Outlook (PST) und IMAP-Postfächern
-- **Support** bei Updates, Backups und Fragen im Betrieb
-- **Betrieb** von Kontext als gehosteter Dienst, ohne eigenen Server
-- **Partnerschaft für IT-Dienstleister**, die Kontext bei ihren Kunden einrichten: direkter Draht zur Entwicklung
-
-Mehr auf [speicherstadt.app](https://speicherstadt.app/#support), Anfragen an [info@teufel-it.de](mailto:info@teufel-it.de).
-
 ## Mitwirken
 
 Fehler und Ideen gern als Issue, mit dem [Formular für Fehlerberichte](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml).
@@ -316,6 +305,7 @@ Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende · <a href="README.md">English version</a><br>
 Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten.<br>
+Für IT-Dienstleister und Hoster: <a href="https://speicherstadt.app/partner/">Partnerprogramm</a>.<br>
 Kontext ist keine Rechtsberatung: Datenschutz und Aufbewahrungspflichten setzt die Firma um, die Software unterstützt dabei.<br>
 Kontext steht in keiner Verbindung zu Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic oder den Anbietern der übrigen hier genannten Produkte; die Namen sind Marken ihrer Inhaber.</sub>
 

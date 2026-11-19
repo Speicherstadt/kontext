@@ -22,7 +22,6 @@ No per-seat pricing. Made in Europe.
 [Quick start](#quick-start) •
 [FAQ](#faq) •
 [Documentation](https://kontext.email/en/) •
-[Support](#support-and-partnership) •
 [Development](#development) •
 [Deutsch](README.de.md)
 
@@ -131,6 +130,9 @@ command. These steps, DNS, telephony, backups and updates are in the
 [installation guide](https://kontext.email/en/installation.html); for a fresh server see
 [setting up a VPS](https://kontext.email/en/vps.html).
 
+No server or IT of your own? Kontext is available hosted or through an IT service provider from the
+[partner programme](https://speicherstadt.app/en/partner/).
+
 ## FAQ
 
 <details>
@@ -146,8 +148,7 @@ calendar and contacts on Stalwart, see the [architecture](https://kontext.email/
 <summary><b>What does it cost?</b></summary>
 
 The software is free (AGPL). You need a server – a VPS from about €5 a month – and someone who
-sets it up and keeps it updated. Setup, migration, support and hosted operation are available from
-the developers if you want them, see [Support and partnership](#support-and-partnership).
+sets it up and keeps it updated.
 </details>
 
 <details>
@@ -276,17 +277,6 @@ admin too); `anna@`, `sandra@` and `max@` share the password. Structure, tests a
 
 More open-source apps for your own server, covering accounting, office documents, a document archive and more: **[speicherstadt.app](https://speicherstadt.app)**
 
-## Support and partnership
-
-Kontext is free (AGPL). If you'd rather not set it up or run it yourself, the developers help:
-
-- **Setup and migration** on your server, also from Microsoft 365, Gmail, Outlook (PST) and IMAP mailboxes
-- **Support** with updates, backups and questions while it runs
-- **Hosted operation** of Kontext, without a server of your own
-- **Partnership for IT service providers** who set up Kontext for their customers: a direct line to the developers
-
-More on [speicherstadt.app](https://speicherstadt.app/en/#support), enquiries to [info@teufel-it.de](mailto:info@teufel-it.de).
-
 ## Contributing
 
 Bugs and ideas are welcome as issues, through the [bug report form](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml).
@@ -312,6 +302,7 @@ request is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <sub>License: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel and contributors · <a href="README.de.md">Deutsche Version</a><br>
 Changed versions you pass on or run for others must offer their source code under the AGPL.<br>
+For IT service providers and hosters: <a href="https://speicherstadt.app/en/partner/">partner programme</a>.<br>
 Kontext is no legal advice: data protection and retention duties are up to the company, the software helps with them.<br>
 Kontext is not affiliated with Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic or the makers of the other products named here; the names are trademarks of their owners.</sub>
 

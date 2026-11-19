@@ -95,7 +95,7 @@ plugins:
             App, Handy und Konto: App, phone and account
             Betrieb: Running it
             VPS einrichten: Setting up a VPS
-            Support und Partnerschaft: Support and partnership
+            Gehostet oder mit Partner: Hosted or with a partner
             Technik: How it is built
             Architektur: Architecture
             Entwicklung: Development
@@ -141,7 +141,7 @@ nav:
   - Betrieb:
       - VPS einrichten: vps.md
       - Installation: installation.md
-      - Support und Partnerschaft: support.md
+      - Gehostet oder mit Partner: hosted.md
   - Technik:
       - Architektur: architecture.md
       - Entwicklung: development.md
