@@ -288,7 +288,7 @@ request is in [CONTRIBUTING.md](CONTRIBUTING.md).
 [Report a bug](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) &nbsp;·&nbsp; [Request a feature](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
 <sub>License: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel and contributors · <a href="README.de.md">Deutsche Version</a><br>
-Changed versions you pass on or run for others must offer their source code under the AGPL; a commercial license without these obligations is available via <a href="https://teufel-it.de">teufel-it.de</a>.<br>
+Changed versions you pass on or run for others must offer their source code under the AGPL. For IT service providers: partnership with a direct line to the developers, plus setup and support via <a href="https://teufel-it.de">teufel-it.de</a>.<br>
 Kontext is no legal advice: data protection and retention duties are up to the company, the software helps with them.<br>
 Kontext is not affiliated with Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft or Anthropic.</sub>
 

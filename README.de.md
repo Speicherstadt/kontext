@@ -290,7 +290,7 @@ Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 [Fehler melden](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) &nbsp;·&nbsp; [Idee vorschlagen](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
 <sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende · <a href="README.md">English version</a><br>
-Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten; eine kommerzielle Lizenz ohne diese Pflichten gibt es über <a href="https://teufel-it.de">teufel-it.de</a>.<br>
+Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten. Für IT-Dienstleister: Partnerschaft mit direktem Draht zur Entwicklung, dazu Einrichtung und Support über <a href="https://teufel-it.de">teufel-it.de</a>.<br>
 Kontext ist keine Rechtsberatung: Datenschutz und Aufbewahrungspflichten setzt die Firma um, die Software unterstützt dabei.<br>
 Kontext steht in keiner Verbindung zu Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft oder Anthropic.</sub>
 
