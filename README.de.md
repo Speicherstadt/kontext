@@ -98,9 +98,9 @@ Mehr Bilder, gemacht zum Weiterschicken an Kunden, im [Rundgang](https://kontext
 | --- | --- | --- |
 | [Google Workspace](https://workspace.google.com), [Microsoft 365](https://www.microsoft.com/microsoft-365) | Mail, Kalender und Office im Abo pro Benutzer | eigener Server, keine Kosten pro Kopf, Chat und Telefon inklusive |
 | [Nextcloud](https://nextcloud.com) | selbst gehostete Dateien, Mail und Kalender als Apps | um Mail und den Kunden herum gebaut, mit gemeinsamen Postfächern und Firmentelefon |
-| [Roundcube](https://roundcube.net), [SOGo](https://www.sogo.nu) | bewährte Webmailer für IMAP | moderne Oberfläche fürs Handy, Kundenansicht, Aufgaben und Chat |
-| [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | Groupware für Provider und größere Firmen | ein kleiner Server pro Firma, an einem Nachmittag eingerichtet |
-| [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | Telefonanlagen mit CTI-Apps | Fritzbox und Nummern bleiben, keine Lizenz pro Nebenstelle |
+| [Roundcube](https://roundcube.net), [SOGo](https://www.sogo.nu) | bewährte Webmailer für IMAP | Kundenansicht, Aufgaben, Chat und Telefon in einer App |
+| [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | Groupware für Provider und größere Firmen | für einen eigenen Server pro Firma gebaut |
+| [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | Telefonanlagen mit CTI-Apps | nutzt deine Fritzbox und deine Nummern weiter |
 
 ## Schnellstart
 
@@ -300,6 +300,6 @@ Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 <sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende · <a href="README.md">English version</a><br>
 Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten. Für IT-Dienstleister: Partnerschaft mit direktem Draht zur Entwicklung, dazu Einrichtung und Support über <a href="https://teufel-it.de">teufel-it.de</a>.<br>
 Kontext ist keine Rechtsberatung: Datenschutz und Aufbewahrungspflichten setzt die Firma um, die Software unterstützt dabei.<br>
-Kontext steht in keiner Verbindung zu Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft oder Anthropic.</sub>
+Kontext steht in keiner Verbindung zu Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic oder den Anbietern der übrigen hier genannten Produkte; die Namen sind Marken ihrer Inhaber.</sub>
 
 </div>

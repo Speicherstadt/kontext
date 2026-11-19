@@ -98,9 +98,9 @@ More pictures, made to send to customers, in the [tour](https://kontext.email/en
 | --- | --- | --- |
 | [Google Workspace](https://workspace.google.com), [Microsoft 365](https://www.microsoft.com/microsoft-365) | mail, calendar and office as a per-user subscription | your own server, no per-seat cost, chat and phone included |
 | [Nextcloud](https://nextcloud.com) | self-hosted files with mail and calendar as apps | built around mail and the customer, with shared mailboxes and the office phone |
-| [Roundcube](https://roundcube.net), [SOGo](https://www.sogo.nu) | proven webmail clients for IMAP | modern interface built for the phone, customer view, tasks and chat |
-| [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | groupware for providers and larger companies | one small server per company, set up in an afternoon |
-| [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | phone systems with CTI apps | keeps your Fritzbox and numbers, no licence per extension |
+| [Roundcube](https://roundcube.net), [SOGo](https://www.sogo.nu) | proven webmail clients for IMAP | customer view, tasks, chat and phone in one app |
+| [Zimbra](https://www.zimbra.com), [Open-Xchange](https://www.open-xchange.com) | groupware for providers and larger companies | built for one server of your own per company |
+| [3CX](https://www.3cx.com), [Placetel](https://www.placetel.de) | phone systems with CTI apps | keeps using your Fritzbox and your numbers |
 
 ## Quick start
 
@@ -297,6 +297,6 @@ request is in [CONTRIBUTING.md](CONTRIBUTING.md).
 <sub>License: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel and contributors · <a href="README.de.md">Deutsche Version</a><br>
 Changed versions you pass on or run for others must offer their source code under the AGPL. For IT service providers: partnership with a direct line to the developers, plus setup and support via <a href="https://teufel-it.de">teufel-it.de</a>.<br>
 Kontext is no legal advice: data protection and retention duties are up to the company, the software helps with them.<br>
-Kontext is not affiliated with Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft or Anthropic.</sub>
+Kontext is not affiliated with Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic or the makers of the other products named here; the names are trademarks of their owners.</sub>
 
 </div>
