@@ -62,7 +62,6 @@
         "@testing-library/react": "^16.3.3",
         "@testing-library/user-event": "^14.6.8",
         "@types/bun": "^1.4.4",
-        "@types/imapflow": "^1.0.23",
         "@types/node-forge": "1.3.14",
         "@types/nodemailer": "^8.0.2",
         "@types/react": "^19.3.0",
@@ -882,8 +881,6 @@
     "@types/dom-mediacapture-record": ["@types/dom-mediacapture-record@1.0.22", "", {}, "sha512-mUMZLK3NvwRLcAAT9qmcK+9p7tpU2FHdDsntR3YI4+GY88XrgG4XiE7u1Q2LAN2/FZOz/tdMDC3GQCR4T8nFuw=="],
 
     "@types/estree": ["@types/estree@1.0.10", "", {}, "sha512-lTyOMnOcmRBzdCv6/4zUZCrEhV0xrqQiUZBZtVcbmLHBXKLnN8q89v/wKRF/Q0HbwVsqbIG3o5HDoFl9sduM+g=="],
-
-    "@types/imapflow": ["@types/imapflow@1.0.23", "", { "dependencies": { "@types/node": "*" } }, "sha512-/p6I5UBzoYWjLNsd5P4WHaQPFUe9QLTvoDYsfoP8Lp7bDLjhusjwDzZxWT4ukYyhgOcOuXyDrn19h0KrEp7WIA=="],
 
     "@types/node": ["@types/node@26.6.6", "", { "dependencies": { "undici-types": "~8.9.0" } }, "sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog=="],
 
