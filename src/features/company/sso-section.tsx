@@ -5,11 +5,11 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { type ComponentProps, type FormEvent, useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
-import { SettingsCard } from "../settings/settings-page";
 import { useStalwartEdition } from "./edition";
 import { ConfirmButton } from "./fields";
 import { useCompanyChange } from "./queries";

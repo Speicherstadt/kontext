@@ -1,6 +1,7 @@
 /** Kontext as an app on this device: install it, let it open mailto: links, which version it is. */
 import { Check, Download, Mail } from "lucide-react";
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { m } from "@/paraglide/messages";
 import {
@@ -10,7 +11,6 @@ import {
   useInstalled,
   useInstallPrompt,
 } from "@/pwa/install";
-import { SettingsCard } from "./settings-page";
 import { VersionRow } from "./version-row";
 
 export const AppSection = () => {

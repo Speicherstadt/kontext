@@ -6,13 +6,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { KeyRound, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
 import type { KeyOrigin, RecipientKey } from "../../../server/company/encryption-gateway";
-import { SettingsCard } from "../settings/settings-page";
 import {
   addRecipientKey,
   getEncryptionGateway,

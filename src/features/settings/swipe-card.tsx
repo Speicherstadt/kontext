@@ -1,10 +1,10 @@
 /** Per device: what swiping a mail in the list to the left or right does on the phone. */
 import { useId } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Select } from "@/components/ui/input";
 import { SWIPE_ACTIONS, type SwipeAction, type SwipeDirection } from "@/lib/swipe";
 import { m } from "@/paraglide/messages";
 import { setSwipeSettings, useSwipeSettings } from "../mail/swipe-settings";
-import { SettingsCard } from "./settings-page";
 
 const ACTION_LABEL: Record<SwipeAction, () => string> = {
   archive: m.settings_swipe_archive,

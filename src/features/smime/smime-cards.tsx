@@ -5,6 +5,7 @@
 import { AlertTriangle, Download, Search, Trash2, Upload } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { useSession } from "@/auth/session";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
@@ -14,7 +15,6 @@ import { groupFingerprint } from "@/lib/pgp";
 import { bytesToBase64 } from "@/lib/secure";
 import { certToPem, openP12, readCertificate } from "@/lib/smime";
 import { m } from "@/paraglide/messages";
-import { SettingsCard } from "../settings/settings-page";
 import { keepSmimeOpen, lookupCert, useKnownCerts, useOwnCert, useSmimeActions } from "./queries";
 import { untilLabel } from "./smime-mail";
 

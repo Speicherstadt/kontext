@@ -38,7 +38,7 @@ import {
   Users,
   VenetianMask,
 } from "lucide-react";
-import { lazy, type ReactNode, Suspense, useId } from "react";
+import { lazy, type ReactNode, Suspense } from "react";
 import { TabBar } from "@/components/shell/tab-bar-slot";
 import { AgentsSection } from "@/features/agents/agents-section";
 import { AssistantSection } from "@/features/company/assistant-section";
@@ -297,33 +297,5 @@ export const SettingsPage = ({ section }: { section: Section | undefined }) => {
         </div>
       </main>
     </>
-  );
-};
-
-/** A titled block of settings with its own save button. */
-export const SettingsCard = ({
-  title,
-  description,
-  children,
-}: {
-  title: string;
-  description?: string;
-  children: ReactNode;
-}) => {
-  // Named by its heading, so it is a region one can find (and jump to).
-  const id = useId();
-  return (
-    <section
-      aria-labelledby={id}
-      className="flex flex-col gap-4 rounded-xl border border-border p-4 md:p-5"
-    >
-      <div className="flex flex-col gap-1">
-        <h3 id={id} className="m-0 text-[16px] font-semibold">
-          {title}
-        </h3>
-        {description ? <p className="m-0 text-[13px] text-muted">{description}</p> : null}
-      </div>
-      {children}
-    </section>
   );
 };

@@ -5,12 +5,12 @@
  */
 import { Check, Copy } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { useTwoFactor } from "@/account/queries";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { Badge, ConfirmButton } from "@/features/company/fields";
-import { useTwoFactor } from "@/features/settings/queries";
-import { SettingsCard } from "@/features/settings/settings-page";
 import { readingDate } from "@/lib/format";
 import { m } from "@/paraglide/messages";
 import {

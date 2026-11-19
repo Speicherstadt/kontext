@@ -1,8 +1,10 @@
 /** Sender name, default „Antwort an“ and signature per address the user sends from (own address, info@, …). */
 import { EditorContent, useEditor } from "@tiptap/react";
 import { type FormEvent, useState } from "react";
+import { usePersonalAccountId, usePersonalIdentities, useSave } from "@/account/queries";
 import { useClient } from "@/auth/auth";
 import { useSession } from "@/auth/session";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -13,8 +15,6 @@ import { htmlToText, textToHtml } from "@/lib/html";
 import { m } from "@/paraglide/messages";
 import { EditorToolbar } from "../mail/editor-toolbar";
 import { richText } from "../mail/rich-text";
-import { usePersonalAccountId, usePersonalIdentities, useSave } from "./queries";
-import { SettingsCard } from "./settings-page";
 
 export const SignatureSection = () => {
   const { data: identities = [], isPending } = usePersonalIdentities();

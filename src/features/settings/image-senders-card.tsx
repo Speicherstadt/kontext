@@ -1,13 +1,13 @@
 /** Settings: whose pictures from the internet load at once – contacts, addresses, domains. */
 import { X } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useImageSenders } from "@/features/mail/image-senders";
 import { m } from "@/paraglide/messages";
 import { CONTACTS } from "../../../server/images/senders";
-import { SettingsCard } from "./settings-page";
 
 export const ImageSendersCard = () => {
   const { senders, trust } = useImageSenders();

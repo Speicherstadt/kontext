@@ -6,7 +6,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { KeyRound } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { useSave, useTwoFactor } from "@/account/queries";
 import { useClient } from "@/auth/auth";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -23,8 +25,6 @@ import {
 import { readingDate } from "@/lib/format";
 import { creationOptions, isCancelled, passkeysSupported, registrationJson } from "@/lib/webauthn";
 import { m } from "@/paraglide/messages";
-import { useSave, useTwoFactor } from "./queries";
-import { SettingsCard } from "./settings-page";
 
 const KEY = ["settings", "passkeys"];
 

@@ -3,6 +3,7 @@
  * access to what, and take it all back per person (src/lib/deputy.ts decides the rights).
  */
 import { type FormEvent, useId, useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -20,7 +21,6 @@ import {
 } from "@/lib/deputy";
 import { m } from "@/paraglide/messages";
 import { useApplyDeputy, useDeputyObjects } from "./deputy-queries";
-import { SettingsCard } from "./settings-page";
 
 const KIND_LABELS: Record<DeputyKind, () => string> = {
   mailbox: m.deputy_mailbox,

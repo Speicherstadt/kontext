@@ -6,6 +6,7 @@
 import { Link } from "@tanstack/react-router";
 import { Archive, ChevronLeft, Reply, ShieldAlert, ShieldCheck, Star, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { usePersonalAccountId } from "@/account/queries";
 import { Button } from "@/components/ui/button";
 import { usePrintKey } from "@/components/use-print-key";
 import { useShortcuts } from "@/components/use-shortcuts";
@@ -20,7 +21,6 @@ import { CategoryDialog } from "../categories/category-dialog";
 import { CategorySubmenu } from "../categories/category-menu";
 import { DiscussDialog } from "../chat/discuss-dialog";
 import { OwnRuleDialog } from "../rules/rule-dialog";
-import { usePersonalAccountId } from "../settings/queries";
 import { SnoozeMenu } from "../snooze/snooze-menu";
 import { TaskDialog, type TaskStart } from "../tasks/task-dialog";
 import { AssignMenu } from "./assignment";

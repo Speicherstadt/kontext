@@ -4,10 +4,10 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { type FormEvent, useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { SettingsCard } from "@/features/settings/settings-page";
 import { m } from "@/paraglide/messages";
 import { ADMIN_KEY, type Admin, send, useAdminChange } from "./settings/api";
 import { BlockedForm } from "./settings/blocked";

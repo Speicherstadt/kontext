@@ -5,10 +5,10 @@
  */
 import { Mic, Square, Upload } from "lucide-react";
 import { type ComponentProps, useRef, useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { SettingsCard } from "@/features/settings/settings-page";
 import { toPhoneWav } from "@/lib/wav";
 import { m } from "@/paraglide/messages";
 import { soundLength } from "../../../../server/phone/sounds";

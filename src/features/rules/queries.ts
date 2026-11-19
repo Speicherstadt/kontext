@@ -4,6 +4,7 @@
  * the dialog only see this.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useFilters, usePersonalAccountId } from "@/account/queries";
 import { useClient } from "@/auth/auth";
 import { setFilters } from "@/jmap/rules";
 import type { Mailbox } from "@/jmap/types";
@@ -18,7 +19,6 @@ import {
   setAccountRules,
 } from "../company/api";
 import { useAllMailboxes } from "../mail/queries";
-import { useFilters, usePersonalAccountId } from "../settings/queries";
 
 export type RulesStore = {
   /** Undefined while loading. */

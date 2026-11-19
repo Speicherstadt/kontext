@@ -5,12 +5,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArchiveRestore } from "lucide-react";
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
-import { SettingsCard } from "../settings/settings-page";
 import { type ArchiveView, retentionDays, setRetentionDays } from "./api";
 import { DeletedItemsList } from "./deleted-items-list";
 import { RetentionNote } from "./deleted-items-section";

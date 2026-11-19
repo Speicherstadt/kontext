@@ -3,13 +3,13 @@
  * already has a place swaps the two, so none is shown twice.
  */
 import { RotateCcw } from "lucide-react";
+import { SettingsCard } from "@/components/settings-card";
 import { useMoreItems, usePhoneApps, useTabItems } from "@/components/shell/nav-items";
 import { setTabChoice } from "@/components/shell/tab-bar-settings";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/input";
 import { isDefaultTabs, placeTab } from "@/lib/tab-bar";
 import { m } from "@/paraglide/messages";
-import { SettingsCard } from "./settings-page";
 
 export const TabBarSection = () => {
   const apps = usePhoneApps();

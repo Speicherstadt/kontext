@@ -4,6 +4,7 @@
  */
 import { ArrowDown, ArrowRight, ArrowUp, ListFilter, Plus } from "lucide-react";
 import { useState } from "react";
+import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
@@ -19,7 +20,6 @@ import {
   whenText,
 } from "@/lib/rules";
 import { m } from "@/paraglide/messages";
-import { SettingsCard } from "../settings/settings-page";
 import { type RulesStore, usePersonalRules } from "./queries";
 import { RuleDialog } from "./rule-dialog";
 

@@ -6,12 +6,12 @@
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
-import { useVacationTemplates } from "@/features/company/vacation-templates";
 import { dateKey } from "@/lib/jscalendar";
 import { LOCALE } from "@/lib/locale";
 import { type VacationForm as Form, withDeputy } from "@/lib/vacation";
 import { deputyText, fillVacationTemplate, namesDeputy } from "@/lib/vacation-template";
 import { m } from "@/paraglide/messages";
+import { useVacationTemplates } from "./vacation-templates";
 
 export type Colleague = { id: string; name: string; email: string };
 
