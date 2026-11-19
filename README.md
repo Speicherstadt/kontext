@@ -2,7 +2,10 @@
 
 <h1>Kontext – your own alternative to Google Workspace and Microsoft 365</h1>
 
-<a href="https://kontext.email/en/"><img src="docs/assets/kontext-teaser.en.webp" alt="Kontext in motion: every module at a glance, the inbox with a PDF preview, a video call from the laptop to a phone, Word in the browser with comments, and an AI agent that looks up a customer and leaves a draft" width="900"></a>
+<a href="https://kontext.email/en/"><picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/mail-dark.png">
+  <img src="docs/screenshots/mail.png" alt="Kontext in the browser: the inbox with categories, a folder per customer and a mail with a PDF preview" width="900">
+</picture></a>
 
 **Mail, calendar, chat, documents and phone for your team – on your own server, open source**<br>
 No per-seat pricing. Made in Europe.

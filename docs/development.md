@@ -151,7 +151,7 @@ spielt die Migrationen beim Start ein.
 gemeinsamen Postfächer info@ und rechnung@, Ordner, Mails mit Anhang, einen HTML-Newsletter mit
 Bildern aus dem Internet, eine Testmail voller XSS-Tricks, Kontakte mit den Gruppen „Lieferanten“
 und „Team“ (drei mit Geburtstag in den nächsten Wochen), Termine der laufenden Woche, eine wöchentliche Teambesprechung und offene Einladungen. Anna hat
-heute von 13:30 bis 15 Uhr einen eigenen Termin, damit Film und Screenshot zu jeder Tageszeit einen
+heute von 13:30 bis 15 Uhr einen eigenen Termin, damit der Screenshot zu jeder Tageszeit einen
 belegten Kollegen zeigen: Für einen Termin, der beim Seed schon vorbei ist, verschickt Stalwart keine
 Einladung. Das Skript ist idempotent – es ergänzt nur, was fehlt.
 
@@ -162,7 +162,7 @@ sobald die Testdaten in Stalwart sind und der Server antwortet (`dev/demo-data.t
 und `#allgemein` und eine Direktnachricht an Jonas. Dafür melden sich die vier über
 `POST /api/auth/sign-in/stalwart` an, wie das Anmeldeformular. Das geschieht nur einmal je
 Datenbank: steht #baustelle-hoffmann schon da, bleibt alles, wie es ist. Wer neu anfangen will,
-löscht `.dev/server/`. Dieselben Daten nehmen die Screenshots und der Film
+löscht `.dev/server/`. Dieselben Daten nehmen die Screenshots
 (`e2e/demo-data.ts`); die e2e-Tests nicht, sie rechnen mit leerem Chat und leeren Aufgaben, und ihr
 Seed (`dev/stalwart.ts --seed`) füllt nur Stalwart.
 
@@ -238,7 +238,6 @@ an. Man meldet sich mit einem Klick als Jonas, Anna, Sandra oder Max an.
 | App (PWA)       | `bun run e2e`         | `e2e/pwa.spec.ts` gegen die gebaute App wie in Produktion (Server auf 28090 liefert `dist/`): Updates, Offline-Start, Cache-Header, Brotli, was vorab gecacht wird, Teilen |
 | Abhängigkeiten  | `bun audit`           | bekannte Lücken; in CI bei jedem Push und nachts                                                            |
 | Screenshots     | `bun run screenshots` | die Bilder in `docs/screenshots/` und für den Installationsdialog in `public/screenshots/`                  |
-| Film            | `bun run video`       | der Film oben auf der Startseite der Doku, deutsch und englisch, `docs/assets/kontext-film.*` (siehe [Film](#film)) |
 
 Vor dem ersten `bun run e2e` (oder `bun run screenshots`) einmal Playwrights Chromium laden:
 `bunx playwright install chromium`. Wer schon ein Chromium hat, zeigt stattdessen mit
@@ -302,45 +301,6 @@ Die lokale Instanz
 erlaubt IMAP-Anmeldungen ohne TLS (nur auf 127.0.0.1), damit Mailprogramme und die
 Integrationstests sich verbinden können.
 
-## Film
-
-Der Film oben auf der Startseite entsteht wie die Screenshots aus der echten App mit den
-Testdaten, nicht aus einer Bildschirmaufnahme, einmal auf Deutsch und einmal auf Englisch
-(`FILM_LANG=de` oder `en`, `video/language.ts`): `bun run video` macht beide nacheinander,
-`bun run video:de` oder `video:en` nur einen. Im englischen Film läuft der Browser auf `en-GB`, die
-App ist englisch, und Titel, Untertitel und getippte Texte kommen aus `say("…", "…")`; die
-Testdaten von Weber Haustechnik bleiben deutsch. Die Aufnahmen finden die Bedienelemente über die
-Texte der App selbst (`ui("mail_inbox")` aus `messages/*.json`), damit beide Sprachen dieselben
-Schritte gehen. Jede Sprache hat ihre Dateien: `docs/assets/kontext-film.de.mp4` und `.en.mp4`, die
-Vorschaubilder `.jpg` und die Teaser `kontext-teaser.de.webp` (`README.de.md`) und `.en.webp`
-(`README.md`); `docs/index.md` zeigt den deutschen, `docs/index.en.md` den englischen Film. Beide
-verweisen auf `assets/kontext-film.mp4` ohne Sprache: mkdocs-static-i18n veröffentlicht
-`kontext-film.de.mp4` unter `assets/kontext-film.mp4` und `kontext-film.en.mp4` unter
-`en/assets/kontext-film.mp4`; `assets/kontext-film.de.mp4` gibt es auf der Seite nicht. Zwei
-Schritte je Sprache:
-
-1. **Aufnehmen** (`bun run video:record`, das Playwright-Projekt `video`): `e2e/video.spec.ts` ruft
-   für jede Szene eine Aufnahme aus `video/takes/` auf. Sie bedient die App Schritt für Schritt und
-   macht nach jedem Schritt ein scharfes Bild (doppelte Pixel am Desktop, dreifache am Handy), dazu,
-   wohin der Zeiger klickt und wohin die Kamera schaut (`video/take.ts`). Alles landet in
-   `.dev/video/takes/<Sprache>/<Szene>/`. `TAKE=chat FILM_LANG=en bun run video:record` nimmt nur
-   eine Szene neu auf.
-   Der Videoanruf läuft wirklich über LiveKit, mit gezeichneten Personen als Kamera
-   (`video/camera.ts`); die KI-Szene ruft Kontexts MCP-Server wirklich auf, nur das Chatfenster des
-   Assistenten daneben ist gezeichnet (`video/panels.ts`), ebenso die Karte mit dem, was der Server
-   von einer vertraulichen Nachricht speichert – dessen Inhalt kommt aus der API. In der Dokumente-Szene zeigt Kontexts Rahmen Bilder des echten Schreibzeug (`video/schreibzeug/`, aus `docs/screenshots/` von Speicherstadt/schreibzeug), weil der Ersatz in den Tests nur sagt, wer angemeldet ist.
-2. **Rendern** (`bun run video:render`, `video/render.ts`): Die Bühne (`video/stage/`) legt die Bilder
-   in Browserfenster und Handys, bewegt Zeiger und Kamera, blendet über und setzt Titel und
-   Untertitel. Sie ist eine Seite in Chromium, die zu jeder Zeit ein festes Bild zeigt
-   (`window.film.render(t)`, die Zeitrechnung in `video/stage/timeline.ts`); gerendert wird Bild für
-   Bild, ffmpeg macht daraus ein MP4 (H.264, spielt überall), ein Vorschaubild und einen kurzen Zusammenschnitt als animiertes WebP für die READMEs (`docs/assets/kontext-teaser.<Sprache>.webp`; GitHub spielt kein Video aus dem Repository ab, zeigt aber animierte Bilder). Welche Stellen in den Zusammenschnitt kommen, steht in `teaser` in `video/storyboard.ts`. Er läuft mit 30 Bildern pro Sekunde wie der Film – mit weniger ruckeln Kamera und Zeiger; `--teaser` schneidet ihn neu, ohne den Film neu zu rendern. Das WebP macht `img2webp` aus libwebp mit einem Schlüsselbild alle acht Bilder: ffmpegs eigenes animiertes WebP hat nur eines am Anfang und übernimmt danach kleine Änderungen nicht, so blieben bei langsamen Überblendungen und Kamerafahrten alte Blöcke stehen. Mit
-   `--stills 12,40.5` entstehen einzelne Bilder in `.dev/video/stills/<Sprache>/`, mit `--from 20 --to 35
-   --out .dev/video/teil.mp4` ein Ausschnitt.
-
-Reihenfolge, Titel und Untertitel stehen in `video/storyboard.ts` und bei den Schritten der
-Aufnahmen: kurz, weil die meisten den Film ohne Ton sehen. Nach einer Änderung am Aussehen der App:
-Actions → _Update video_ → Run workflow (oder `bun run video`, braucht ffmpeg und img2webp, Paket
-`webp`), dann beide Filme ansehen.
 
 ## CI und Releases
 
@@ -390,7 +350,6 @@ Actions → _Update video_ → Run workflow (oder `bun run video`, braucht ffmpe
   .github/renovate.json5`.
 - **Screenshots**: Actions → _Update screenshots_ → Run workflow (oder `bun run screenshots`, lokal mit
   `PW_CHROMIUM_PATH`, wenn Playwrights eigener Browser fehlt).
-- **Film**: Actions → _Update video_ → Run workflow (oder `bun run video`, siehe [Film](#film)).
 - **Release**: Actions → _Bump version_ → Run workflow auf `main` und `patch`, `minor` oder `major`
   wählen (für einen Release Candidate `preminor`, dann `prerelease`, am Ende `patch`). Der Lauf hebt
   die Version in `package.json`, committet sie als „Release vX.Y.Z“, setzt den Tag und startet

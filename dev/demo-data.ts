@@ -4,7 +4,7 @@
  * (each signs in with POST /api/auth/sign-in/stalwart, as the login form does).
  *
  * Used by `bun run dev` (dev/fill-demo.ts, once per database: it stops when #baustelle-hoffmann is
- * there), by the pictures and the film (e2e/demo-data.ts), and by the demo against the routes in
+ * there), by the pictures (e2e/demo-data.ts), and by the demo against the routes in
  * the page (`fillWith`, src/demo/team.ts). Not by the e2e tests: they count on an empty chat and
  * task list.
  */
