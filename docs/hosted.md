@@ -19,8 +19,9 @@ betreuen es.
 
 ## Fragen zur Nutzung
 
-Fragen zu Kontext gehören in die [Issues auf GitHub](https://github.com/Speicherstadt/kontext/issues).
-Kostenlose Einzelhilfe gibt es nicht; die Einrichtung für eine einzelne Firma übernimmt ein Partner
-oder die Entwickler als bezahltes Projekt.
+Fragen zur Nutzung beantworten wir öffentlich in den
+[GitHub-Issues](https://github.com/Speicherstadt/kontext/issues), damit alle etwas davon haben. Wer
+Einrichtung oder Betrieb für seine Firma abgeben will, findet einen Partner oder nutzt den
+gehosteten Betrieb; größere Einführungen übernehmen wir auch als bezahltes Projekt.
 
 Mehr dazu auf der Seite zum [Partnerprogramm](https://speicherstadt.app/partner/).
