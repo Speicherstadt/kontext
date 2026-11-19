@@ -4,6 +4,8 @@
  */
 import { Inbox, ListFilter, Plus } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { type Company, createMailbox, type SharedMailbox, updateMailbox } from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
@@ -15,10 +17,8 @@ import {
 import { m } from "@/paraglide/messages";
 import { useCompanyRules } from "../rules/queries";
 import { RulesList } from "../rules/rules-section";
-import { type Company, createMailbox, type SharedMailbox, updateMailbox } from "./api";
 import { AccessList, AddressInput, AliasesField, addressFor } from "./fields";
 import { CompanyGate } from "./gate";
-import { useCompanyChange } from "./queries";
 
 export const MailboxesSection = () => (
   <CompanyGate>{(company) => <Mailboxes company={company} />}</CompanyGate>

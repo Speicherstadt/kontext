@@ -1,13 +1,13 @@
 /** Connecting the old mailbox (Gmail, GMX, …) and entering a new password after a change. */
 import { type FormEvent, useState } from "react";
+import { type Company, createSync, setSyncPassword } from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Select } from "@/components/ui/input";
 import { m } from "@/paraglide/messages";
 import { PROVIDERS, type ProviderId } from "../../../server/migration/providers";
-import { type Company, createSync, setSyncPassword } from "./api";
 import { M365Fields } from "./m365-fields";
-import { useCompanyChange } from "./queries";
 
 const HINTS: Partial<Record<ProviderId, () => string>> = {
   gmail: m.company_sync_hint_gmail,

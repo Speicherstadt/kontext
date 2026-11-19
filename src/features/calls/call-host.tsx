@@ -3,8 +3,8 @@
  * LiveKit's code loads only once a call begins.
  */
 import { lazy, Suspense } from "react";
-import { useChannels } from "@/features/chat/queries";
-import { useChatNames } from "@/features/chat/use-chat-names";
+import { useChannels } from "@/chat-core/queries";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { useCallStore } from "./call-store";
 import { IncomingCall } from "./incoming-call";
 

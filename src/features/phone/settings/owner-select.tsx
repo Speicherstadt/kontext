@@ -3,8 +3,8 @@
  * telephone go.
  */
 import type { ComponentProps } from "react";
+import { useCompany } from "@/company-core/queries";
 import { Select } from "@/components/ui/input";
-import { useCompany } from "@/features/company/queries";
 
 export const OwnerSelect = ({
   none,

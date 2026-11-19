@@ -5,9 +5,9 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { CircleAlert, LoaderCircle } from "lucide-react";
+import { getSearchIndex } from "@/company-core/api";
 import { LOCALE } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
-import { getSearchIndex } from "./api";
 
 export const SearchIndexNotice = () => {
   const { data } = useQuery({

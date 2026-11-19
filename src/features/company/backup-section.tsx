@@ -6,6 +6,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronRight, CircleAlert, CircleCheck, Info, LoaderCircle } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
+import {
+  type BackupSettings,
+  type BackupView,
+  getBackup,
+  runBackup,
+  saveBackupSettings,
+} from "@/company-core/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -15,13 +22,6 @@ import { cn } from "@/lib/cn";
 import { formatSize } from "@/lib/format";
 import { m } from "@/paraglide/messages";
 import { TIME } from "../../../server/company/backup-schema";
-import {
-  type BackupSettings,
-  type BackupView,
-  getBackup,
-  runBackup,
-  saveBackupSettings,
-} from "./api";
 
 const KEY = ["company", "backup"];
 const GUIDE = "https://kontext.email/installation.html#5-backups";

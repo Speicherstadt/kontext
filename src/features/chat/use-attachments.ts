@@ -4,11 +4,11 @@
  */
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { decodeVoiceShape, voiceShapeKey } from "@/chat-core/voice-message";
 import { useToast } from "@/components/ui/toast";
 import { type Card, type ChatFile, isPhoto, isVoice, MAX_FILES, sameCard } from "@/lib/chat-cards";
 import { m } from "@/paraglide/messages";
 import { uploadFile } from "./upload";
-import { decodeVoiceShape, voiceShapeKey } from "./voice-message";
 
 export type PendingFile = {
   key: string;

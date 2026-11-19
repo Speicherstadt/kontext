@@ -4,6 +4,7 @@ import { useMemo, useRef } from "react";
 import { useClient } from "@/auth/auth";
 import { useSession } from "@/auth/session";
 import { useToast } from "@/components/ui/toast";
+import { useAddressSuggestions } from "@/contacts-core/use-suggestions";
 import type { Identity, Mailbox } from "@/jmap/types";
 import { type ComposeMode, switchReplyTo } from "@/lib/compose";
 import { findRole } from "@/lib/mailboxes";
@@ -12,9 +13,7 @@ import { useUndoSeconds } from "@/mail-core/send-settings";
 import { useSendAccount } from "@/mail-core/use-send-account";
 import { m } from "@/paraglide/messages";
 import { useLegalFooter } from "../company/legal-footer";
-import { useAddressSuggestions } from "../contacts/use-suggestions";
 import { useAutocryptHeader } from "../pgp/autocrypt";
-import { useEncryptedSend } from "../pgp/use-encrypted-send";
 import type { ComposePrefill } from "./composer";
 import { useComposerDraft } from "./composer-draft";
 import { useComposerEditor } from "./composer-editor";
@@ -33,6 +32,7 @@ import { useEmail } from "./queries";
 import { useRemoteImages } from "./remote-images";
 import { useTakeBack } from "./take-back";
 import { useEmlForward } from "./use-eml-forward";
+import { useEncryptedSend } from "./use-encrypted-send";
 import { useHeldFiles } from "./use-held-files";
 
 export type ComposerProps = {

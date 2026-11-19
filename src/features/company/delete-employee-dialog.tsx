@@ -3,13 +3,13 @@
  * retention it says how long the account can still be restored (deleted-accounts.ts).
  */
 import { useState } from "react";
+import { deleteEmployee, type Employee } from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
-import { deleteEmployee, type Employee } from "./api";
 import { type DeleteOutcome, deleteOutcome, useDeletedAccounts } from "./deleted-accounts";
-import { useCompanyChange } from "./queries";
 
 const noticeOf = (outcome: DeleteOutcome, name: string): string => {
   if (outcome.kind === "final") return m.company_delete_final({ name });

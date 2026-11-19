@@ -5,8 +5,8 @@
  */
 import { X } from "lucide-react";
 import { useState } from "react";
+import { useContacts } from "@/contacts-core/queries";
 import { usePrincipals } from "@/directory/queries";
-import { useContacts } from "@/features/contacts/queries";
 import { ItemLink, LinkIcon } from "@/features/links/item-link";
 import { useStatusLabel, useTasks } from "@/features/tasks/queries";
 import { principalName } from "@/jmap/principals";

@@ -5,11 +5,11 @@
  * box: its provisioning address goes into the phone once.
  */
 import { useState } from "react";
+import { useCompany } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { useCompany } from "@/features/company/queries";
 import { m } from "@/paraglide/messages";
 import { type Admin, send, useAdminChange } from "./api";
 

@@ -1,13 +1,13 @@
 /** Someone leaves: lock, hand the mailbox over, forward and answer new mail. Nothing is deleted. */
 import { type ReactNode, useState } from "react";
+import { type Company, type Employee, offboard } from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { withDeputy } from "@/lib/vacation";
 import { m } from "@/paraglide/messages";
-import { type Company, type Employee, offboard } from "./api";
 import { ConfirmButton } from "./fields";
-import { useCompanyChange } from "./queries";
 
 const PersonSelect = ({
   label,

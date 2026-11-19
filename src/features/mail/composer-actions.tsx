@@ -28,8 +28,8 @@ import {
 import { cn } from "@/lib/cn";
 import { LOCALE } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
-import { LINK_DAY_CHOICES } from "../pgp/use-encrypted-send";
 import { SendLater } from "./send-later";
+import { LINK_DAY_CHOICES } from "./use-encrypted-send";
 
 const ON = "bg-accent/10 text-accent-ink hover:bg-accent/15";
 const WARN = "bg-warn/10 text-warn hover:bg-warn/15";

@@ -10,6 +10,8 @@ import { useMemo, useState } from "react";
 import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import type { Contact } from "@/contacts-core/queries";
+import { usePeople } from "@/directory/queries";
 import { participants } from "@/jmap/correspondence";
 import { dateKey } from "@/lib/jscalendar";
 import { allEmails } from "@/lib/jscontact";
@@ -17,10 +19,9 @@ import { contactLink, linkedMails, mailsWith, tasksOfContact } from "@/lib/task-
 import type { Task } from "@/lib/tasks";
 import { useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";
-import { usePeople, useTaskActions, useTasks } from "../tasks/queries";
+import { useTaskActions, useTasks } from "../tasks/queries";
 import { TaskDialog, type TaskStart } from "../tasks/task-dialog";
 import { TaskRow } from "../tasks/task-row";
-import type { Contact } from "./queries";
 
 const SHOWN = 6;
 

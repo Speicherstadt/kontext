@@ -3,18 +3,19 @@
  * latest mail and the next appointment with them, and "Annehmen" to take it in Kontext. The desk
  * phones ring at the same time; whoever takes it first has it.
  */
+
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { DoorOpen, Phone, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { useMe } from "@/directory/queries";
 import { useCallStore } from "@/features/calls/call-store";
 import { startRinging } from "@/features/calls/ringtone";
-import { useChatNames } from "@/features/chat/use-chat-names";
-import { useMe } from "@/features/tasks/queries";
 import { eventTimes } from "@/lib/jscalendar";
 import { LOCALE } from "@/lib/locale";
 import {

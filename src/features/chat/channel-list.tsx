@@ -14,6 +14,7 @@ import {
   Plus,
 } from "lucide-react";
 import { useState } from "react";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { SearchField } from "@/components/search-field";
 import { Button } from "@/components/ui/button";
 import { FROM_PARENT } from "@/components/use-back";
@@ -24,7 +25,6 @@ import { type ChannelSummary, firstName, shortTime, sortChannels, sortDirect } f
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
 import { ChatSearchResults } from "./chat-search";
-import { useChatNames } from "./use-chat-names";
 
 type Props = {
   channels: ChannelSummary[];

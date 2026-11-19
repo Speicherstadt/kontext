@@ -1,11 +1,11 @@
 /** Form parts the Firmenverwaltung's dialogs share. */
 import { Check, Copy, Plus, X } from "lucide-react";
 import { type KeyboardEvent, type ReactNode, useState } from "react";
+import type { Company } from "@/company-core/api";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
-import type { Company } from "./api";
 
 /** "lena" + domain: the new account's address; the domain is a choice only with several. */
 export const AddressInput = ({

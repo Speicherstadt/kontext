@@ -11,9 +11,8 @@ import {
 } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useClient } from "@/auth/auth";
-import { usePrincipals } from "@/directory/queries";
-import { contactsQuery, useBooks } from "@/features/contacts/queries";
-import { useMe } from "@/features/tasks/queries";
+import { contactsQuery, useBooks } from "@/contacts-core/queries";
+import { useMe, usePrincipals } from "@/directory/queries";
 import { type ContactCard, contactPhoto } from "@/lib/jscontact";
 import { addressKey, colleaguePhotoUrl, type PhotoKey, photoFinder } from "@/lib/photo";
 import { squarePhoto } from "./make-photo";

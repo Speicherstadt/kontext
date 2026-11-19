@@ -6,6 +6,8 @@
  */
 import { AtSign, Hash, Search } from "lucide-react";
 import { useState } from "react";
+import { useChannels, useDiscussions, useSuggestions } from "@/chat-core/queries";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
@@ -18,8 +20,6 @@ import { useChatActions } from "./actions";
 import { useShareCopy } from "./mail-copy";
 import { MessageCard } from "./message-card";
 import { MessageInput } from "./message-input";
-import { useChannels, useDiscussions, useSuggestions } from "./queries";
-import { useChatNames } from "./use-chat-names";
 
 type Target =
   | { kind: "channel"; channel: ChannelSummary; why?: string }

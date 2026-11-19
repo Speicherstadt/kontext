@@ -2,12 +2,14 @@
  * One task to read and change: title, status, who, when, which board, steps, notes and what it is
  * about (mails, contacts). Every change is saved at once; text when leaving the field.
  */
+
 import { useNavigate } from "@tanstack/react-router";
 import { Check, ChevronLeft, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { useMe, usePeople } from "@/directory/queries";
 import { LinkDocument } from "@/features/documents/document-actions";
 import { useDocumentsConnected } from "@/features/documents/queries";
 import { useShareWith } from "@/features/documents/use-share-with";
@@ -29,7 +31,7 @@ import { m } from "@/paraglide/messages";
 import type { TaskPatch } from "../../../server/model/tasks";
 import { companyDay, nextDue } from "../../../server/model/tasks";
 import { DeleteTaskButton, useDeleteTask } from "./delete-task";
-import { useBoards, useColumns, useMe, useOnMyBoards, usePeople, useTaskActions } from "./queries";
+import { useBoards, useColumns, useOnMyBoards, useTaskActions } from "./queries";
 import { TaskChecklist } from "./task-checklist";
 import { TaskReminder } from "./task-reminder";
 

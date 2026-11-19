@@ -5,11 +5,11 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { CircleAlert, CircleCheck, CircleDashed, Info, RefreshCw } from "lucide-react";
+import { getSecurity } from "@/company-core/api";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
 import type { Check, CheckState } from "../../../server/company/security";
-import { getSecurity } from "./api";
 
 const LABELS: Record<string, () => string> = {
   https: m.security_https,

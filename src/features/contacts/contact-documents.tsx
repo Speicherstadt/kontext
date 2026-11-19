@@ -6,6 +6,7 @@
 import { FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { type Contact, useContactMutations } from "@/contacts-core/queries";
 import { LinkDocument } from "@/features/documents/document-actions";
 import { useDocumentsConnected } from "@/features/documents/queries";
 import { useShareWith } from "@/features/documents/use-share-with";
@@ -18,7 +19,6 @@ import {
   withContactDocuments,
 } from "@/lib/document-links";
 import { m } from "@/paraglide/messages";
-import { type Contact, useContactMutations } from "./queries";
 
 export const ContactDocuments = ({ card, mayWrite }: { card: Contact; mayWrite: boolean }) => {
   const connected = useDocumentsConnected();

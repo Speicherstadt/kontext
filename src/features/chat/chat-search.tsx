@@ -4,12 +4,12 @@
  */
 import { Link } from "@tanstack/react-router";
 import { useDeferredValue } from "react";
+import { useChannels, useChatSearch } from "@/chat-core/queries";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { Highlighted } from "@/components/highlighted";
 import { firstName, shortTime, snippet } from "@/lib/chat";
 import { messageSummary } from "@/lib/chat-cards";
 import { m } from "@/paraglide/messages";
-import { useChannels, useChatSearch } from "./queries";
-import { useChatNames } from "./use-chat-names";
 
 export const ChatSearchResults = ({ words, onPick }: { words: string; onPick?: () => void }) => {
   const query = useDeferredValue(words.trim());

@@ -7,13 +7,13 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ChevronLeft, ChevronRight, Download, FileText, X } from "lucide-react";
 import { useState } from "react";
+import { VoiceMessage } from "@/chat-core/voice-message";
 import { type ChatFile, isPhoto, isVoice } from "@/lib/chat-cards";
 import { cn } from "@/lib/cn";
 import { formatSize } from "@/lib/format";
 import { m } from "@/paraglide/messages";
 import { fileUrl, thumbUrl } from "./upload";
 import { shareFile, useSharedFile } from "./use-shared-file";
-import { VoiceMessage } from "./voice-message";
 
 type Urls = Record<string, string> | undefined;
 

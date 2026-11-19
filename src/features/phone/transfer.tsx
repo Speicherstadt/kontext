@@ -5,10 +5,10 @@
  */
 import { useQueryClient } from "@tanstack/react-query";
 import { type FormEvent, useState } from "react";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { useChatNames } from "@/features/chat/use-chat-names";
 import { linesOf, type PhoneCall, readableNumber } from "@/lib/phone";
 import { m } from "@/paraglide/messages";
 import { leavePhone } from "./phone-store";

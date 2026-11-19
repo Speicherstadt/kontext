@@ -8,6 +8,11 @@
 import type { PrivateKey } from "openpgp";
 import { type ReactNode, useState } from "react";
 import { useClient } from "@/auth/auth";
+import { useLegalFooter } from "@/features/company/legal-footer";
+import { keepUnlocked, useKnownKeys, useOwnKey, useUnlockedKey } from "@/features/pgp/queries";
+import { type Asking, UnlockDialog } from "@/features/pgp/unlock-dialog";
+import { send as api, type SentCode, showCodes } from "@/features/secure/queries";
+import { keepSmimeOpen, useKnownCerts, useOpenSmime, useOwnCert } from "@/features/smime/queries";
 import {
   type Hold,
   type OutgoingAttachment,
@@ -35,11 +40,6 @@ import {
 } from "@/lib/secure";
 import { type OwnSmime, openP12, smimeMail, smimeSignedMail } from "@/lib/smime";
 import { m } from "@/paraglide/messages";
-import { useLegalFooter } from "../company/legal-footer";
-import { send as api, type SentCode, showCodes } from "../secure/queries";
-import { keepSmimeOpen, useKnownCerts, useOpenSmime, useOwnCert } from "../smime/queries";
-import { keepUnlocked, useKnownKeys, useOwnKey, useUnlockedKey } from "./queries";
-import { type Asking, UnlockDialog } from "./unlock-dialog";
 
 /** Long header lines folded for the raw mail. */
 const foldHeader = (name: string, value: string) =>

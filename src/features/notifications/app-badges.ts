@@ -4,13 +4,15 @@
  * bell's feed. Reading the mail or answering the invitation clears them on every device; tasks
  * count as seen per device (in the browser, like the bell).
  */
+
 import { useEffect } from "react";
-import { useChannels } from "@/features/chat/queries";
+import { useChannels } from "@/chat-core/queries";
+import { useMe } from "@/directory/queries";
 import { totalUnread } from "@/lib/chat";
 import { type AppBadges, appBadges, invitationsSoon } from "@/lib/notifications";
 import { assignedToMe } from "@/lib/task-context";
 import { useInboxes } from "@/mail-core/accounts";
-import { useMe, useTasks } from "../tasks/queries";
+import { useTasks } from "../tasks/queries";
 import { markTasksSeen, useSeen } from "./device-settings";
 import { useNotificationFeed, useNow } from "./feed";
 

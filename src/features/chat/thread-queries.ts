@@ -3,8 +3,8 @@
  * kept current by the live connection like the channel), and emojis, shown at once.
  */
 import { type QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addMessage, send, type Thread, threadKey } from "@/chat-core/queries";
 import { type Message, toggleReaction } from "@/lib/chat";
-import { addMessage, send, type Thread, threadKey } from "./queries";
 
 export const useThread = (parentId: string | undefined) => {
   const { data, isPending, isError } = useQuery({

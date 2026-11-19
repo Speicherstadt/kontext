@@ -3,25 +3,25 @@
  * Unlike mail, contacts and calendar this is not JMAP: the server works with its own Stalwart key.
  */
 
-import type { Category } from "../../../server/categories/categories";
+import type { Category } from "../../server/categories/categories";
 import type {
   Company as CompanyData,
   Employee,
   SharedMailbox,
-} from "../../../server/company/accounts";
-import type { BackupSettings, BackupView } from "../../../server/company/backup-schema";
-import type { DeletedAccount, DeletedAccountsView } from "../../../server/company/deleted-accounts";
-import type { GatewayView, NewKey } from "../../../server/company/encryption-gateway";
-import type { FolderName } from "../../../server/company/mailstore";
-import type { SearchIndexStatus } from "../../../server/company/search-index";
-import type { Check } from "../../../server/company/security";
-import type { Period } from "../../../server/company/server-health";
-import type { ServerHealthView } from "../../../server/company/server-health-routes";
-import type { Job } from "../../../server/migration/jobs";
-import type { ProviderId } from "../../../server/migration/providers";
-import type { Sync } from "../../../server/migration/syncs";
-import type { Vacation } from "../../../server/rules/filters";
-import type { Rule } from "../../../server/rules/script";
+} from "../../server/company/accounts";
+import type { BackupSettings, BackupView } from "../../server/company/backup-schema";
+import type { DeletedAccount, DeletedAccountsView } from "../../server/company/deleted-accounts";
+import type { GatewayView, NewKey } from "../../server/company/encryption-gateway";
+import type { FolderName } from "../../server/company/mailstore";
+import type { SearchIndexStatus } from "../../server/company/search-index";
+import type { Check } from "../../server/company/security";
+import type { Period } from "../../server/company/server-health";
+import type { ServerHealthView } from "../../server/company/server-health-routes";
+import type { Job } from "../../server/migration/jobs";
+import type { ProviderId } from "../../server/migration/providers";
+import type { Sync } from "../../server/migration/syncs";
+import type { Vacation } from "../../server/rules/filters";
+import type { Rule } from "../../server/rules/script";
 
 export type { Employee, SharedMailbox };
 /** A move as the server sends it (dates as text). */

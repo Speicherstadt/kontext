@@ -4,11 +4,11 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { type FormEvent, useState } from "react";
+import { type Company, connectM365, createSync, getM365 } from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select } from "@/components/ui/input";
 import { m } from "@/paraglide/messages";
-import { type Company, connectM365, createSync, getM365 } from "./api";
-import { useCompanyChange } from "./queries";
 
 const Problem = ({ text }: { text: string | null }) =>
   text ? (

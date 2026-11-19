@@ -7,6 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/input";
 import { Loading, PlaceholderRows } from "@/components/ui/placeholder";
 import { useShortcuts } from "@/components/use-shortcuts";
+import {
+  type BookRef,
+  bookLabel,
+  contactKey,
+  useContacts,
+  useContactsAccountId,
+} from "@/contacts-core/queries";
 import { cn } from "@/lib/cn";
 import { byLetter } from "@/lib/contact-selection";
 import { isGroup } from "@/lib/groups";
@@ -23,7 +30,6 @@ import { ContactViews } from "./contact-views";
 import { GroupDetail } from "./group-detail";
 import { GroupEditor } from "./group-editor";
 import { OtherContacts } from "./other-contacts";
-import { type BookRef, bookLabel, contactKey, useContacts, useContactsAccountId } from "./queries";
 
 type ContactsSearch = {
   id?: string;

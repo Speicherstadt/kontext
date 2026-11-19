@@ -22,9 +22,9 @@ import {
 } from "livekit-client";
 import { LockKeyhole, Maximize2, Minimize2, Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useChannels } from "@/chat-core/queries";
+import { useChatNames } from "@/chat-core/use-chat-names";
 import { useToast } from "@/components/ui/toast";
-import { useChannels } from "@/features/chat/queries";
-import { useChatNames } from "@/features/chat/use-chat-names";
 import { useColleaguePhotoOf } from "@/features/photos/queries";
 import { holdMicrophone } from "@/lib/audio-session";
 import { callDuration, callerState, firstNameList } from "@/lib/calls";

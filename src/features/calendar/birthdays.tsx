@@ -4,9 +4,9 @@
  * Shown unless switched off under "Meine Kalender" ("birthdays" in the hidden calendars).
  */
 import { useMemo } from "react";
+import { useContacts } from "@/contacts-core/queries";
 import { type BirthdayEvent, birthdayEvent, birthdaysBetween } from "@/lib/birthdays";
 import { m } from "@/paraglide/messages";
-import { useContacts } from "../contacts/queries";
 import { setCalendarHidden, useHiddenCalendars } from "./hidden-calendars";
 
 const BIRTHDAYS_KEY = "birthdays";

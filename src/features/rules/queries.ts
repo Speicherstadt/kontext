@@ -6,6 +6,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFilters, usePersonalAccountId } from "@/account/queries";
 import { useClient } from "@/auth/auth";
+import {
+  applyAccountRule,
+  getAccountRules,
+  type RulesOwner,
+  setAccountRules,
+} from "@/company-core/api";
 import { setFilters } from "@/jmap/rules";
 import type { Mailbox } from "@/jmap/types";
 import type { Category } from "@/lib/categories";
@@ -13,12 +19,6 @@ import { type Rule, type RuleFolder, ruleFolders } from "@/lib/rules";
 import { useAllMailboxes } from "@/mail-core/accounts";
 import { applyToInbox } from "../../../server/rules/apply";
 import { useCategories } from "../categories/queries";
-import {
-  applyAccountRule,
-  getAccountRules,
-  type RulesOwner,
-  setAccountRules,
-} from "../company/api";
 
 export type RulesStore = {
   /** Undefined while loading. */

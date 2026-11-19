@@ -5,8 +5,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useClient } from "@/auth/auth";
 import { useSession } from "@/auth/session";
+import { type Contact, useContacts } from "@/contacts-core/queries";
 import { useEventsWith } from "@/features/calendar/queries";
-import { type Contact, useContacts } from "@/features/contacts/queries";
 import { CAPABILITIES } from "@/jmap/client";
 import { emailsWithAddress } from "@/jmap/mail";
 import { eventTimes } from "@/lib/jscalendar";

@@ -4,16 +4,18 @@
  * before. Besides, the coming appointments whose reminders the device shows. All from the server's state, refreshed by push like every other view, so reading a
  * mail on the phone clears it here too.
  */
+
 import { useQueries } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useClient } from "@/auth/auth";
+import { useMe } from "@/directory/queries";
 import { queryEmails } from "@/jmap/mail";
 import { addDays, type CalendarEvent, dateKey, eventKey, eventTimes } from "@/lib/jscalendar";
 import { type InboxMail, newMails, restOfToday } from "@/lib/notifications";
 import { assignedToMe, dueTasks } from "@/lib/task-context";
 import { useInboxes } from "@/mail-core/accounts";
 import { isInvitation, useEvents, useMyAddresses } from "../calendar/queries";
-import { useMe, useTasks } from "../tasks/queries";
+import { useTasks } from "../tasks/queries";
 
 export type FeedEvent = {
   key: string;

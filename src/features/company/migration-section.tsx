@@ -5,12 +5,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link2, Upload } from "lucide-react";
 import { type FormEvent, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
-import { Input, Label, Select } from "@/components/ui/input";
-import { uploadInPieces } from "@/lib/chunked-upload";
-import { formatSize } from "@/lib/format";
-import { m } from "@/paraglide/messages";
 import {
   type Company,
   createMigration,
@@ -19,10 +13,16 @@ import {
   type Migration,
   retryMigration,
   sendPiece,
-} from "./api";
+} from "@/company-core/api";
+import { useCompanyChange } from "@/company-core/queries";
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { Input, Label, Select } from "@/components/ui/input";
+import { uploadInPieces } from "@/lib/chunked-upload";
+import { formatSize } from "@/lib/format";
+import { m } from "@/paraglide/messages";
 import { Badge } from "./fields";
 import { CompanyGate } from "./gate";
-import { useCompanyChange } from "./queries";
 import { ConnectDialog } from "./sync-dialogs";
 import { SyncRow } from "./sync-row";
 

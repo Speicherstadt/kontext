@@ -3,10 +3,12 @@
  * dragged between and within columns (the new place is set between its neighbours); on a phone the
  * columns scroll sideways and the status is changed in the task.
  */
+
 import { Link } from "@tanstack/react-router";
 import { Mail, Plus, Repeat } from "lucide-react";
 import { type DragEvent, type FormEvent, useState } from "react";
 import { useToast } from "@/components/ui/toast";
+import { usePeople } from "@/directory/queries";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
 import { cn } from "@/lib/cn";
 import { dateKey } from "@/lib/jscalendar";
@@ -20,7 +22,7 @@ import {
   type TaskStatus,
 } from "@/lib/tasks";
 import { m } from "@/paraglide/messages";
-import { type Board, useColumns, usePeople, useTaskActions } from "./queries";
+import { type Board, useColumns, useTaskActions } from "./queries";
 import { ShowDone } from "./task-list";
 import { dueTone } from "./task-row";
 
