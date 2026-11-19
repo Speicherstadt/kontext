@@ -6,7 +6,7 @@
  */
 import { ListChecks } from "lucide-react";
 import { type KeyboardEvent, useState } from "react";
-import { isPending } from "@/chat-core/queries";
+import { isPending, shownKey } from "@/chat-core/queries";
 import { Button } from "@/components/ui/button";
 import { useLongPress } from "@/components/use-long-press";
 import { useMediaQuery } from "@/components/use-media-query";
@@ -363,7 +363,7 @@ export const Run = ({ run, ...rest }: Props) => {
           </time>
         </span>
         {run.messages.map((message) => (
-          <Item key={message.id} message={message} own={own} {...rest} />
+          <Item key={shownKey(message)} message={message} own={own} {...rest} />
         ))}
       </div>
     </li>

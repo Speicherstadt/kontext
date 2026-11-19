@@ -234,14 +234,18 @@ test.describe("Chat", () => {
     await login(page);
     await openChat(page);
     await openDirectWithMax(page);
+    const voices = page
+      .getByRole("list", { name: "Nachrichten" })
+      .getByRole("group", { name: /^Sprachnachricht, 0:0[4-5]$/ });
     const mic = page.getByRole("button", { name: "Sprachnachricht aufnehmen" });
     await mic.click();
     await expect(page.getByRole("timer")).toHaveText("0:04", { timeout: 10_000 });
+    const before = await voices.count();
     await page.getByRole("button", { name: "Sprachnachricht senden" }).click();
-    const voice = page
-      .getByRole("list", { name: "Nachrichten" })
-      .getByRole("group", { name: /^Sprachnachricht, 0:0[4-5]$/ })
-      .last();
+    // On a retry the earlier attempt's message is there too: wait for this one.
+    await expect(voices).toHaveCount(before + 1);
+    // Played at once, while the server's copy is still on its way: that copy keeps it playing.
+    const voice = voices.nth(before);
     await voice.getByRole("button", { name: "Abspielen" }).click();
     await expect(voice.getByRole("button", { name: "Anhalten" })).toBeVisible();
     expect(await sessionType()).toBe("playback");
