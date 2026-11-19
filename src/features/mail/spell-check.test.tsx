@@ -1,10 +1,10 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { Editor } from "@tiptap/core";
 import { afterEach, describe, expect, it } from "vitest";
+import { richText, spellChecked } from "@/mail-core/rich-text";
 import { m } from "@/paraglide/messages";
 import { type Locale, overwriteGetLocale } from "@/paraglide/runtime";
 import { ComposerFields } from "./composer-fields";
-import { richText, spellChecked } from "./rich-text";
 
 const none = () => {};
 

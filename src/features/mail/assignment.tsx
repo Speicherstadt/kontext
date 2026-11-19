@@ -15,15 +15,15 @@ import {
   MenuTrigger,
 } from "@/components/ui/menu";
 import { useToast } from "@/components/ui/toast";
+import { usePrincipals } from "@/directory/queries";
 import { principalName } from "@/jmap/principals";
 import type { EmailSummary } from "@/jmap/types";
 import { type Assignment, assignablePeople, assignmentOf } from "@/lib/assignment";
 import { cn } from "@/lib/cn";
+import { useEmailActions } from "@/mail-core/actions";
+import { ToolbarButton } from "@/mail-core/toolbar-button";
 import { m } from "@/paraglide/messages";
 import { useMailboxMembers } from "../company/mailbox-members";
-import { usePrincipals } from "../sharing/queries";
-import { useEmailActions } from "./actions";
-import { ToolbarButton } from "./toolbar-button";
 
 /** The people of the company by principal id, the own one first. */
 export const usePeople = () => {

@@ -20,8 +20,8 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { FormatMenus } from "@/mail-core/format-menus";
 import { m } from "@/paraglide/messages";
-import { FormatMenus } from "./format-menus";
 
 type Tool = {
   label: string;

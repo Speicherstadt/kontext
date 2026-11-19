@@ -20,15 +20,15 @@ import { rowFace } from "@/lib/row-face";
 import { rowClick } from "@/lib/selection";
 import { directionOf, type SwipeAction } from "@/lib/swipe";
 import { tasksOfMail } from "@/lib/tasks";
+import { useOpenedPreview, useShownSubject } from "@/mail-core/opened-mails";
+import { useSwipeSettings } from "@/mail-core/swipe-settings";
 import { m } from "@/paraglide/messages";
 import { useCategoryMap } from "../categories/queries";
 import { useTasks } from "../tasks/queries";
 import type { Row } from "./list-frame";
 import { type DraggedMail, startMailDrag } from "./mail-drag";
 import { MarksLine, PickColumn, TopLine } from "./message-row-parts";
-import { useOpenedPreview, useShownSubject } from "./opened-mails";
 import { SwipeBackdrop } from "./swipe-backdrop";
-import { useSwipeSettings } from "./swipe-settings";
 import type { Answer, Group } from "./use-thread-info";
 
 type Props = {

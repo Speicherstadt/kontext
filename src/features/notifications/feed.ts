@@ -11,8 +11,8 @@ import { queryEmails } from "@/jmap/mail";
 import { addDays, type CalendarEvent, dateKey, eventKey, eventTimes } from "@/lib/jscalendar";
 import { type InboxMail, newMails, restOfToday } from "@/lib/notifications";
 import { assignedToMe, dueTasks } from "@/lib/task-context";
+import { useInboxes } from "@/mail-core/accounts";
 import { isInvitation, useEvents, useMyAddresses } from "../calendar/queries";
-import { useInboxes } from "../mail/queries";
 import { useMe, useTasks } from "../tasks/queries";
 
 export type FeedEvent = {

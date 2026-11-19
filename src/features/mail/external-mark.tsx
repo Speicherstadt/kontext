@@ -1,7 +1,7 @@
 /** The mark „Extern“ beside a sender from outside the company, while the hint is switched on. */
 import { Globe } from "lucide-react";
-import { useInsideDomains } from "@/features/company/external-hint";
 import { isExternal } from "@/lib/external-hint";
+import { useInsideDomains } from "@/mail-core/external-hint";
 import { m } from "@/paraglide/messages";
 
 export const ExternalMark = ({ address }: { address: string | undefined }) => {

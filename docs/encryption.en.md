@@ -103,7 +103,7 @@ which later also carries confidential chats (building block 5).
   opened here, its text is quoted, and when forwarding, content and attachments go along (never
   the encrypted parts); otherwise Kontext says you have to open it first. Opened mails show the
   start of their text in the list and the conversation instead of "Encrypted"
-  (`src/features/mail/opened-mails.ts`, in memory only).
+  (`src/mail-core/opened-mails.ts`, in memory only).
 - **Subject:** it is encrypted too (Protected Headers, as Thunderbird does it): inside, it sits
   in the encrypted part (`protectHeaders`, `src/lib/mime.ts`), outside only "Vertrauliche
   Nachricht" (confidential message). Once a mail has been opened, the list, the view and the reply

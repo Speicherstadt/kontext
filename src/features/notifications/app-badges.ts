@@ -9,7 +9,7 @@ import { useChannels } from "@/features/chat/queries";
 import { totalUnread } from "@/lib/chat";
 import { type AppBadges, appBadges, invitationsSoon } from "@/lib/notifications";
 import { assignedToMe } from "@/lib/task-context";
-import { useInboxes } from "../mail/queries";
+import { useInboxes } from "@/mail-core/accounts";
 import { useMe, useTasks } from "../tasks/queries";
 import { markTasksSeen, useSeen } from "./device-settings";
 import { useNotificationFeed, useNow } from "./feed";

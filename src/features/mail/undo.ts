@@ -8,8 +8,8 @@ import { useToast } from "@/components/ui/toast";
 import { useShortcuts } from "@/components/use-shortcuts";
 import { isTyping } from "@/lib/shortcuts";
 import { createUndoSlot, type MailMove } from "@/lib/undo-move";
+import { useMailActions } from "@/mail-core/actions";
 import { m } from "@/paraglide/messages";
-import { useMailActions } from "./actions";
 
 type Undo = () => Promise<unknown>;
 

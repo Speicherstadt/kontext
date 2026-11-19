@@ -9,13 +9,13 @@ import { Label, Textarea } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
 import { parseDomains } from "@/lib/external-hint";
-import { m } from "@/paraglide/messages";
 import {
   EXTERNAL_HINT_KEY,
   type ExternalHint,
   saveExternalHint,
   useExternalHint,
-} from "./external-hint";
+} from "@/mail-core/external-hint";
+import { m } from "@/paraglide/messages";
 
 export const ExternalHintSection = () => {
   const { data } = useExternalHint();

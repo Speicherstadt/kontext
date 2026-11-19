@@ -9,8 +9,8 @@ import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { useMailAccounts } from "@/features/mail/queries";
 import { KNOWN_PLACEHOLDERS } from "@/lib/snippet-fill";
+import { useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";
 import { type Snippet, useSnippetActions, useSnippets } from "./queries";
 

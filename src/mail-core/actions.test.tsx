@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { handleRequest } from "@/demo/jmap";
 import { createStore } from "@/demo/store";
 import type { EmailSummary } from "@/jmap/types";
-import { useMailActions } from "./actions";
+import { useMailActions } from "@/mail-core/actions";
 
 // The demo server stands in for Stalwart: the patches the app sends land on the seed.
 const store = vi.hoisted(() => ({ current: null as unknown }));

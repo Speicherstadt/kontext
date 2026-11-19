@@ -12,9 +12,9 @@ import { updateIdentity } from "@/jmap/settings";
 import type { EmailAddress, Identity } from "@/jmap/types";
 import { formatAddressInput, parseAddresses } from "@/lib/addresses";
 import { htmlToText, textToHtml } from "@/lib/html";
+import { EditorToolbar } from "@/mail-core/editor-toolbar";
+import { richText } from "@/mail-core/rich-text";
 import { m } from "@/paraglide/messages";
-import { EditorToolbar } from "../mail/editor-toolbar";
-import { richText } from "../mail/rich-text";
 
 export const SignatureSection = () => {
   const { data: identities = [], isPending } = usePersonalIdentities();

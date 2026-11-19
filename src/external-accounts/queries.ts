@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { listExternalAccounts } from "./api";
+import { listExternalAccounts } from "@/external-accounts/api";
 
 export const EXTERNAL_KEY = ["external-accounts"];
 

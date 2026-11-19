@@ -9,10 +9,10 @@ import { MenuContent, MenuItem, MenuRoot, MenuSeparator, MenuTrigger } from "@/c
 import { useToast } from "@/components/ui/toast";
 import { useShortcuts } from "@/components/use-shortcuts";
 import { sendTimeLabel, snoozeChoices } from "@/lib/schedule";
+import { TimeDialog } from "@/mail-core/time-dialog";
+import { ToolbarButton } from "@/mail-core/toolbar-button";
 import { m } from "@/paraglide/messages";
 import { validUntil } from "../../../server/snooze/snooze";
-import { TimeDialog } from "../mail/time-dialog";
-import { ToolbarButton } from "../mail/toolbar-button";
 import { useSnoozeActions } from "./queries";
 
 /** Mails of one account, taken out of one folder. */

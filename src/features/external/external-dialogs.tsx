@@ -3,11 +3,11 @@ import { type FormEvent, type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Select } from "@/components/ui/input";
+import { changeExternalAccount, createExternalAccount } from "@/external-accounts/api";
+import { useExternalChange } from "@/external-accounts/queries";
 import { m } from "@/paraglide/messages";
 import type { MailProviderId } from "../../../server/external/providers";
 import { PROVIDERS } from "../../../server/migration/providers";
-import { changeExternalAccount, createExternalAccount } from "./api";
-import { useExternalChange } from "./queries";
 
 const MAIL_PROVIDERS = PROVIDERS.filter((p) => p.id !== "m365");
 

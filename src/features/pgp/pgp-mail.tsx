@@ -25,8 +25,8 @@ import { mailDocument, sanitizeMailHtml, textToHtml } from "@/lib/html";
 import { unlockKey } from "@/lib/pgp";
 import { checkSigned, type ReadMail, readEncrypted, type Signature } from "@/lib/pgp-mail";
 import { asDownload } from "@/lib/safe-blob";
+import { rememberOpened } from "@/mail-core/opened-mails";
 import { m } from "@/paraglide/messages";
-import { rememberOpened } from "../mail/opened-mails";
 import { keepUnlocked, useKnownKeys, useOwnKey, useUnlockedKey } from "./queries";
 
 export const useRaw = (accountId: string, email: EmailDetail, enabled: boolean) => {

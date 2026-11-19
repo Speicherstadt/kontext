@@ -9,17 +9,17 @@ import { downloadBlob } from "@/lib/download";
 import { domainOf, isExternal } from "@/lib/external-hint";
 import { mailboxRights } from "@/lib/mailboxes";
 import type { BlockScope } from "@/lib/rules";
+import { useEmailActions } from "@/mail-core/actions";
+import { useExternalHint } from "@/mail-core/external-hint";
+import { useThreadView } from "@/mail-core/thread-view";
 import { m } from "@/paraglide/messages";
-import { useExternalHint } from "../company/external-hint";
 import { useBlockSender } from "../rules/block-sender";
-import { useEmailActions } from "./actions";
 import { useThread } from "./conversation";
 import type { ComposeMode } from "./message-more-menu";
 import { usePrintMail } from "./print-mail";
 import { useMailAccounts } from "./queries";
 import { useRemoteImages } from "./remote-images";
 import { useReportPhishing } from "./report-phishing";
-import { useThreadView } from "./thread-view";
 import { useOfferUndo } from "./undo";
 
 /** Closes the open mail (and its composer): back to the list. */

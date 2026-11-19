@@ -14,8 +14,8 @@ import type { EmailDetail } from "@/jmap/types";
 import { displayName, noteDate } from "@/lib/format";
 import { findRole } from "@/lib/mailboxes";
 import { MDN_SENT, receiptAnswered, receiptMessage } from "@/lib/mdn";
+import { useSendAccount } from "@/mail-core/use-send-account";
 import { m } from "@/paraglide/messages";
-import { useSendAccount } from "./use-send-account";
 
 const line =
   "flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-border px-3 py-2 text-[13px]";

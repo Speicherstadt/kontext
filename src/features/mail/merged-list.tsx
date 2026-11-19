@@ -8,12 +8,12 @@ import type { MailSearch } from "@/features/mail/search-params";
 import type { EmailFilter } from "@/jmap/mail";
 import { type Feed, mergeFeeds, pinResurfaced } from "@/lib/inboxes";
 import type { MailAccount } from "@/lib/mail-accounts";
+import { useThreadView } from "@/mail-core/thread-view";
 import { useCategoryMap } from "../categories/queries";
 import { ListFrame, type Row } from "./list-frame";
 import type { DraggedMail } from "./mail-drag";
 import { useEmailList } from "./queries";
 import { useMailSort } from "./sort-setting";
-import { useThreadView } from "./thread-view";
 
 export type Source = { account: MailAccount; filter: EmailFilter };
 

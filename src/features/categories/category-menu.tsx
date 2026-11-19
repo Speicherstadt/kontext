@@ -12,8 +12,8 @@ import { useToast } from "@/components/ui/toast";
 import type { EmailSummary } from "@/jmap/types";
 import { COLOR_STYLES } from "@/lib/categories";
 import { cn } from "@/lib/cn";
+import { useEmailActions } from "@/mail-core/actions";
 import { m } from "@/paraglide/messages";
-import { useEmailActions } from "../mail/actions";
 import { useCategories } from "./queries";
 
 /**

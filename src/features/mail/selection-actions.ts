@@ -14,9 +14,9 @@ import {
 } from "@/lib/selection";
 import { mailLink, plainSubject } from "@/lib/tasks";
 import type { MailMove } from "@/lib/undo-move";
+import { useMailActions } from "@/mail-core/actions";
 import { m } from "@/paraglide/messages";
 import type { TaskStart } from "../tasks/task-dialog";
-import { useMailActions } from "./actions";
 import { useAllMailboxes, useMailAccounts } from "./queries";
 import { useOfferUndo } from "./undo";
 

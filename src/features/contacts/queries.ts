@@ -5,6 +5,7 @@
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { useClient } from "@/auth/auth";
 import { useSession } from "@/auth/session";
+import { usePrincipals } from "@/directory/queries";
 import { CAPABILITIES, type JmapClient } from "@/jmap/client";
 import {
   type AddressBook,
@@ -27,7 +28,6 @@ import { idsByAccount } from "@/lib/contact-selection";
 import type { ContactCard } from "@/lib/jscontact";
 import type { ShareWith } from "@/lib/sharing";
 import { m } from "@/paraglide/messages";
-import { usePrincipals } from "../sharing/queries";
 
 /** An address book together with the account it lives in. */
 export type BookRef = {

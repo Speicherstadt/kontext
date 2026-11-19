@@ -16,8 +16,8 @@ import { aroundMail, personOf } from "@/lib/conversation";
 import { displayName, listDate } from "@/lib/format";
 import { findRole } from "@/lib/mailboxes";
 import { encryptedPreview } from "@/lib/pgp-mail";
+import { useOpenedPreview } from "@/mail-core/opened-mails";
 import { m } from "@/paraglide/messages";
-import { useOpenedPreview } from "./opened-mails";
 import { useMailboxes } from "./queries";
 
 export const useThread = (accountId: string, threadId: string | undefined) => {

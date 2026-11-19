@@ -12,8 +12,6 @@ import { MeetingField } from "@/features/calls/meeting-field";
 import { useAddressSuggestions } from "@/features/contacts/use-suggestions";
 import { EventDocuments } from "@/features/documents/document-actions";
 import { useShareWith } from "@/features/documents/use-share-with";
-import { useExternalQuestion } from "@/features/mail/external-question";
-import { RecipientField } from "@/features/mail/recipient-field";
 import { formatAddressInput } from "@/lib/addresses";
 import { copyForm, copyToEvent } from "@/lib/event-copy";
 import {
@@ -37,6 +35,8 @@ import { formAt, formSlot } from "@/lib/planning";
 import { defaultReminder, reminderForKind } from "@/lib/reminders";
 import { isFirstDate } from "@/lib/series-split";
 import { withNames } from "@/lib/suggestions";
+import { useExternalQuestion } from "@/mail-core/external-question";
+import { RecipientField } from "@/mail-core/recipient-field";
 import { m } from "@/paraglide/messages";
 import { AvailabilityPanel } from "./availability-panel";
 import { attendeeList } from "./availability-queries";

@@ -13,7 +13,6 @@ import { useContacts } from "@/features/contacts/queries";
 import { DocumentBrowser } from "@/features/documents/document-picker";
 import { useDocumentsConnected } from "@/features/documents/queries";
 import { LinkIcon } from "@/features/links/item-link";
-import { useAllMailboxes, useMailAccounts } from "@/features/mail/queries";
 import { useTasks } from "@/features/tasks/queries";
 import { queryEmails } from "@/jmap/mail";
 import { type Card, contactCard, mailCard, taskCard } from "@/lib/chat-cards";
@@ -23,6 +22,7 @@ import { dateKey } from "@/lib/jscalendar";
 import { matchesSearch } from "@/lib/jscontact";
 import { parseSearch, toEmailFilter } from "@/lib/mail-search";
 import { mailboxPath } from "@/lib/mailboxes";
+import { useAllMailboxes, useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";
 
 type Kind = "mail" | "task" | "contact" | "document";

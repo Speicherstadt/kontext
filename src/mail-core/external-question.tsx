@@ -5,8 +5,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { useInsideDomains } from "@/features/company/external-hint";
 import { externalAddresses } from "@/lib/external-hint";
+import { useInsideDomains } from "@/mail-core/external-hint";
 import { m } from "@/paraglide/messages";
 
 type Asked = { addresses: string[]; proceed: () => void };

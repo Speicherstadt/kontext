@@ -12,6 +12,7 @@ import {
 import { useEffect } from "react";
 import { useClient } from "@/auth/auth";
 import { useSession } from "@/auth/session";
+import { usePrincipals } from "@/directory/queries";
 import {
   type Calendar,
   getEvent,
@@ -35,7 +36,6 @@ import {
   myParticipation,
 } from "@/lib/jscalendar";
 import { m } from "@/paraglide/messages";
-import { usePrincipals } from "../sharing/queries";
 import { CALENDAR_COLORS } from "./calendar-colors";
 import { forgetHiddenCalendar, useHiddenCalendars } from "./hidden-calendars";
 

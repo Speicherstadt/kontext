@@ -27,7 +27,7 @@ vi.mock("./queries", () => ({
 }));
 vi.mock("@/auth/auth", () => ({ useClient: () => ({}) }));
 vi.mock("@/auth/session", () => ({ useSession: () => ({ data: null }) }));
-vi.mock("../mail/use-send-account", () => ({ useSendAccount: () => ({ myName: "" }) }));
+vi.mock("@/mail-core/use-send-account", () => ({ useSendAccount: () => ({ myName: "" }) }));
 vi.mock("../settings/queries", () => ({ usePersonalAccountId: () => "a" }));
 const show = vi.hoisted(() => vi.fn());
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ show }) }));

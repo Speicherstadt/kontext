@@ -5,7 +5,7 @@
  * whose people only Kontext's server knows (it skips ids that are no shared mailbox).
  */
 import { useCallback } from "react";
-import { usePrincipals } from "@/features/sharing/queries";
+import { usePrincipals } from "@/directory/queries";
 import {
   type Card,
   channelMailboxes,

@@ -3,8 +3,8 @@ import { useId } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Select } from "@/components/ui/input";
 import { SWIPE_ACTIONS, type SwipeAction, type SwipeDirection } from "@/lib/swipe";
+import { setSwipeSettings, useSwipeSettings } from "@/mail-core/swipe-settings";
 import { m } from "@/paraglide/messages";
-import { setSwipeSettings, useSwipeSettings } from "../mail/swipe-settings";
 
 const ACTION_LABEL: Record<SwipeAction, () => string> = {
   archive: m.settings_swipe_archive,

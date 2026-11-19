@@ -7,6 +7,9 @@ import { useToast } from "@/components/ui/toast";
 import type { Identity, Mailbox } from "@/jmap/types";
 import { type ComposeMode, switchReplyTo } from "@/lib/compose";
 import { findRole } from "@/lib/mailboxes";
+import { useExternalQuestion } from "@/mail-core/external-question";
+import { useUndoSeconds } from "@/mail-core/send-settings";
+import { useSendAccount } from "@/mail-core/use-send-account";
 import { m } from "@/paraglide/messages";
 import { useLegalFooter } from "../company/legal-footer";
 import { useAddressSuggestions } from "../contacts/use-suggestions";
@@ -25,15 +28,12 @@ import { useComposerFill } from "./composer-fill";
 import { useComposerImages } from "./composer-images";
 import { sendWith } from "./composer-send";
 import { type ComposerState, useComposerState } from "./composer-state";
-import { useExternalQuestion } from "./external-question";
 import { useInlineImageUrls } from "./inline-image-urls";
 import { useEmail } from "./queries";
 import { useRemoteImages } from "./remote-images";
-import { useUndoSeconds } from "./send-settings";
 import { useTakeBack } from "./take-back";
 import { useEmlForward } from "./use-eml-forward";
 import { useHeldFiles } from "./use-held-files";
-import { useSendAccount } from "./use-send-account";
 
 export type ComposerProps = {
   accountId: string;

@@ -2,10 +2,10 @@
 import Placeholder from "@tiptap/extension-placeholder";
 import { useEditor } from "@tiptap/react";
 import type { RefObject } from "react";
+import { richText, spellChecked } from "@/mail-core/rich-text";
 import { m } from "@/paraglide/messages";
 import { pictures } from "./composer-images";
 import type { ComposerState } from "./composer-state";
-import { richText, spellChecked } from "./rich-text";
 
 /**
  * `insertPictures`: pictures pasted or dropped into the text; set once the pictures hook has the

@@ -1,7 +1,7 @@
 /** Filling the form once: from the original (reply, forward, draft), the prefill and the sender. */
 import type { Editor } from "@tiptap/react";
 import { useEffect } from "react";
-import { replyingExternal } from "@/features/external/api";
+import { replyingExternal } from "@/external-accounts/api";
 import { displayBody, type OutgoingAttachment } from "@/jmap/mail";
 import type { EmailAddress, EmailDetail, Identity } from "@/jmap/types";
 import { parseAddresses } from "@/lib/addresses";
@@ -17,10 +17,10 @@ import { markCids } from "@/lib/inline-images";
 import { withoutLegalFooter } from "@/lib/legal-footer";
 import { pgpKind } from "@/lib/pgp-mail";
 import { signedOverEncrypted, smimeKind } from "@/lib/smime";
+import { type OpenedMail, openedMail, shownSubject } from "@/mail-core/opened-mails";
 import type { ComposePrefill } from "./composer";
 import type { useComposerImages } from "./composer-images";
 import type { ComposerState } from "./composer-state";
-import { type OpenedMail, openedMail, shownSubject } from "./opened-mails";
 import type { HeldFiles } from "./use-held-files";
 
 /** The identity to send from: in a shared mailbox its address, else the login address. */

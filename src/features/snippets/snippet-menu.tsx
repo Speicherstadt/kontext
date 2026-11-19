@@ -15,11 +15,11 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "@/components/ui/menu";
-import { useMailAccounts } from "@/features/mail/queries";
 import type { EmailAddress } from "@/jmap/types";
 import { textToHtml } from "@/lib/html";
 import { LOCALE } from "@/lib/locale";
 import { fillSnippet, snippetFields } from "@/lib/snippet-fill";
+import { useMailAccounts } from "@/mail-core/accounts";
 import { m } from "@/paraglide/messages";
 import { type Snippet, useSnippets } from "./queries";
 import { SnippetFieldsDialog } from "./snippet-fields-dialog";

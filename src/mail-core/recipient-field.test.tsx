@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { EmailAddress } from "@/jmap/types";
 import type { Suggestion } from "@/lib/groups";
-import { RecipientField } from "./recipient-field";
+import { RecipientField } from "@/mail-core/recipient-field";
 
 const petra = { name: "Petra Keller", email: "petra@keller.test" };
 const richter = { name: "Bestellannahme Richter", email: "bestellung@richter.test" };

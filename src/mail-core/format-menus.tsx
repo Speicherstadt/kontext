@@ -8,8 +8,8 @@ import { ALargeSmall, Baseline, Highlighter, type LucideIcon, Table2 } from "luc
 import type { ReactNode } from "react";
 import { MenuContent, MenuItem, MenuRoot, MenuSeparator, MenuTrigger } from "@/components/ui/menu";
 import { cn } from "@/lib/cn";
+import { FONT_SIZES, HIGHLIGHTS, TEXT_COLORS } from "@/mail-core/rich-text";
 import { m } from "@/paraglide/messages";
-import { FONT_SIZES, HIGHLIGHTS, TEXT_COLORS } from "./rich-text";
 
 const FormatMenu = ({
   label,

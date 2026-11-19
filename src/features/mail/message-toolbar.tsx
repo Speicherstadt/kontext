@@ -16,6 +16,7 @@ import { canAssignIn } from "@/lib/mailboxes";
 import { moveTargets } from "@/lib/move-targets";
 import { type Rule, ruleFromSender } from "@/lib/rules";
 import { mailLink, plainSubject } from "@/lib/tasks";
+import { ToolbarButton } from "@/mail-core/toolbar-button";
 import { m } from "@/paraglide/messages";
 import { CategoryDialog } from "../categories/category-dialog";
 import { CategorySubmenu } from "../categories/category-menu";
@@ -27,7 +28,6 @@ import { AssignMenu } from "./assignment";
 import { MoreMenu } from "./message-more-menu";
 import { useBlock, useCloseMail, useMailActions, useMoreActions } from "./message-toolbar-actions";
 import { useAllMailboxes, useMailAccounts } from "./queries";
-import { ToolbarButton } from "./toolbar-button";
 
 export { useCloseMail } from "./message-toolbar-actions";
 

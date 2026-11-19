@@ -6,10 +6,10 @@
  */
 import { useMemo } from "react";
 import { useSession } from "@/auth/session";
-import { externalIdentity } from "@/features/external/api";
-import { useExternalAccounts } from "@/features/external/queries";
+import { externalIdentity } from "@/external-accounts/api";
+import { useExternalAccounts } from "@/external-accounts/queries";
 import { withOwnReplyTo } from "@/lib/compose";
-import { useIdentities, useMailAccounts, useMailboxes } from "./queries";
+import { useIdentities, useMailAccounts, useMailboxes } from "@/mail-core/accounts";
 
 /** `withExternal`: the composer also offers the other mailboxes, which send through their server. */
 export const useSendAccount = (accountId: string, withExternal = false) => {

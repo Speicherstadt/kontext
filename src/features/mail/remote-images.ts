@@ -7,9 +7,9 @@ import { useSyncExternalStore } from "react";
 import type { EmailDetail } from "@/jmap/types";
 import { findContact } from "@/lib/correspondent";
 import { imageState } from "@/lib/remote-images";
+import { useImageSenders } from "@/mail-core/image-senders";
 import { trusts } from "../../../server/images/senders";
 import { useContacts } from "../contacts/queries";
-import { useImageSenders } from "./image-senders";
 
 const loaded = new Set<string>();
 const listeners = new Set<() => void>();
