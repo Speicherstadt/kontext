@@ -273,8 +273,7 @@ Releases: [Entwicklung](https://kontext.email/development.html).
 
 ## 🧩 Mehr von uns
 
-- Word, Excel und PowerPoint ohne Microsoft 365? **[Schreibzeug](https://github.com/Speicherstadt/schreibzeug)** bearbeitet sie im Browser und speichert sie als .docx, .xlsx und .pptx.
-- Machst du deine Buchhaltung selbst? **[Haben](https://github.com/firsttris/haben)**: Rechnungen mit E-Rechnung, Belege, Bankabgleich und die Umsatzsteuer-Voranmeldung an ELSTER.
+Weitere Open-Source-Apps für deinen eigenen Server, etwa für Buchhaltung, Office-Dokumente, ein Dokumentenarchiv und mehr: **[speicherstadt.app](https://speicherstadt.app)**
 
 ## 🤝 Mitmachen
 
@@ -286,11 +285,12 @@ Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <div align="center">
 
-⭐ Gefällt dir Kontext? Ein [Stern auf GitHub](https://github.com/Speicherstadt/kontext) hilft anderen, es zu finden.<br>
-🐛 [Fehler melden](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) · 💡 [Idee vorschlagen](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
+⭐ **Gefällt dir Kontext?** Ein [Stern auf GitHub](https://github.com/Speicherstadt/kontext) hilft anderen, es zu finden.
+
+[Fehler melden](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) &nbsp;·&nbsp; [Idee vorschlagen](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
 <sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende · <a href="README.md">English version</a><br>
-Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten; eine kommerzielle Lizenz ohne diese Pflichten gibt es über <a href="https://teufel-it.de">teufel-it.de</a>.<br>
+Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten. Für IT-Dienstleister: Partnerschaft mit direktem Draht zur Entwicklung, dazu Einrichtung und Support über <a href="https://teufel-it.de">teufel-it.de</a>.<br>
 Kontext ist keine Rechtsberatung: Datenschutz und Aufbewahrungspflichten setzt die Firma um, die Software unterstützt dabei.<br>
 Kontext steht in keiner Verbindung zu Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft oder Anthropic.</sub>
 
