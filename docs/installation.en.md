@@ -716,7 +716,8 @@ encrypted data; keep the password in a safe place outside the server as well. Wh
 data volume (mails, calendars, contacts, accounts), a copy of the Kontext database
 (sign-ins, company signature, tasks, chat, call list, state of the migrations), the photos and files from the
 chat, announcements, voicemail messages, faxes and recordings from telephony, and the confidentially sent
-mails, and with Documents also Schreibzeug's database (a copy) and files. Uploaded PST files are left out. Ideally use a bucket with **Object Lock**; then even an attacker with
+mails, and with Documents also Schreibzeug's database (a copy) and files, plus the server's
+settings without the Restic password and the storage key ([Restoring](#wiederherstellen)). Uploaded PST files are left out. Ideally use a bucket with **Object Lock**; then even an attacker with
 access to the server cannot delete the backups. This does not replace a GoBD archive for mails. Set the retention period
 in the bucket to 14 days at most: `backup.sh` keeps 14 days, 8 weeks and 12 months and clears away the
 rest; files locked for longer cannot be deleted. The script reports that, but checks the
@@ -804,28 +805,46 @@ practise a restore on a test server, as described below.
 
 ### Restoring { #wiederherstellen }
 
-Restic creates three backups per run, recognizable by their tag: `stalwart` (Stalwart's data volume),
+Restic creates up to four backups per run, recognizable by their tag: `stalwart` (Stalwart's data volume),
 `kontext` (the copy of the database under `backup/kontext.db` and the folders `chat-files`,
 `photos`, `phone`, `secure`) and, with Documents, `schreibzeug` (`backup/schreibzeug.db`, `blobs`,
-`auth-secret`). The volumes are backed up under their path on the server, for example
+`auth-secret`) and `config` (the settings, see below). The volumes are backed up under their path on the server, for example
 `/var/lib/docker/volumes/kontext_stalwart-data/_data` (Compose with Docker) or
 `/var/lib/containers/storage/volumes/stalwart-data/_data` (Quadlet). With
 Compose the volumes are called `kontext_stalwart-data`, `kontext_kontext-data`, `kontext_schreibzeug-data`, with Quadlet
 without the prefix `stalwart-data`, `kontext-data`, `schreibzeug-data`.
 
-Not in the backup: the settings (`deploy/.env` or the Quadlet files and
-`kontext.env` … – which is why they belong in the password manager, see
-[Saving the credentials](vps.md#13-zugangsdaten-sichern)) and Stalwart's volume `stalwart-config`.
-That includes the [storage key](#speicher-verschlusseln) `STALWART_BLOB_KEY`: without the same
-key the new Stalwart cannot read the restored mails.
-It only holds `config.json` with the storage location; everything else (domains, accounts, DKIM keys,
-settings) is in Stalwart's database and comes back with `stalwart`.
+`config` backs up a copy under `/run/kontext-backup-config/`: in `deploy/` the server's own files
+from `deploy/` (`.env` or `backup.env`, `kontext.env` and the other `*.env`, `Caddyfile`,
+`livekit.yaml`, `compose.override.yaml`), with Quadlet in `quadlet/` the units from
+`/etc/containers/systemd/`, and in `stalwart-config/` Stalwart's `config.json`. It only holds the
+storage location; everything else (domains, accounts, DKIM keys, settings) is in Stalwart's
+database and comes back with `stalwart`.
+
+Two values are empty in the copy: the Restic password, which is what opens the backup, and the
+[storage key](#speicher-verschlusseln) `STALWART_BLOB_KEY`, which on purpose is not kept next to
+the encrypted mails. Both belong in the password manager
+([Saving the credentials](vps.md#13-zugangsdaten-sichern)): without the same key the new Stalwart
+cannot read the restored mails.
 
 **1. Provide a server.** On a new server, install and start Kontext as in steps 1 and 2 with
 the same settings, then go through Stalwart's initial setup
 (user `admin`, password from the log), with the default storage (RocksDB under
 `/var/lib/stalwart/`) – only then does `config.json` exist. Whatever you enter there is replaced
 by the backup in a moment. On the old server, this step is not needed.
+
+The settings come from `config`: give Restic the values by hand (`export
+RESTIC_REPOSITORY=… RESTIC_PASSWORD=… AWS_ACCESS_KEY_ID=… AWS_SECRET_ACCESS_KEY=…`, the password from
+the password manager), then
+
+```bash
+restic restore latest --tag config --target /tmp/restore
+ls -A /tmp/restore/run/kontext-backup-config/*   # deploy/, quadlet/, stalwart-config/
+```
+
+copy the files from `deploy/` to `/opt/kontext/deploy/`, with Quadlet those from `quadlet/` to
+`/etc/containers/systemd/`, and put `RESTIC_PASSWORD` and `STALWART_BLOB_KEY` back in from the
+password manager.
 
 **2. Give Restic the settings** – the same ones `backup.sh` backs up with, as root:
 

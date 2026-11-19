@@ -612,7 +612,7 @@ What belongs in a password manager outside the server – not in a text file:
 | **Stalwart admin** (`admin@firma.de`) | Emergency access to Stalwart's management | `/root/.stalwart-admin` |
 | **The boss's account** | Sign-in to Kontext and mail programs (after changing it, the new one) | – |
 | **SSH key, access to the provider** | Server and panel | – |
-| `deploy/kontext.env`, `deploy/backup.env` (as a secure note) | Faster restore; the backup doesn't include them | `deploy/` |
+| `deploy/kontext.env`, `deploy/backup.env` (as a secure note) | Faster restore; the backup includes them without the Restic password and the storage key (tag `config`) | `deploy/` |
 
 The temporary password from Stalwart's log (user `admin`) no longer works after the initial
 setup. Not needed, because they can be created again at any time: the account `kontext-server@`

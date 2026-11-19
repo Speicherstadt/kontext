@@ -10,6 +10,8 @@
 # files are left out.
 # Schreibzeug (documents, when it runs) the same way: its SQLite copied with VACUUM INTO, its
 # file contents (blobs, named by their hash and never changed) as they are.
+# The server's own settings last (tag config): deploy/'s .env files, Caddyfile and livekit.yaml,
+# the Quadlet units and Stalwart's config.json, without the Restic password and the storage key.
 #
 # Works with Docker Compose (settings in deploy/.env) and with Podman Quadlet (the units in
 # /etc/containers/systemd/; settings in deploy/backup.env, since Quadlet has no deploy/.env).
@@ -85,11 +87,41 @@ restic backup --tag stalwart --host "$KONTEXT_DOMAIN" "$data"
 start stalwart
 trap - EXIT
 
+# The settings this server runs with, so a new server gets them back with the data. Two values
+# stay out: the Restic password opens this very backup, and Stalwart's storage key is kept apart
+# from the backup on purpose (docs, "Speicher verschlüsseln"); both belong in the password
+# manager. The copy goes to /run (memory, root only) and is gone after the run.
+without_secrets() {
+  sed -e 's/\(RESTIC_PASSWORD=\).*/\1/' -e 's/\(STALWART_BLOB_KEY=\).*/\1/' "$1"
+}
+copy_without_secrets() {
+  mkdir -p "$2"
+  for file in "$1"/*; do
+    [ -f "$file" ] && without_secrets "$file" > "$2/$(basename "$file")"
+  done
+  return 0
+}
+config="${KONTEXT_BACKUP_CONFIG:-/run/kontext-backup-config}"
+rm -rf "$config"
+mkdir -m 700 "$config"
+trap 'rm -rf "$config"' EXIT
+mkdir "$config/deploy"
+for file in .env ./*.env Caddyfile livekit.yaml compose.override.yaml; do
+  [ ! -f "$file" ] || without_secrets "$file" > "$config/deploy/${file#./}"
+done
+[ -z "$quadlet_units" ] || copy_without_secrets "$quadlet_units" "$config/quadlet"
+if stalwart_config="$(volume_path stalwart-config 2>/dev/null)"; then
+  copy_without_secrets "$stalwart_config" "$config/stalwart-config"
+fi
+restic backup --tag config --host "$KONTEXT_DOMAIN" "$config"
+rm -rf "$config"
+trap - EXIT
+
 # Keep 14 days, 8 weeks, 12 months; Object Lock on the bucket keeps them from being deleted early.
 # A file still locked cannot be deleted, so tidying up may fail: that is reported, and the check
 # below runs anyway (set -e would otherwise end the script before it).
 tidied=ok
-for tag in stalwart kontext schreibzeug; do
+for tag in stalwart kontext schreibzeug config; do
   restic forget --tag "$tag" --keep-daily 14 --keep-weekly 8 --keep-monthly 12 --prune ||
     tidied=failed
 done

@@ -66,6 +66,8 @@ esac`,
   const env = {
     ...process.env,
     PATH: `${bin}:${process.env.PATH}`,
+    // Compose, also on a host that runs Kontext with Quadlet.
+    KONTEXT_QUADLET_DIR: join(root, "no-quadlet"),
     KONTEXT_BACKUP_STATE: join(root, "state"),
     KONTEXT_BACKUP_UNITS: units,
     KONTEXT_BACKUP_LOCK: lock,
