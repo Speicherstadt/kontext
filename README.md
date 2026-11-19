@@ -130,8 +130,8 @@ command. These steps, DNS, telephony, backups and updates are in the
 [installation guide](https://kontext.email/en/installation.html); for a fresh server see
 [setting up a VPS](https://kontext.email/en/vps.html).
 
-No server or IT of your own? Kontext is available hosted or through an IT service provider from the
-[partner programme](https://speicherstadt.app/en/partner/).
+No server or IT of your own? Kontext is available hosted on request or through an IT service provider
+from the [partner programme](https://speicherstadt.app/en/partner/).
 
 ## FAQ
 

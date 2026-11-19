@@ -1,27 +1,26 @@
 ---
 description: >-
-  Kontext ohne eigenen Server oder eigene IT: gehosteter Betrieb auf Anfrage oder Einrichtung und
-  Betreuung durch einen IT-Dienstleister aus dem Partnerprogramm.
+  Kontext ohne eigenen Server oder eigene IT: gehosteter Betrieb auf Anfrage, ein Partner für die
+  Einrichtung und das Partnerprogramm für IT-Dienstleister und Hoster.
 ---
 
 # Gehostet oder mit Partner
 
-Diese Dokumentation beschreibt, wie du Kontext selbst betreibst. Wer das nicht will, hat zwei Wege.
+Diese Dokumentation beschreibt, wie du Kontext selbst betreibst.
 
 ## Gehostet
 
-Kontext gibt es auf Anfrage als gehosteten Betrieb, ohne eigenen Server.
+Kontext gibt es auf Anfrage an [info@teufel-it.de](mailto:info@teufel-it.de) als gehosteten Dienst,
+ohne eigenen Server. Wer Einrichtung und Betrieb lieber einem IT-Dienstleister überlässt, fragt
+unter derselben Adresse nach einem Partner.
 
-## Mit Partner
+## Partnerprogramm
 
-IT-Dienstleister und Hoster aus dem Partnerprogramm richten Kontext für ihre Kunden ein und
-betreuen es.
+IT-Dienstleister und Hoster, die Kontext bei ihren Kunden einrichten und betreuen wollen, werden
+Partner: siehe [Partnerprogramm](https://speicherstadt.app/partner/).
 
 ## Fragen zur Nutzung
 
 Fragen zur Nutzung beantworten wir öffentlich in den
-[GitHub-Issues](https://github.com/Speicherstadt/kontext/issues), damit alle etwas davon haben. Wer
-Einrichtung oder Betrieb für seine Firma abgeben will, findet einen Partner oder nutzt den
-gehosteten Betrieb; größere Einführungen übernehmen wir auch als bezahltes Projekt.
-
-Mehr dazu auf der Seite zum [Partnerprogramm](https://speicherstadt.app/partner/).
+[GitHub-Issues](https://github.com/Speicherstadt/kontext/issues), damit alle etwas davon haben.
+Größere Einführungen übernehmen wir auch als bezahltes Projekt.

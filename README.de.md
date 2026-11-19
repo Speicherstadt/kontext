@@ -131,8 +131,8 @@ eintragen. Diese Schritte, DNS, Telefonie, Backups und Updates stehen in der
 [Installationsanleitung](https://kontext.email/installation.html); für einen frischen Server
 gibt es die Seite [VPS einrichten](https://kontext.email/vps.html).
 
-Keinen eigenen Server oder keine eigene IT? Kontext gibt es gehostet oder über einen IT-Dienstleister
-aus dem [Partnerprogramm](https://speicherstadt.app/partner/).
+Keinen eigenen Server oder keine eigene IT? Kontext gibt es auf Anfrage gehostet oder über einen
+IT-Dienstleister aus dem [Partnerprogramm](https://speicherstadt.app/partner/).
 
 ## FAQ
 

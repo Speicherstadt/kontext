@@ -1,27 +1,26 @@
 ---
 description: >-
-  Kontext without a server or IT of your own: hosted operation on request, or setup and care by an
-  IT service provider from the partner programme.
+  Kontext without a server or IT of your own: hosted operation on request, a partner for the setup
+  and the partner programme for IT service providers and hosters.
 ---
 
 # Hosted or with a partner { #gehostet-oder-mit-partner }
 
-This documentation covers running Kontext yourself. If you'd rather not, there are two ways.
+These docs cover running Kontext yourself.
 
 ## Hosted { #gehostet }
 
-Kontext is available as hosted operation on request, without a server of your own.
+Kontext is available as a hosted service, without a server of your own, on request to
+[info@teufel-it.de](mailto:info@teufel-it.de). If you'd rather leave setup and operation to an IT
+service provider, ask us at the same address for a partner.
 
-## With a partner { #mit-partner }
+## Partner programme { #partnerprogramm }
 
-IT service providers and hosters from the partner programme set up Kontext for their customers and
-look after it.
+IT service providers and hosters who want to set up and look after Kontext for their customers can
+become partners: see the [partner programme](https://speicherstadt.app/en/partner/).
 
 ## Questions about using it { #fragen-zur-nutzung }
 
 We answer questions about using Kontext in public, in the
-[GitHub issues](https://github.com/Speicherstadt/kontext/issues), so everyone benefits. If you'd
-rather hand over setup or operation for your company, a partner can take it on, or use hosted
-operation; larger rollouts we also take on as a paid project.
-
-More on the [partner programme](https://speicherstadt.app/en/partner/) page.
+[GitHub issues](https://github.com/Speicherstadt/kontext/issues), so everyone benefits. Larger
+rollouts we also take on as a paid project.
