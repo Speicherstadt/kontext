@@ -271,8 +271,7 @@ admin too); `anna@`, `sandra@` and `max@` share the password. Structure, tests a
 
 ## 🧩 More from us
 
-- Word, Excel and PowerPoint without Microsoft 365? **[Schreibzeug](https://github.com/Speicherstadt/schreibzeug)** edits them in the browser and keeps them as .docx, .xlsx and .pptx.
-- Doing your own books in Germany? **[Haben](https://github.com/firsttris/haben)**: invoices with e-invoicing, receipts, bank reconciliation and VAT returns via ELSTER.
+More open-source apps for your own server, for accounting, office documents, a document archive and more: **[speicherstadt.app](https://speicherstadt.app)**
 
 ## 🤝 Contributing
 
@@ -284,8 +283,9 @@ request is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <div align="center">
 
-⭐ Like Kontext? A [star on GitHub](https://github.com/Speicherstadt/kontext) helps others find it.<br>
-🐛 [Report a bug](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) · 💡 [Request a feature](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
+⭐ **Like Kontext?** A [star on GitHub](https://github.com/Speicherstadt/kontext) helps others find it.
+
+[Report a bug](https://github.com/Speicherstadt/kontext/issues/new?template=bug_report.yml) &nbsp;·&nbsp; [Request a feature](https://github.com/Speicherstadt/kontext/issues/new?template=feature_request.yml)
 
 <sub>License: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel and contributors · <a href="README.de.md">Deutsche Version</a><br>
 Changed versions you pass on or run for others must offer their source code under the AGPL; a commercial license without these obligations is available via <a href="https://teufel-it.de">teufel-it.de</a>.<br>
