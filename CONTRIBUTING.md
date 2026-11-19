@@ -23,7 +23,7 @@ privately, see [SECURITY.md](SECURITY.md).
   - the tests: Vitest next to the code for pure logic, Playwright in `e2e/` for what a user does,
     on the desktop and on the phone (`@phone`);
   - the docs in `docs/` that describe it;
-  - both READMEs (`README.md` in English, `README.de.md` in German) when a feature a user sees is
+  - both READMEs (`README.md` in German, `README.en.md` in English) when a feature a user sees is
     added, changed or removed;
   - the screenshots after a change to the look (`bun run screenshots`, or the *Update screenshots*
     workflow).
