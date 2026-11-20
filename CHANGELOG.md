@@ -25,8 +25,9 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
   and Mermaid are downloaded at build time and served from the site (Material's `privacy`
   plugin). Every page has links to the legal notice (Impressum) and the privacy policy in the
   footer.
-- Deploy: `deploy/.env.example` and the Quadlet use Schreibzeug 0.1.21 (was 0.1.19, with security
-  updates and its own container hardening), and Compose and the Quadlet use Caddy 2.11.9 (was
+- Deploy: `deploy/.env.example` and the Quadlet use Schreibzeug 0.1.25 (was 0.1.19, with security
+  updates, its own container hardening and the optional saving to an archive and opening from
+  another app, `SCHREIBZEUG_ARCHIVE_*` and `SCHREIBZEUG_IMPORT_ORIGINS`, off without them), and Compose and the Quadlet use Caddy 2.11.9 (was
   2.11.8), the versions running on the first server. No step beyond raising the versions; with
   Quadlet, raise the images in `schreibzeug.container` and `caddy.container`.
 - **Upgrade** Stalwart 1.1.1: raise `STALWART_VERSION=1.1.1` in `deploy/.env` (Quadlet:
