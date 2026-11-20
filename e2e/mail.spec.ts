@@ -708,9 +708,8 @@ test.describe("Mail am Handy @phone", () => {
   });
 
   test("steht nach Mail und Zurück an derselben Stelle der Liste @phone", async ({ page }) => {
-    // Enough mails of its own that the list scrolls, whatever the seed and other tests left.
-    for (let i = 0; i < 12; i++)
-      await addMail("jonas", "jonas", unique(`Stelle in der Liste ${i}`));
+    // The seed's inbox is longer than the phone's screen; no mails of its own, which would push
+    // the shared mailboxes' rows out of other tests' sight.
     await login(page);
     const list = page.getByRole("list", { name: "Posteingang" });
     await expect(list.getByRole("listitem").first()).toBeVisible();
@@ -724,8 +723,12 @@ test.describe("Mail am Handy @phone", () => {
           .find((li) => li.getBoundingClientRect().bottom > top + 1);
         return { scrollTop: Math.round(element.scrollTop), row: row?.dataset.index };
       });
-    await scroller.evaluate((element) => element.scrollTo(0, 700));
-    // Rows measured on the way settle the position before it counts.
+    // Down in small steps, as a finger does: the rows passed on the way get measured, and only
+    // rows measured before were thrown off when the list was hidden.
+    for (let step = 0; step < 6; step++) {
+      await scroller.evaluate((element) => element.scrollBy(0, 120));
+      await page.waitForTimeout(80);
+    }
     let before = await place();
     await expect
       .poll(async () => {
