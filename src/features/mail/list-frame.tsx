@@ -3,7 +3,7 @@
  * one folder (`MessageList`) or from the inboxes of all accounts (`UnifiedList`).
  */
 import { Link, useParams } from "@tanstack/react-router";
-import { useVirtualizer, type Virtualizer } from "@tanstack/react-virtual";
+import { measureElement, useVirtualizer, type Virtualizer } from "@tanstack/react-virtual";
 import { Menu, SquarePen } from "lucide-react";
 import { type ReactNode, type RefObject, useEffect, useRef } from "react";
 import { TabBar } from "@/components/shell/tab-bar-slot";
@@ -282,6 +282,22 @@ const ListRows = ({ props, picks, showBar, virtualizer, accountOf, info }: RowsP
 
 const rowKey = (row: Row) => `${row.account?.id ?? ""}/${row.email.id}/${row.section ?? ""}`;
 
+/**
+ * A row's height, kept while the list is hidden: on the phone an open mail hides the list
+ * (display: none, mail-layout.tsx), and every row then measures 0. Taken as is, the virtualizer
+ * shifted the scroll position for the rows above (virtual-core resizeItem), and again when they
+ * measured their height back; the list stood elsewhere after the mail. No row is ever 0 high.
+ */
+const measureShown: typeof measureElement = (element, entry, instance) => {
+  const size = measureElement(element, entry, instance);
+  if (size > 0) return size;
+  const index = instance.indexFromElement(element);
+  return (
+    instance.itemSizeCache.get(instance.options.getItemKey(index)) ??
+    instance.options.estimateSize(index)
+  );
+};
+
 /** The rows of a long list, rendered only where they show; near the end it asks for more. */
 const useRowsVirtualizer = (rows: Row[], onNearEnd: () => void) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -291,6 +307,7 @@ const useRowsVirtualizer = (rows: Row[], onNearEnd: () => void) => {
     getItemKey: (index) => (rows[index] ? rowKey(rows[index]) : index),
     getScrollElement: () => scrollRef.current,
     estimateSize: () => 92,
+    measureElement: measureShown,
     overscan: 8,
   });
   const lastIndex = virtualizer.getVirtualItems().at(-1)?.index ?? -1;
