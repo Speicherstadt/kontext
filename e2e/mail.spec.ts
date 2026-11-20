@@ -707,6 +707,43 @@ test.describe("Mail am Handy @phone", () => {
     await expect(page.getByRole("link", { name: "Papierkorb" })).toBeVisible();
   });
 
+  test("steht nach Mail und Zurück an derselben Stelle der Liste @phone", async ({ page }) => {
+    // Enough mails of its own that the list scrolls, whatever the seed and other tests left.
+    for (let i = 0; i < 12; i++)
+      await addMail("jonas", "jonas", unique(`Stelle in der Liste ${i}`));
+    await login(page);
+    const list = page.getByRole("list", { name: "Posteingang" });
+    await expect(list.getByRole("listitem").first()).toBeVisible();
+    const scroller = list.locator("xpath=..");
+    /** The scroll position and the row at the top of the list. */
+    const place = () =>
+      scroller.evaluate((element) => {
+        const top = element.getBoundingClientRect().top;
+        const row = [...element.querySelectorAll("li")]
+          .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)
+          .find((li) => li.getBoundingClientRect().bottom > top + 1);
+        return { scrollTop: Math.round(element.scrollTop), row: row?.dataset.index };
+      });
+    await scroller.evaluate((element) => element.scrollTo(0, 700));
+    // Rows measured on the way settle the position before it counts.
+    let before = await place();
+    await expect
+      .poll(async () => {
+        const now = await place();
+        const settled = JSON.stringify(now) === JSON.stringify(before);
+        before = now;
+        return settled && now.scrollTop > 0;
+      })
+      .toBe(true);
+
+    await list.locator(`li[data-index="${Number(before.row) + 1}"]`).click();
+    await expect(page.getByRole("button", { name: "Zurück" })).toBeVisible();
+    await expect(list).toBeHidden();
+    await page.getByRole("button", { name: "Zurück" }).click();
+    await expect(list).toBeVisible();
+    await expect.poll(place).toEqual(before);
+  });
+
   test("verkleinert eine breite HTML-Mail auf die Breite des Handys @phone", async ({ page }) => {
     expect(await openWideMail(page)).toBeLessThan(1);
   });
