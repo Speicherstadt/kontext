@@ -1,6 +1,6 @@
 /**
  * Settings of the own account: name, signatures, out-of-office reply, deputy, mail rules,
- * password and 2FA, who has access, AI agents, look.
+ * password and 2FA, who has access, AI agents, look, about Kontext.
  */
 import { Link } from "@tanstack/react-router";
 import {
@@ -15,6 +15,7 @@ import {
   Globe,
   Handshake,
   Inbox,
+  Info,
   KeyRound,
   ListFilter,
   LockKeyhole,
@@ -71,6 +72,7 @@ import type { settingsSections } from "@/features/settings/sections";
 import { SnippetsSection } from "@/features/snippets/snippets-section";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
+import { AboutSection } from "./about-section";
 import { AccessSection } from "./access-section";
 import { AppPasswordsCard } from "./app-passwords-card";
 import { AppearanceSection } from "./appearance-section";
@@ -121,6 +123,7 @@ const OWN: Entry[] = [
   { id: "agents", label: m.settings_agents, icon: Bot },
   { id: "appearance", label: m.settings_appearance, icon: Palette },
   { id: "deleted", label: m.deleted_title, icon: ArchiveRestore },
+  { id: "about", label: m.about_title, icon: Info },
 ];
 
 /** The Firmenverwaltung, only for accounts with that right. */
@@ -169,6 +172,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
   agents: () => <AgentsSection />,
   appearance: () => <AppearanceSection />,
   deleted: () => <DeletedItemsSection />,
+  about: () => <AboutSection />,
   employees: () => <EmployeesSection />,
   mailboxes: () => <MailboxesSection />,
   "company-signature": () => <CompanySignatureSection />,

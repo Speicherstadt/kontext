@@ -2603,5 +2603,19 @@
   "company_deleted_mailbox": "Shared mailbox",
   "company_restore": "Restore",
   "company_restore_confirm": "Restore {name}? The account is back afterwards, with its mail.",
-  "company_restored": "{name} restored"
+  "company_restored": "{name} restored",
+  "about_title": "About Kontext",
+  "about_version_title": "Version",
+  "about_version_hint": "Include this in every bug report to your administrator or support.",
+  "about_app": "App on this device",
+  "about_server": "Kontext server",
+  "about_stalwart": "Mail server (Stalwart)",
+  "about_edition_community": "Community",
+  "about_edition_enterprise": "Enterprise",
+  "about_unknown": "unknown",
+  "about_project_title": "Kontext",
+  "about_project_hint": "Free software under the AGPL – the source code is open.",
+  "about_website": "Website and guide",
+  "about_source": "Source code on GitHub",
+  "about_license": "License: GNU AGPL 3.0"
 }

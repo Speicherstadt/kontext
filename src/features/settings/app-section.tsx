@@ -1,4 +1,4 @@
-/** Kontext as an app on this device: install it, let it open mailto: links, which version it is. */
+/** Kontext as an app on this device: install it, let it open mailto: links (the version is in "Über Kontext", ./about-section.tsx). */
 import { Check, Download, Mail } from "lucide-react";
 import { useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
@@ -11,7 +11,6 @@ import {
   useInstalled,
   useInstallPrompt,
 } from "@/pwa/install";
-import { VersionRow } from "./version-row";
 
 export const AppSection = () => {
   const installed = useInstalled();
@@ -49,7 +48,6 @@ export const AppSection = () => {
           </span>
         </div>
       ) : null}
-      <VersionRow />
     </SettingsCard>
   );
 };
