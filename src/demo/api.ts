@@ -5,6 +5,7 @@
  * answer 404, as the server does.
  */
 import { DEV_DOMAIN } from "../../dev/config";
+import packageJson from "../../package.json";
 import { deviceOf } from "../../server/access/devices";
 import { type Category, DEFAULT_CATEGORIES } from "../../server/categories/categories";
 import { json } from "./respond";
@@ -69,6 +70,8 @@ const FIXED: Record<string, (store: Store) => unknown> = {
   "GET /api/company/encryption-gateway": () => ({ known: false, enabled: false, keys: [] }),
   // The demo stands in for a Stalwart without a license (server/company/edition.ts).
   "GET /api/company/edition": () => ({ edition: "community" }),
+  // The demo is built from the same package.json as the app it serves (server/app.ts).
+  "GET /api/version": () => ({ version: packageJson.version }),
   "GET /api/snippets": () => ({ snippets: [] }),
   "GET /api/external-accounts": () => [],
   "GET /api/pgp/me": () => ({ key: null }),

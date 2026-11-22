@@ -16,6 +16,7 @@ export const settingsSections = [
   "agents",
   "appearance",
   "deleted",
+  "about",
   "employees",
   "mailboxes",
   "company-signature",

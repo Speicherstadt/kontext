@@ -109,8 +109,11 @@ Kontext E-Mail-Links öffnen soll. Der Knopf erscheint nur in Browsern, die das 
 
 ## Version und Updates
 
-*Einstellungen → Darstellung → App auf diesem Gerät* zeigt, welche Version auf dem Gerät läuft
-(„Kontext 0.1.6“). Läuft auf dem Server schon eine neuere, steht sie darunter. Eine neue Version
+*Einstellungen → Über Kontext* zeigt, welche Version auf dem Gerät läuft, welche auf dem
+Kontext-Server und ob Stalwart als Community oder Enterprise läuft; dazu Webseite, Quellcode und
+Lizenz. Läuft auf dem Server schon eine neuere, steht darunter ein Hinweis. Die Version steht auch
+klein unten im Konto-Menü (Desktop: das Bild unten in der Leiste links, Handy: „Mehr“, „Kontext
+0.1.6“); ein Klick darauf führt zu *Über Kontext*. Eine neue Version
 meldet sich mit „Eine neue Version von Kontext ist da.“ und übernimmt erst nach „Neu laden“ –
 eine angefangene Mail geht so nicht verloren. Sind alle Fenster zu, startet beim nächsten Öffnen
 ohnehin die neue. Updates des Servers spielt der Betreiber ein

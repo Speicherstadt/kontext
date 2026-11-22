@@ -34,6 +34,7 @@ import { type AppBadges, badgeSum } from "@/lib/notifications";
 import { appTarget, MORE_TARGET } from "@/lib/tour";
 import { m } from "@/paraglide/messages";
 import { AccountAvatar, StorageSummary, storageText, useOwnQuota } from "./account-avatar";
+import { MenuVersion } from "./menu-version";
 
 /** "Einführung" in the menus: the tour again, from the inbox where it points at most. */
 const TourItem = ({ user }: { user: string }) => {
@@ -77,6 +78,8 @@ const UserMenu = () => {
         <MenuItem onSelect={logout}>
           <LogOut size={16} /> {m.logout()}
         </MenuItem>
+        <MenuSeparator />
+        <MenuVersion />
       </MenuContent>
     </MenuRoot>
   );
@@ -326,6 +329,8 @@ const MoreMenu = ({ badges }: { badges: AppBadges }) => {
         <MenuItem onSelect={logout}>
           <LogOut size={16} /> {m.logout()}
         </MenuItem>
+        <MenuSeparator />
+        <MenuVersion />
       </MenuContent>
     </MenuRoot>
   );

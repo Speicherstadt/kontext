@@ -167,7 +167,7 @@ test.describe("Darstellung", () => {
     await page.getByText("Wie das Gerät", { exact: true }).click();
   });
 
-  test("zeigt die Version und sagt, wenn der Server schon weiter ist", async ({
+  test("zeigt die Version unter „Über Kontext“ und sagt, wenn der Server schon weiter ist", async ({
     page,
     request,
   }) => {
@@ -175,15 +175,27 @@ test.describe("Darstellung", () => {
       version: packageJson.version,
     });
     await login(page);
-    await page.goto("/settings?section=appearance");
-    const card = page.locator("section").filter({ hasText: "App auf diesem Gerät" });
-    await expect(card).toContainText(`Kontext ${packageJson.version}`);
+    await page.goto("/settings?section=about");
+    const card = page.locator("section").filter({ hasText: "Version" }).first();
+    await expect(card).toContainText("App auf diesem Gerät");
+    await expect(card).toContainText(packageJson.version);
     await expect(card).not.toContainText("Auf dem Server");
 
     // An update on the server while the device still runs the app it loaded before.
     await page.route("/api/version", (route) => route.fulfill({ json: { version: "99.0.0" } }));
     await page.reload();
     await expect(card).toContainText("Auf dem Server läuft schon 99.0.0.");
+  });
+
+  test("führt aus dem Konto-Menü zu „Über Kontext“", async ({ page }) => {
+    await login(page);
+    await page
+      .getByRole("button", { name: address("jonas") })
+      .first()
+      .click();
+    await page.getByRole("menuitem", { name: `Kontext ${packageJson.version}` }).click();
+    await expect(page).toHaveURL(/section=about/);
+    await expect(page.getByRole("heading", { name: "Über Kontext", level: 2 })).toBeVisible();
   });
 });
 

@@ -2603,5 +2603,19 @@
   "company_deleted_mailbox": "Gemeinsames Postfach",
   "company_restore": "Wiederherstellen",
   "company_restore_confirm": "{name} wiederherstellen? Das Konto ist danach wieder da, mit seinen Mails.",
-  "company_restored": "{name} wiederhergestellt"
+  "company_restored": "{name} wiederhergestellt",
+  "about_title": "Über Kontext",
+  "about_version_title": "Version",
+  "about_version_hint": "Das gehört in jede Fehlermeldung an den Betreiber oder den Support.",
+  "about_app": "App auf diesem Gerät",
+  "about_server": "Kontext-Server",
+  "about_stalwart": "Mailserver (Stalwart)",
+  "about_edition_community": "Community",
+  "about_edition_enterprise": "Enterprise",
+  "about_unknown": "unbekannt",
+  "about_project_title": "Kontext",
+  "about_project_hint": "Freie Software unter der AGPL – der Quellcode ist offen.",
+  "about_website": "Webseite und Anleitung",
+  "about_source": "Quellcode auf GitHub",
+  "about_license": "Lizenz: GNU AGPL 3.0"
 }
