@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useColleagues, usePrincipals } from "@/directory/queries";
 import { getCalendarEvents } from "@/jmap/calendar";
 import { principalName } from "@/jmap/principals";
@@ -46,15 +47,16 @@ export const CalendarList = ({ onManage }: { onManage: () => void }) => {
         <span className="flex-1 text-[12px] font-medium text-muted">
           {m.calendar_my_calendars()}
         </span>
-        <button
-          type="button"
-          aria-label={m.calendar_manage()}
-          title={m.calendar_manage()}
-          onClick={onManage}
-          className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
-        >
-          <Settings2 size={16} />
-        </button>
+        <Tooltip label={m.calendar_manage()}>
+          <button
+            type="button"
+            aria-label={m.calendar_manage()}
+            onClick={onManage}
+            className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
+          >
+            <Settings2 size={16} />
+          </button>
+        </Tooltip>
       </div>
       <Rows calendars={calendars.filter((c) => c.isPersonal)} />
       <TasksToggle />

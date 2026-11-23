@@ -18,6 +18,7 @@ import {
 import { type ReactNode, useState } from "react";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import { useToast } from "@/components/ui/toast";
+import { Tooltip } from "@/components/ui/tooltip";
 import { QUICK_REACTIONS } from "@/lib/chat-threads";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
@@ -54,24 +55,20 @@ export const HoverBar = ({ actions, side }: { actions: MessageActions; side: "st
     >
       {onReact ? <ReactionPicker onPick={onReact} className={barButton} /> : null}
       {onReply ? (
-        <button
-          type="button"
-          aria-label={m.chat_reply()}
-          title={m.chat_reply()}
-          onClick={onReply}
-          className={barButton}
-        >
-          <MessageSquareReply size={16} />
-        </button>
+        <Tooltip label={m.chat_reply()} side="top">
+          <button type="button" aria-label={m.chat_reply()} onClick={onReply} className={barButton}>
+            <MessageSquareReply size={16} />
+          </button>
+        </Tooltip>
       ) : null}
       {more ? (
         <MenuRoot>
-          <MenuTrigger
-            aria-label={m.chat_message_actions()}
-            title={m.chat_message_actions()}
-            className={barButton}
-          >
-            <Ellipsis size={16} />
+          <MenuTrigger asChild>
+            <Tooltip label={m.chat_message_actions()} side="top">
+              <button type="button" aria-label={m.chat_message_actions()} className={barButton}>
+                <Ellipsis size={16} />
+              </button>
+            </Tooltip>
           </MenuTrigger>
           <MenuContent align="end">
             {onMakeTask ? (

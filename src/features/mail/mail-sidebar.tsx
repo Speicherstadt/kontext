@@ -49,7 +49,13 @@ export const MailSidebar = ({ accountId, mailbox, view, query }: Props) => {
         >
           <ChevronLeft size={20} />
         </Link>
-        <Button asChild variant="primary" className="h-9 flex-1">
+        <Button
+          asChild
+          variant="primary"
+          className="h-9 flex-1"
+          title={m.mail_compose()}
+          shortcut="compose"
+        >
           <Link
             data-tour="compose"
             to="/mail/$accountId/$mailboxId"

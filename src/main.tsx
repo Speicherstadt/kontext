@@ -6,6 +6,7 @@ import { StrictMode, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import { AuthProvider, createAppClient, hasSession } from "@/auth/auth";
 import { ToastProvider } from "@/components/ui/toast";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { signOutFrame } from "@/features/documents/frame-store";
 import type { JmapClient } from "@/jmap/client";
 import { parseSearch, stringifySearch } from "@/lib/search-params";
@@ -77,7 +78,9 @@ const App = () => {
     >
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
-          <RouterProvider router={router} />
+          <TooltipProvider>
+            <RouterProvider router={router} />
+          </TooltipProvider>
         </ToastProvider>
       </QueryClientProvider>
     </AuthProvider>

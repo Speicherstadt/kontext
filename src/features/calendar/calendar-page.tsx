@@ -237,6 +237,7 @@ export const CalendarPage = ({ search }: { search: Search }) => {
         size="iconSm"
         aria-label={m.calendar_print()}
         title={m.calendar_print()}
+        shortcut="print"
         onClick={print}
         className="hidden md:inline-flex"
       >
@@ -258,7 +259,7 @@ export const CalendarPage = ({ search }: { search: Search }) => {
             <ChevronLeft size={16} />
           </Link>
         </Button>
-        <Button asChild size="sm">
+        <Button asChild size="sm" title={m.calendar_today()} shortcut="today">
           <Link to="/calendar" search={(prev) => ({ ...prev, date: undefined })}>
             {m.calendar_today()}
           </Link>
@@ -319,7 +320,13 @@ export const CalendarPage = ({ search }: { search: Search }) => {
   return (
     <>
       <aside className="hidden h-full w-sidebar shrink-0 flex-col gap-6 border-r border-border bg-side p-4 lg:flex">
-        <Button asChild variant="primary" className="h-9">
+        <Button
+          asChild
+          variant="primary"
+          className="h-9"
+          title={m.calendar_new()}
+          shortcut="newEvent"
+        >
           <Link
             to="/calendar"
             search={(prev) => ({ ...prev, event: "new", start: `${selected}T09:00` })}

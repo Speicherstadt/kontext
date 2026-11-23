@@ -9,6 +9,7 @@ import { FileUp } from "lucide-react";
 import { type DragEvent, useRef, useState } from "react";
 import { useClient } from "@/auth/auth";
 import { useToast } from "@/components/ui/toast";
+import { Tooltip } from "@/components/ui/tooltip";
 import { type EmlFailure, type EmlFile, importEmlFiles, importMbox } from "@/jmap/eml-import";
 import type { Mailbox } from "@/jmap/types";
 import { acceptsImport, checkFile, type FileProblem, receivedAtOf } from "@/lib/eml-import";
@@ -147,15 +148,16 @@ export const EmlImportButton = ({
   if (!acceptsImport(mailbox)) return null;
   return (
     <>
-      <button
-        type="button"
-        aria-label={m.mail_import_eml()}
-        title={m.mail_import_eml()}
-        onClick={() => input.current?.click()}
-        className="flex size-8 shrink-0 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
-      >
-        <FileUp size={16} aria-hidden="true" />
-      </button>
+      <Tooltip label={m.mail_import_eml()}>
+        <button
+          type="button"
+          aria-label={m.mail_import_eml()}
+          onClick={() => input.current?.click()}
+          className="flex size-8 shrink-0 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
+        >
+          <FileUp size={16} aria-hidden="true" />
+        </button>
+      </Tooltip>
       <input
         ref={input}
         type="file"

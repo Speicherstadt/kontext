@@ -5,6 +5,7 @@
 import { Link } from "@tanstack/react-router";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
+import { Tooltip } from "@/components/ui/tooltip";
 import { type Category, COLOR_STYLES, categorySearch } from "@/lib/categories";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
@@ -31,15 +32,16 @@ export const CategoryNav = ({
     <nav aria-label={m.categories_title()} className="flex flex-col gap-px">
       <div className="flex items-center pr-1 pb-1.5 pl-2.5">
         <span className="flex-1 text-[12px] font-medium text-muted">{m.categories_title()}</span>
-        <button
-          type="button"
-          aria-label={m.categories_edit()}
-          title={m.categories_edit()}
-          onClick={() => setEditing(true)}
-          className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
-        >
-          <Pencil size={14} />
-        </button>
+        <Tooltip label={m.categories_edit()}>
+          <button
+            type="button"
+            aria-label={m.categories_edit()}
+            onClick={() => setEditing(true)}
+            className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
+          >
+            <Pencil size={14} />
+          </button>
+        </Tooltip>
       </div>
       {categories.map((category) => (
         <Link

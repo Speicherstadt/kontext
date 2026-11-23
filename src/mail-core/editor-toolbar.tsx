@@ -19,6 +19,7 @@ import {
   Underline,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import { FormatMenus } from "@/mail-core/format-menus";
 import { m } from "@/paraglide/messages";
@@ -127,21 +128,21 @@ export const EditorToolbar = ({ editor, extra }: { editor: Editor; extra?: React
             const on = active[index++] ?? false;
             const Icon = tool.icon;
             return (
-              <button
-                key={tool.label}
-                type="button"
-                title={tool.label}
-                aria-label={tool.label}
-                aria-pressed={tool.active ? on : undefined}
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => tool.run(editor)}
-                className={cn(
-                  "flex size-8 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg",
-                  on && "bg-subtle text-fg",
-                )}
-              >
-                <Icon size={16} />
-              </button>
+              <Tooltip key={tool.label} label={tool.label}>
+                <button
+                  type="button"
+                  aria-label={tool.label}
+                  aria-pressed={tool.active ? on : undefined}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => tool.run(editor)}
+                  className={cn(
+                    "flex size-8 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg",
+                    on && "bg-subtle text-fg",
+                  )}
+                >
+                  <Icon size={16} />
+                </button>
+              </Tooltip>
             );
           })}
         </div>

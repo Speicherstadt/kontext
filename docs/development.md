@@ -293,6 +293,10 @@ hat. Darum:
   Kopien dann anders, fast die ganze Suite landet in jedem von drei Teilen auf einem Server, und
   die Tests treffen dort aufeinander, wie sie es bei einem Pull Request nie tun. Lokal geht das mit
   `bun run e2e --repeat-each=3`, auf einem Branch mit **Actions → CI → Run workflow** und „repeat“.
+- **Hinweise nicht über `title` suchen.** Knöpfe zeigen ihren Namen als Tooltip
+  (`src/components/ui/tooltip.tsx`), nicht als `title`; Tests finden sie über Rolle und Namen
+  (`getByRole("button", { name })`), den Hinweis selbst nach einem `hover()` über
+  `getByRole("tooltip")`.
 - **Listen zeigen nur, was auf den Bildschirm passt.** Die Mailliste zeichnet nur die sichtbaren
   Zeilen. Eine alte Mail aus den Testdaten steht unter allem, was andere Tests vorher geschrieben
   haben; ein Test, der sie unter vielen Treffern sucht, sortiert „Älteste zuerst“.

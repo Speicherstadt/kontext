@@ -7,6 +7,7 @@ import * as Primitive from "@radix-ui/react-select";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Check, ChevronDown } from "lucide-react";
 import { type ReactNode, useId } from "react";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 
 export type SelectOption<T extends string = string> = {
@@ -67,6 +68,7 @@ type SelectProps<T extends string> = VariantProps<typeof triggerVariants> & {
   id?: string;
   name?: string;
   "aria-label"?: string;
+  /** Shown as the tooltip; the name stays the aria-label. */
   title?: string;
   disabled?: boolean;
   required?: boolean;
@@ -148,6 +150,7 @@ export const Select = <T extends string>({
   disabled,
   required,
   name,
+  title,
   ...trigger
 }: SelectProps<T>) => {
   const chosen = optionsOf(options).find((option) => option.value === value);
@@ -162,13 +165,18 @@ export const Select = <T extends string>({
       required={required}
       name={name}
     >
-      <Primitive.Trigger className={cn(triggerVariants({ variant, size }), className)} {...trigger}>
-        <Primitive.Value placeholder={chosen?.label ?? placeholder}>
-          {chosen ? <Chosen option={chosen} showHint={showHint} /> : null}
-        </Primitive.Value>
-        <Primitive.Icon className="ml-auto flex shrink-0 text-muted">
-          <ChevronDown size={16} />
-        </Primitive.Icon>
+      {/* The tooltip inside the trigger, so the select's state is the one on the button. */}
+      <Primitive.Trigger asChild {...trigger}>
+        <Tooltip label={title} disabled={disabled}>
+          <button type="button" className={cn(triggerVariants({ variant, size }), className)}>
+            <Primitive.Value placeholder={chosen?.label ?? placeholder}>
+              {chosen ? <Chosen option={chosen} showHint={showHint} /> : null}
+            </Primitive.Value>
+            <Primitive.Icon className="ml-auto flex shrink-0 text-muted">
+              <ChevronDown size={16} />
+            </Primitive.Icon>
+          </button>
+        </Tooltip>
       </Primitive.Trigger>
       <Primitive.Portal>
         <Primitive.Content

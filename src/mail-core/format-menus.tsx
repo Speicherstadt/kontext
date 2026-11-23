@@ -7,6 +7,7 @@ import { useEditorState } from "@tiptap/react";
 import { ALargeSmall, Baseline, Highlighter, type LucideIcon, Table2 } from "lucide-react";
 import type { ReactNode } from "react";
 import { MenuContent, MenuItem, MenuRoot, MenuSeparator, MenuTrigger } from "@/components/ui/menu";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import { FONT_SIZES, HIGHLIGHTS, TEXT_COLORS } from "@/mail-core/rich-text";
 import { m } from "@/paraglide/messages";
@@ -24,18 +25,19 @@ const FormatMenu = ({
 }) => (
   <MenuRoot modal={false}>
     <MenuTrigger asChild>
-      <button
-        type="button"
-        title={label}
-        aria-label={label}
-        onMouseDown={(event) => event.preventDefault()}
-        className={cn(
-          "flex size-8 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg",
-          on && "bg-subtle text-fg",
-        )}
-      >
-        <Icon size={16} />
-      </button>
+      <Tooltip label={label}>
+        <button
+          type="button"
+          aria-label={label}
+          onMouseDown={(event) => event.preventDefault()}
+          className={cn(
+            "flex size-8 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg",
+            on && "bg-subtle text-fg",
+          )}
+        >
+          <Icon size={16} />
+        </button>
+      </Tooltip>
     </MenuTrigger>
     {/* Focus goes back to the text, so the choice applies where the cursor was. */}
     <MenuContent align="start" onCloseAutoFocus={(event) => event.preventDefault()}>

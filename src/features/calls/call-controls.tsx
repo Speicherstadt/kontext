@@ -11,6 +11,7 @@ import {
   Video,
   VideoOff,
 } from "lucide-react";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
 
@@ -31,20 +32,21 @@ const Toggle = ({
   // The label says what a press does: "Mikrofon aus" while it is on.
   const { icon: Icon, label } = enabled ? off : on;
   return (
-    <button
-      type="button"
-      aria-label={label}
-      title={label}
-      aria-pressed={enabled}
-      disabled={pending}
-      onClick={() => void toggle()}
-      className={cn(
-        "flex size-11 items-center justify-center rounded-full transition-colors disabled:opacity-50",
-        enabled ? "bg-subtle text-fg hover:bg-hover" : "bg-fg text-bg hover:opacity-90",
-      )}
-    >
-      <Icon size={20} />
-    </button>
+    <Tooltip label={label} side="top">
+      <button
+        type="button"
+        aria-label={label}
+        aria-pressed={enabled}
+        disabled={pending}
+        onClick={() => void toggle()}
+        className={cn(
+          "flex size-11 items-center justify-center rounded-full transition-colors disabled:opacity-50",
+          enabled ? "bg-subtle text-fg hover:bg-hover" : "bg-fg text-bg hover:opacity-90",
+        )}
+      >
+        <Icon size={20} />
+      </button>
+    </Tooltip>
   );
 };
 
@@ -81,14 +83,15 @@ export const CallControls = ({
         />
       </span>
     ) : null}
-    <button
-      type="button"
-      aria-label={m.call_leave()}
-      title={m.call_leave()}
-      onClick={onLeave}
-      className="flex size-11 items-center justify-center rounded-full bg-danger text-white hover:opacity-90"
-    >
-      <PhoneOff size={20} />
-    </button>
+    <Tooltip label={m.call_leave()} side="top">
+      <button
+        type="button"
+        aria-label={m.call_leave()}
+        onClick={onLeave}
+        className="flex size-11 items-center justify-center rounded-full bg-danger text-white hover:opacity-90"
+      >
+        <PhoneOff size={20} />
+      </button>
+    </Tooltip>
   </div>
 );

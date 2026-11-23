@@ -13,6 +13,7 @@ import {
 } from "@/company-core/api";
 import { useCompanyChange } from "@/company-core/queries";
 import { useToast } from "@/components/ui/toast";
+import { Tooltip } from "@/components/ui/tooltip";
 import { LOCALE } from "@/lib/locale";
 import { bytesToBase64 } from "@/lib/secure";
 import { m } from "@/paraglide/messages";
@@ -53,15 +54,16 @@ const Row = ({ authority, onRemove }: { authority: SmimeAuthority; onRemove: () 
         SHA-256 {authority.fingerprint}
       </span>
     </div>
-    <button
-      type="button"
-      aria-label={m.company_smime_remove({ name: authority.subject })}
-      title={m.company_smime_remove({ name: authority.subject })}
-      onClick={onRemove}
-      className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-hover hover:text-danger"
-    >
-      <Trash2 size={16} />
-    </button>
+    <Tooltip label={m.company_smime_remove({ name: authority.subject })}>
+      <button
+        type="button"
+        aria-label={m.company_smime_remove({ name: authority.subject })}
+        onClick={onRemove}
+        className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-hover hover:text-danger"
+      >
+        <Trash2 size={16} />
+      </button>
+    </Tooltip>
   </li>
 );
 

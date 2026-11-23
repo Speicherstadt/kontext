@@ -59,6 +59,7 @@ export const VoiceRecorderBar = ({
         size="icon"
         aria-label={m.chat_voice_discard()}
         title={m.chat_voice_discard()}
+        tooltipSide="top"
         disabled={sending}
         onClick={onDiscard}
       >

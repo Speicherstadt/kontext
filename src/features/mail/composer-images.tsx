@@ -8,6 +8,7 @@
 import type { Editor } from "@tiptap/react";
 import { ImagePlus } from "lucide-react";
 import { useRef, useState } from "react";
+import { Tooltip } from "@/components/ui/tooltip";
 import type { OutgoingAttachment, OutgoingImage } from "@/jmap/mail";
 import { newCid, sendableHtml } from "@/lib/inline-images";
 import { imageUrl } from "@/lib/safe-blob";
@@ -81,16 +82,17 @@ export const InsertImageButton = ({ onFiles }: { onFiles: (files: File[]) => voi
   const input = useRef<HTMLInputElement>(null);
   return (
     <>
-      <button
-        type="button"
-        title={m.mail_insert_image()}
-        aria-label={m.mail_insert_image()}
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() => input.current?.click()}
-        className="flex size-8 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
-      >
-        <ImagePlus size={16} />
-      </button>
+      <Tooltip label={m.mail_insert_image()} side="top">
+        <button
+          type="button"
+          aria-label={m.mail_insert_image()}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => input.current?.click()}
+          className="flex size-8 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
+        >
+          <ImagePlus size={16} />
+        </button>
+      </Tooltip>
       <input
         ref={input}
         type="file"

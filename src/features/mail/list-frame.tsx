@@ -165,7 +165,14 @@ const PhoneBar = ({ accountLabel }: { accountLabel: string }) => (
       <Menu size={14} />
       <span className="max-w-[200px] truncate">{accountLabel}</span>
     </Link>
-    <Button asChild variant="primary" size="iconSm" aria-label={m.mail_compose()}>
+    <Button
+      asChild
+      variant="primary"
+      size="iconSm"
+      aria-label={m.mail_compose()}
+      title={m.mail_compose()}
+      shortcut="compose"
+    >
       <Link to="." search={{ compose: "new" }} data-tour="compose">
         <SquarePen size={16} />
       </Link>
