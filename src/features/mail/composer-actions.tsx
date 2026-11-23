@@ -158,7 +158,20 @@ const MoreMenu = ({ toggles, onSaveDraft }: { toggles: Toggle[]; onSaveDraft: ()
   );
 };
 
-/** Attach and the switches on the left; the autosave note, discard, save as draft and send on the right. */
+const DiscardButton = ({ onDiscard }: { onDiscard: () => void }) => (
+  <Button
+    variant="ghost"
+    size="icon"
+    aria-label={m.mail_discard()}
+    title={m.mail_discard()}
+    tooltipSide="top"
+    onClick={onDiscard}
+  >
+    <Trash2 size={16} />
+  </Button>
+);
+
+/** Discard, attach and the switches on the left; the autosave note, save as draft and send on the right. */
 export const ComposerActions = (props: Props) => {
   const {
     sending,
@@ -189,6 +202,8 @@ export const ComposerActions = (props: Props) => {
           hidden
           onChange={(e) => onAttach(e.target.files)}
         />
+        {/* Discarding at the far left, away from sending at the far right. */}
+        <DiscardButton onDiscard={onDiscard} />
         <Button
           variant="ghost"
           size="icon"
@@ -238,16 +253,6 @@ export const ComposerActions = (props: Props) => {
             })}
           </span>
         ) : null}
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={m.mail_discard()}
-          title={m.mail_discard()}
-          tooltipSide="top"
-          onClick={onDiscard}
-        >
-          <Trash2 size={16} />
-        </Button>
         <Button variant="ghost" size="sm" className="hidden md:inline-flex" onClick={onSaveDraft}>
           {m.mail_save_draft()}
         </Button>

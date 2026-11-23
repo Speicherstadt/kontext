@@ -143,7 +143,7 @@ const ComposerText = ({ c }: { c: Composing }) => {
       ) : null}
       <EditorContent
         editor={editor}
-        className="editor-content min-h-[160px] flex-1 overflow-y-auto"
+        className="editor-content min-h-0 flex-1 overflow-y-auto md:min-h-[160px]"
       />
       <LegalFooterPreview footer={c.legalFooter} />
       <AttachmentList
@@ -207,7 +207,9 @@ export const Composer = (props: ComposerProps) => {
       className="flex h-full min-h-0 flex-col gap-2.5 px-3 pt-2 pb-3 md:px-[18px] md:pt-3.5 md:pb-4"
     >
       <ComposerHeader c={c} mode={props.mode} />
-      <div className="flex min-h-0 flex-1 flex-col rounded-xl border border-border shadow-sm">
+      {/* Clipped so the text never spills over the footer: with the phone keyboard open the
+          editor may get only a few lines (it scrolls inside itself). */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-border shadow-sm">
         <ComposerAddresses c={c} mode={props.mode} />
         <ComposerText c={c} />
       </div>
