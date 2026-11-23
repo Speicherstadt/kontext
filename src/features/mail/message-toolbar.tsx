@@ -47,7 +47,7 @@ const QuickActions = ({
     {mail.archive ? (
       <ToolbarButton
         label={m.mail_archive_action()}
-        shortcut="e"
+        shortcut="archive"
         onClick={mail.archive}
         icon={<Archive size={16} />}
       />
@@ -55,7 +55,7 @@ const QuickActions = ({
     {mail.remove ? (
       <ToolbarButton
         label={m.mail_delete()}
-        shortcut="#"
+        shortcut="delete"
         onClick={mail.remove}
         icon={<Trash2 size={16} />}
       />
@@ -63,7 +63,7 @@ const QuickActions = ({
     {mail.toggleSpam ? (
       <ToolbarButton
         label={mail.inJunk ? m.mail_spam_unmark() : m.mail_spam_mark()}
-        shortcut="!"
+        shortcut="spam"
         onClick={mail.toggleSpam}
         icon={mail.inJunk ? <ShieldCheck size={16} /> : <ShieldAlert size={16} />}
       />
@@ -79,7 +79,7 @@ const QuickActions = ({
     {mail.canFlag ? (
       <ToolbarButton
         label={mail.flagged ? m.mail_unflag() : m.mail_flag()}
-        shortcut="s"
+        shortcut="flag"
         aria-pressed={mail.flagged}
         onClick={mail.toggleFlag}
         icon={<Star size={16} className={mail.flagged ? "fill-warn text-warn" : undefined} />}
@@ -216,7 +216,14 @@ export const Toolbar = ({ accountId, mailbox, email }: Props) => {
         close={close}
         assign={assign}
       />
-      <Button asChild variant="outline" size="sm" className="hidden shrink-0 sm:inline-flex">
+      <Button
+        asChild
+        variant="outline"
+        size="sm"
+        className="hidden shrink-0 sm:inline-flex"
+        title={m.mail_reply()}
+        shortcut="reply"
+      >
         <Link to="." search={(prev) => ({ ...prev, compose: "reply" })}>
           <Reply size={16} /> {m.mail_reply()}
         </Link>

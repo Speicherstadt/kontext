@@ -29,6 +29,7 @@ import { useEffect, useRef, useState } from "react";
 import { useChatNames } from "@/chat-core/use-chat-names";
 import { Avatar } from "@/components/ui/avatar";
 import { useToast } from "@/components/ui/toast";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useMe } from "@/directory/queries";
 import { holdMicrophone } from "@/lib/audio-session";
 import { callDuration } from "@/lib/calls";
@@ -140,57 +141,62 @@ const Controls = ({ call }: { call: PhoneCall }) => {
         </button>
       )}
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          aria-label={mic.enabled ? m.call_mic_off() : m.call_mic_on()}
-          title={mic.enabled ? m.call_mic_off() : m.call_mic_on()}
-          aria-pressed={mic.enabled}
-          onClick={() => void mic.toggle()}
-          className={roundButton(mic.enabled)}
-        >
-          {mic.enabled ? <Mic size={20} /> : <MicOff size={20} />}
-        </button>
-        <button
-          type="button"
-          aria-label={m.phone_keypad()}
-          title={m.phone_keypad()}
-          aria-pressed={keypad}
-          onClick={() => setKeypad((open) => !open)}
-          className={roundButton(true)}
-        >
-          <Grid3x3 size={20} />
-        </button>
-        <button
-          type="button"
-          aria-label={call.held ? m.phone_resume() : m.phone_hold()}
-          title={call.held ? m.phone_resume() : m.phone_hold()}
-          aria-pressed={call.held}
-          disabled={call.state !== "talking"}
-          onClick={hold}
-          className={cn(roundButton(!call.held), "disabled:opacity-40")}
-        >
-          {call.held ? <Play size={20} /> : <Pause size={20} />}
-        </button>
-        <button
-          type="button"
-          aria-label={m.phone_transfer()}
-          title={m.phone_transfer()}
-          aria-pressed={transfer}
-          disabled={call.state !== "talking"}
-          onClick={() => setTransfer((open) => !open)}
-          className={cn(roundButton(true), "disabled:opacity-40")}
-        >
-          <ArrowRightLeft size={20} />
-        </button>
-        <button
-          type="button"
-          aria-label={othersHere ? m.phone_leave_call() : m.call_leave()}
-          title={othersHere ? m.phone_leave_call() : m.call_leave()}
-          onClick={hangup}
-          className="flex size-12 items-center justify-center rounded-full bg-danger text-white hover:opacity-90"
-        >
-          <PhoneOff size={20} />
-        </button>
+        <Tooltip label={mic.enabled ? m.call_mic_off() : m.call_mic_on()} side="top">
+          <button
+            type="button"
+            aria-label={mic.enabled ? m.call_mic_off() : m.call_mic_on()}
+            aria-pressed={mic.enabled}
+            onClick={() => void mic.toggle()}
+            className={roundButton(mic.enabled)}
+          >
+            {mic.enabled ? <Mic size={20} /> : <MicOff size={20} />}
+          </button>
+        </Tooltip>
+        <Tooltip label={m.phone_keypad()} side="top">
+          <button
+            type="button"
+            aria-label={m.phone_keypad()}
+            aria-pressed={keypad}
+            onClick={() => setKeypad((open) => !open)}
+            className={roundButton(true)}
+          >
+            <Grid3x3 size={20} />
+          </button>
+        </Tooltip>
+        <Tooltip label={call.held ? m.phone_resume() : m.phone_hold()} side="top">
+          <button
+            type="button"
+            aria-label={call.held ? m.phone_resume() : m.phone_hold()}
+            aria-pressed={call.held}
+            disabled={call.state !== "talking"}
+            onClick={hold}
+            className={cn(roundButton(!call.held), "disabled:opacity-40")}
+          >
+            {call.held ? <Play size={20} /> : <Pause size={20} />}
+          </button>
+        </Tooltip>
+        <Tooltip label={m.phone_transfer()} side="top">
+          <button
+            type="button"
+            aria-label={m.phone_transfer()}
+            aria-pressed={transfer}
+            disabled={call.state !== "talking"}
+            onClick={() => setTransfer((open) => !open)}
+            className={cn(roundButton(true), "disabled:opacity-40")}
+          >
+            <ArrowRightLeft size={20} />
+          </button>
+        </Tooltip>
+        <Tooltip label={othersHere ? m.phone_leave_call() : m.call_leave()} side="top">
+          <button
+            type="button"
+            aria-label={othersHere ? m.phone_leave_call() : m.call_leave()}
+            onClick={hangup}
+            className="flex size-12 items-center justify-center rounded-full bg-danger text-white hover:opacity-90"
+          >
+            <PhoneOff size={20} />
+          </button>
+        </Tooltip>
       </div>
     </div>
   );

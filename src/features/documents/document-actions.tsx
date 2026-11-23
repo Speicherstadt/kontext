@@ -129,6 +129,7 @@ export const AttachFromDocuments = ({
         size="icon"
         aria-label={m.documents_attach()}
         title={m.documents_attach()}
+        tooltipSide="top"
         onClick={() => setOpen(true)}
       >
         <FolderOpen size={16} />

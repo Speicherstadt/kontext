@@ -252,17 +252,31 @@ const ReplyButtons = ({ email }: { email: Detail }) => (
       asChild
       variant="outline"
       className="h-10 basis-full justify-start rounded-[10px] font-normal text-muted sm:min-w-[200px] sm:flex-1 sm:basis-auto"
+      title={m.mail_reply()}
+      shortcut="reply"
     >
       <Link to="." search={(prev) => ({ ...prev, compose: "reply" })}>
         {m.mail_reply_to({ name: firstName(email.from?.[0]) })}
       </Link>
     </Button>
-    <Button asChild variant="outline" className="h-10 flex-1 rounded-[10px] sm:flex-none">
+    <Button
+      asChild
+      variant="outline"
+      className="h-10 flex-1 rounded-[10px] sm:flex-none"
+      title={m.mail_reply_all()}
+      shortcut="replyAll"
+    >
       <Link to="." search={(prev) => ({ ...prev, compose: "replyAll" })}>
         {m.mail_reply_all()}
       </Link>
     </Button>
-    <Button asChild variant="outline" className="h-10 flex-1 rounded-[10px] sm:flex-none">
+    <Button
+      asChild
+      variant="outline"
+      className="h-10 flex-1 rounded-[10px] sm:flex-none"
+      title={m.mail_forward()}
+      shortcut="forward"
+    >
       <Link to="." search={(prev) => ({ ...prev, compose: "forward" })}>
         {m.mail_forward()}
       </Link>

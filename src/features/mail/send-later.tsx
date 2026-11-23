@@ -27,6 +27,7 @@ export const SendLater = ({
             size="icon"
             aria-label={m.mail_later()}
             title={m.mail_later()}
+            tooltipSide="top"
             disabled={disabled}
             className="w-8 rounded-l-none border-l border-onprimary/20"
           >

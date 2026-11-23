@@ -6,6 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { CalendarDays, CheckCircle2, Plus, SquareKanban, Sun, User, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { Tooltip } from "@/components/ui/tooltip";
 import type { TasksSearch } from "@/features/tasks/search-params";
 import { cn } from "@/lib/cn";
 import type { TaskView } from "@/lib/tasks";
@@ -68,15 +69,16 @@ export const TaskSidebar = ({
     <nav aria-label={m.tasks_boards()} className="flex flex-col gap-px">
       <div className="flex items-center justify-between pb-1.5 pl-2.5">
         <span className="text-[12px] font-medium text-muted">{m.tasks_boards()}</span>
-        <button
-          type="button"
-          onClick={onNewBoard}
-          aria-label={m.tasks_board_new()}
-          title={m.tasks_board_new()}
-          className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
-        >
-          <Plus size={14} />
-        </button>
+        <Tooltip label={m.tasks_board_new()}>
+          <button
+            type="button"
+            onClick={onNewBoard}
+            aria-label={m.tasks_board_new()}
+            className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
+          >
+            <Plus size={14} />
+          </button>
+        </Tooltip>
       </div>
       {boards.map((board) => {
         const active = search.board === board.id;

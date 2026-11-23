@@ -7,6 +7,7 @@ import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import type { DayTask } from "@/lib/task-context";
 import { m } from "@/paraglide/messages";
@@ -72,27 +73,28 @@ export const TaskChip = ({
     >
       {/* The ring is small in the grids; the button around it is larger to hit, so a click
           just beside it ticks off rather than opens the task. */}
-      <button
-        type="button"
-        onClick={() => void complete()}
-        aria-label={m.tasks_toggle_done({ title: task.title })}
-        title={m.tasks_complete()}
-        className={cn(
-          "group/done flex shrink-0 items-center justify-center",
-          size === "sm" ? "-mx-1.5 -my-1 px-1.5 py-1" : "-m-2 p-2",
-          touch && "max-md:my-0 max-md:self-stretch max-md:py-0",
-        )}
-      >
-        <span
+      <Tooltip label={m.tasks_complete()}>
+        <button
+          type="button"
+          onClick={() => void complete()}
+          aria-label={m.tasks_toggle_done({ title: task.title })}
           className={cn(
-            "flex items-center justify-center rounded-full border-[1.5px] text-transparent group-hover/done:border-ok group-hover/done:bg-ok/10 group-hover/done:text-ok",
-            size === "sm" ? "size-3.5" : "size-[18px]",
-            overdue ? "border-danger" : "border-muted",
+            "group/done flex shrink-0 items-center justify-center",
+            size === "sm" ? "-mx-1.5 -my-1 px-1.5 py-1" : "-m-2 p-2",
+            touch && "max-md:my-0 max-md:self-stretch max-md:py-0",
           )}
         >
-          <Check size={size === "sm" ? 10 : 12} />
-        </span>
-      </button>
+          <span
+            className={cn(
+              "flex items-center justify-center rounded-full border-[1.5px] text-transparent group-hover/done:border-ok group-hover/done:bg-ok/10 group-hover/done:text-ok",
+              size === "sm" ? "size-3.5" : "size-[18px]",
+              overdue ? "border-danger" : "border-muted",
+            )}
+          >
+            <Check size={size === "sm" ? 10 : 12} />
+          </span>
+        </button>
+      </Tooltip>
       <Link
         to="/tasks"
         search={{ task: task.id }}

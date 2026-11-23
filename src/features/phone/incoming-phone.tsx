@@ -13,6 +13,7 @@ import { useChatNames } from "@/chat-core/use-chat-names";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useMe } from "@/directory/queries";
 import { useCallStore } from "@/features/calls/call-store";
 import { startRinging } from "@/features/calls/ringtone";
@@ -104,12 +105,16 @@ const Ringing = ({
                   .join(" · ")}
               </span>
             </div>
-            <DialogPrimitive.Close
-              aria-label={m.phone_dismiss()}
-              title={m.phone_dismiss()}
-              className="flex size-8 items-center justify-center rounded-lg text-muted hover:bg-hover hover:text-fg"
-            >
-              <X size={16} />
+            <DialogPrimitive.Close asChild>
+              <Tooltip label={m.phone_dismiss()}>
+                <button
+                  type="button"
+                  aria-label={m.phone_dismiss()}
+                  className="flex size-8 items-center justify-center rounded-lg text-muted hover:bg-hover hover:text-fg"
+                >
+                  <X size={16} />
+                </button>
+              </Tooltip>
             </DialogPrimitive.Close>
           </div>
           {lastMail || nextEvent ? (

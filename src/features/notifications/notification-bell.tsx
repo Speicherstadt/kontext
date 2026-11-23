@@ -10,6 +10,7 @@ import { Link } from "@tanstack/react-router";
 import { Bell, CalendarCheck, CalendarDays, CheckCheck, ListChecks } from "lucide-react";
 import { useState } from "react";
 import { Avatar } from "@/components/ui/avatar";
+import { Tooltip } from "@/components/ui/tooltip";
 import { usePeople } from "@/directory/queries";
 import { cn } from "@/lib/cn";
 import { displayName, listDate } from "@/lib/format";
@@ -139,14 +140,18 @@ export const NotificationBell = ({ className }: { className: string }) => {
         );
       }}
     >
-      <Popover.Trigger aria-label={label} title={label} className={cn(className, "relative")}>
-        <Bell size={20} />
-        {unseen > 0 ? (
-          <span
-            aria-hidden="true"
-            className="absolute top-2 right-2 size-2 rounded-full bg-accent ring-2 ring-side"
-          />
-        ) : null}
+      <Popover.Trigger asChild>
+        <Tooltip label={label} side="right">
+          <button type="button" aria-label={label} className={cn(className, "relative")}>
+            <Bell size={20} />
+            {unseen > 0 ? (
+              <span
+                aria-hidden="true"
+                className="absolute top-2 right-2 size-2 rounded-full bg-accent ring-2 ring-side"
+              />
+            ) : null}
+          </button>
+        </Tooltip>
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content

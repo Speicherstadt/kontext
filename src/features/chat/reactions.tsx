@@ -6,6 +6,7 @@
 import * as Popover from "@radix-ui/react-popover";
 import { Plus, SmilePlus } from "lucide-react";
 import { useState } from "react";
+import { Tooltip } from "@/components/ui/tooltip";
 import type { Message } from "@/lib/chat";
 import { QUICK_REACTIONS, reactionNames } from "@/lib/chat-threads";
 import { cn } from "@/lib/cn";
@@ -33,8 +34,12 @@ export const ReactionPicker = ({
         setAll(false);
       }}
     >
-      <Popover.Trigger aria-label={m.chat_react()} title={m.chat_react()} className={className}>
-        <SmilePlus size={16} />
+      <Popover.Trigger asChild>
+        <Tooltip label={m.chat_react()} side="top">
+          <button type="button" aria-label={m.chat_react()} className={className}>
+            <SmilePlus size={16} />
+          </button>
+        </Tooltip>
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
@@ -63,15 +68,16 @@ export const ReactionPicker = ({
                   {emoji}
                 </button>
               ))}
-              <button
-                type="button"
-                aria-label={m.emoji_more()}
-                title={m.emoji_more()}
-                onClick={() => setAll(true)}
-                className="flex size-9 items-center justify-center rounded-full text-muted hover:bg-hover hover:text-fg"
-              >
-                <Plus size={20} />
-              </button>
+              <Tooltip label={m.emoji_more()} side="top">
+                <button
+                  type="button"
+                  aria-label={m.emoji_more()}
+                  onClick={() => setAll(true)}
+                  className="flex size-9 items-center justify-center rounded-full text-muted hover:bg-hover hover:text-fg"
+                >
+                  <Plus size={20} />
+                </button>
+              </Tooltip>
             </>
           )}
         </Popover.Content>
@@ -98,26 +104,27 @@ export const ReactionBar = ({
         const who = reactionNames(reaction, me, nameOf);
         return (
           <li key={reaction.emoji}>
-            <button
-              type="button"
-              aria-pressed={mine}
-              aria-label={m.chat_reaction_label({
-                emoji: reaction.emoji,
-                count: reaction.members.length,
-                names: who,
-              })}
-              title={`${who}: ${reaction.emoji}`}
-              onClick={() => onReact(reaction.emoji)}
-              className={cn(
-                "flex h-8 items-center gap-1 rounded-full border px-2.5 text-[13px] transition-colors md:h-7 md:px-2",
-                mine
-                  ? "border-accent/60 bg-accent/10 font-medium text-accent-ink"
-                  : "border-border bg-bg text-muted hover:border-muted hover:text-fg",
-              )}
-            >
-              <span className="text-[16px] leading-none">{reaction.emoji}</span>
-              <span className="font-mono text-[12px]">{reaction.members.length}</span>
-            </button>
+            <Tooltip label={`${who}: ${reaction.emoji}`}>
+              <button
+                type="button"
+                aria-pressed={mine}
+                aria-label={m.chat_reaction_label({
+                  emoji: reaction.emoji,
+                  count: reaction.members.length,
+                  names: who,
+                })}
+                onClick={() => onReact(reaction.emoji)}
+                className={cn(
+                  "flex h-8 items-center gap-1 rounded-full border px-2.5 text-[13px] transition-colors md:h-7 md:px-2",
+                  mine
+                    ? "border-accent/60 bg-accent/10 font-medium text-accent-ink"
+                    : "border-border bg-bg text-muted hover:border-muted hover:text-fg",
+                )}
+              >
+                <span className="text-[16px] leading-none">{reaction.emoji}</span>
+                <span className="font-mono text-[12px]">{reaction.members.length}</span>
+              </button>
+            </Tooltip>
           </li>
         );
       })}

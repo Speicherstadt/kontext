@@ -15,6 +15,7 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "@/components/ui/menu";
+import { Tooltip } from "@/components/ui/tooltip";
 import type { EmailAddress } from "@/jmap/types";
 import { textToHtml } from "@/lib/html";
 import { LOCALE } from "@/lib/locale";
@@ -87,13 +88,17 @@ export const SnippetMenu = ({
         />
       ) : null}
       <MenuRoot>
-        <MenuTrigger
-          aria-label={m.snippets_insert()}
-          title={m.snippets_insert()}
-          onMouseDown={(event) => event.preventDefault()}
-          className="flex size-8 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
-        >
-          <TextQuote size={16} />
+        <MenuTrigger asChild>
+          <Tooltip label={m.snippets_insert()}>
+            <button
+              type="button"
+              aria-label={m.snippets_insert()}
+              onMouseDown={(event) => event.preventDefault()}
+              className="flex size-8 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
+            >
+              <TextQuote size={16} />
+            </button>
+          </Tooltip>
         </MenuTrigger>
         <MenuContent
           align="start"

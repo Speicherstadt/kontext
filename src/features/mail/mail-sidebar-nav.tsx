@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { PlaceholderNav } from "@/components/ui/placeholder";
+import { Tooltip } from "@/components/ui/tooltip";
 import type { Mailbox } from "@/jmap/types";
 import { cn } from "@/lib/cn";
 import { mailboxNotice } from "@/lib/mail-accounts";
@@ -143,22 +144,22 @@ export const MailboxesNav = ({
         // The full address, like everywhere else: a bare "info@" means nothing to most people.
         const label = entry.name;
         return (
-          <Link
-            key={entry.id}
-            to="/mail/$accountId/$mailboxId"
-            params={{ accountId: entry.id, mailboxId: "inbox" }}
-            data-tour={entry.kind === "shared" ? "shared" : undefined}
-            {...(inbox ? dropTarget({ accountId: entry.id, mailboxId: inbox.id }, label) : {})}
-            title={mailboxNotice(entry)}
-            className={navClass(!unified && entry.id === accountId)}
-          >
-            {entry.isPersonal ? (
-              <span aria-hidden="true" className="size-2 rounded-full bg-accent" />
-            ) : (
-              <Users size={16} />
-            )}
-            <span className="truncate">{label}</span>
-          </Link>
+          <Tooltip key={entry.id} label={mailboxNotice(entry)} side="right">
+            <Link
+              to="/mail/$accountId/$mailboxId"
+              params={{ accountId: entry.id, mailboxId: "inbox" }}
+              data-tour={entry.kind === "shared" ? "shared" : undefined}
+              {...(inbox ? dropTarget({ accountId: entry.id, mailboxId: inbox.id }, label) : {})}
+              className={navClass(!unified && entry.id === accountId)}
+            >
+              {entry.isPersonal ? (
+                <span aria-hidden="true" className="size-2 rounded-full bg-accent" />
+              ) : (
+                <Users size={16} />
+              )}
+              <span className="truncate">{label}</span>
+            </Link>
+          </Tooltip>
         );
       })}
     </nav>
@@ -233,15 +234,16 @@ export const FolderNav = ({
     <nav aria-label={m.mail_folders()} className="flex flex-col gap-px">
       <div className="flex items-center pr-1 pb-1.5 pl-2.5">
         <span className="flex-1 truncate text-[12px] font-medium text-muted">{heading}</span>
-        <button
-          type="button"
-          aria-label={m.mail_new_folder()}
-          title={m.mail_new_folder()}
-          onClick={onNewFolder}
-          className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
-        >
-          <Plus size={16} />
-        </button>
+        <Tooltip label={m.mail_new_folder()}>
+          <button
+            type="button"
+            aria-label={m.mail_new_folder()}
+            onClick={onNewFolder}
+            className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
+          >
+            <Plus size={16} />
+          </button>
+        </Tooltip>
       </div>
       <ul className="m-0 list-none p-0">
         {tree.map((node) => (

@@ -21,6 +21,7 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "@/components/ui/menu";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useShortcuts } from "@/components/use-shortcuts";
 import { useVisibleHeight } from "@/components/use-visible-height";
 import { useFrameState } from "@/features/documents/frame-store";
@@ -58,12 +59,16 @@ const UserMenu = () => {
   const quota = useOwnQuota();
   return (
     <MenuRoot>
-      <MenuTrigger
-        aria-label={name}
-        title={quota ? storageText(quota) : undefined}
-        className="flex items-center justify-center rounded-full outline-offset-2"
-      >
-        <AccountAvatar name={name} size={30} />
+      <MenuTrigger asChild>
+        <Tooltip label={quota ? storageText(quota) : undefined} side="right">
+          <button
+            type="button"
+            aria-label={name}
+            className="flex items-center justify-center rounded-full outline-offset-2"
+          >
+            <AccountAvatar name={name} size={30} />
+          </button>
+        </Tooltip>
       </MenuTrigger>
       <MenuContent side="right" align="end">
         <MenuLabel>{name}</MenuLabel>
@@ -150,61 +155,64 @@ const Rail = ({ onHelp, bell }: { onHelp: () => void; bell: ReactNode }) => {
       {useNavItems().map(({ to, label, icon: Icon }) => {
         const active = pathname.startsWith(to);
         return (
-          <Link
-            key={to}
-            to={to}
-            data-tour={appTarget(to)}
-            aria-label={railLabel(to, label(), badges, unsaved)}
-            title={label()}
-            aria-current={active ? "page" : undefined}
-            className={cn(
-              "relative flex size-10 items-center justify-center rounded-[10px] hover:bg-hover",
-              active ? "bg-subtle text-fg" : "text-muted",
-            )}
-          >
-            <Icon size={20} />
-            <UnreadBadge count={badges[to] ?? 0} className="top-0.5 right-0.5" />
-            {to === "/documents" && unsaved ? (
-              <span
-                aria-hidden="true"
-                className="absolute top-1.5 right-1.5 size-2 rounded-full bg-accent"
-              />
-            ) : null}
-          </Link>
+          <Tooltip key={to} label={label()} side="right">
+            <Link
+              to={to}
+              data-tour={appTarget(to)}
+              aria-label={railLabel(to, label(), badges, unsaved)}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "relative flex size-10 items-center justify-center rounded-[10px] hover:bg-hover",
+                active ? "bg-subtle text-fg" : "text-muted",
+              )}
+            >
+              <Icon size={20} />
+              <UnreadBadge count={badges[to] ?? 0} className="top-0.5 right-0.5" />
+              {to === "/documents" && unsaved ? (
+                <span
+                  aria-hidden="true"
+                  className="absolute top-1.5 right-1.5 size-2 rounded-full bg-accent"
+                />
+              ) : null}
+            </Link>
+          </Tooltip>
         );
       })}
       {phone ? (
-        <Link
-          to="/phone"
-          aria-label={m.nav_phone()}
-          title={m.nav_phone()}
-          aria-current={pathname.startsWith("/phone") ? "page" : undefined}
-          className={railButton(pathname.startsWith("/phone"))}
-        >
-          <Phone size={20} />
-        </Link>
+        <Tooltip label={m.nav_phone()} side="right">
+          <Link
+            to="/phone"
+            aria-label={m.nav_phone()}
+            aria-current={pathname.startsWith("/phone") ? "page" : undefined}
+            className={railButton(pathname.startsWith("/phone"))}
+          >
+            <Phone size={20} />
+          </Link>
+        </Tooltip>
       ) : null}
       <div className="flex-1" />
       {bell}
-      <button
-        type="button"
-        onClick={onHelp}
-        aria-label={m.shortcuts_open()}
-        title={m.shortcuts_open()}
-        className={railButton(false)}
-      >
-        <Keyboard size={20} />
-      </button>
-      <Link
-        to="/settings"
-        search={{}}
-        aria-label={m.nav_settings()}
-        title={m.nav_settings()}
-        aria-current={pathname.startsWith("/settings") ? "page" : undefined}
-        className={cn("mb-1.5", railButton(pathname.startsWith("/settings")))}
-      >
-        <Settings size={20} />
-      </Link>
+      <Tooltip label={m.shortcuts_open()} shortcut="help" side="right">
+        <button
+          type="button"
+          onClick={onHelp}
+          aria-label={m.shortcuts_open()}
+          className={railButton(false)}
+        >
+          <Keyboard size={20} />
+        </button>
+      </Tooltip>
+      <Tooltip label={m.nav_settings()} side="right">
+        <Link
+          to="/settings"
+          search={{}}
+          aria-label={m.nav_settings()}
+          aria-current={pathname.startsWith("/settings") ? "page" : undefined}
+          className={cn("mb-1.5", railButton(pathname.startsWith("/settings")))}
+        >
+          <Settings size={20} />
+        </Link>
+      </Tooltip>
       <UserMenu />
     </nav>
   );

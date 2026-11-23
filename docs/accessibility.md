@@ -29,6 +29,15 @@ Arbeitsplätze von Beschäftigten mit Behinderung (SGB IX § 164) ist das die Me
   Was sich ziehen lässt, geht auch ohne Maus: Mails über „Verschieben nach …“, Aufgaben über
   ihre Spalte in der Aufgabe, Termine über Datum und Uhrzeit im Termin, Dateien über „Anhängen“.
   Dazu kommen Tastaturkürzel wie in Gmail; `?` zeigt sie ([App, Handy und Konto](app.md)).
+- **Hinweise an Knöpfen:** Knöpfe mit einem Symbol nennen ihren Namen in einem kleinen Hinweis
+  im Look der App (hell und dunkel), nicht im `title` des Browsers. Er erscheint nach einer
+  halben Sekunde über der Maus, an Nachbarknöpfen danach sofort, und ebenso, sobald der Knopf
+  den Fokus über die Tastatur bekommt; Escape oder ein Klick schließt ihn, beim Tippen am Handy
+  erscheint er nicht. Hinter dem Namen stehen die Tasten des Kürzels, etwa „Archivieren“ mit
+  [E] oder „Senden“ mit [Strg] [Enter] (am Mac [⌘]). Vorgelesen wird der Name nur einmal, als
+  Name des Knopfs; der Hinweis fügt höchstens die Tasten hinzu. An einem gesperrten Knopf
+  erscheint kein Hinweis; wo der Grund zählt, steht er sichtbar daneben, etwa warum
+  „Vertraulich senden“ gerade nicht geht (`src/components/ui/tooltip.tsx`).
 - **Am Handy:** Was dort ein langes Drücken öffnet, etwa die Aktionen zu einer Chat-Nachricht,
   erreicht ein Screenreader über einen eigenen, unsichtbaren Knopf. Vergrößern mit zwei Fingern
   ist wie in einer installierten App gesperrt, auch in einer Mail; größere Schrift kommt über die

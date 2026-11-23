@@ -4,6 +4,7 @@
  * here first, so the line shows its text, not the ciphertext.
  */
 import { CornerDownRight } from "lucide-react";
+import { Tooltip } from "@/components/ui/tooltip";
 import type { Message } from "@/lib/chat";
 import { messageSummary } from "@/lib/chat-cards";
 import { m } from "@/paraglide/messages";
@@ -16,15 +17,16 @@ const Summary = ({ parent }: { parent: Message }) => {
 };
 
 export const ThreadNote = ({ parent, onOpen }: { parent?: Message; onOpen: () => void }) => (
-  <button
-    type="button"
-    onClick={onOpen}
-    title={m.chat_open_thread_of()}
-    className="flex max-w-full items-center gap-1.5 text-left text-[12px] text-muted hover:text-fg"
-  >
-    <CornerDownRight size={14} aria-hidden="true" className="shrink-0" />
-    <span className="truncate">
-      {parent ? <Summary parent={parent} /> : m.chat_reply_in_a_thread()}
-    </span>
-  </button>
+  <Tooltip label={m.chat_open_thread_of()}>
+    <button
+      type="button"
+      onClick={onOpen}
+      className="flex max-w-full items-center gap-1.5 text-left text-[12px] text-muted hover:text-fg"
+    >
+      <CornerDownRight size={14} aria-hidden="true" className="shrink-0" />
+      <span className="truncate">
+        {parent ? <Summary parent={parent} /> : m.chat_reply_in_a_thread()}
+      </span>
+    </button>
+  </Tooltip>
 );

@@ -92,3 +92,27 @@ export const SHORTCUTS: { group: ShortcutGroup; keys: string[]; action: Shortcut
   { group: "contacts", keys: ["c"], action: "newContact" },
   { group: "contacts", keys: ["/"], action: "search" },
 ];
+
+/** Apple devices (macOS, iOS, iPadOS) take ⌘ where others take Ctrl ("Strg"). */
+export const isApple = (platform: string): boolean => /Mac|iPhone|iPad|iPod/.test(platform);
+
+/** One part of a key as printed on the keyboard: a letter as its capital, a capital with ⇧. */
+const capsOf = (part: string, apple: boolean, ctrl: string): string[] => {
+  if (part === "Strg") return [apple ? "⌘" : ctrl];
+  if (/^\p{Lu}$/u.test(part)) return ["⇧", part];
+  if (/^\p{Ll}$/u.test(part)) return [part.toUpperCase()];
+  return [part];
+};
+
+/**
+ * The keys of an action's (first) shortcut as caps for a tooltip: "e" is [E], "U" [⇧][U],
+ * "Strg+Enter" [Strg][Enter] or on Apple devices [⌘][Enter]. `ctrl` is the Ctrl key's name in
+ * the app's language.
+ */
+export const shortcutCaps = (
+  action: ShortcutAction,
+  { apple, ctrl }: { apple: boolean; ctrl: string },
+): string[] => {
+  const key = SHORTCUTS.find((shortcut) => shortcut.action === action)?.keys[0];
+  return key ? key.split("+").flatMap((part) => capsOf(part, apple, ctrl)) : [];
+};

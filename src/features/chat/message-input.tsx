@@ -138,6 +138,7 @@ export const MessageInput = ({
       variant="primary"
       aria-label={m.chat_voice_record()}
       title={m.chat_voice_record()}
+      tooltipSide="top"
       onClick={() => void voice.start()}
       className="size-11 rounded-full p-0 md:hidden"
     >
@@ -308,6 +309,7 @@ export const MessageInput = ({
                   size="iconSm"
                   aria-label={m.chat_attach()}
                   title={m.chat_attach()}
+                  tooltipSide="top"
                   className="hidden md:inline-flex"
                   onClick={() => filePicker.current?.click()}
                 >
@@ -319,6 +321,7 @@ export const MessageInput = ({
                     size="iconSm"
                     aria-label={linkTitle}
                     title={linkTitle}
+                    tooltipSide="top"
                     className="hidden md:inline-flex"
                     onClick={() => setLinking(true)}
                   >
@@ -330,6 +333,7 @@ export const MessageInput = ({
                   size="iconSm"
                   aria-label={m.chat_voice_record()}
                   title={m.chat_voice_record()}
+                  tooltipSide="top"
                   className="hidden md:inline-flex"
                   onClick={() => void voice.start()}
                 >

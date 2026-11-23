@@ -1,7 +1,9 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ComponentProps } from "react";
+import { Tooltip, type TooltipSide } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
+import type { ShortcutAction } from "@/lib/shortcuts";
 
 export const buttonVariants = cva(
   "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:shrink-0",
@@ -27,16 +29,40 @@ export const buttonVariants = cva(
   },
 );
 
-type ButtonProps = ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & { asChild?: boolean };
+type ButtonProps = Omit<ComponentProps<"button">, "title"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+    /** Shown as the tooltip (tooltip.tsx), not the browser's; the name stays the aria-label. */
+    title?: string;
+    /** The action whose keys the tooltip shows behind the title. */
+    shortcut?: ShortcutAction;
+    tooltipSide?: TooltipSide;
+  };
 
-export const Button = ({ className, variant, size, asChild, type, ...props }: ButtonProps) => {
+export const Button = ({
+  className,
+  variant,
+  size,
+  asChild,
+  type,
+  title,
+  shortcut,
+  tooltipSide,
+  ...props
+}: ButtonProps) => {
   const Component = asChild ? Slot : "button";
-  return (
+  const button = (
     <Component
       type={asChild ? undefined : (type ?? "button")}
       className={cn(buttonVariants({ variant, size }), className)}
       {...props}
     />
+  );
+  return title ? (
+    <Tooltip label={title} shortcut={shortcut} side={tooltipSide} disabled={props.disabled}>
+      {button}
+    </Tooltip>
+  ) : (
+    button
   );
 };

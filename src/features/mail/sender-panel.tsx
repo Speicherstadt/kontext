@@ -11,6 +11,7 @@ import { useClient } from "@/auth/auth";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useContactMutations, useContacts } from "@/contacts-core/queries";
 import { emailsWithAddress } from "@/jmap/mail";
 import type { EmailDetail } from "@/jmap/types";
@@ -60,13 +61,14 @@ const QuickActions = ({
 }) => (
   <div className={cn("mt-1 grid w-full gap-1.5 [&>*]:px-2", phone ? "grid-cols-3" : "grid-cols-2")}>
     <Button asChild size="sm" variant="outline">
-      <Link
-        to="."
-        search={{ compose: "new", to: formatAddressInput([{ name, email: address }]) }}
-        title={m.contacts_write_mail()}
-      >
-        <Mail size={14} /> {m.mail_person_mail()}
-      </Link>
+      <Tooltip label={m.contacts_write_mail()}>
+        <Link
+          to="."
+          search={{ compose: "new", to: formatAddressInput([{ name, email: address }]) }}
+        >
+          <Mail size={14} /> {m.mail_person_mail()}
+        </Link>
+      </Tooltip>
     </Button>
     <Button asChild size="sm" variant="outline">
       <Link to="/calendar" search={{ event: "new", start: `${dateKey(new Date())}T09:00` }}>
