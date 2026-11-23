@@ -1,8 +1,8 @@
 /** A time picked by hand, for "Später senden" and "Wiedervorlage". */
 import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { DateTimeInput } from "@/components/ui/date-time-input";
 import { Dialog, DialogActions } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { fromLocal, toLocal } from "@/lib/jscalendar";
 import { m } from "@/paraglide/messages";
 
@@ -47,13 +47,12 @@ export const TimeDialog = ({
         }}
       >
         <div className="flex flex-col gap-1.5 text-[12px] text-muted">
-          <label htmlFor={whenId}>{label}</label>
-          <Input
-            id={whenId}
-            type="datetime-local"
+          <span id={whenId}>{label}</span>
+          <DateTimeInput
+            aria-labelledby={whenId}
             value={value}
-            min={toLocal(now).slice(0, 16)}
-            onChange={(event) => setValue(event.target.value)}
+            min={toLocal(now).slice(0, 10)}
+            onChange={setValue}
           />
         </div>
         {chosen && !ok ? <p className="m-0 text-[12px] text-danger">{invalid}</p> : null}
