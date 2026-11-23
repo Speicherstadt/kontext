@@ -64,6 +64,8 @@ const FIXED: Record<string, (store: Store) => unknown> = {
   "GET /api/company/external-hint": () => ({ enabled: true, partners: [], domains: [DEV_DOMAIN] }),
   "GET /api/company/legal-footer": () => ({ text: "" }),
   "GET /api/company/vacation-templates": () => ({ templates: [] }),
+  // Every shared mailbox keeps its sent mails itself, the default (src/lib/sent-copy.ts).
+  "GET /api/company/sent-copies": () => ({ copies: {} }),
   // The demo's search has no index to build (server/company/search-index.ts).
   "GET /api/company/search-index": () => ({ pending: 0, failed: false, known: true }),
   // Stalwart's encryption gateway needs the real server (server/company/encryption-gateway.ts).

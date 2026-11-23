@@ -23,6 +23,7 @@ import { migrationRoutes } from "./migration-routes";
 import { phishingReportRoutes, readPhishingReport } from "./phishing-report";
 import { searchIndexStatus } from "./search-index";
 import { checkDomain, httpsCheck } from "./security";
+import { readSentCopies } from "./sent-copies";
 import { serverHealthRoutes } from "./server-health-routes";
 import { signatureRoutes } from "./signature-routes";
 import { authorityRoutes } from "./smime-authorities";
@@ -42,6 +43,7 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
   const vacationTemplates = readVacationTemplates(deps);
   const phishingReport = readPhishingReport(deps);
   const mailboxMembers = readMailboxMembers(deps);
+  const sentCopies = readSentCopies(deps);
   const edition = readEdition(deps);
 
   /** Whether to show the Firmenverwaltung at all; asked by every signed-in user. */
@@ -83,6 +85,12 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
   app.get("/mailbox-members", async (c) => {
     const members = await mailboxMembers(c.req.raw);
     return members ? c.json({ members }) : c.json({ error: "Nicht angemeldet" }, 401);
+  });
+
+  /** „Gesendete Mails ablegen“: every signed-in user's composer sends and files with it. */
+  app.get("/sent-copies", async (c) => {
+    const copies = await sentCopies(c.req.raw);
+    return copies ? c.json(copies) : c.json({ error: "Nicht angemeldet" }, 401);
   });
 
   /** Stalwart Community or Enterprise: every signed-in user's app shows what the license allows. */

@@ -89,13 +89,16 @@ export const useMailboxes = (accountId: string) => {
  * The addresses one may send from in an account. Only owners (the user, members of a shared
  * mailbox) may read them; someone a mailbox was merely shared with gets "forbidden" at once.
  */
+export const identitiesQuery = (client: ReturnType<typeof useClient>, accountId: string) => ({
+  queryKey: [accountId, "identities"],
+  queryFn: () => listIdentities(client, accountId),
+  retry: (count: number, error: Error) =>
+    !(isJmapError(error) && error.type === "forbidden") && count < 3,
+});
+
 export const useIdentities = (accountId: string) => {
   const client = useClient();
-  return useQuery({
-    queryKey: [accountId, "identities"],
-    queryFn: () => listIdentities(client, accountId),
-    retry: (count, error) => !(isJmapError(error) && error.type === "forbidden") && count < 3,
-  });
+  return useQuery(identitiesQuery(client, accountId));
 };
 
 type ListData = InfiniteData<EmailPage, number>;

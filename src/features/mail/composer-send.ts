@@ -5,17 +5,20 @@ import { externalIdOf, sendThroughExternal } from "@/external-accounts/api";
 import type { JmapClient } from "@/jmap/client";
 import { type Hold, saveDraft, sendEmail } from "@/jmap/mail";
 import { isRefusedError } from "@/jmap/refused";
+import { copySent } from "@/jmap/sent-copy";
 import type { Identity, Mailbox } from "@/jmap/types";
 import { attachmentMention, ownText } from "@/lib/attachment-reminder";
 import type { ComposeMode } from "@/lib/compose";
 import { withLegalFooter } from "@/lib/legal-footer";
 import { holdUntil, sendTimeLabel } from "@/lib/schedule";
+import type { CopyTo } from "@/lib/send-route";
 import type { useExternalQuestion } from "@/mail-core/external-question";
 import { m } from "@/paraglide/messages";
 import type { useLegalFooter } from "../company/legal-footer";
 import type { OutgoingMail } from "./composer-files";
 import { signatureOf } from "./composer-fill";
 import type { ComposerState } from "./composer-state";
+import { settleDraft } from "./draft-place";
 import type { useTakeBack } from "./take-back";
 import type { useEncryptedSend } from "./use-encrypted-send";
 
@@ -33,6 +36,8 @@ export type SendInput = {
   identity: Identity | undefined;
   drafts: Mailbox | undefined;
   sent: Mailbox | undefined;
+  /** Where a copy of the sent mail goes too (lib/send-route.ts). */
+  copyTo: CopyTo | null;
   html: () => string;
   outgoing: () => OutgoingMail;
   released: (mail: OutgoingMail) => Promise<OutgoingMail>;
@@ -59,7 +64,7 @@ const sendExternal = async (
   folders: Folders,
 ) => {
   const emailId = await saveDraft(input.client, mail, folders.draftsId);
-  input.state.draftId.current = emailId;
+  await settleDraft(input, mail.accountId, emailId);
   return (await sendThroughExternal(externalId, { emailId, ...folders })).refused;
 };
 
@@ -94,8 +99,30 @@ const deliver = async (
       : state.sign
         ? await pgp.sendSigned(mail, folders, hold)
         : await sendEmail(input.client, mail, folders, hold);
+  // Sent through a shared mailbox: the draft written in the own account before goes.
+  if (!externalId) await settleDraft(input, mail.accountId, null);
   // Links and other mailboxes go out at once: nothing to take back, nothing held.
-  return { kept: held && !(state.encrypt && pgp.viaLink.length) ? held : null, refused };
+  return {
+    kept: held && !(state.encrypt && pgp.viaLink.length) ? held : null,
+    refused,
+    emailId: held?.emailId ?? null,
+  };
+};
+
+/**
+ * `both`: a copy of the mail sent through a shared mailbox into the own Sent (jmap/sent-copy.ts).
+ * The mail is out (or held) already, so a failed copy only says so.
+ */
+const copyToOwnSent = async (input: SendInput, emailId: string | null) => {
+  const { copyTo, client, sendAccountId, toast } = input;
+  if (!copyTo || !emailId) return;
+  try {
+    await copySent(client, { fromAccountId: sendAccountId, emailId, ...copyTo });
+    void input.queryClient.invalidateQueries({ queryKey: [copyTo.accountId] });
+  } catch (error) {
+    console.warn("Kopie in Gesendet", error);
+    toast.show(m.mail_sent_copy_failed(), "error");
+  }
 };
 
 /** RFC 8621: marks the original as answered; mailboxes shared only for reading may not allow it. */
@@ -197,6 +224,7 @@ export const sendWith = (input: SendInput) => {
         draftsId: drafts.id,
         sentId: sent.id,
       });
+      await copyToOwnSent(input, delivered.emailId);
       await markAnswered(input);
       input.markSaved();
       toastSent(input, { ...delivered, externalId, hold }, later);
@@ -207,7 +235,7 @@ export const sendWith = (input: SendInput) => {
     } catch (error) {
       if (isRefusedError(error)) {
         // Back among the drafts (or, encrypted, only here in the form): the old draft is gone.
-        state.draftId.current = error.draftId;
+        await settleDraft(input, sendAccountId, error.draftId);
         toast.show(m.mail_refused({ reasons: error.message }), "error");
       } else toast.show(m.common_error({ message: (error as Error).message }), "error");
     } finally {

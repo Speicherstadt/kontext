@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import type { OutgoingAttachment } from "@/jmap/mail";
 import type { EmailAddress } from "@/jmap/types";
 import type { ComposeMode } from "@/lib/compose";
+import type { SavedDraft } from "@/lib/send-route";
 
 /** Sender, recipients and subject. */
 const useAddressFields = () => {
@@ -34,7 +35,12 @@ const useAddressFields = () => {
   };
 };
 
-export const useComposerState = (mode: ComposeMode, sourceEmailId: string | undefined) => {
+/** `accountId`: where the mail opened as a draft (mode "draft") lies. */
+export const useComposerState = (
+  mode: ComposeMode,
+  sourceEmailId: string | undefined,
+  accountId: string,
+) => {
   const fields = useAddressFields();
   const [attachments, setAttachments] = useState<OutgoingAttachment[]>([]);
   const [uploading, setUploading] = useState(0);
@@ -48,8 +54,11 @@ export const useComposerState = (mode: ComposeMode, sourceEmailId: string | unde
   // "Anhang vergessen?": the word that asked, and when the mail was to go (now or later).
   const [forgotten, setForgotten] = useState<{ word: string; later?: Date } | null>(null);
   // A ref, not state: a send that waited for a running autosave must replace the draft that
-  // save just wrote, not the one from before it.
-  const draftId = useRef<string | null>(mode === "draft" ? (sourceEmailId ?? null) : null);
+  // save just wrote, not the one from before it. With its account: picking a shared mailbox's
+  // address as the sender moves the draft there (lib/send-route.ts).
+  const savedDraft = useRef<SavedDraft | null>(
+    mode === "draft" && sourceEmailId ? { accountId, id: sourceEmailId } : null,
+  );
   const [threading, setThreading] = useState<{
     inReplyTo: string[] | null;
     references: string[] | null;
@@ -82,7 +91,7 @@ export const useComposerState = (mode: ComposeMode, sourceEmailId: string | unde
     setSending,
     forgotten,
     setForgotten,
-    draftId,
+    savedDraft,
     threading,
     setThreading,
     changes,

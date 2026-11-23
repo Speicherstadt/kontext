@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { type SentCopy, withSentCopy } from "../../src/lib/sent-copy";
 import { type Roles, rolesValue, type StalwartAccount } from "./accounts";
 import type { Mailstore } from "./mailstore";
 import type { Management } from "./management";
@@ -98,6 +99,7 @@ const setup = (
   const idle = { minutes: 0 };
   const vacation = { templates: [] as { title: string; text: string }[] };
   const phishing = { address: "" };
+  const sentCopies: { copies: Record<string, SentCopy> } = { copies: {} };
   const assistant = { setting: null as { apiKey: string; model: string } | null };
   const ended: string[] = [];
   const welcomed: { newcomer: string; people: string[] }[] = [];
@@ -141,6 +143,10 @@ const setup = (
       phishingReport: async () => phishing.address,
       savePhishingReport: async (address) => {
         phishing.address = address;
+      },
+      sentCopies: async () => sentCopies.copies,
+      saveSentCopy: async (accountId, copy) => {
+        sentCopies.copies = withSentCopy(sentCopies.copies, accountId, copy);
       },
       assistant: async () => assistant.setting,
       saveAssistant: async (setting) => {
@@ -205,6 +211,7 @@ const setup = (
     idle,
     vacation,
     phishing,
+    sentCopies,
     assistant,
     send,
     hint,
@@ -448,6 +455,24 @@ describe("Firmenverwaltung", () => {
     // A new description changes nobody's access.
     await send("PATCH", "/mailboxes/g", { description: "Anfragen" });
     expect(changedMailboxes).toEqual(["g"]);
+  });
+
+  it("keeps where a shared mailbox's sent mails go, read by everyone, set by the admin", async () => {
+    const chef = setup("chef@firma.de");
+    expect((await chef.send("PATCH", "/mailboxes/g", { sentCopy: "both" })).status).toBe(200);
+    expect(chef.sentCopies.copies).toEqual({ g: "both" });
+    expect((await chef.send("PATCH", "/mailboxes/g", { sentCopy: "elsewhere" })).status).toBe(400);
+    // The default is not kept.
+    await chef.send("PATCH", "/mailboxes/g", { sentCopy: "group" });
+    expect(chef.sentCopies.copies).toEqual({});
+
+    const anna = setup("anna@firma.de");
+    anna.sentCopies.copies = { g: "sender" };
+    expect(await (await anna.send("GET", "/sent-copies")).json()).toEqual({
+      copies: { g: "sender" },
+    });
+    expect((await anna.send("PATCH", "/mailboxes/g", { sentCopy: "both" })).status).toBe(403);
+    expect((await setup(null).send("GET", "/sent-copies")).status).toBe(401);
   });
 
   it("gives everyone signed in the hint „Extern“ with the company's domains", async () => {

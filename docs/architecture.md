@@ -84,6 +84,36 @@ im Postfach hat (Stalwart gibt Identitäten nur Mitgliedern), antwortet vom eige
 Antwort liegt dann im eigenen Gesendet-Ordner. Beide Stufen setzt die Firmenverwaltung; „Nur
 lesen“ teilt dabei alle vorhandenen Ordner des Postfachs (später angelegte Ordner nicht).
 
+Stalwart führt die Adressen der Gruppen, in denen man Mitglied ist, auch als Identitäten des
+eigenen Kontos. Eine Mail, die im eigenen Postfach als info@ geschrieben wird, schickt Kontext
+trotzdem über das Konto der Gruppe (`src/lib/send-route.ts`): `EmailSubmission/set` liest
+Identität und Mail aus dem Konto der Anfrage, und `onSuccessUpdateEmail` wird zu einem
+`Email/set` im selben Konto (`crates/jmap/src/submission/set.rs`) – Entwürfe und Gesendet von
+info@ erreicht nur eine Einreichung in info@, mit dessen Identität. Mitglieder dürfen das
+(`assert_is_member` in `crates/jmap/src/api/request.rs`). Hochgeladene Dateien gehen mit, denn
+Stalwart prüft den Zugriff auf einen Blob am Anmeldenden, nicht am Konto
+(`crates/jmap/src/blob/download.rs`). Ein Entwurf kann nicht zwischen Konten wandern: Wechselt der
+Absender, schreibt die nächste Speicherung ihn im neuen Konto und löscht danach den alten
+(`src/features/mail/draft-place.ts`). Liefert das Konto der Gruppe keine Identitäten oder fehlen
+ihm Entwürfe oder Gesendet, bleibt die Mail im eigenen Konto.
+
+„Gesendete Mails ablegen“ (`src/lib/sent-copy.ts`) hält der Kontext-Server je Gruppe in
+`company_setting` (Schlüssel `sentCopies`, nur abweichend vom Standard `group`); jeder
+Angemeldete liest es über `GET /api/company/sent-copies`, die Firmenverwaltung setzt es mit
+`PATCH /api/company/mailboxes/:id` (`sentCopy`). Bei `sender` geht eine Mail aus dem eigenen
+Postfach über das eigene Konto und dessen Identität – der Absendername ist dann der der
+Identität, denn „Person (Postfach)“ gehört zu Mails, die im Gesendet des Postfachs liegen. Im
+gemeinsamen Postfach selbst bleibt es beim Konto der Gruppe: wer dort schreibt, arbeitet bewusst
+im Postfach. Bei `both` kopiert die App die Mail gleich nach der Einreichung mit `Email/copy`
+(RFC 8621 §4.7, `crates/jmap/src/email/copy.rs`) in den eigenen Gesendet-Ordner, gelesen und
+mit einem verborgenen Schlüsselwort, das auf die Mail im Postfach zeigt
+(`src/jmap/sent-copy.ts`). Sofort statt erst beim tatsächlichen Versand, weil eine
+zurückgehaltene Mail („Rückgängig“, „Später senden“) schon im Gesendet des Postfachs liegt und
+die App nach Stunden nicht mehr offen sein muss; nimmt man sie zurück, löscht `take-back.ts` die
+Kopie über dieses Schlüsselwort, das Stalwart sofort aus seinem Cache beantwortet (eine Suche
+nach der Message-ID wartet auf den Suchindex). Scheitert die Kopie, ist die Mail trotzdem
+gesendet; die App sagt es nur.
+
 Der Server (Aufgaben, Kategorien, Textbausteine, Chat, DAV) liest die Stufe nicht aus `isReadOnly`
 der Session: Stalwart (0.16 wie 1.0) schickt jedes weitere Konto mit `isReadOnly: false` und `isPersonal:
 false`, auch das einer Kollegin, die nur ein Adressbuch teilt. Mitglied einer Gruppe ist, bei

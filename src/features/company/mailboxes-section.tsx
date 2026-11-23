@@ -1,6 +1,6 @@
 /**
- * Shared mailboxes (Stalwart groups): creating them, their addresses, who belongs to them and the
- * rules that sort their mail.
+ * Shared mailboxes (Stalwart groups): creating them, their addresses, who belongs to them, where
+ * their sent mails are kept and the rules that sort their mail.
  */
 import { Inbox, ListFilter, Plus } from "lucide-react";
 import { type FormEvent, useState } from "react";
@@ -14,11 +14,14 @@ import {
   DeletedItemsButton,
   DeletedItemsDialog,
 } from "@/features/deleted-items/deleted-items-admin";
+import { type SentCopy, sentCopyOf } from "@/lib/sent-copy";
+import { useSentCopies } from "@/mail-core/sent-copies";
 import { m } from "@/paraglide/messages";
 import { useCompanyRules } from "../rules/queries";
 import { RulesList } from "../rules/rules-section";
 import { AccessList, AddressInput, AliasesField, addressFor } from "./fields";
 import { CompanyGate } from "./gate";
+import { SentCopyField } from "./sent-copy-field";
 
 export const MailboxesSection = () => (
   <CompanyGate>{(company) => <Mailboxes company={company} />}</CompanyGate>
@@ -152,15 +155,24 @@ const MailboxDialog = ({
   const [aliases, setAliases] = useState(mailbox?.aliases ?? []);
   const [memberIds, setMemberIds] = useState(mailbox?.memberIds ?? []);
   const [readerIds, setReaderIds] = useState(mailbox?.readerIds ?? []);
+  const saved = sentCopyOf(useSentCopies(), mailbox?.id ?? "");
+  const [sentCopy, setSentCopy] = useState<SentCopy | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
   const save = useCompanyChange(async () =>
     mailbox
-      ? updateMailbox(mailbox.id, { description, aliases, memberIds, readerIds })
+      ? updateMailbox(mailbox.id, {
+          description,
+          aliases,
+          memberIds,
+          readerIds,
+          ...(sentCopy ? { sentCopy } : {}),
+        })
       : createMailbox({
           email: addressFor(local, domainId, company.domains),
           description,
           memberIds,
           readerIds,
+          ...(sentCopy ? { sentCopy } : {}),
         }),
   );
 
@@ -221,6 +233,7 @@ const MailboxDialog = ({
             setReaderIds(readers);
           }}
         />
+        <SentCopyField value={sentCopy ?? saved} onChange={setSentCopy} />
         {problem ? (
           <p role="alert" className="m-0 text-[13px] text-danger">
             {problem}

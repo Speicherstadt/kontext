@@ -8,9 +8,11 @@ import { useAddressSuggestions } from "@/contacts-core/use-suggestions";
 import type { Identity, Mailbox } from "@/jmap/types";
 import { type ComposeMode, switchReplyTo } from "@/lib/compose";
 import { findRole } from "@/lib/mailboxes";
+import type { SendRoute } from "@/lib/send-route";
 import { useExternalQuestion } from "@/mail-core/external-question";
 import { useUndoSeconds } from "@/mail-core/send-settings";
 import { useSendAccount } from "@/mail-core/use-send-account";
+import { useSendRoute } from "@/mail-core/use-send-route";
 import { m } from "@/paraglide/messages";
 import { useLegalFooter } from "../company/legal-footer";
 import { useAutocryptHeader } from "../pgp/autocrypt";
@@ -83,7 +85,7 @@ const useForm = (props: ComposerProps, sendAccountId: string) => {
   const client = useClient();
   const queryClient = useQueryClient();
   const toast = useToast();
-  const state = useComposerState(props.mode, props.sourceEmailId);
+  const state = useComposerState(props.mode, props.sourceEmailId, props.accountId);
   const held = useHeldFiles(client, sendAccountId);
   // Pictures pasted or dropped into the text; set once the hook below has the editor.
   const insertPictures = useRef<(files: File[]) => void>(() => {});
@@ -101,7 +103,6 @@ const useForm = (props: ComposerProps, sendAccountId: string) => {
     held,
     client,
     queryClient,
-    sendAccountId,
     onError: (message) => toast.show(message, "error"),
   });
   return { client, queryClient, toast, state, held, editor, pics, files };
@@ -145,7 +146,7 @@ const useFillFrom = (
 
 type SendBase = {
   form: Form;
-  sender: Sender;
+  route: SendRoute;
   identity: Identity | undefined;
   drafts: Mailbox | undefined;
   sent: Mailbox | undefined;
@@ -156,7 +157,7 @@ type SendBase = {
 /** Sending: with the Pflichtangaben, encrypted or signed, "Rückgängig", the question about outside. */
 const useSending = (
   props: ComposerProps,
-  { form, sender, identity, drafts, sent, outgoing, draft }: SendBase,
+  { form, route, identity, drafts, sent, outgoing, draft }: SendBase,
 ) => {
   const { state, editor, files, held } = form;
   const pgp = useEncryptedSend(
@@ -172,7 +173,8 @@ const useSending = (
     client: form.client,
     queryClient: form.queryClient,
     toast: form.toast,
-    sendAccountId: sender.sendAccountId,
+    sendAccountId: route.accountId,
+    copyTo: route.copyTo,
     identity,
     drafts,
     sent,
@@ -193,24 +195,25 @@ const useSending = (
 export const useComposer = (props: ComposerProps) => {
   const { data: session } = useSession();
   const sender = useSendAccount(props.accountId, true);
-  const { sendAccountId, identities, mailboxes } = sender;
+  const { sendAccountId, identities } = sender;
   const original = useOriginal(props);
   const form = useForm(props, sendAccountId);
   useFillFrom(props, sender, original, form, session?.username);
   const { state, editor, pics, files } = form;
+  // The sender picked; it may go out through a shared mailbox (lib/send-route.ts).
   const identity = identities.find((i) => i.id === state.identityId);
-  const drafts = findRole(mailboxes, "drafts");
-  const sent = findRole(mailboxes, "sent");
+  const { route, viaGroup } = useSendRoute(sender, identity);
+  const drafts = findRole(route.mailboxes, "drafts");
+  const sent = findRole(route.mailboxes, "sent");
   const autocrypt = useAutocryptHeader(identity?.email);
   const suggestions = useAddressSuggestions();
-  const ownId = sender.own?.id;
   const outgoing = {
     state,
     editor,
     pics,
-    sendAccountId,
-    ownId,
-    identity,
+    sendAccountId: route.accountId,
+    ownId: sender.own?.id,
+    identity: route.identity,
     myName: sender.myName,
     autocrypt,
   };
@@ -219,10 +222,9 @@ export const useComposer = (props: ComposerProps) => {
     mode: props.mode,
     identity,
     drafts,
-    sendAccountId,
     draftMail: () => files.released(outgoingMail(outgoing, { draft: true })),
   });
-  const sending = useSending(props, { form, sender, identity, drafts, sent, outgoing, draft });
+  const sending = useSending(props, { form, route, identity, drafts, sent, outgoing, draft });
   useSharedFiles(state, props.prefill, sendAccountId, files.upload);
   const pickIdentity = pickIdentityWith(state, identities);
   const { asEml } = original;
@@ -230,6 +232,7 @@ export const useComposer = (props: ComposerProps) => {
     ...form,
     ...sending,
     sender,
+    viaGroup,
     identity,
     drafts,
     sent,
