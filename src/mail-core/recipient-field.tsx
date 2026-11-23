@@ -112,14 +112,16 @@ const Chips = ({ value, onChange }: Pick<Props, "value" | "onChange">) => (
       <span
         key={address.email}
         title={address.email}
-        className="inline-flex h-6 items-center gap-1 rounded-full border border-border pr-1 pl-2.5 text-[13px]"
+        className="inline-flex h-6 max-w-full min-w-0 items-center gap-1 rounded-full border border-border pr-1 pl-2.5 text-[13px]"
       >
-        {displayName(address)}
+        {/* One line: a long address is cut short (the whole one is in the title), not wrapped
+            out of the chip. */}
+        <span className="min-w-0 truncate">{displayName(address)}</span>
         <button
           type="button"
           aria-label={`${address.email} entfernen`}
           onClick={() => onChange(value.filter((a) => a !== address))}
-          className="flex size-4 items-center justify-center rounded-full text-muted hover:bg-hover hover:text-fg"
+          className="flex size-4 shrink-0 items-center justify-center rounded-full text-muted hover:bg-hover hover:text-fg"
         >
           <X size={12} />
         </button>
@@ -186,18 +188,8 @@ export const RecipientField = ({
   const input = useRecipientInput({ value, onChange, suggestions });
   const listId = useId();
   const open = input.matches.length > 0;
-  const field = (
-    <div
-      className={cn(
-        "relative flex flex-1 flex-wrap items-center gap-1.5",
-        boxed
-          ? "min-h-10 rounded-lg border border-border bg-bg px-2 py-1 focus-within:border-muted"
-          : "min-h-9 py-1",
-      )}
-    >
-      {boxed ? null : (
-        <span className="min-w-9 shrink-0 whitespace-nowrap text-[13px] text-muted">{label}</span>
-      )}
+  const entry = (
+    <>
       <Chips value={value} onChange={onChange} />
       <input
         aria-label={label}
@@ -213,11 +205,24 @@ export const RecipientField = ({
           if (input.text.trim()) input.commit();
         }}
         className={cn(
-          "h-7 min-w-[120px] flex-1 border-0 bg-transparent text-[14px] text-fg outline-none placeholder:text-muted",
+          "h-7 min-w-16 flex-1 border-0 bg-transparent text-[14px] text-fg outline-none placeholder:text-muted",
           boxed && "px-1",
         )}
       />
       {open ? <SuggestionList id={listId} boxed={boxed} input={input} /> : null}
+    </>
+  );
+  // The label keeps its place on the left; only the chips and the input wrap beside it.
+  const field = boxed ? (
+    <div className="relative flex min-h-10 flex-1 flex-wrap items-center gap-1.5 rounded-lg border border-border bg-bg px-2 py-1 focus-within:border-muted">
+      {entry}
+    </div>
+  ) : (
+    <div className="relative flex min-h-9 min-w-0 flex-1 items-start gap-1.5 py-1">
+      <span className="min-w-9 shrink-0 whitespace-nowrap text-[13px] leading-7 text-muted">
+        {label}
+      </span>
+      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">{entry}</div>
     </div>
   );
   return boxed ? (
