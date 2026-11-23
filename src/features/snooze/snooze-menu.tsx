@@ -94,7 +94,7 @@ export const SnoozeMenu = ({
           {labelled ? (
             <ToolbarButton
               label={m.mail_snooze()}
-              shortcut={shortcut ? "w" : undefined}
+              shortcut={shortcut ? "snooze" : undefined}
               disabled={targets.length === 0}
               icon={<AlarmClock size={16} />}
             />
@@ -104,7 +104,8 @@ export const SnoozeMenu = ({
               size={small ? "iconSm" : "icon"}
               disabled={targets.length === 0}
               aria-label={m.mail_snooze()}
-              title={shortcut ? `${m.mail_snooze()} (w)` : m.mail_snooze()}
+              title={m.mail_snooze()}
+              shortcut={shortcut ? "snooze" : undefined}
             >
               <AlarmClock size={16} />
             </Button>

@@ -1,6 +1,7 @@
 /** The list of the contacts column: groups first, then the contacts by letter. */
 import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
+import { Tooltip } from "@/components/ui/tooltip";
 import { type Contact, contactKey } from "@/contacts-core/queries";
 import { byLetter } from "@/lib/contact-selection";
 import { sortKey } from "@/lib/jscontact";
@@ -62,15 +63,16 @@ export const ContactList = ({
           <div className="flex items-center px-3 pt-2 pb-1">
             <span className="flex-1 text-[12px] font-medium text-muted">{m.contacts_groups()}</span>
             {!searching ? (
-              <Link
-                to="/contacts"
-                search={{ id: "new-group", edit: true, book }}
-                aria-label={m.contacts_group_new()}
-                title={m.contacts_group_new()}
-                className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
-              >
-                <Plus size={16} />
-              </Link>
+              <Tooltip label={m.contacts_group_new()}>
+                <Link
+                  to="/contacts"
+                  search={{ id: "new-group", edit: true, book }}
+                  aria-label={m.contacts_group_new()}
+                  className="flex size-6 items-center justify-center rounded-md text-muted hover:bg-hover hover:text-fg"
+                >
+                  <Plus size={16} />
+                </Link>
+              </Tooltip>
             ) : null}
           </div>
           <ul aria-label={m.contacts_groups()} className="m-0 flex list-none flex-col gap-0.5 p-0">

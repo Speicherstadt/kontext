@@ -25,6 +25,7 @@ import { useEffect, useRef, useState } from "react";
 import { useChannels } from "@/chat-core/queries";
 import { useChatNames } from "@/chat-core/use-chat-names";
 import { useToast } from "@/components/ui/toast";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useColleaguePhotoOf } from "@/features/photos/queries";
 import { holdMicrophone } from "@/lib/audio-session";
 import { callDuration, callerState, firstNameList } from "@/lib/calls";
@@ -209,15 +210,16 @@ export const CallPanel = ({ active, title }: { active: ActiveCall; title: string
             <LockKeyhole size={12} aria-hidden="true" /> {m.call_encrypted()}
           </span>
         ) : null}
-        <button
-          type="button"
-          aria-label={expanded ? m.call_shrink() : m.call_expand()}
-          title={expanded ? m.call_shrink() : m.call_expand()}
-          onClick={() => setExpanded((value) => !value)}
-          className="hidden size-8 items-center justify-center rounded-lg text-muted hover:bg-hover hover:text-fg md:flex"
-        >
-          {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-        </button>
+        <Tooltip label={expanded ? m.call_shrink() : m.call_expand()}>
+          <button
+            type="button"
+            aria-label={expanded ? m.call_shrink() : m.call_expand()}
+            onClick={() => setExpanded((value) => !value)}
+            className="hidden size-8 items-center justify-center rounded-lg text-muted hover:bg-hover hover:text-fg md:flex"
+          >
+            {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+          </button>
+        </Tooltip>
       </header>
       <CallView active={active} />
     </LiveKitRoom>

@@ -37,10 +37,12 @@ import { LINK_DAY_CHOICES } from "./use-encrypted-send";
 const ON = "bg-accent/10 text-accent-ink hover:bg-accent/15";
 const WARN = "bg-warn/10 text-warn hover:bg-warn/15";
 
-/** A switch of the mail being written: a pressed button on the desktop, a menu check on phones. */
+/**
+ * A switch of the mail being written: a pressed button on the desktop, a menu check on phones. Its
+ * tooltip is its name; what it does stands in the line below the bar.
+ */
 type Toggle = {
   label: string;
-  title: string;
   icon: ReactNode;
   on: boolean;
   onChange: (on: boolean) => void;
@@ -85,7 +87,6 @@ const signNote = (signWith: "smime" | "pgp") =>
 const togglesOf = (p: Props): Toggle[] => [
   {
     label: m.mail_receipt_request(),
-    title: m.mail_receipt_request(),
     icon: <MailCheck size={16} />,
     on: p.receipt,
     onChange: p.onReceipt,
@@ -93,7 +94,6 @@ const togglesOf = (p: Props): Toggle[] => [
   },
   {
     label: m.mail_dsn_request(),
-    title: m.mail_dsn_request(),
     icon: <PackageCheck size={16} />,
     on: p.delivery,
     onChange: p.onDelivery,
@@ -101,9 +101,6 @@ const togglesOf = (p: Props): Toggle[] => [
   },
   {
     label: m.pgp_send_toggle(),
-    title: p.encrypt
-      ? (p.encryptBlocked ?? `${p.encryptNote} ${m.pgp_send_draft_hint()}`)
-      : m.pgp_send_toggle(),
     icon: p.encrypt ? <LockKeyhole size={16} /> : <LockKeyholeOpen size={16} />,
     on: p.encrypt,
     onChange: p.onEncrypt,
@@ -113,7 +110,6 @@ const togglesOf = (p: Props): Toggle[] => [
     ? [
         {
           label: m.sign_toggle(),
-          title: p.sign ? signNote(p.signWith) : m.sign_toggle(),
           icon: <Signature size={16} />,
           on: p.sign,
           onChange: p.onSign,
@@ -137,6 +133,7 @@ const MoreMenu = ({ toggles, onSaveDraft }: { toggles: Toggle[]; onSaveDraft: ()
           size="icon"
           aria-label={m.mail_more()}
           title={m.mail_more()}
+          tooltipSide="top"
           className={cn("md:hidden", active?.onClass)}
         >
           <MoreHorizontal size={16} />
@@ -197,6 +194,7 @@ export const ComposerActions = (props: Props) => {
           size="icon"
           aria-label={m.mail_attach()}
           title={m.mail_attach()}
+          tooltipSide="top"
           onClick={() => fileInput.current?.click()}
         >
           <Paperclip size={16} />
@@ -208,7 +206,8 @@ export const ComposerActions = (props: Props) => {
             variant="ghost"
             size="icon"
             aria-label={toggle.label}
-            title={toggle.title}
+            title={toggle.label}
+            tooltipSide="top"
             aria-pressed={toggle.on}
             onClick={() => toggle.onChange(!toggle.on)}
             className={cn("hidden md:inline-flex", toggle.on && toggle.onClass)}
@@ -244,6 +243,7 @@ export const ComposerActions = (props: Props) => {
           size="icon"
           aria-label={m.mail_discard()}
           title={m.mail_discard()}
+          tooltipSide="top"
           onClick={onDiscard}
         >
           <Trash2 size={16} />
@@ -256,6 +256,9 @@ export const ComposerActions = (props: Props) => {
             type="submit"
             variant="primary"
             disabled={sending || !canSend}
+            title={m.mail_send()}
+            shortcut="send"
+            tooltipSide="top"
             className="rounded-r-none"
           >
             <Send size={16} /> {sending ? m.mail_sending() : m.mail_send()}
@@ -272,9 +275,9 @@ export const ComposerActions = (props: Props) => {
         // A line of its own below the buttons, so what happens (or why not) stays in sight.
         <p
           role="status"
-          className={cn("m-0 truncate text-[12px]", encryptBlocked ? "text-warn" : "text-accent")}
+          className={cn("m-0 text-[12px]", encryptBlocked ? "text-warn" : "text-accent")}
         >
-          {encryptBlocked ?? encryptNote}
+          {encryptBlocked ?? `${encryptNote} ${m.pgp_send_draft_hint()}`}
         </p>
       ) : null}
     </div>

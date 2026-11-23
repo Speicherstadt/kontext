@@ -1173,7 +1173,7 @@ test.describe("Tastaturkürzel", () => {
 
   test("zeigt die Tastaturkürzel auch über den Knopf in der Leiste", async ({ page }) => {
     await login(page);
-    await page.getByRole("button", { name: "Tastaturkürzel anzeigen (?)" }).click();
+    await page.getByRole("button", { name: "Tastaturkürzel anzeigen" }).click();
     const dialog = page.getByRole("dialog", { name: "Tastaturkürzel" });
     await expect(dialog).toContainText("Spam / kein Spam");
   });
@@ -1229,7 +1229,9 @@ test.describe("Speicherplatz", () => {
     const avatar = page.getByRole("navigation", { name: "Apps" }).getByRole("button", {
       name: address("jonas"),
     });
-    await expect(avatar).toHaveAttribute("title", /von 5 GB belegt \(\d+ %\)/);
+    // In the tooltip on hover (components/ui/tooltip.tsx), no longer a native title.
+    await avatar.hover();
+    await expect(page.getByRole("tooltip")).toHaveText(/von 5 GB belegt \(\d+ %\)/);
     await avatar.click();
     await expect(page.getByRole("menu")).toContainText(/von 5 GB belegt/);
   });

@@ -10,6 +10,7 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "@/components/ui/menu";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import { DEFAULT_SORT, type MailSort, readMailSort } from "@/lib/mail-sort";
 import { m } from "@/paraglide/messages";
@@ -39,19 +40,23 @@ export const SortMenu = () => {
   const label = m.mail_sort_label({ order: SORT_NAMES[sort]() });
   return (
     <MenuRoot>
-      <MenuTrigger
-        aria-label={label}
-        title={label}
-        className={cn(
-          "flex h-7 shrink-0 items-center gap-1 self-center rounded-md px-1.5 text-[12px] hover:bg-hover",
-          changed ? "text-accent" : "text-muted",
-        )}
-      >
-        <ArrowDownUp size={14} aria-hidden="true" />
-        {/* Another order says which where there is room; on narrow lists the coloured icon does. */}
-        {changed ? (
-          <span className="hidden max-w-[140px] truncate xl:inline">{SORT_NAMES[sort]()}</span>
-        ) : null}
+      <MenuTrigger asChild>
+        <Tooltip label={label}>
+          <button
+            type="button"
+            aria-label={label}
+            className={cn(
+              "flex h-7 shrink-0 items-center gap-1 self-center rounded-md px-1.5 text-[12px] hover:bg-hover",
+              changed ? "text-accent" : "text-muted",
+            )}
+          >
+            <ArrowDownUp size={14} aria-hidden="true" />
+            {/* Another order says which where there is room; on narrow lists the coloured icon does. */}
+            {changed ? (
+              <span className="hidden max-w-[140px] truncate xl:inline">{SORT_NAMES[sort]()}</span>
+            ) : null}
+          </button>
+        </Tooltip>
       </MenuTrigger>
       <MenuContent>
         <MenuLabel>{m.mail_sort_title()}</MenuLabel>

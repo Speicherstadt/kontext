@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isTyping, SHORTCUTS, shortcutKey } from "./shortcuts";
+import { isApple, isTyping, SHORTCUTS, shortcutCaps, shortcutKey } from "./shortcuts";
 
 describe("shortcuts", () => {
   it("ignores keys while typing", () => {
@@ -21,6 +21,23 @@ describe("shortcuts", () => {
     expect(shortcutKey({ ...base, key: "r", metaKey: true })).toBeNull();
     expect(shortcutKey({ ...base, key: "Escape" })).toBe("esc");
     expect(shortcutKey({ ...base, key: "ArrowLeft" })).toBe("left");
+  });
+  it("names an action's keys as caps", () => {
+    const pc = { apple: false, ctrl: "Strg" };
+    expect(shortcutCaps("archive", pc)).toEqual(["E"]);
+    expect(shortcutCaps("delete", pc)).toEqual(["#"]);
+    expect(shortcutCaps("unread", pc)).toEqual(["⇧", "U"]);
+    expect(shortcutCaps("send", pc)).toEqual(["Strg", "Enter"]);
+    expect(shortcutCaps("send", { apple: false, ctrl: "Ctrl" })).toEqual(["Ctrl", "Enter"]);
+    expect(shortcutCaps("send", { apple: true, ctrl: "Strg" })).toEqual(["⌘", "Enter"]);
+    // The first of several: "z", not Ctrl+Z.
+    expect(shortcutCaps("undo", pc)).toEqual(["Z"]);
+  });
+  it("knows Apple devices by their platform", () => {
+    expect(isApple("MacIntel")).toBe(true);
+    expect(isApple("iPhone")).toBe(true);
+    expect(isApple("Win32")).toBe(false);
+    expect(isApple("Linux x86_64")).toBe(false);
   });
   it("has no key twice in one group", () => {
     for (const group of ["general", "mail", "calendar", "contacts"]) {

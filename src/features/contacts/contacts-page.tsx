@@ -123,6 +123,7 @@ export const ContactsPage = ({ search }: { search: ContactsSearch }) => {
                   size="iconSm"
                   aria-label={m.contacts_new()}
                   title={m.contacts_new()}
+                  shortcut="newContact"
                 >
                   <Link to="/contacts" search={{ id: "new", edit: true, book: search.book }}>
                     <Plus size={16} />

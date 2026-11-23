@@ -14,6 +14,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { ShortcutKeys } from "@/components/ui/kbd";
 import { useContacts } from "@/contacts-core/queries";
 import { cn } from "@/lib/cn";
 import { contactAddresses } from "@/lib/jscontact";
@@ -182,8 +183,14 @@ export const SearchBox = forwardRef<SearchBoxHandle, { initial?: string }>(({ in
           onFocus={() => box.setOpen(true)}
           onBlur={() => setTimeout(() => box.setOpen(false), 120)}
           onKeyDown={keysOf(box, input)}
-          className="min-w-0 flex-1 border-0 bg-transparent text-[16px] text-fg outline-none md:text-[14px] [&::-webkit-search-cancel-button]:hidden"
+          className="peer min-w-0 flex-1 border-0 bg-transparent text-[16px] text-fg outline-none md:text-[14px] [&::-webkit-search-cancel-button]:hidden"
         />
+        {/* Its key, beside the field rather than in a tooltip; gone while typing. */}
+        {box.text ? null : (
+          <span aria-hidden="true" className="hidden md:flex peer-focus:hidden">
+            <ShortcutKeys action="search" className="min-w-5 px-1 py-0 text-[11px] text-muted" />
+          </span>
+        )}
         {box.text ? (
           <button
             type="button"

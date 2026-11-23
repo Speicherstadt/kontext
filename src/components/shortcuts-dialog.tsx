@@ -1,5 +1,6 @@
 /** "?": all keyboard shortcuts, grouped by app. */
 import { Dialog } from "@/components/ui/dialog";
+import { Kbd } from "@/components/ui/kbd";
 import { SHORTCUTS, type ShortcutAction, type ShortcutGroup } from "@/lib/shortcuts";
 import { m } from "@/paraglide/messages";
 
@@ -54,12 +55,7 @@ export const ShortcutList = () => (
               <dt className="text-[14px]">{ACTION_LABELS[shortcut.action]()}</dt>
               <dd className="m-0 flex gap-1">
                 {shortcut.keys.map((key) => (
-                  <kbd
-                    key={key}
-                    className="min-w-6 rounded-md border border-border bg-subtle px-1.5 py-0.5 text-center font-mono text-[12px]"
-                  >
-                    {key}
-                  </kbd>
+                  <Kbd key={key}>{key}</Kbd>
                 ))}
               </dd>
             </div>

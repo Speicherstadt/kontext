@@ -5,6 +5,7 @@
  */
 import { Search } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
+import { Tooltip } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
 import { EMOJI_CATEGORIES, type Emoji, emojiName, searchEmojis } from "@/lib/emoji";
 import { m } from "@/paraglide/messages";
@@ -13,15 +14,16 @@ import { getLocale } from "@/paraglide/runtime";
 const EmojiButton = ({ emoji, onPick }: { emoji: Emoji; onPick: (emoji: string) => void }) => {
   const name = emojiName(emoji, getLocale());
   return (
-    <button
-      type="button"
-      aria-label={m.chat_react_with({ emoji: `${emoji.emoji} ${name}` })}
-      title={name}
-      onClick={() => onPick(emoji.emoji)}
-      className="flex size-10 items-center justify-center rounded-lg text-[22px] hover:bg-hover focus-visible:bg-hover md:size-9 md:text-[22px]"
-    >
-      {emoji.emoji}
-    </button>
+    <Tooltip label={name}>
+      <button
+        type="button"
+        aria-label={m.chat_react_with({ emoji: `${emoji.emoji} ${name}` })}
+        onClick={() => onPick(emoji.emoji)}
+        className="flex size-10 items-center justify-center rounded-lg text-[22px] hover:bg-hover focus-visible:bg-hover md:size-9 md:text-[22px]"
+      >
+        {emoji.emoji}
+      </button>
+    </Tooltip>
   );
 };
 
@@ -69,16 +71,16 @@ export const EmojiPicker = ({
       {query.trim() ? null : (
         <nav aria-label={m.emoji_more()} className="flex justify-between">
           {EMOJI_CATEGORIES.map((category) => (
-            <button
-              key={category.id}
-              type="button"
-              aria-label={category.label()}
-              title={category.label()}
-              onClick={() => sections.current[category.id]?.scrollIntoView({ block: "start" })}
-              className="flex size-8 items-center justify-center rounded-md text-[16px] hover:bg-hover"
-            >
-              {category.emojis[0]?.emoji}
-            </button>
+            <Tooltip key={category.id} label={category.label()}>
+              <button
+                type="button"
+                aria-label={category.label()}
+                onClick={() => sections.current[category.id]?.scrollIntoView({ block: "start" })}
+                className="flex size-8 items-center justify-center rounded-md text-[16px] hover:bg-hover"
+              >
+                {category.emojis[0]?.emoji}
+              </button>
+            </Tooltip>
           ))}
         </nav>
       )}

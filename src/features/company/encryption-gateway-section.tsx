@@ -19,6 +19,7 @@ import { Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
+import { Tooltip } from "@/components/ui/tooltip";
 import { m } from "@/paraglide/messages";
 import type { KeyOrigin, RecipientKey } from "../../../server/company/encryption-gateway";
 
@@ -40,15 +41,16 @@ const Row = ({ item, onRemove }: { item: RecipientKey; onRemove: () => void }) =
       <span className="text-[13px] text-muted">{ORIGIN[item.origin]()}</span>
       <span className="truncate font-mono text-[11px] text-muted">{stateOf(item)}</span>
     </div>
-    <button
-      type="button"
-      aria-label={m.company_gateway_remove({ email: item.email })}
-      title={m.company_gateway_remove({ email: item.email })}
-      onClick={onRemove}
-      className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-hover hover:text-danger"
-    >
-      <Trash2 size={16} />
-    </button>
+    <Tooltip label={m.company_gateway_remove({ email: item.email })}>
+      <button
+        type="button"
+        aria-label={m.company_gateway_remove({ email: item.email })}
+        onClick={onRemove}
+        className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-hover hover:text-danger"
+      >
+        <Trash2 size={16} />
+      </button>
+    </Tooltip>
   </li>
 );
 
