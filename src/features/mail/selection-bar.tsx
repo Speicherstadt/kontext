@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Fragment, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   MenuCheckboxItem,
   MenuContent,
@@ -72,15 +73,13 @@ const PickHeader = ({
 }: Pick<Props, "picked" | "allPicked" | "onPickAll" | "onClear">) => (
   <div className="flex items-center gap-1">
     <label className="flex size-8 cursor-pointer items-center justify-center rounded-lg hover:bg-hover">
-      <input
-        type="checkbox"
+      <Checkbox
         ref={(box) => {
           if (box) box.indeterminate = !allPicked && picked.length > 0;
         }}
         checked={allPicked}
         aria-label={m.mail_select_all()}
         onChange={allPicked ? onClear : onPickAll}
-        className="size-4 cursor-pointer accent-[var(--primary)]"
       />
     </label>
     <span className="min-w-0 flex-1 truncate text-[14px] font-medium" aria-live="polite">

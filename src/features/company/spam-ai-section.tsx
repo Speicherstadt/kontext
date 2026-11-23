@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useStalwartEdition } from "@/company-core/edition";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label, Select } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
@@ -192,11 +193,9 @@ const ModelFields = ({
       )}
       {!ollama && assistant ? (
         <label className="flex min-h-9 items-center gap-2.5 text-[14px]">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={form.useAssistantKey}
             onChange={(event) => change({ useAssistantKey: event.target.checked })}
-            className="size-4 accent-[var(--accent)]"
           />
           {m.company_spam_ai_use_assistant()}
         </label>

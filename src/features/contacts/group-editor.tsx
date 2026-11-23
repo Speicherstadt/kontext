@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, Search } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import {
@@ -62,12 +63,7 @@ const MemberPicker = ({
       {candidates.map((card) => (
         <li key={card.id}>
           <label className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 hover:bg-hover">
-            <input
-              type="checkbox"
-              checked={members.has(card.uid!)}
-              onChange={() => onToggle(card.uid!)}
-              className="size-4 accent-[var(--accent)]"
-            />
+            <Checkbox checked={members.has(card.uid!)} onChange={() => onToggle(card.uid!)} />
             <span className="flex min-w-0 flex-col">
               <span className="truncate">{fullName(card)}</span>
               {company(card) ? (

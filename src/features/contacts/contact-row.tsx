@@ -6,6 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { Users } from "lucide-react";
 import type { MouseEvent } from "react";
 import { Avatar } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useLongPress } from "@/components/use-long-press";
 import { useMediaQuery } from "@/components/use-media-query";
 import type { Contact } from "@/contacts-core/queries";
@@ -72,13 +73,12 @@ export const ContactRow = ({ card, active, ownAccount, book, group, picking }: P
             boxShown ? "flex" : "hidden md:flex",
           )}
         >
-          <input
-            type="checkbox"
+          <Checkbox
             checked={picking.selected}
             readOnly
             aria-label={m.contacts_select({ name: fullName(card) })}
             className={cn(
-              "size-4 cursor-pointer accent-[var(--primary)]",
+              "size-4 cursor-pointer",
               !boxShown && "opacity-35 group-hover:opacity-100 focus-visible:opacity-100",
             )}
           />

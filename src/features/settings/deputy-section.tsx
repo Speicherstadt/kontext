@@ -5,6 +5,7 @@
 import { type FormEvent, useId, useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useColleagues } from "@/directory/queries";
@@ -91,11 +92,9 @@ const GrantForm = ({ colleagues }: { colleagues: Principal[] }) => {
         <legend className="mb-1.5 p-0 text-[13px] font-medium">{m.deputy_what()}</legend>
         {DEPUTY_KINDS.map((kind) => (
           <label key={kind} className="flex items-center gap-2 text-[14px]">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={kinds.includes(kind)}
               onChange={(e) => toggle(kind, e.target.checked)}
-              className="size-4 accent-[var(--accent)]"
             />
             {KIND_LABELS[kind]()}
           </label>

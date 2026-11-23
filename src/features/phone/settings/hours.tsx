@@ -7,6 +7,7 @@ import { useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { StateSelect } from "@/components/state-select";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { comingHolidays, type State } from "@/lib/holidays";
@@ -67,11 +68,9 @@ const DayRow = ({ row, onChange }: { row: WeekRow; onChange: (row: WeekRow) => v
   return (
     <div className="flex flex-wrap items-center gap-2 text-[14px]">
       <label className="flex w-28 items-center gap-2">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={row.open}
           onChange={(event) => onChange({ ...row, open: event.target.checked })}
-          className="size-4 accent-[var(--accent)]"
         />
         {label}
       </label>
@@ -147,12 +146,7 @@ export const HoursForm = ({
   return (
     <SettingsCard title={m.phone_hours()} description={m.phone_hours_hint()}>
       <label className="flex items-center gap-2 text-[14px]">
-        <input
-          type="checkbox"
-          checked={enabled}
-          onChange={(event) => setEnabled(event.target.checked)}
-          className="size-4 accent-[var(--accent)]"
-        />
+        <Checkbox checked={enabled} onChange={(event) => setEnabled(event.target.checked)} />
         {m.phone_hours_enabled()}
       </label>
       {enabled ? (

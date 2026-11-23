@@ -5,6 +5,7 @@
 import { Plus, X } from "lucide-react";
 import { type FormEvent, type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -103,12 +104,7 @@ const Action = ({
 }) => (
   <div className="flex flex-col gap-2">
     <label className="flex items-center gap-2.5 text-[14px]">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="size-4 accent-[var(--accent)]"
-      />
+      <Checkbox checked={checked} onChange={(e) => onChange(e.target.checked)} />
       {label}
     </label>
     {checked && children ? <div className="pl-[26px]">{children}</div> : null}

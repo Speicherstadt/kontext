@@ -6,6 +6,7 @@
 import { type FormEvent, useRef, useState } from "react";
 import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useAddressSuggestions } from "@/contacts-core/use-suggestions";
@@ -258,8 +259,7 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
         </Label>
       ) : null}
       <label className="flex items-center gap-2 text-[14px]">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={form.allDay}
           onChange={(e) => {
             const allDay = e.target.checked;
@@ -269,17 +269,15 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
               reminder: reminderForKind(reminder, allDay),
             }));
           }}
-          className="size-4 accent-[var(--accent)]"
         />
         {m.calendar_event_all_day()}
       </label>
       {mayBePrivate ? (
         <label className="flex items-start gap-2 text-[14px]">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={form.private}
             onChange={(e) => setForm((current) => ({ ...current, private: e.target.checked }))}
-            className="mt-0.5 size-4 shrink-0 accent-[var(--accent)]"
+            className="mt-0.5 size-4 shrink-0"
           />
           <span className="flex flex-col">
             {m.calendar_event_private()}

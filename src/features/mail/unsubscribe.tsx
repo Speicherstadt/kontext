@@ -8,6 +8,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { sendEmail, setKeyword } from "@/jmap/mail";
@@ -157,12 +158,7 @@ const UnsubscribeDialog = ({
       }
     >
       <label className="flex items-center gap-2.5 text-[14px]">
-        <input
-          type="checkbox"
-          checked={remove}
-          onChange={(event) => setRemove(event.target.checked)}
-          className="size-4 accent-[var(--primary)]"
-        />
+        <Checkbox checked={remove} onChange={(event) => setRemove(event.target.checked)} />
         {m.mail_unsubscribe_delete()}
       </label>
       <div className="flex justify-end gap-2">

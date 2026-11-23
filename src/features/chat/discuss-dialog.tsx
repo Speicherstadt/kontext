@@ -8,6 +8,7 @@ import { AtSign, Hash, Search } from "lucide-react";
 import { useState } from "react";
 import { useChannels, useDiscussions, useSuggestions } from "@/chat-core/queries";
 import { useChatNames } from "@/chat-core/use-chat-names";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
@@ -184,11 +185,10 @@ export const DiscussDialog = ({
       <MessageCard card={card} />
       {detail ? (
         <label className="flex items-start gap-2.5 text-[14px]">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={asCopy}
             onChange={(event) => setAsCopy(event.target.checked)}
-            className="mt-0.5 size-4 shrink-0 accent-[var(--primary)]"
+            className="mt-0.5 size-4 shrink-0"
           />
           <span className="flex flex-col gap-0.5">
             {m.chat_discuss_copy()}

@@ -8,6 +8,7 @@ import { usePersonalAccountId } from "@/account/queries";
 import { useSession } from "@/auth/session";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -66,12 +67,7 @@ const RecoveryStep = ({ locked, onDone }: { locked: LockedKey; onDone: () => voi
         <Printer size={16} /> {m.pgp_recovery_print()}
       </Button>
       <label className="flex items-center gap-2.5 text-[14px]">
-        <input
-          type="checkbox"
-          checked={kept}
-          onChange={(event) => setKept(event.target.checked)}
-          className="size-4 accent-[var(--primary)]"
-        />
+        <Checkbox checked={kept} onChange={(event) => setKept(event.target.checked)} />
         {m.pgp_recovery_kept()}
       </label>
       <div className="flex justify-end">

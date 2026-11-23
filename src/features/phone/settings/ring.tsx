@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useCompany } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { moved } from "@/lib/move";
@@ -43,8 +44,7 @@ export const RingForm = ({ admin }: { admin: Admin }) => {
         <legend className="sr-only">{m.phone_ring()}</legend>
         {employees.map((employee) => (
           <label key={employee.id} className="flex items-center gap-2 text-[14px]">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={chosen.includes(employee.id)}
               onChange={(event) =>
                 setChosen((current) =>
@@ -53,7 +53,6 @@ export const RingForm = ({ admin }: { admin: Admin }) => {
                     : current.filter((id) => id !== employee.id),
                 )
               }
-              className="size-4 accent-[var(--accent)]"
             />
             {employee.fullName}
           </label>
@@ -114,12 +113,7 @@ export const RingForm = ({ admin }: { admin: Admin }) => {
         </>
       ) : null}
       <label className="flex items-center gap-2 text-[14px]">
-        <input
-          type="checkbox"
-          checked={forwarding}
-          onChange={(event) => setForwarding(event.target.checked)}
-          className="size-4 accent-[var(--accent)]"
-        />
+        <Checkbox checked={forwarding} onChange={(event) => setForwarding(event.target.checked)} />
         {m.phone_forward()}
       </label>
       {forwarding ? (

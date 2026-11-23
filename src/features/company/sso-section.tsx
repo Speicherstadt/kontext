@@ -9,6 +9,7 @@ import { useStalwartEdition } from "@/company-core/edition";
 import { useCompanyChange } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
@@ -231,9 +232,7 @@ const DomainsCard = ({ view }: { view: SsoView }) => {
               ) : (
                 <div className="flex flex-wrap gap-x-5 gap-y-1 text-[14px]">
                   <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="size-4 accent-[var(--accent)]"
+                    <Checkbox
                       checked={Boolean(choice?.sso)}
                       disabled={!view.directory}
                       onChange={(e) => toggle(domain.id, "sso", e.target.checked)}
@@ -242,9 +241,7 @@ const DomainsCard = ({ view }: { view: SsoView }) => {
                     {m.company_sso_column_sso()}
                   </label>
                   <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      className="size-4 accent-[var(--accent)]"
+                    <Checkbox
                       checked={Boolean(choice?.scim)}
                       onChange={(e) => toggle(domain.id, "scim", e.target.checked)}
                       aria-label={m.company_sso_domain_scim({ domain: domain.name })}

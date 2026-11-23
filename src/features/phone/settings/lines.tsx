@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useCompany } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
@@ -64,8 +65,7 @@ const LineEditor = ({
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         {people.map((employee) => (
           <label key={employee.id} className="flex items-center gap-2 text-[14px]">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={draft.ring.includes(employee.id)}
               onChange={(event) =>
                 onChange({
@@ -75,7 +75,6 @@ const LineEditor = ({
                     : draft.ring.filter((id) => id !== employee.id),
                 })
               }
-              className="size-4 accent-[var(--accent)]"
             />
             {employee.fullName}
           </label>

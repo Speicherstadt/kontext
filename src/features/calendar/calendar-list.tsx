@@ -10,6 +10,7 @@ import { useClient } from "@/auth/auth";
 import { NameDialog } from "@/components/name-dialog";
 import { StateSelect } from "@/components/state-select";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -84,16 +85,14 @@ const Row = ({ calendar, manage }: { calendar: CalendarRef; manage: boolean }) =
   return (
     <li className="flex min-h-8 items-center gap-2.5">
       <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={visible}
           aria-label={m.calendar_show({ name: calendar.name })}
           onChange={(e) => {
             setShown(e.target.checked);
             setVisible.mutate({ calendar, visible: e.target.checked });
           }}
-          className="size-4 shrink-0"
-          style={{ accentColor: calendar.color }}
+          color={calendar.color}
         />
         <span className="flex min-w-0 flex-col leading-tight">
           <span className="truncate">{calendar.name}</span>

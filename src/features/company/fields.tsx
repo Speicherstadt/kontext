@@ -3,6 +3,7 @@ import { Check, Copy, Plus, X } from "lucide-react";
 import { type KeyboardEvent, type ReactNode, useState } from "react";
 import type { Company } from "@/company-core/api";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Select } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
@@ -73,8 +74,7 @@ export const CheckList = ({
     {options.length === 0 && empty ? <p className="m-0 text-[13px] text-muted">{empty}</p> : null}
     {options.map((option) => (
       <label key={option.id} className="flex min-h-9 items-center gap-2.5 text-[14px]">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={selected.includes(option.id)}
           onChange={(e) =>
             onChange(
@@ -83,7 +83,6 @@ export const CheckList = ({
                 : selected.filter((id) => id !== option.id),
             )
           }
-          className="size-4 accent-[var(--accent)]"
         />
         <span className="min-w-0 flex-1 truncate">{option.label}</span>
         {option.detail ? (

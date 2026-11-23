@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useCompany } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
@@ -21,11 +22,9 @@ export const DoorForm = ({ door }: { door: Admin["door"] }) => {
   return (
     <SettingsCard title={m.phone_door_settings()} description={m.phone_door_hint()}>
       <label className="flex items-center gap-2 text-[14px]">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={draft.enabled}
           onChange={(event) => setDraft({ ...draft, enabled: event.target.checked })}
-          className="size-4 accent-[var(--accent)]"
         />
         {m.phone_door_enabled()}
       </label>
@@ -49,8 +48,7 @@ export const DoorForm = ({ door }: { door: Admin["door"] }) => {
         <legend className="mb-1 text-[13px] font-medium">{m.phone_door_members()}</legend>
         {people.map((employee) => (
           <label key={employee.id} className="flex items-center gap-2 text-[14px]">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={draft.members.includes(employee.id)}
               onChange={(event) =>
                 setDraft({
@@ -60,7 +58,6 @@ export const DoorForm = ({ door }: { door: Admin["door"] }) => {
                     : draft.members.filter((id) => id !== employee.id),
                 })
               }
-              className="size-4 accent-[var(--accent)]"
             />
             {employee.fullName}
           </label>

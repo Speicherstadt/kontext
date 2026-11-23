@@ -1,6 +1,7 @@
 /** A task's small steps to tick off. */
 import { Plus, X } from "lucide-react";
 import { type FormEvent, useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { m } from "@/paraglide/messages";
 import type { CheckItem } from "../../../server/model/tasks";
 
@@ -29,8 +30,7 @@ export const TaskChecklist = ({
       {items.map((item) => (
         <div key={item.id} className="group flex items-center gap-2.5">
           <label className="flex min-w-0 flex-1 items-center gap-2.5 text-[14px]">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={item.done}
               onChange={() =>
                 onChange(
@@ -39,7 +39,6 @@ export const TaskChecklist = ({
                   ),
                 )
               }
-              className="size-4 accent-[var(--primary)]"
             />
             <span className={item.done ? "text-muted line-through" : undefined}>{item.text}</span>
           </label>

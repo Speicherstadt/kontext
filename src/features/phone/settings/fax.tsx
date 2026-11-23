@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
@@ -27,12 +28,7 @@ export const FaxForm = ({ admin }: { admin: Admin }) => {
   return (
     <SettingsCard title={m.phone_fax()} description={m.phone_fax_hint()}>
       <label className="flex items-center gap-2 text-[14px]">
-        <input
-          type="checkbox"
-          checked={enabled}
-          onChange={(event) => setEnabled(event.target.checked)}
-          className="size-4 accent-[var(--accent)]"
-        />
+        <Checkbox checked={enabled} onChange={(event) => setEnabled(event.target.checked)} />
         {m.phone_fax_enabled()}
       </label>
       <Label>
