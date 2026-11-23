@@ -1,7 +1,7 @@
 /** A time picked by hand, for "Später senden" and "Wiedervorlage". */
 import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { fromLocal, toLocal } from "@/lib/jscalendar";
 import { m } from "@/paraglide/messages";
@@ -57,14 +57,14 @@ export const TimeDialog = ({
           />
         </div>
         {chosen && !ok ? <p className="m-0 text-[12px] text-danger">{invalid}</p> : null}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onClose}>
             {m.mail_later_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={!ok}>
             {submit}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

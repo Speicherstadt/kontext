@@ -5,7 +5,7 @@
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { type BoardColumn, columnLabel, newColumnId } from "@/lib/tasks";
@@ -142,14 +142,14 @@ export const ColumnsDialog = ({
         >
           <Plus size={14} /> {m.tasks_column_add()}
         </Button>
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onClose}>
             {m.tasks_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={busy}>
             {m.company_save()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

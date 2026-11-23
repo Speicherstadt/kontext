@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { DialogActions } from "@/components/ui/dialog";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -179,20 +180,22 @@ export const ContactEditor = ({ card, books, preferredBook }: Props) => {
           <Textarea value={form.note} onChange={set("note")} />
         </Label>
       </div>
-      <div className="flex flex-wrap items-center gap-2">
-        <Button type="submit" variant="primary" disabled={create.isPending || update.isPending}>
-          {m.contacts_save()}
-        </Button>
+      <DialogActions
+        leading={
+          card ? (
+            <Button variant="danger" onClick={() => void destroy()}>
+              {m.contacts_delete()}
+            </Button>
+          ) : null
+        }
+      >
         <Button variant="ghost" onClick={() => cancel()}>
           {m.contacts_cancel()}
         </Button>
-        <div className="flex-1" />
-        {card ? (
-          <Button variant="danger" onClick={() => void destroy()}>
-            {m.contacts_delete()}
-          </Button>
-        ) : null}
-      </div>
+        <Button type="submit" variant="primary" disabled={create.isPending || update.isPending}>
+          {m.contacts_save()}
+        </Button>
+      </DialogActions>
     </form>
   );
 };

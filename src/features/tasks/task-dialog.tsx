@@ -8,7 +8,7 @@
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -290,14 +290,14 @@ export const TaskDialog = ({
             {many ? m.tasks_archive_mails() : m.tasks_archive_mail()}
           </label>
         ) : null}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onClose}>
             {m.tasks_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={busy || (!many && !title.trim())}>
             {many ? m.tasks_create_many({ count: starts.length }) : m.tasks_create()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

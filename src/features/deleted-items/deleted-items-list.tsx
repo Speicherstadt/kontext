@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { formatSize } from "@/lib/format";
 import { LOCALE } from "@/lib/locale";
@@ -157,14 +157,14 @@ const DestroyDialog = ({
       title={`${m.deleted_destroy()}?`}
       description={m.deleted_destroy_confirm({ title: titleOf(item) })}
     >
-      <div className="flex flex-wrap justify-end gap-2">
+      <DialogActions>
         <Button variant="ghost" onClick={onClose}>
           {m.mail_later_cancel()}
         </Button>
         <Button variant="danger" disabled={destroy.isPending} onClick={run}>
           {m.deleted_destroy()}
         </Button>
-      </div>
+      </DialogActions>
     </Dialog>
   );
 };

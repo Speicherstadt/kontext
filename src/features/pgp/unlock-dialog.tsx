@@ -1,7 +1,7 @@
 /** Asks for the password of one's own PGP or S/MIME key, when a mail is to be encrypted or signed. */
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { m } from "@/paraglide/messages";
 
@@ -57,14 +57,14 @@ export const UnlockDialog = ({
             {kind === "pgp" ? m.pgp_wrong_passphrase() : m.smime_wrong_password()}
           </span>
         ) : null}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onCancel}>
             {m.tasks_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={!passphrase}>
             {m.pgp_unlock()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

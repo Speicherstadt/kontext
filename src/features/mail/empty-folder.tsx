@@ -7,7 +7,7 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { emptyMailbox } from "@/jmap/empty-mailbox";
 import type { Mailbox } from "@/jmap/types";
@@ -58,14 +58,14 @@ export const EmptyFolder = ({ accountId, mailbox }: { accountId: string; mailbox
             : m.mail_empty_folder_hint({ count: mailbox.totalEmails })
         }
       >
-        <div className="flex flex-wrap justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={() => setAsking(false)}>
             {m.mail_later_cancel()}
           </Button>
           <Button variant="danger" disabled={busy} onClick={() => void empty()}>
             {m.mail_empty_folder_confirm()}
           </Button>
-        </div>
+        </DialogActions>
       </Dialog>
     </>
   );

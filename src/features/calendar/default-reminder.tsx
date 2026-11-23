@@ -9,7 +9,7 @@ import { Bell } from "lucide-react";
 import { useState } from "react";
 import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { updateCalendar } from "@/jmap/calendar";
 import { withOwnVisibility } from "@/lib/calendar-visibility";
@@ -99,14 +99,14 @@ const DefaultReminderDialog = ({
         label={m.calendar_default_reminder_all_day()}
         howLabel={`${m.calendar_reminder_how()} (${m.calendar_default_reminder_all_day()})`}
       />
-      <div className="flex justify-end gap-2">
+      <DialogActions>
         <Button variant="ghost" onClick={onClose}>
           {m.calendar_event_cancel()}
         </Button>
         <Button variant="primary" disabled={save.isPending} onClick={() => save.mutate()}>
           {m.calendar_event_save()}
         </Button>
-      </div>
+      </DialogActions>
     </Dialog>
   );
 };

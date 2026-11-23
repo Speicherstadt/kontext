@@ -7,6 +7,7 @@ import { type FormEvent, useRef, useState } from "react";
 import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DialogActions } from "@/components/ui/dialog";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -366,14 +367,14 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
           {problem}
         </p>
       ) : null}
-      <div className="flex gap-2">
-        <Button type="submit" variant="primary" disabled={create.isPending || update.isPending}>
-          {m.calendar_event_save()}
-        </Button>
+      <DialogActions>
         <Button variant="ghost" onClick={onCancel}>
           {m.calendar_event_cancel()}
         </Button>
-      </div>
+        <Button type="submit" variant="primary" disabled={create.isPending || update.isPending}>
+          {m.calendar_event_save()}
+        </Button>
+      </DialogActions>
       {external.dialog}
     </form>
   );

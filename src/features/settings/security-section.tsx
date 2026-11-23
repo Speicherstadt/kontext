@@ -12,6 +12,7 @@ import { useAuth, useClient } from "@/auth/auth";
 import { useSession } from "@/auth/session";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { changePassword, disableTwoFactor, enableTwoFactor } from "@/jmap/settings";
@@ -228,14 +229,14 @@ const TwoFactorCard = () => {
               {problem}
             </p>
           ) : null}
-          <div className="flex gap-2">
-            <Button type="submit" variant="danger" disabled={save.isPending}>
-              {m.settings_2fa_disable()}
-            </Button>
+          <DialogActions>
             <Button variant="ghost" onClick={reset}>
               {m.contacts_cancel()}
             </Button>
-          </div>
+            <Button type="submit" variant="danger" disabled={save.isPending}>
+              {m.settings_2fa_disable()}
+            </Button>
+          </DialogActions>
         </form>
       ) : setup ? (
         <form onSubmit={(e) => void submit(e, "enable")} className="flex flex-col gap-4">
@@ -274,14 +275,14 @@ const TwoFactorCard = () => {
               {problem}
             </p>
           ) : null}
-          <div className="flex gap-2">
-            <Button type="submit" variant="primary" disabled={save.isPending}>
-              {m.settings_2fa_enable()}
-            </Button>
+          <DialogActions>
             <Button variant="ghost" onClick={reset}>
               {m.contacts_cancel()}
             </Button>
-          </div>
+            <Button type="submit" variant="primary" disabled={save.isPending}>
+              {m.settings_2fa_enable()}
+            </Button>
+          </DialogActions>
         </form>
       ) : (
         <TwoFactorStatus

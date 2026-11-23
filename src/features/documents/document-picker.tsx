@@ -5,7 +5,7 @@
 import { ChevronRight, FileText, Folder, Inbox } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { m } from "@/paraglide/messages";
 import { type DocumentNode, useFolder, useMailboxFolders } from "./queries";
 
@@ -114,12 +114,12 @@ export const DocumentBrowser = ({
         )}
       </ul>
       {mode === "folder" && actions ? (
-        <div className="flex flex-wrap justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onCancel}>
             {m.documents_cancel()}
           </Button>
           {actions(folderId)}
-        </div>
+        </DialogActions>
       ) : null}
     </>
   );

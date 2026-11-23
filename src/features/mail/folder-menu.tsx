@@ -10,7 +10,7 @@ import { CheckCheck, Download, Ellipsis, FolderInput, Pencil, Trash2 } from "luc
 import { type FormEvent, type ReactNode, useState } from "react";
 import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import { Select, type SelectOption } from "@/components/ui/select";
@@ -137,14 +137,14 @@ export const FolderRow = ({ accountId, mailbox, mailboxes, activeId, children }:
           title={m.mail_folder_delete_title({ name })}
           description={deleteHint(mailbox, mailboxes)}
         >
-          <div className="flex flex-wrap justify-end gap-2">
+          <DialogActions>
             <Button variant="ghost" onClick={() => setDialog(null)}>
               {m.contacts_cancel()}
             </Button>
             <Button variant="danger" disabled={busy} onClick={() => void run(remove)}>
               {m.mail_folder_delete()}
             </Button>
-          </div>
+          </DialogActions>
         </Dialog>
       ) : null}
     </div>
@@ -192,14 +192,14 @@ const EditFolderDialog = ({ kind, mailbox, targets, busy, onClose, onSave }: Edi
         ) : (
           <ParentSelect value={parentId} onValueChange={setParentId} options={targets} />
         )}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onClose}>
             {m.contacts_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={busy}>
             {title}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );
