@@ -2,6 +2,7 @@
 import { type ReactNode, useState } from "react";
 import { type Company, type Employee, offboard } from "@/company-core/api";
 import { useCompanyChange } from "@/company-core/queries";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -103,12 +104,7 @@ export const OffboardingDialog = ({
           onChange={chooseForward}
         />
         <label className="flex items-center gap-2.5 text-[14px]">
-          <input
-            type="checkbox"
-            checked={reply}
-            onChange={(e) => setReply(e.target.checked)}
-            className="size-4 accent-[var(--accent)]"
-          />
+          <Checkbox checked={reply} onChange={(e) => setReply(e.target.checked)} />
           {m.company_reply_enable()}
         </label>
         {reply ? (

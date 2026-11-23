@@ -6,6 +6,7 @@
 import { Check, Search } from "lucide-react";
 import { type FormEvent, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -183,11 +184,10 @@ export const ChatDialog = ({
         </div>
         {editing ? null : (
           <label className="flex items-start gap-2.5 text-[14px]">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={confidential}
               onChange={(event) => setConfidential(event.target.checked)}
-              className="mt-0.5 size-4 accent-[var(--primary)]"
+              className="mt-0.5 size-4"
             />
             <span className="flex flex-col gap-0.5">
               {m.chat_confidential_toggle()}

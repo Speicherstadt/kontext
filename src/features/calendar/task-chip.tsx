@@ -5,6 +5,7 @@
  */
 import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/cn";
 import type { DayTask } from "@/lib/task-context";
@@ -21,12 +22,7 @@ export const TasksToggle = () => {
   const shown = useTasksShown();
   return (
     <label className="flex min-h-8 cursor-pointer items-center gap-2.5">
-      <input
-        type="checkbox"
-        checked={shown}
-        onChange={(e) => setCalendarHidden(TASKS_KEY, !e.target.checked)}
-        className="size-4 shrink-0 accent-[var(--primary)]"
-      />
+      <Checkbox checked={shown} onChange={(e) => setCalendarHidden(TASKS_KEY, !e.target.checked)} />
       <span className="flex min-w-0 flex-col leading-tight">
         <span className="truncate">{m.calendar_tasks()}</span>
         <span className="truncate text-[12px] text-muted">{m.calendar_tasks_hint()}</span>

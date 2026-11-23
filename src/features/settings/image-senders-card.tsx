@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useImageSenders } from "@/mail-core/image-senders";
@@ -28,11 +29,9 @@ export const ImageSendersCard = () => {
   return (
     <SettingsCard title={m.images_title()} description={m.images_hint()}>
       <label className="flex items-center gap-2.5 text-[14px]">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={contacts}
           onChange={(event) => run(trust(CONTACTS, event.target.checked))}
-          className="size-4 accent-[var(--primary)]"
         />
         {m.images_contacts()}
       </label>

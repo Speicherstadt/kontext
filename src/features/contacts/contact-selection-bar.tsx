@@ -6,6 +6,7 @@
 import { Download, Trash2, UserPlus, X } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import { useToast } from "@/components/ui/toast";
 import {
@@ -112,15 +113,13 @@ export const ContactSelectionBar = ({
   return (
     <div className="flex items-center gap-1">
       <label className="flex size-8 cursor-pointer items-center justify-center rounded-lg hover:bg-hover">
-        <input
-          type="checkbox"
+        <Checkbox
           ref={(box) => {
             if (box) box.indeterminate = !allPicked && !none;
           }}
           checked={allPicked}
           aria-label={m.mail_select_all()}
           onChange={allPicked ? onClear : onPickAll}
-          className="size-4 cursor-pointer accent-[var(--primary)]"
         />
       </label>
       <span className="min-w-0 flex-1 truncate text-[14px] font-medium" aria-live="polite">

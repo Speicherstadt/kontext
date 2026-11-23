@@ -4,6 +4,7 @@
  * Shown unless switched off under "Meine Kalender" ("birthdays" in the hidden calendars).
  */
 import { useMemo } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useContacts } from "@/contacts-core/queries";
 import { type BirthdayEvent, birthdayEvent, birthdaysBetween } from "@/lib/birthdays";
 import { m } from "@/paraglide/messages";
@@ -36,13 +37,11 @@ export const BirthdaysToggle = () => {
   const shown = useBirthdaysShown();
   return (
     <label className="flex min-h-8 cursor-pointer items-center gap-2.5">
-      <input
-        type="checkbox"
+      <Checkbox
         checked={shown}
         aria-label={m.calendar_show({ name: m.calendar_birthdays() })}
         onChange={(e) => setCalendarHidden(BIRTHDAYS_KEY, !e.target.checked)}
-        className="size-4 shrink-0"
-        style={{ accentColor: BIRTHDAY_COLOR }}
+        color={BIRTHDAY_COLOR}
       />
       <span className="flex min-w-0 flex-col leading-tight">
         <span className="truncate">{m.calendar_birthdays()}</span>

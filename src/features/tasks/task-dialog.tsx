@@ -7,6 +7,7 @@
 
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -283,12 +284,7 @@ export const TaskDialog = ({
         </div>
         {onArchive ? (
           <label className="flex items-center gap-2.5 text-[14px]">
-            <input
-              type="checkbox"
-              checked={archive}
-              onChange={(e) => setArchive(e.target.checked)}
-              className="size-4 accent-[var(--primary)]"
-            />
+            <Checkbox checked={archive} onChange={(e) => setArchive(e.target.checked)} />
             {many ? m.tasks_archive_mails() : m.tasks_archive_mail()}
           </label>
         ) : null}

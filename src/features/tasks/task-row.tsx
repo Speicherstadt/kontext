@@ -1,6 +1,7 @@
 /** One task in a list: its box to tick off, title, due date, what it is about, who does it. */
 import { Link } from "@tanstack/react-router";
 import { BellRing, Mail, Repeat } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
 import { cn } from "@/lib/cn";
 import { dueGroup, dueLabel, type Task } from "@/lib/tasks";
@@ -47,12 +48,11 @@ export const TaskRow = ({
     >
       {/* More to hit than the box shows: a click just beside it ticks off, not opens. */}
       <label className="-m-2.5 mt-[-8px] flex shrink-0 cursor-pointer p-2.5">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={done}
           onChange={onToggle}
           aria-label={m.tasks_toggle_done({ title: task.title })}
-          className="size-[18px] cursor-pointer rounded-full accent-[var(--primary)]"
+          className="size-[18px] cursor-pointer rounded-full"
         />
       </label>
       <Link
@@ -69,15 +69,11 @@ export const TaskRow = ({
               {dueLabel(task.dueDate, task.dueTime, today)}
             </span>
           ) : null}
-          {task.repeat && !done ? (
-            <Repeat size={12} className="shrink-0" aria-label={m.tasks_repeat()} />
-          ) : null}
-          {task.remindAt && !done ? (
-            <BellRing size={12} className="shrink-0" aria-label={m.tasks_remind()} />
-          ) : null}
+          {task.repeat && !done ? <Repeat size={12} aria-label={m.tasks_repeat()} /> : null}
+          {task.remindAt && !done ? <BellRing size={12} aria-label={m.tasks_remind()} /> : null}
           {mail ? (
             <span className="flex min-w-0 items-center gap-1 truncate">
-              <Mail size={12} className="shrink-0" aria-hidden="true" />
+              <Mail size={12} aria-hidden="true" />
               <span className="truncate">{mail.detail || mail.label}</span>
             </span>
           ) : null}

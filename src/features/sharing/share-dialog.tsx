@@ -7,6 +7,7 @@
 import { Users } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Select } from "@/components/ui/input";
 import { useColleagues } from "@/directory/queries";
@@ -145,11 +146,10 @@ export const ShareDialog = ({
         </ul>
         {isCalendar ? (
           <label className="flex items-start gap-2.5 border-t border-border pt-3 text-[14px]">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={included}
               onChange={(e) => setIncluded(e.target.checked)}
-              className="mt-0.5 size-4 shrink-0 accent-[var(--accent)]"
+              className="mt-0.5 size-4 shrink-0"
             />
             <span className="flex flex-col gap-0.5">
               {m.sharing_include_availability()}

@@ -2,6 +2,8 @@
  * Password and (with two-factor sign-in) code, asked again before an agent gets access: its
  * connection signs in at Stalwart on its own (server/mcp/routes.ts, server/mcp/oauth.ts).
  */
+
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label } from "@/components/ui/input";
 import { m } from "@/paraglide/messages";
 
@@ -51,11 +53,10 @@ export const WriteChoice = ({
   onChange: (checked: boolean) => void;
 }) => (
   <label className="flex items-start gap-2.5 text-[14px]">
-    <input
-      type="checkbox"
+    <Checkbox
       checked={checked}
       onChange={(event) => onChange(event.target.checked)}
-      className="mt-0.5 size-4 shrink-0 accent-[var(--primary)]"
+      className="mt-0.5 size-4 shrink-0"
     />
     <span className="flex flex-col gap-0.5">
       {m.agents_write()}

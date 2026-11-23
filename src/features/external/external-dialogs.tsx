@@ -1,6 +1,7 @@
 /** Connecting another mailbox (Gmail, GMX, …) and entering a new password after a change. */
 import { type FormEvent, type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label, Select } from "@/components/ui/input";
 import { changeExternalAccount, createExternalAccount } from "@/external-accounts/api";
@@ -174,8 +175,7 @@ export const ConnectDialog = ({ onClose }: { onClose: () => void }) => {
           </Select>
         </Label>
         <label className="flex items-start gap-2 text-[13px]">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={importExisting}
             onChange={(e) => setImportExisting(e.target.checked)}
             className="mt-0.5"

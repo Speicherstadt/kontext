@@ -5,6 +5,7 @@
 import { useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { readableNumber } from "@/lib/phone";
@@ -20,12 +21,7 @@ export const BlockedForm = ({ blocked }: { blocked: Admin["blocked"] }) => {
   return (
     <SettingsCard title={m.phone_blocklist()} description={m.phone_blocklist_hint()}>
       <label className="flex items-center gap-2 text-[14px]">
-        <input
-          type="checkbox"
-          checked={anonymous}
-          onChange={(event) => setAnonymous(event.target.checked)}
-          className="size-4 accent-[var(--accent)]"
-        />
+        <Checkbox checked={anonymous} onChange={(event) => setAnonymous(event.target.checked)} />
         {m.phone_blocklist_anonymous()}
       </label>
       {numbers.length ? (

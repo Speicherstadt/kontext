@@ -27,7 +27,11 @@
         "noNonNullAssertion": "off"
       },
       "a11y": {
-        "noAutofocus": "off"
+        "noAutofocus": "off",
+        "noLabelWithoutControl": {
+          "level": "error",
+          "options": { "inputComponents": ["Checkbox"] }
+        }
       },
       "complexity": {
         "noExcessiveLinesPerFunction": {

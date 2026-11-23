@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useCompany } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
@@ -56,11 +57,9 @@ const OptionEditor = ({
         </Label>
       </div>
       <label className="flex items-center gap-2 text-[14px]">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={option.mailbox}
           onChange={(event) => onChange({ ...option, mailbox: event.target.checked })}
-          className="size-4 accent-[var(--accent)]"
         />
         {m.phone_menu_mailbox()}
       </label>
@@ -68,8 +67,7 @@ const OptionEditor = ({
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           {people.map((employee) => (
             <label key={employee.id} className="flex items-center gap-2 text-[14px]">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={option.members.includes(employee.id)}
                 onChange={(event) =>
                   onChange({
@@ -79,7 +77,6 @@ const OptionEditor = ({
                       : option.members.filter((id) => id !== employee.id),
                   })
                 }
-                className="size-4 accent-[var(--accent)]"
               />
               {employee.fullName}
             </label>
@@ -105,12 +102,7 @@ export const MenuForm = ({ menu, sounds }: { menu: Admin["menu"]; sounds: Admin[
   return (
     <SettingsCard title={m.phone_menu()} description={m.phone_menu_hint()}>
       <label className="flex items-center gap-2 text-[14px]">
-        <input
-          type="checkbox"
-          checked={enabled}
-          onChange={(event) => setEnabled(event.target.checked)}
-          className="size-4 accent-[var(--accent)]"
-        />
+        <Checkbox checked={enabled} onChange={(event) => setEnabled(event.target.checked)} />
         {m.phone_menu_enabled()}
       </label>
       <Label>

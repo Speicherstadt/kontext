@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Highlighted } from "@/components/highlighted";
 import { Avatar } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
 import { isFlagged } from "@/jmap/mail";
 import type { Category } from "@/lib/categories";
 import { cn } from "@/lib/cn";
@@ -58,14 +59,13 @@ export const PickColumn = ({
         className="pointer-events-none absolute top-3 left-2 group-hover:opacity-0 group-has-[:focus-visible]:opacity-0"
       />
     )}
-    <input
-      type="checkbox"
+    <Checkbox
       checked={selected}
       readOnly
       aria-label={m.mail_select({ subject: subject || m.mail_no_subject() })}
       className={cn(
         // In the middle of the picture's place.
-        "mt-1.5 ml-1.5 block size-4 cursor-pointer accent-[var(--primary)]",
+        "mt-1.5 ml-1.5 block size-4 cursor-pointer",
         // Under the picture, still there for the keyboard; shown on hover and focus.
         !boxShown && "opacity-0 group-hover:opacity-100 group-has-[:focus-visible]:opacity-100",
       )}
@@ -128,7 +128,7 @@ const Place = ({ row }: { row: Row }) => (
         title={row.account.title}
         className="flex min-w-0 items-center gap-1 rounded-md bg-subtle px-1.5 text-[11px] font-medium text-muted"
       >
-        <Users size={12} className="shrink-0" aria-hidden="true" />
+        <Users size={12} aria-hidden="true" />
         <span className="truncate">{row.account.label}</span>
       </span>
     ) : null}
@@ -184,9 +184,7 @@ const Preview = ({ row, openedPreview }: { row: Row; openedPreview?: string | nu
     );
   return (
     <>
-      {email.hasAttachment ? (
-        <Paperclip size={12} className="shrink-0" aria-label={m.mail_attachments()} />
-      ) : null}
+      {email.hasAttachment ? <Paperclip size={12} aria-label={m.mail_attachments()} /> : null}
       <span className="truncate">
         <Highlighted text={email.preview} terms={highlight} />
       </span>

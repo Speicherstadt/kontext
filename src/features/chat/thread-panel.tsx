@@ -8,6 +8,7 @@ import { ChevronLeft, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { isPending, shownKey } from "@/chat-core/queries";
 import { useChatNames } from "@/chat-core/use-chat-names";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useMediaQuery } from "@/components/use-media-query";
 import { type ChannelSummary, firstName, type Message, timeline } from "@/lib/chat";
 import { m } from "@/paraglide/messages";
@@ -178,11 +179,9 @@ export const ThreadPanel = ({
         )}
         {channel.confidential && !unlocked ? null : (
           <label className="mt-2 flex w-fit items-center gap-2 px-1 text-[13px] text-muted">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={alsoInChannel}
               onChange={(event) => setAlsoInChannel(event.target.checked)}
-              className="size-4 accent-[var(--primary)]"
             />
             {m.chat_also_in_channel()}
           </label>

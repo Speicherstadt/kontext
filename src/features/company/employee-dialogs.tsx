@@ -12,6 +12,7 @@ import {
 import { useStalwartEdition } from "@/company-core/edition";
 import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -49,12 +50,10 @@ const AdminCheckbox = ({
 }) => (
   <div className="flex flex-col gap-1">
     <label className="flex min-h-9 items-center gap-2.5 text-[14px]">
-      <input
-        type="checkbox"
+      <Checkbox
         checked={checked}
         disabled={disabled}
         onChange={(e) => onChange(e.target.checked)}
-        className="size-4 accent-[var(--accent)]"
       />
       {m.company_admin_label()}
     </label>

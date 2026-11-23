@@ -5,6 +5,7 @@
  */
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { dateKey } from "@/lib/jscalendar";
 import { LOCALE } from "@/lib/locale";
@@ -93,11 +94,9 @@ export const VacationForm = ({
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       <label className="flex items-center gap-2.5 text-[16px] font-medium">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={form.isEnabled}
           onChange={(e) => setForm((current) => ({ ...current, isEnabled: e.target.checked }))}
-          className="size-4 accent-[var(--accent)]"
         />
         {m.settings_vacation_enable()}
       </label>
