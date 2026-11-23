@@ -26,7 +26,8 @@ test("sendet aus dem eigenen Postfach als info@ über das gemeinsame Postfach", 
     // As info@, it shows the name the customer will see, and the draft moves to info@.
     await form.getByLabel("Von").click();
     const info = page.getByRole("option").filter({ hasText: "info@" }).first();
-    await expect(info).toContainText("Jonas Weber (Weber Haustechnik)");
+    // The person and the mailbox's name, as Stalwart names info@ (its group's description).
+    await expect(info).toContainText(/Jonas Weber \(.+\)/);
     await info.click();
     await expect(form.getByLabel("Von")).toContainText(/info@/);
     await expect
@@ -47,7 +48,10 @@ test("sendet aus dem eigenen Postfach als info@ über das gemeinsame Postfach", 
     expect(await findMail("jonas", subject)).toBeNull();
     await expect
       .poll(async () => (await inboxMails("anna")).find((mail) => mail.subject === subject))
-      .toMatchObject({ from: address("info"), fromName: "Jonas Weber (Weber Haustechnik)" });
+      .toMatchObject({
+        from: address("info"),
+        fromName: expect.stringMatching(/^Jonas Weber \(.+\)$/),
+      });
   } finally {
     await removeMails("jonas", "info", [subject]);
     await removeMails("jonas", "jonas", [subject]);
