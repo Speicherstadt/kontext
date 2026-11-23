@@ -7,7 +7,7 @@ import { useId } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { ShortcutList } from "@/components/shortcuts-dialog";
 import { setThemeChoice, useTheme } from "@/components/theme/use-theme";
-import { Select } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/cn";
 import { UNDO_CHOICES, type UndoSeconds } from "@/lib/schedule";
@@ -75,15 +75,13 @@ export const AppearanceSection = () => {
           <Select
             id={undoId}
             value={String(undo)}
-            onChange={(event) => setUndoSeconds(Number(event.target.value) as UndoSeconds)}
+            onValueChange={(value) => setUndoSeconds(Number(value) as UndoSeconds)}
+            options={UNDO_CHOICES.map((seconds) => ({
+              value: String(seconds),
+              label: seconds ? m.settings_undo_seconds({ seconds }) : m.settings_undo_off(),
+            }))}
             className="w-auto"
-          >
-            {UNDO_CHOICES.map((seconds) => (
-              <option key={seconds} value={seconds}>
-                {seconds ? m.settings_undo_seconds({ seconds }) : m.settings_undo_off()}
-              </option>
-            ))}
-          </Select>
+          />
         </div>
         <p className="m-0 mt-1 text-[12px] text-muted">{m.settings_undo_hint()}</p>
       </SettingsCard>

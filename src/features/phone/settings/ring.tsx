@@ -9,7 +9,8 @@ import { useCompany } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { moved } from "@/lib/move";
 import { readableNumber } from "@/lib/phone";
@@ -60,10 +61,14 @@ export const RingForm = ({ admin }: { admin: Admin }) => {
       </fieldset>
       <Label>
         {m.phone_ring_mode()}
-        <Select value={mode} onChange={(event) => setMode(event.target.value as typeof mode)}>
-          <option value="all">{m.phone_ring_all()}</option>
-          <option value="order">{m.phone_ring_order()}</option>
-        </Select>
+        <Select
+          value={mode}
+          onValueChange={setMode}
+          options={[
+            { value: "all", label: m.phone_ring_all() },
+            { value: "order", label: m.phone_ring_order() },
+          ]}
+        />
       </Label>
       {mode === "order" ? (
         <>
@@ -100,15 +105,13 @@ export const RingForm = ({ admin }: { admin: Admin }) => {
           <Label>
             {m.phone_ring_step()}
             <Select
-              value={stepSeconds}
-              onChange={(event) => setStepSeconds(Number(event.target.value))}
-            >
-              {STEPS.map((seconds) => (
-                <option key={seconds} value={seconds}>
-                  {m.phone_seconds({ seconds })}
-                </option>
-              ))}
-            </Select>
+              value={String(stepSeconds)}
+              onValueChange={(seconds) => setStepSeconds(Number(seconds))}
+              options={STEPS.map((seconds) => ({
+                value: String(seconds),
+                label: m.phone_seconds({ seconds }),
+              }))}
+            />
           </Label>
         </>
       ) : null}
@@ -130,15 +133,13 @@ export const RingForm = ({ admin }: { admin: Admin }) => {
           <Label>
             {m.phone_forward_after()}
             <Select
-              value={afterSeconds}
-              onChange={(event) => setAfterSeconds(Number(event.target.value))}
-            >
-              {AFTER.map((seconds) => (
-                <option key={seconds} value={seconds}>
-                  {seconds ? m.phone_seconds({ seconds }) : m.phone_forward_at_once()}
-                </option>
-              ))}
-            </Select>
+              value={String(afterSeconds)}
+              onValueChange={(seconds) => setAfterSeconds(Number(seconds))}
+              options={AFTER.map((seconds) => ({
+                value: String(seconds),
+                label: seconds ? m.phone_seconds({ seconds }) : m.phone_forward_at_once(),
+              }))}
+            />
           </Label>
         </div>
       ) : null}

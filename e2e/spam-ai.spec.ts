@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { address, jmapAs, login, mailboxAccountId, unique } from "./helpers";
+import { address, choose, jmapAs, login, mailboxAccountId, unique } from "./helpers";
 
 /**
  * The CI's Stalwart is Community, so the Enterprise form is tried against Kontext's own answers
@@ -104,7 +104,7 @@ test.describe("KI-Spamfilter", () => {
     await expect(card.getByLabel("Modell")).toHaveValue("claude-haiku-5-5");
     await expect(card.getByRole("button", { name: "Speichern" })).toBeDisabled();
     await card.getByLabel("Schlüssel des Assistenten im Chat verwenden").check();
-    await card.getByLabel("Wirkung").selectOption("shadow");
+    await choose(card.getByLabel("Wirkung"), "Nur beobachten (Urteil steht nur in der Mail)");
     await card.getByRole("button", { name: "Speichern" }).click();
     await expect(page.getByRole("status")).toHaveText("Gespeichert");
     expect(saved).toEqual([

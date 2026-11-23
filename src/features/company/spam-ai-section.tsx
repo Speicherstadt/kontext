@@ -10,7 +10,8 @@ import { useStalwartEdition } from "@/company-core/edition";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
@@ -145,17 +146,11 @@ const ModelFields = ({
         {m.company_spam_ai_provider()}
         <Select
           value={form.provider}
-          onChange={(event) => {
-            const provider = event.target.value as SpamAiProvider;
-            change({ provider, model: provider === view.provider ? view.model : "" });
-          }}
-        >
-          {PROVIDERS.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label()}
-            </option>
-          ))}
-        </Select>
+          onValueChange={(provider) =>
+            change({ provider, model: provider === view.provider ? view.model : "" })
+          }
+          options={PROVIDERS.map((option) => ({ value: option.id, label: option.label() }))}
+        />
       </Label>
       <Label>
         {m.company_spam_ai_model()}
@@ -204,11 +199,12 @@ const ModelFields = ({
         {m.company_spam_ai_mode()}
         <Select
           value={form.mode}
-          onChange={(event) => change({ mode: event.target.value as SpamAiForm["mode"] })}
-        >
-          <option value="automatic">{m.company_spam_ai_automatic()}</option>
-          <option value="shadow">{m.company_spam_ai_shadow()}</option>
-        </Select>
+          onValueChange={(mode) => change({ mode })}
+          options={[
+            { value: "automatic", label: m.company_spam_ai_automatic() },
+            { value: "shadow", label: m.company_spam_ai_shadow() },
+          ]}
+        />
       </Label>
     </>
   );

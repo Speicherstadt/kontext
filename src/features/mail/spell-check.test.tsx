@@ -11,7 +11,7 @@ const none = () => {};
 const subjectField = () => {
   render(
     <ComposerFields
-      identities={[]}
+      senders={[]}
       identityId=""
       onIdentity={none}
       to={[]}

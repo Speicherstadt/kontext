@@ -14,6 +14,9 @@ vi.mock("@/auth/auth", () => ({ useClient: () => ({}) }));
 vi.mock("@tanstack/react-router", () => ({ useNavigate: () => vi.fn() }));
 vi.mock("@/components/ui/toast", () => ({ useToast: () => ({ show: vi.fn() }) }));
 
+Element.prototype.hasPointerCapture ??= () => false;
+Element.prototype.scrollIntoView ??= () => undefined;
+
 afterEach(() => {
   cleanup();
   updateMailbox.mockClear();
@@ -42,7 +45,7 @@ const openMove = (mailbox: Mailbox, mailboxes: Mailbox[]) => {
     button: 0,
   });
   fireEvent.click(screen.getByRole("menuitem", { name: "Verschieben" }));
-  return screen.getByRole("combobox") as HTMLSelectElement;
+  return screen.getByRole("combobox");
 };
 
 describe("moving a folder", () => {
@@ -54,8 +57,9 @@ describe("moving a folder", () => {
     const other = box("k", "Kunden", null, null);
     const select = openMove(projects, [inbox, projects, other]);
 
-    expect(select.value).toBe("i");
-    fireEvent.change(select, { target: { value: "" } });
+    expect(select.textContent).toContain("Posteingang");
+    fireEvent.keyDown(select, { key: "Enter" });
+    fireEvent.click(screen.getByRole("option", { name: "—" }));
     fireEvent.click(screen.getByRole("button", { name: "Verschieben" }));
     expect(updateMailbox).toHaveBeenCalledWith({}, "acc", "p", { parentId: null });
   });

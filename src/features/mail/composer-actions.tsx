@@ -1,7 +1,9 @@
 /**
- * The composer's action bar. On a phone (below `md`) only send, attach, "Weitere Aktionen" and
- * discard stay in the row; the switches and "Als Entwurf speichern" move into the menu, so every
- * action fits on a 360–412 px screen. From `md` on, all of them stand in the row.
+ * The composer's action bar: the tools for the mail (attach, switches) on the left, what ends
+ * writing on the right, "Senden" last – where the eye ends up after writing. On a phone (below
+ * `md`) only attach, "Weitere Aktionen", discard and send stay in the row; the switches and "Als
+ * Entwurf speichern" move into the menu, so every action fits on a 360–412 px screen. From `md`
+ * on, all of them stand in the row.
  */
 import {
   LockKeyhole,
@@ -25,6 +27,7 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "@/components/ui/menu";
+import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/cn";
 import { LOCALE } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
@@ -158,7 +161,7 @@ const MoreMenu = ({ toggles, onSaveDraft }: { toggles: Toggle[]; onSaveDraft: ()
   );
 };
 
-/** Send, attach, the switches, the autosave note, save as draft and discard. */
+/** Attach and the switches on the left; the autosave note, discard, save as draft and send on the right. */
 export const ComposerActions = (props: Props) => {
   const {
     sending,
@@ -181,17 +184,6 @@ export const ComposerActions = (props: Props) => {
   const toggles = togglesOf(props);
   return (
     <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
-      <span className="flex">
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={sending || !canSend}
-          className="rounded-r-none"
-        >
-          <Send size={16} /> {sending ? m.mail_sending() : m.mail_send()}
-        </Button>
-        <SendLater disabled={sending || !canSend} onPick={onSendLater} />
-      </span>
       <input
         ref={fileInput}
         type="file"
@@ -242,19 +234,18 @@ export const ComposerActions = (props: Props) => {
         </span>
       ) : null}
       {encrypt && !encryptBlocked && linkDays !== null ? (
-        <select
+        <Select
           aria-label={m.secure_link_days()}
           title={m.secure_link_days()}
-          value={linkDays}
-          onChange={(event) => onLinkDays(Number(event.target.value))}
-          className="h-8 rounded-lg border border-border bg-bg px-2 text-[12px] text-fg"
-        >
-          {LINK_DAY_CHOICES.map((days) => (
-            <option key={days} value={days}>
-              {m.secure_link_days_option({ days })}
-            </option>
-          ))}
-        </select>
+          value={String(linkDays)}
+          onValueChange={(days) => onLinkDays(Number(days))}
+          options={LINK_DAY_CHOICES.map((days) => ({
+            value: String(days),
+            label: m.secure_link_days_option({ days }),
+          }))}
+          size="sm"
+          className="w-auto shrink-0"
+        />
       ) : null}
       <div className="flex-1" />
       {savedAt ? (
@@ -264,9 +255,6 @@ export const ComposerActions = (props: Props) => {
           })}
         </span>
       ) : null}
-      <Button variant="ghost" size="sm" className="hidden md:inline-flex" onClick={onSaveDraft}>
-        {m.mail_save_draft()}
-      </Button>
       <Button
         variant="ghost"
         size="icon"
@@ -276,6 +264,20 @@ export const ComposerActions = (props: Props) => {
       >
         <Trash2 size={16} />
       </Button>
+      <Button variant="ghost" size="sm" className="hidden md:inline-flex" onClick={onSaveDraft}>
+        {m.mail_save_draft()}
+      </Button>
+      <span className="flex">
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={sending || !canSend}
+          className="rounded-r-none"
+        >
+          <Send size={16} /> {sending ? m.mail_sending() : m.mail_send()}
+        </Button>
+        <SendLater disabled={sending || !canSend} onPick={onSendLater} />
+      </span>
     </div>
   );
 };

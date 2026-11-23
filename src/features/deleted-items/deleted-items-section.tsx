@@ -6,6 +6,7 @@ import { useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { useStalwartEdition } from "@/company-core/edition";
 import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { m } from "@/paraglide/messages";
 import { type ArchiveAccount, type ArchiveView, pickAccount, retentionDays } from "./api";
 import { DeletedItemsList } from "./deleted-items-list";
@@ -37,19 +38,17 @@ const AccountPicker = ({
 }) => (
   <Label>
     {m.deleted_account()}
-    <select
+    <Select
       value={value}
-      onChange={(event) => onChange(event.target.value)}
-      className="h-10 rounded-lg border border-border bg-bg px-2 text-[14px] text-fg"
-    >
-      {accounts.map((account) => (
-        <option key={account.id} value={account.id}>
-          {account.kind === "own"
+      onValueChange={onChange}
+      options={accounts.map((account) => ({
+        value: account.id,
+        label:
+          account.kind === "own"
             ? m.deleted_account_own({ email: account.email })
-            : m.deleted_account_shared({ email: account.email })}
-        </option>
-      ))}
-    </select>
+            : m.deleted_account_shared({ email: account.email }),
+      }))}
+    />
   </Label>
 );
 

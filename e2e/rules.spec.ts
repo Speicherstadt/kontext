@@ -1,5 +1,14 @@
 import { expect, type Page, test } from "@playwright/test";
-import { addMail, address, findMail, inboxMails, login, removeMails, unique } from "./helpers";
+import {
+  addMail,
+  address,
+  choose,
+  findMail,
+  inboxMails,
+  login,
+  removeMails,
+  unique,
+} from "./helpers";
 import { deliverMail } from "./protocols";
 
 const deleteRule = async (page: Page, title: RegExp) => {
@@ -18,14 +27,14 @@ test.describe("Regeln", () => {
     await expect(page.getByText("Noch keine Regeln.")).toBeVisible();
     await page.getByRole("button", { name: "Neue Regel" }).click();
     const dialog = page.getByRole("dialog", { name: "Neue Regel" });
-    await dialog.getByLabel("Feld").selectOption("subject");
+    await choose(dialog.getByLabel("Feld"), "Betreff");
     await dialog.getByLabel("Wert").fill(token);
     await dialog.getByRole("button", { name: "Regel speichern" }).click();
     await expect(dialog.getByRole("alert")).toHaveText(
       "Bitte wählen Sie, was mit der Mail passieren soll.",
     );
     await dialog.getByLabel("In Ordner verschieben").check();
-    await dialog.getByLabel("Ordner wählen").selectOption({ label: "Archiv" });
+    await choose(dialog.getByLabel("Ordner wählen"), "Archiv");
     await dialog.getByLabel("Als gelesen markieren").check();
     await dialog.getByRole("button", { name: "Regel speichern" }).click();
     await expect(page.getByRole("status").filter({ hasText: "Regel gespeichert." })).toBeVisible();
@@ -118,10 +127,10 @@ test.describe("Regeln auf vorhandene Mails und für gemeinsame Postfächer", () 
     await page.goto("/settings?section=rules");
     await page.getByRole("button", { name: "Neue Regel" }).click();
     const dialog = page.getByRole("dialog", { name: "Neue Regel" });
-    await dialog.getByLabel("Feld").selectOption("subject");
+    await choose(dialog.getByLabel("Feld"), "Betreff");
     await dialog.getByLabel("Wert").fill(token);
     await dialog.getByLabel("In Ordner verschieben").check();
-    await dialog.getByLabel("Ordner wählen").selectOption({ label: "Archiv" });
+    await choose(dialog.getByLabel("Ordner wählen"), "Archiv");
     await dialog.getByLabel("Markieren", { exact: true }).check();
     await dialog.getByLabel("Auch auf die Mails anwenden").check();
     await dialog.getByRole("button", { name: "Regel speichern" }).click();
@@ -147,7 +156,7 @@ test.describe("Regeln auf vorhandene Mails und für gemeinsame Postfächer", () 
     await expect(rules.getByText("Noch keine Regeln.")).toBeVisible();
     await rules.getByRole("button", { name: "Neue Regel" }).click();
     const dialog = page.getByRole("dialog", { name: "Neue Regel" });
-    await dialog.getByLabel("Feld").selectOption("subject");
+    await choose(dialog.getByLabel("Feld"), "Betreff");
     await dialog.getByLabel("Wert").fill(token);
     await dialog.getByLabel("Markieren", { exact: true }).check();
     await dialog.getByLabel("Auch auf die Mails anwenden").check();
@@ -208,7 +217,7 @@ test.describe("Regeln für Mitarbeiter", () => {
       await expect(rules).toContainText(`Gelten für neue Mails an ${address("anna")}`);
       await rules.getByRole("button", { name: "Neue Regel" }).click();
       const dialog = page.getByRole("dialog", { name: "Neue Regel" });
-      await dialog.getByLabel("Feld").selectOption("subject");
+      await choose(dialog.getByLabel("Feld"), "Betreff");
       await dialog.getByLabel("Wert").fill(token);
       await dialog.getByLabel("Markieren", { exact: true }).check();
       await dialog.getByLabel("Auch auf die Mails anwenden").check();

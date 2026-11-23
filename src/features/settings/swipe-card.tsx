@@ -1,7 +1,7 @@
 /** Per device: what swiping a mail in the list to the left or right does on the phone. */
 import { useId } from "react";
 import { SettingsCard } from "@/components/settings-card";
-import { Select } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { SWIPE_ACTIONS, type SwipeAction, type SwipeDirection } from "@/lib/swipe";
 import { setSwipeSettings, useSwipeSettings } from "@/mail-core/swipe-settings";
 import { m } from "@/paraglide/messages";
@@ -30,17 +30,13 @@ export const SwipeCard = () => {
           <Select
             id={`${id}-${direction}`}
             value={settings[direction]}
-            onChange={(event) =>
-              setSwipeSettings({ ...settings, [direction]: event.target.value as SwipeAction })
-            }
+            onValueChange={(action) => setSwipeSettings({ ...settings, [direction]: action })}
+            options={SWIPE_ACTIONS.map((action) => ({
+              value: action,
+              label: ACTION_LABEL[action](),
+            }))}
             className="w-44"
-          >
-            {SWIPE_ACTIONS.map((action) => (
-              <option key={action} value={action}>
-                {ACTION_LABEL[action]()}
-              </option>
-            ))}
-          </Select>
+          />
         </div>
       ))}
     </SettingsCard>

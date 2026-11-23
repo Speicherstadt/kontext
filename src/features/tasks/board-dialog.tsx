@@ -6,7 +6,8 @@ import { Trash2 } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
 import { type Board, useBoards, useTaskActions } from "./queries";
@@ -94,13 +95,14 @@ export const BoardDialog = ({
         {!board && mailboxes.length > 1 ? (
           <Label>
             {m.tasks_mailbox()}
-            <Select value={mailbox} onChange={(e) => setMailbox(e.target.value)}>
-              {mailboxes.map((candidate) => (
-                <option key={candidate.id} value={candidate.accountId}>
-                  {candidate.mailbox}
-                </option>
-              ))}
-            </Select>
+            <Select
+              value={mailbox}
+              onValueChange={setMailbox}
+              options={mailboxes.map((candidate) => ({
+                value: candidate.accountId,
+                label: candidate.mailbox,
+              }))}
+            />
           </Label>
         ) : null}
         {board ? (

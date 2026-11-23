@@ -4,8 +4,8 @@ import { BookUser, Plus, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { TabBar } from "@/components/shell/tab-bar-slot";
 import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/input";
 import { Loading, PlaceholderRows } from "@/components/ui/placeholder";
+import { Select } from "@/components/ui/select";
 import { useShortcuts } from "@/components/use-shortcuts";
 import {
   type BookRef,
@@ -255,26 +255,23 @@ const BookPicker = ({ books, value }: { books: BookRef[]; value: string | undefi
     <Select
       aria-label={m.contacts_book()}
       value={value ?? ""}
-      onChange={(e) => navigate({ to: "/contacts", search: { book: e.target.value || undefined } })}
-      className="h-9 rounded-lg text-[14px]"
-    >
-      <option value="">{m.contacts_all()}</option>
-      <optgroup label={m.contacts_books_mine()}>
-        {own.map((book) => (
-          <option key={book.key} value={book.key}>
-            {book.name}
-          </option>
-        ))}
-      </optgroup>
-      {shared.length > 0 ? (
-        <optgroup label={m.contacts_books_shared()}>
-          {shared.map((book) => (
-            <option key={book.key} value={book.key}>
-              {bookLabel(book)}
-            </option>
-          ))}
-        </optgroup>
-      ) : null}
-    </Select>
+      onValueChange={(book) => navigate({ to: "/contacts", search: { book: book || undefined } })}
+      options={[
+        { value: "", label: m.contacts_all() },
+        {
+          label: m.contacts_books_mine(),
+          options: own.map((book) => ({ value: book.key, label: book.name })),
+        },
+        ...(shared.length > 0
+          ? [
+              {
+                label: m.contacts_books_shared(),
+                options: shared.map((book) => ({ value: book.key, label: bookLabel(book) })),
+              },
+            ]
+          : []),
+      ]}
+      className="h-9 text-[14px]"
+    />
   );
 };

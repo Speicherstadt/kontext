@@ -1,7 +1,7 @@
 import { expect, type Page, test } from "@playwright/test";
 import { DEV_PASSWORD } from "../dev/config";
 import { startFakeSmtp } from "./fake-smtp";
-import { addMail, address, inboxSubjects, login, unique } from "./helpers";
+import { addMail, address, choose, inboxSubjects, login, unique } from "./helpers";
 
 /**
  * Takes away the signed-in person's other mailboxes, so a failed try leaves nothing that keeps
@@ -36,9 +36,7 @@ test("Weiteres Postfach: abrufen, als diese Adresse antworten, ohne Bcc versende
     const dialog = page.getByRole("dialog", { name: "Postfach hinzufügen" });
     // The select's name includes the chosen option ("AnbieterGmail / Google"), and "Anbieter"
     // alone also matches the checkbox about the provider's inbox.
-    await dialog
-      .getByRole("combobox", { name: /^Anbieter/ })
-      .selectOption({ label: "Anderer Server" });
+    await choose(dialog.getByRole("combobox", { name: /^Anbieter/ }), "Anderer Server");
     const servers = dialog.getByLabel("Port", { exact: true });
     await dialog.getByLabel("Posteingang (IMAP)", { exact: true }).fill("127.0.0.1");
     await servers.nth(0).fill("20143");
@@ -66,8 +64,9 @@ test("Weiteres Postfach: abrufen, als diese Adresse antworten, ohne Bcc versende
     await page.goto("/mail");
     await page.getByRole("list", { name: "Posteingang" }).getByText(fresh).click();
     await page.getByRole("link", { name: "Antworten" }).first().click();
-    const sender = page.getByLabel("Von").locator("option:checked");
-    await expect(sender).toHaveText(`Anna (privat) <${address("max")}>`);
+    const sender = page.getByLabel("Von");
+    await expect(sender).toContainText("Anna (privat)");
+    await expect(sender).toContainText(address("max"));
     const replyUrl = page.url();
     await page.getByRole("button", { name: "Cc / Bcc" }).click();
     const bcc = page.getByRole("combobox", { name: "Bcc" });

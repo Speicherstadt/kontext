@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { jmapAs, login, mailsWithSubject, personalAccountId, unique } from "./helpers";
+import { choose, jmapAs, login, mailsWithSubject, personalAccountId, unique } from "./helpers";
 
 /**
  * Abmelden nach Inaktivität for this page only: the app's read is answered here (after asking the
@@ -128,8 +128,9 @@ test("Abmelden nach Inaktivität setzt die Firmenverwaltung", async ({ page }) =
   await login(page, "jonas");
   await page.goto("/settings?section=company-idle");
   const time = page.getByRole("combobox", { name: "Abmelden nach" });
-  await expect(time).toHaveValue("0");
-  await expect(time.locator("option")).toHaveText([
+  await expect(time).toContainText("Nie (aus)");
+  await time.click();
+  await expect(page.getByRole("option")).toHaveText([
     "Nie (aus)",
     "15 Minuten",
     "30 Minuten",
@@ -137,9 +138,10 @@ test("Abmelden nach Inaktivität setzt die Firmenverwaltung", async ({ page }) =
     "4 Stunden",
     "8 Stunden",
   ]);
+  await page.keyboard.press("Escape");
   const save = page.getByRole("button", { name: "Speichern" });
   await expect(save).toBeDisabled();
-  await time.selectOption("30 Minuten");
+  await choose(time, "30 Minuten");
   await save.click();
   await expect(page.getByRole("status")).toHaveText("Gespeichert");
   expect(saved).toEqual([30]);

@@ -3,6 +3,7 @@ import { EditorContent } from "@tiptap/react";
 import { ChevronLeft, X } from "lucide-react";
 import type { KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { usePrincipals } from "@/directory/queries";
 import { AttachFromDocuments } from "@/features/documents/document-actions";
 import { EditorToolbar } from "@/mail-core/editor-toolbar";
 import { m } from "@/paraglide/messages";
@@ -12,6 +13,7 @@ import { AttachmentList, ComposerFields } from "./composer-fields";
 import { InsertImageButton } from "./composer-images";
 import { ForgottenAttachment } from "./forgotten-attachment";
 import { LegalFooterPreview } from "./legal-footer-preview";
+import { senderOptions } from "./sender-options";
 import { type ComposerProps, type Composing, useComposer } from "./use-composer";
 
 /** What a new mail starts with from outside: a contact, a mailto: link, a share. */
@@ -63,12 +65,34 @@ const ComposerHeader = ({ c, mode }: View) => (
   </div>
 );
 
+/** Whom one can send as, with what each address is (alias, shared mailbox, other mailbox). */
+const useSenders = ({ sender, login }: Composing) => {
+  const { data: principals = [] } = usePrincipals();
+  const groups = principals.flatMap((p) => (p.type === "group" && p.email ? [p.email] : []));
+  return senderOptions(sender.identities, {
+    login,
+    groups,
+    shared:
+      sender.sendAccountId !== sender.own?.id
+        ? { mailbox: sender.account?.name ?? "", person: sender.myName }
+        : null,
+    texts: {
+      own: m.mail_from_own(),
+      other: m.mail_from_other(),
+      alias: m.mail_from_alias(),
+      group: m.mail_from_group(),
+      appearsAs: (name) => m.mail_from_appears_as({ name }),
+    },
+  });
+};
+
 /** The addresses and the subject. */
 const ComposerAddresses = ({ c, mode }: View) => {
   const { state } = c;
+  const senders = useSenders(c);
   return (
     <ComposerFields
-      identities={c.sender.identities}
+      senders={senders}
       identityId={state.identityId}
       onIdentity={c.pickIdentity}
       to={state.to}

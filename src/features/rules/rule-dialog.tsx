@@ -7,7 +7,8 @@ import { type FormEvent, type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { COLOR_STYLES } from "@/lib/categories";
 import { cn } from "@/lib/cn";
@@ -50,25 +51,15 @@ const ConditionRow = ({
       <Select
         aria-label={m.rules_field()}
         value={condition.field}
-        onChange={(e) => setField(e.target.value as RuleField)}
-      >
-        {RULE_FIELDS.map(({ field, label }) => (
-          <option key={field} value={field}>
-            {label()}
-          </option>
-        ))}
-      </Select>
+        onValueChange={(field) => setField(field as RuleField)}
+        options={RULE_FIELDS.map(({ field, label }) => ({ value: field, label: label() }))}
+      />
       <Select
         aria-label={m.rules_operator()}
         value={condition.operator}
-        onChange={(e) => onChange({ ...condition, operator: e.target.value as RuleOperator })}
-      >
-        {operators.map(({ operator, label }) => (
-          <option key={operator} value={operator}>
-            {label}
-          </option>
-        ))}
-      </Select>
+        onValueChange={(operator) => onChange({ ...condition, operator: operator as RuleOperator })}
+        options={operators.map(({ operator, label }) => ({ value: operator, label }))}
+      />
       <Input
         aria-label={m.rules_value()}
         value={condition.value}
@@ -205,12 +196,14 @@ export const RuleDialog = ({
               <Select
                 aria-label={m.rules_when()}
                 value={rule.match}
-                onChange={(e) => set({ match: e.target.value as Rule["match"] })}
-                className="h-8 w-auto text-[13px]"
-              >
-                <option value="all">{m.rules_match_all()}</option>
-                <option value="any">{m.rules_match_any()}</option>
-              </Select>
+                onValueChange={(match) => set({ match: match as Rule["match"] })}
+                size="sm"
+                className="w-auto"
+                options={[
+                  { value: "all", label: m.rules_match_all() },
+                  { value: "any", label: m.rules_match_any() },
+                ]}
+              />
             ) : null}
           </div>
           {rule.conditions.map((condition, index) => (
@@ -246,14 +239,9 @@ export const RuleDialog = ({
             <Select
               aria-label={m.rules_choose_folder()}
               value={rule.moveTo?.id ?? ""}
-              onChange={(e) => chooseFolder(e.target.value)}
-            >
-              {folders.map((folder) => (
-                <option key={folder.id} value={folder.id}>
-                  {folder.label}
-                </option>
-              ))}
-            </Select>
+              onValueChange={chooseFolder}
+              options={folders.map((folder) => ({ value: folder.id, label: folder.label }))}
+            />
           </Action>
           <Action
             label={m.rules_action_read()}

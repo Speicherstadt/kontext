@@ -6,7 +6,8 @@
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input, Label, Select, Textarea } from "@/components/ui/input";
+import { Input, Label, Textarea } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { dateKey } from "@/lib/jscalendar";
 import { LOCALE } from "@/lib/locale";
 import { type VacationForm as Form, withDeputy } from "@/lib/vacation";
@@ -116,30 +117,33 @@ export const VacationForm = ({
       </div>
       <Label>
         {m.company_deputy()}
-        <Select value={deputyId} onChange={(e) => change(form, e.target.value)}>
-          <option value="">{m.company_deputy_none()}</option>
-          {colleagues.map((colleague) => (
-            <option key={colleague.id} value={colleague.id}>
-              {colleague.name}
-            </option>
-          ))}
-        </Select>
+        <Select
+          value={deputyId}
+          onValueChange={(id) => change(form, id)}
+          options={[
+            { value: "", label: m.company_deputy_none() },
+            ...colleagues.map((colleague) => ({
+              value: colleague.id,
+              label: colleague.name,
+              hint: colleague.email,
+            })),
+          ]}
+        />
       </Label>
       {templates.length ? (
         <Label>
           {m.vacation_template()}
           <Select
-            value={picked?.index ?? ""}
-            onChange={(e) => pick(e.target.value ? Number(e.target.value) : -1)}
-          >
-            <option value="">{m.vacation_template_own()}</option>
-            {templates.map((template, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: the Vorlagen have no ids
-              <option key={index} value={index}>
-                {template.title}
-              </option>
-            ))}
-          </Select>
+            value={picked ? String(picked.index) : ""}
+            onValueChange={(value) => pick(value ? Number(value) : -1)}
+            options={[
+              { value: "", label: m.vacation_template_own() },
+              ...templates.map((template, index) => ({
+                value: String(index),
+                label: template.title,
+              })),
+            ]}
+          />
         </Label>
       ) : null}
       <Label>

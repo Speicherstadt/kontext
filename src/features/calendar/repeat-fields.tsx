@@ -1,5 +1,6 @@
 /** "Wiederholen" in the event editor: how often, and when the series ends. */
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { type Repeat, type RepeatEnd, type RepeatForm, repeatLabel } from "@/lib/recurrence";
 import { m } from "@/paraglide/messages";
 
@@ -24,13 +25,11 @@ export const RepeatFields = ({ value, onChange }: Props) => {
     <div className="flex flex-col gap-3">
       <Label>
         {m.calendar_repeat()}
-        <Select value={value.repeat} onChange={(e) => set({ repeat: e.target.value as Repeat })}>
-          {REPEATS.map((repeat) => (
-            <option key={repeat} value={repeat}>
-              {repeatLabel(repeat)}
-            </option>
-          ))}
-        </Select>
+        <Select
+          value={value.repeat}
+          onValueChange={(repeat) => set({ repeat })}
+          options={REPEATS.map((repeat) => ({ value: repeat, label: repeatLabel(repeat) }))}
+        />
       </Label>
       {value.repeat !== "none" ? (
         <div className="flex gap-2">
@@ -38,14 +37,9 @@ export const RepeatFields = ({ value, onChange }: Props) => {
             {m.calendar_repeat_ends()}
             <Select
               value={value.repeatEnd}
-              onChange={(e) => set({ repeatEnd: e.target.value as RepeatEnd })}
-            >
-              {ENDS.map(([end, label]) => (
-                <option key={end} value={end}>
-                  {label()}
-                </option>
-              ))}
-            </Select>
+              onValueChange={(repeatEnd) => set({ repeatEnd })}
+              options={ENDS.map(([end, label]) => ({ value: end, label: label() }))}
+            />
           </Label>
           {value.repeatEnd === "count" ? (
             <Label className="w-32 shrink-0">

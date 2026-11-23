@@ -505,3 +505,15 @@ export const addBirthday = async (
   });
   return { name: `${given} ${surname}`, remove: () => deleteContact(client, accountId, id) };
 };
+
+/**
+ * Picks an option of a select (src/components/ui/select.tsx): opens the list from its field and
+ * clicks the option of that name; the list is in a portal, so it is looked up on the page.
+ */
+export const choose = async (select: Locator, option: string | RegExp) => {
+  await select.click();
+  await select
+    .page()
+    .getByRole("option", { name: option, exact: typeof option === "string" })
+    .click();
+};

@@ -8,6 +8,7 @@ import {
   addMail,
   address,
   addSnippet,
+  choose,
   externalHintOn,
   formatWith,
   jmapAs,
@@ -143,8 +144,8 @@ test.describe("Screenshots @screenshots", () => {
     try {
       await login(page, "sandra");
       await page.goto("/settings?section=deputy");
-      await page.getByLabel("Kollegin oder Kollege").selectOption({ label: "Max Becker" });
-      await page.getByLabel("Zugriff", { exact: true }).selectOption({ label: "Bearbeiten" });
+      await choose(page.getByLabel("Kollegin oder Kollege"), "Max Becker");
+      await choose(page.getByLabel("Zugriff", { exact: true }), "Bearbeiten");
       await page.getByRole("button", { name: "Freigeben" }).click();
       await expect(
         page.getByRole("list", { name: "Wer hat Zugriff" }).getByText("Max Becker"),
@@ -476,9 +477,9 @@ test.describe("Screenshots @screenshots", () => {
       .getByRole("button", { name: "Erinnerung: Mein Kalender" })
       .click();
     const defaults = page.getByRole("dialog", { name: "Erinnerung für „Mein Kalender“" });
-    await defaults.getByLabel("Termine mit Uhrzeit").selectOption({ label: "30 Minuten vorher" });
-    await defaults.getByLabel("Ganztägige Termine").selectOption({ label: "1 Tag vorher" });
-    await defaults.getByLabel("Erinnern per").last().selectOption({ label: "Mail" });
+    await choose(defaults.getByLabel("Termine mit Uhrzeit"), "30 Minuten vorher");
+    await choose(defaults.getByLabel("Ganztägige Termine"), "1 Tag vorher");
+    await choose(defaults.getByLabel("Erinnern per").last(), "Mail");
     await page.mouse.move(1, 1);
     await shot(page, "calendar-default-reminder");
   });
@@ -562,8 +563,8 @@ test.describe("Screenshots @screenshots", () => {
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Titel").fill("Wartung Heizung Becker");
     await dialog.getByLabel("Ort").fill("Lindenweg 12, Bühl");
-    await dialog.getByLabel("Erinnerung").selectOption({ label: "1 Tag vorher" });
-    await dialog.getByLabel("Erinnern per").selectOption({ label: "Mail" });
+    await choose(dialog.getByLabel("Erinnerung"), "1 Tag vorher");
+    await choose(dialog.getByLabel("Erinnern per"), "Mail");
     await dialog.getByLabel("Erinnerung").scrollIntoViewIfNeeded();
     await shot(page, "event-reminder");
   });
@@ -782,11 +783,11 @@ test.describe("Screenshots @screenshots", () => {
   });
 
   test("Regeln", async ({ page }) => {
-    type Rule = { field: string; value: string; folder?: string; read?: boolean };
+    type Rule = { field: "Absender" | "Betreff"; value: string; folder?: string; read?: boolean };
     const rules: Rule[] = [
-      { field: "from", value: "kanzlei-brandt.test", folder: "Steuerberater" },
-      { field: "subject", value: "Lieferschein", folder: "Lieferanten", read: true },
-      { field: "from", value: "newsletter@", read: true },
+      { field: "Absender", value: "kanzlei-brandt.test", folder: "Steuerberater" },
+      { field: "Betreff", value: "Lieferschein", folder: "Lieferanten", read: true },
+      { field: "Absender", value: "newsletter@", read: true },
     ];
     await page.setViewportSize({ width: 1440, height: 900 });
     await login(page);
@@ -796,11 +797,11 @@ test.describe("Screenshots @screenshots", () => {
       for (const rule of rules) {
         await page.getByRole("button", { name: "Neue Regel" }).click();
         const dialog = page.getByRole("dialog", { name: "Neue Regel" });
-        await dialog.getByLabel("Feld").selectOption(rule.field);
+        await choose(dialog.getByLabel("Feld"), rule.field);
         await dialog.getByLabel("Wert").fill(rule.value);
         if (rule.folder) {
           await dialog.getByLabel("In Ordner verschieben").check();
-          await dialog.getByLabel("Ordner wählen").selectOption({ label: rule.folder });
+          await choose(dialog.getByLabel("Ordner wählen"), rule.folder);
         }
         if (rule.read) await dialog.getByLabel("Als gelesen markieren").check();
         await dialog.getByRole("button", { name: "Regel speichern" }).click();

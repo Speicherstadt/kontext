@@ -4,6 +4,7 @@ import { createContact, deleteContact, listAddressBooks } from "../src/jmap/cont
 import { fakePushService } from "./fake-push";
 import {
   addMail,
+  choose,
   findMails,
   jmapAs,
   login,
@@ -289,8 +290,8 @@ test.describe("Aufgaben im Kontext", () => {
     await page.goto(`/tasks?task=${task.id}`);
     const detail = page.getByRole("article", { name: title });
     const remind = detail.getByRole("combobox", { name: /^Erinnern/ });
-    await remind.selectOption({ label: "15 Minuten vorher" });
-    await expect(remind).toHaveValue("15");
+    await choose(remind, "15 Minuten vorher");
+    await expect(remind).toContainText("15 Minuten vorher");
     await expect.poll(async () => (await taskOf(page, title))?.remindAt).toBeTruthy();
     const first = new Date((await taskOf(page, title))!.remindAt!).getTime();
 
@@ -298,7 +299,7 @@ test.describe("Aufgaben im Kontext", () => {
     await expect
       .poll(async () => new Date((await taskOf(page, title))!.remindAt!).getTime())
       .toBe(first + 2 * 3_600_000);
-    await expect(remind).toHaveValue("15");
+    await expect(remind).toContainText("15 Minuten vorher");
   });
 
   test("Erinnern schon im Dialog „Neue Aufgabe“, zieht mit dem Tag mit", async ({ page }) => {
@@ -311,12 +312,16 @@ test.describe("Aufgaben im Kontext", () => {
       await dialog.getByLabel("Titel").fill(title);
       const remind = dialog.getByRole("combobox", { name: /^Erinnern/ });
       // Without a due day: none, or a time by hand.
-      await expect(remind.getByRole("option")).toHaveCount(2);
+      await remind.click();
+      await expect(page.getByRole("option")).toHaveCount(2);
+      await page.keyboard.press("Escape");
       await dialog.getByRole("button", { name: "Morgen" }).click();
-      await remind.selectOption({ label: "Am Morgen um 08:00" });
+      await choose(remind, "Am Morgen um 08:00");
       // Another day: the reminder goes along.
       await dialog.locator('input[type="date"]').fill(day(3));
-      await expect(dialog.getByRole("combobox", { name: /^Erinnern/ })).toHaveValue("morning");
+      await expect(dialog.getByRole("combobox", { name: /^Erinnern/ })).toContainText(
+        "Am Morgen um 08:00",
+      );
       await dialog.getByRole("button", { name: "Aufgabe erstellen" }).click();
       await expect(dialog).toHaveCount(0);
       await expect

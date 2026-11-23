@@ -7,7 +7,8 @@ import { useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label, Select } from "@/components/ui/input";
+import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
 import { type Admin, send, useAdminChange } from "./api";
@@ -45,16 +46,14 @@ export const MailboxForm = ({
       <Label>
         {m.phone_mailbox_after()}
         <Select
-          value={ringSeconds}
-          onChange={(event) => setRingSeconds(Number(event.target.value))}
+          value={String(ringSeconds)}
+          onValueChange={(seconds) => setRingSeconds(Number(seconds))}
+          options={RING_SECONDS.map((seconds) => ({
+            value: String(seconds),
+            label: m.phone_mailbox_seconds({ seconds }),
+          }))}
           disabled={!enabled}
-        >
-          {RING_SECONDS.map((seconds) => (
-            <option key={seconds} value={seconds}>
-              {m.phone_mailbox_seconds({ seconds })}
-            </option>
-          ))}
-        </Select>
+        />
       </Label>
       <Label>
         {m.phone_mailbox_greeting()}
@@ -62,7 +61,7 @@ export const MailboxForm = ({
           sounds={sounds}
           none={m.phone_mailbox_beep_only()}
           value={greeting}
-          onChange={(event) => setGreeting(event.target.value)}
+          onValueChange={setGreeting}
           disabled={!enabled}
         />
       </Label>
@@ -71,7 +70,7 @@ export const MailboxForm = ({
         <OwnerSelect
           none={m.phone_mailbox_deliver_none()}
           value={deliverTo}
-          onChange={(event) => setDeliverTo(event.target.value)}
+          onValueChange={setDeliverTo}
           disabled={!enabled}
         />
       </Label>

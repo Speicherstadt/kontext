@@ -20,11 +20,7 @@ export const CallbacksForm = ({ board }: { board: string | null }) => {
     <SettingsCard title={m.phone_callbacks()} description={m.phone_callbacks_hint()}>
       <Label>
         {m.phone_callbacks_board()}
-        <OwnerSelect
-          none={m.phone_callbacks_none()}
-          value={chosen}
-          onChange={(event) => setChosen(event.target.value)}
-        />
+        <OwnerSelect none={m.phone_callbacks_none()} value={chosen} onValueChange={setChosen} />
       </Label>
       <Button
         variant="primary"

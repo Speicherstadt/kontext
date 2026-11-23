@@ -7,7 +7,8 @@ import { useState } from "react";
 import { getChatRetention, saveChatRetention } from "@/company-core/api";
 import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
-import { Label, Select } from "@/components/ui/input";
+import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { RETENTION_DAYS } from "@/lib/chat";
 import { retentionText } from "@/lib/chat-threads";
@@ -39,13 +40,14 @@ const RetentionForm = ({ days }: { days: number }) => {
       <p className="m-0 text-[13px] text-muted">{m.company_chat_hint()}</p>
       <Label>
         {m.company_chat_keep()}
-        <Select value={chosen} onChange={(event) => setChosen(Number(event.target.value))}>
-          {RETENTION_DAYS.map((value) => (
-            <option key={value} value={value}>
-              {value === 0 ? m.company_chat_forever() : retentionText(value)}
-            </option>
-          ))}
-        </Select>
+        <Select
+          value={String(chosen)}
+          onValueChange={(value) => setChosen(Number(value))}
+          options={RETENTION_DAYS.map((value) => ({
+            value: String(value),
+            label: value === 0 ? m.company_chat_forever() : retentionText(value),
+          }))}
+        />
       </Label>
       {shorter ? (
         <p className="m-0 text-[13px] text-warn">

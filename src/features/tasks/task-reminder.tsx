@@ -3,7 +3,8 @@
  * or a time picked by hand. The server sends it, also with Kontext closed (server/tasks/notices.ts).
  */
 import { useState } from "react";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { fromLocal, toLocal } from "@/lib/jscalendar";
 import { reminderChoices, reminderKey } from "@/lib/task-reminders";
 import type { Task } from "@/lib/tasks";
@@ -28,22 +29,18 @@ export const TaskReminder = ({
         {m.tasks_remind()}
         <Select
           value={key}
-          onChange={(e) => {
-            const value = e.target.value;
+          onValueChange={(value) => {
             setCustom(value === "custom");
             if (value === "custom") return;
             const choice = choices.find((entry) => entry.key === value);
             onChange(choice ? choice.at.toISOString() : null);
           }}
-        >
-          <option value="">{m.tasks_remind_none()}</option>
-          {choices.map((choice) => (
-            <option key={choice.key} value={choice.key}>
-              {choice.label}
-            </option>
-          ))}
-          <option value="custom">{m.tasks_remind_custom()}</option>
-        </Select>
+          options={[
+            { value: "", label: m.tasks_remind_none() },
+            ...choices.map((choice) => ({ value: choice.key, label: choice.label })),
+            { value: "custom", label: m.tasks_remind_custom() },
+          ]}
+        />
       </Label>
       {key === "custom" ? (
         <Label>

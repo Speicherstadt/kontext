@@ -7,7 +7,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
 
@@ -85,13 +86,11 @@ const AssistantForm = ({ saved }: { saved: Saved }) => {
         </Label>
         <Label>
           {m.company_assistant_model()}
-          <Select value={model} onChange={(event) => setModel(event.target.value)}>
-            {MODELS.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label()}
-              </option>
-            ))}
-          </Select>
+          <Select
+            value={model}
+            onValueChange={setModel}
+            options={MODELS.map((option) => ({ value: option.id, label: option.label() }))}
+          />
         </Label>
         <p className="m-0 text-[13px] text-muted">{m.company_assistant_privacy()}</p>
         <div className="flex gap-2">

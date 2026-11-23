@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { addMail, login, unique } from "./helpers";
+import { addMail, choose, login, unique } from "./helpers";
 
 type ApiTask = {
   title: string;
@@ -62,9 +62,9 @@ test.describe("Aufgaben", () => {
     await page.keyboard.press("t");
     const dialog = page.getByRole("dialog", { name: "Aufgabe aus dieser Mail" });
     await expect(dialog.getByLabel("Titel")).toHaveValue(subject);
-    await expect(dialog.getByLabel(/^Board/)).toHaveValue(/.+/);
+    await expect(dialog.getByLabel(/^Board/)).toContainText(/.+/);
     await dialog.getByRole("button", { name: "Morgen" }).click();
-    await dialog.getByLabel("Zuständig").selectOption({ label: "Niemand" });
+    await choose(dialog.getByLabel("Zuständig"), "Niemand");
     await dialog.getByRole("button", { name: "Aufgabe erstellen" }).click();
     await expect(page.getByRole("status").filter({ hasText: "Aufgabe angelegt" })).toBeVisible();
 

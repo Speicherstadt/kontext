@@ -8,7 +8,8 @@ import { useState } from "react";
 import { useCompany } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
 import { type Admin, send, useAdminChange } from "./api";
@@ -70,15 +71,16 @@ export const DesksForm = ({ desks }: { desks: Admin["deskPhones"] }) => {
               {m.phone_desk_member()}
               <Select
                 value={desk.member ?? ""}
-                onChange={(event) => update(index, { member: event.target.value || null })}
-              >
-                <option value="">{m.phone_desk_shared()}</option>
-                {people.map((employee) => (
-                  <option key={employee.id} value={employee.id}>
-                    {employee.fullName}
-                  </option>
-                ))}
-              </Select>
+                onValueChange={(member) => update(index, { member: member || null })}
+                options={[
+                  { value: "", label: m.phone_desk_shared() },
+                  ...people.map((employee) => ({
+                    value: employee.id,
+                    label: employee.fullName,
+                    hint: employee.email,
+                  })),
+                ]}
+              />
             </Label>
           </div>
           {desk.id ? (

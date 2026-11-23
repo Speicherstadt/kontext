@@ -7,7 +7,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { Check, ChevronLeft, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select, Textarea } from "@/components/ui/input";
+import { Input, Label, Textarea } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { useMe, usePeople } from "@/directory/queries";
 import { LinkDocument } from "@/features/documents/document-actions";
@@ -161,41 +162,41 @@ export const TaskDetail = ({ task, onClose }: { task: Task; onClose?: () => void
               {m.tasks_assignee()}
               <Select
                 value={task.assigneeId ?? ""}
-                onChange={(e) => {
-                  const assigneeId = e.target.value || null;
+                onValueChange={(value) => {
+                  const assigneeId = value || null;
                   void save({ assigneeId });
                   // Whoever takes it over can open its documents too.
                   for (const link of task.links)
                     if (link.kind === "document")
                       shareWith.task(assigneeId, link.ref, task.accountId);
                 }}
-              >
-                <option value="">{m.tasks_nobody()}</option>
-                {people.map((person) => (
-                  <option key={person.id} value={person.id}>
-                    {person.id === me ? m.tasks_me({ name: person.name }) : person.name}
-                  </option>
-                ))}
-              </Select>
+                options={[
+                  { value: "", label: m.tasks_nobody() },
+                  ...people.map((person) => ({
+                    value: person.id,
+                    label: person.id === me ? m.tasks_me({ name: person.name }) : person.name,
+                  })),
+                ]}
+              />
             </Label>
             <Label>
               {m.tasks_board()}
               <Select
                 value={boardKey(task)}
                 disabled={!onMyBoards}
-                onChange={(e) => moveTo(e.target.value)}
-              >
-                {onMyBoards ? null : (
-                  <option value={boardKey(task)}>
-                    {m.tasks_board_of({ mailbox: owner || "—" })}
-                  </option>
-                )}
-                {boards.map((board) => (
-                  <option key={board.id} value={board.id}>
-                    {board.label}
-                  </option>
-                ))}
-              </Select>
+                onValueChange={moveTo}
+                options={[
+                  ...(onMyBoards
+                    ? []
+                    : [
+                        {
+                          value: boardKey(task),
+                          label: m.tasks_board_of({ mailbox: owner || "—" }),
+                        },
+                      ]),
+                  ...boards.map((board) => ({ value: board.id, label: board.label })),
+                ]}
+              />
             </Label>
             <Label>
               {m.tasks_due()}
@@ -223,15 +224,14 @@ export const TaskDetail = ({ task, onClose }: { task: Task; onClose?: () => void
                 {m.tasks_repeat()}
                 <Select
                   value={task.repeat ?? ""}
-                  onChange={(e) => void save({ repeat: (e.target.value || null) as Repeat | null })}
-                >
-                  <option value="">{m.tasks_repeat_none()}</option>
-                  {REPEATS.map((repeat) => (
-                    <option key={repeat} value={repeat}>
-                      {REPEAT_LABELS[repeat]()}
-                    </option>
-                  ))}
-                </Select>
+                  onValueChange={(repeat) =>
+                    void save({ repeat: (repeat || null) as Repeat | null })
+                  }
+                  options={[
+                    { value: "", label: m.tasks_repeat_none() },
+                    ...REPEATS.map((repeat) => ({ value: repeat, label: REPEAT_LABELS[repeat]() })),
+                  ]}
+                />
               </Label>
               {task.repeat ? (
                 <p className="m-0 self-end pb-2 text-[12px] text-muted">

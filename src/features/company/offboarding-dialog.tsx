@@ -4,7 +4,8 @@ import { type Company, type Employee, offboard } from "@/company-core/api";
 import { useCompanyChange } from "@/company-core/queries";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
-import { Input, Label, Select, Textarea } from "@/components/ui/input";
+import { Input, Label, Textarea } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { withDeputy } from "@/lib/vacation";
 import { m } from "@/paraglide/messages";
@@ -15,24 +16,28 @@ const PersonSelect = ({
   hint,
   people,
   value,
-  onChange,
+  onValueChange,
 }: {
   label: string;
   hint?: ReactNode;
   people: Employee[];
   value: string;
-  onChange: (id: string) => void;
+  onValueChange: (id: string) => void;
 }) => (
   <Label>
     {label}
-    <Select value={value} onChange={(e) => onChange(e.target.value)}>
-      <option value="">{m.company_nobody()}</option>
-      {people.map((person) => (
-        <option key={person.id} value={person.id}>
-          {person.fullName}
-        </option>
-      ))}
-    </Select>
+    <Select
+      value={value}
+      onValueChange={onValueChange}
+      options={[
+        { value: "", label: m.company_nobody() },
+        ...people.map((person) => ({
+          value: person.id,
+          label: person.fullName,
+          hint: person.email,
+        })),
+      ]}
+    />
     {hint ? <span className="text-[12px]">{hint}</span> : null}
   </Label>
 );
@@ -95,13 +100,13 @@ export const OffboardingDialog = ({
           hint={m.company_handover_hint()}
           people={colleagues}
           value={handoverTo}
-          onChange={setHandoverTo}
+          onValueChange={setHandoverTo}
         />
         <PersonSelect
           label={m.company_forward()}
           people={colleagues}
           value={forwardTo}
-          onChange={chooseForward}
+          onValueChange={chooseForward}
         />
         <label className="flex items-center gap-2.5 text-[14px]">
           <Checkbox checked={reply} onChange={(e) => setReply(e.target.checked)} />

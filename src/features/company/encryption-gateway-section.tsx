@@ -15,7 +15,8 @@ import {
 import { useCompanyChange } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select, Textarea } from "@/components/ui/input";
+import { Input, Label, Textarea } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
@@ -133,11 +134,12 @@ export const EncryptionGatewaySection = () => {
             {m.company_gateway_lookup()}
             <Select
               value={lookup}
-              onChange={(event) => setLookup(event.target.value as "wkd" | "vks")}
-            >
-              <option value="wkd">{m.company_gateway_wkd()}</option>
-              <option value="vks">{m.company_gateway_vks()}</option>
-            </Select>
+              onValueChange={setLookup}
+              options={[
+                { value: "wkd", label: m.company_gateway_wkd() },
+                { value: "vks", label: m.company_gateway_vks() },
+              ]}
+            />
           </Label>
         )}
         <div>

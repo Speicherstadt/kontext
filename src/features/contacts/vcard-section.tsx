@@ -9,7 +9,7 @@ import { Download, Upload } from "lucide-react";
 import { type ChangeEvent, useMemo, useRef, useState } from "react";
 import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { type BookRef, bookLabel, startBook } from "@/contacts-core/queries";
 import { createContacts, listContacts, parseVCards } from "@/jmap/contacts";
@@ -127,18 +127,13 @@ export const VCardSection = ({ books }: { books: BookRef[] }) => {
         <Select
           aria-label={m.contacts_vcard_book()}
           value={bookKey}
-          onChange={(e) => {
-            setBookKey(e.target.value);
+          onValueChange={(key) => {
+            setBookKey(key);
             close();
           }}
+          options={books.map((b) => ({ value: b.key, label: bookLabel(b) }))}
           className="min-w-0 flex-1 basis-48"
-        >
-          {books.map((b) => (
-            <option key={b.key} value={b.key}>
-              {bookLabel(b)}
-            </option>
-          ))}
-        </Select>
+        />
         <input
           ref={input}
           type="file"

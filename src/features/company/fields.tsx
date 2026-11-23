@@ -4,7 +4,8 @@ import { type KeyboardEvent, type ReactNode, useState } from "react";
 import type { Company } from "@/company-core/api";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input, Select } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
 
@@ -36,15 +37,10 @@ export const AddressInput = ({
         <Select
           aria-label={m.company_domain()}
           value={domainId}
-          onChange={(e) => onChange(local, e.target.value)}
+          onValueChange={(id) => onChange(local, id)}
+          options={domains.map((domain) => ({ value: domain.id, label: domain.name }))}
           className="w-auto"
-        >
-          {domains.map((domain) => (
-            <option key={domain.id} value={domain.id}>
-              {domain.name}
-            </option>
-          ))}
-        </Select>
+        />
       ) : (
         <span className="text-[14px]">{domains[0]?.name}</span>
       )}
@@ -129,13 +125,15 @@ export const AccessList = ({
           <Select
             aria-label={m.company_access_for({ name: person.fullName })}
             value={accessOf(person.id)}
-            onChange={(e) => choose(person.id, e.target.value as Access)}
-            className="h-9 w-auto"
-          >
-            <option value="none">{m.company_access_none()}</option>
-            <option value="read">{m.company_access_read()}</option>
-            <option value="full">{m.company_access_full()}</option>
-          </Select>
+            onValueChange={(access) => choose(person.id, access)}
+            options={[
+              { value: "none", label: m.company_access_none() },
+              { value: "read", label: m.company_access_read() },
+              { value: "full", label: m.company_access_full() },
+            ]}
+            size="sm"
+            className="w-auto"
+          />
         </div>
       ))}
     </fieldset>

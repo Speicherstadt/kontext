@@ -7,7 +7,7 @@ import { SettingsCard } from "@/components/settings-card";
 import { useMoreItems, usePhoneApps, useTabItems } from "@/components/shell/nav-items";
 import { setTabChoice } from "@/components/shell/tab-bar-settings";
 import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { isDefaultTabs, placeTab } from "@/lib/tab-bar";
 import { m } from "@/paraglide/messages";
 
@@ -26,15 +26,10 @@ export const TabBarSection = () => {
             <Select
               aria-label={m.settings_tab_bar_slot_label({ slot: slot + 1 })}
               value={current}
-              onChange={(event) => setTabChoice(placeTab(tabs, slot, event.target.value))}
+              onValueChange={(to) => setTabChoice(placeTab(tabs, slot, to))}
+              options={apps.map(({ to, label }) => ({ value: to, label: label() }))}
               className="w-44"
-            >
-              {apps.map(({ to, label }) => (
-                <option key={to} value={to}>
-                  {label()}
-                </option>
-              ))}
-            </Select>
+            />
           </li>
         ))}
       </ol>

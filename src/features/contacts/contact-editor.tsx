@@ -3,7 +3,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select, Textarea } from "@/components/ui/input";
+import { Input, Label, Textarea } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import {
   type BookRef,
@@ -136,14 +137,9 @@ export const ContactEditor = ({ card, books, preferredBook }: Props) => {
             <Select
               aria-label={m.contacts_book()}
               value={bookKey}
-              onChange={(e) => setBookKey(e.target.value)}
-            >
-              {writable.map((book) => (
-                <option key={book.key} value={book.key}>
-                  {bookLabel(book)}
-                </option>
-              ))}
-            </Select>
+              onValueChange={setBookKey}
+              options={writable.map((book) => ({ value: book.key, label: bookLabel(book) }))}
+            />
           </Label>
         ) : null}
         <Label>

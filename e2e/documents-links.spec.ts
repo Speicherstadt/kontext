@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { addAttendees, address, login, unique } from "./helpers";
+import { addAttendees, address, choose, login, unique } from "./helpers";
 
 /**
  * Files of Dokumente where they belong in Kontext: as a card in the chat, linked to a task, with
@@ -91,7 +91,7 @@ test.describe("Dokumente in Chat, Aufgaben, Terminen und Kontakten", () => {
       .first()
       .click();
     const detail = page.getByRole("article", { name: title });
-    await detail.getByLabel("Zuständig").selectOption({ label: "Anna Weber" });
+    await choose(detail.getByLabel("Zuständig"), "Anna Weber");
 
     await detail.getByRole("button", { name: "Dokument verknüpfen" }).click();
     await page

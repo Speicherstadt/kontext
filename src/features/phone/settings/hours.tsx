@@ -171,7 +171,7 @@ export const HoursForm = ({
               sounds={sounds}
               none={m.phone_hours_no_greeting()}
               value={greeting}
-              onChange={(event) => setGreeting(event.target.value)}
+              onValueChange={setGreeting}
             />
           </Label>
           <div className="flex flex-col gap-2">
@@ -220,7 +220,7 @@ export const HoursForm = ({
               >
                 {m.phone_hours_add()}
               </Button>
-              <StateSelect value={state} onChange={setState} />
+              <StateSelect value={state} onValueChange={setState} />
               <Button onClick={() => addDays(comingHolidays(companyDay(new Date()), state))}>
                 {m.phone_hours_holidays()}
               </Button>

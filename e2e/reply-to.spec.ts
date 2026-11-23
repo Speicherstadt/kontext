@@ -129,7 +129,7 @@ test.describe("Antwort an", () => {
         .click();
       await page.getByRole("link", { name: "info@" }).click();
       await page.getByRole("link", { name: "Neue Mail" }).first().click();
-      await expect(page.getByLabel("Von").locator("option:checked")).toHaveText(/info@/);
+      await expect(page.getByLabel("Von")).toContainText(/info@/);
       await expect(chips(page, "Antwort an").getByTitle(address("rechnung"))).toBeVisible();
     } finally {
       await clearDefaults("jonas");

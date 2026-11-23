@@ -2,6 +2,7 @@ import { expect, type Page, test } from "@playwright/test";
 import {
   addMail,
   address,
+  choose,
   givenKeywords,
   jmapAs,
   login,
@@ -103,7 +104,7 @@ test.describe("Kategorien", () => {
     await page.goto("/settings?section=rules");
     await page.getByRole("button", { name: "Neue Regel" }).click();
     const rule = page.getByRole("dialog", { name: "Neue Regel" });
-    await rule.getByLabel("Feld").selectOption("subject");
+    await choose(rule.getByLabel("Feld"), "Betreff");
     await rule.getByLabel("Wert").fill(token);
     // Switched on with the first category; Angebot added.
     await rule.getByLabel("Kategorie setzen").check();

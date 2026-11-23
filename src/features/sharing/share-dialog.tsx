@@ -9,7 +9,7 @@ import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
-import { Select } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useColleagues } from "@/directory/queries";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
 import { principalName } from "@/jmap/principals";
@@ -102,15 +102,16 @@ export const ShareDialog = ({
             <Select
               aria-label={m.sharing_everyone()}
               value={everyoneValue}
-              onChange={(e) => {
-                setEveryone(e.target.value as "none" | "availability");
+              onValueChange={(choice) => {
+                setEveryone(choice);
                 setChanges({});
               }}
+              options={[
+                { value: "availability", label: m.sharing_availability() },
+                { value: "none", label: m.sharing_none() },
+              ]}
               className="w-[160px] shrink-0"
-            >
-              <option value="availability">{m.sharing_availability()}</option>
-              <option value="none">{m.sharing_none()}</option>
-            </Select>
+            />
           </div>
         ) : null}
         <ul aria-label={m.sharing_people()} className="m-0 flex list-none flex-col gap-1 p-0">
@@ -126,20 +127,15 @@ export const ShareDialog = ({
                 <Select
                   aria-label={principalName(person)}
                   value={value}
-                  onChange={(e) =>
-                    setChanges((current) => ({
-                      ...current,
-                      [person.id]: e.target.value as Access,
-                    }))
+                  onValueChange={(access) =>
+                    setChanges((current) => ({ ...current, [person.id]: access }))
                   }
+                  options={ACCESS[kind].map((access) => ({
+                    value: access,
+                    label: LABELS[access](),
+                  }))}
                   className="w-[160px] shrink-0"
-                >
-                  {ACCESS[kind].map((access) => (
-                    <option key={access} value={access}>
-                      {LABELS[access]()}
-                    </option>
-                  ))}
-                </Select>
+                />
               </li>
             );
           })}

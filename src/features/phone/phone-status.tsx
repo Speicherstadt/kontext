@@ -4,7 +4,8 @@
  */
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Input, Select } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
 import { setPhoneStatus, usePhone } from "./queries";
@@ -31,13 +32,14 @@ export const PhoneStatus = () => {
       <Select
         aria-label={m.phone_status()}
         value={status.mode}
-        onChange={(event) => change(event.target.value as typeof status.mode, until)}
+        onValueChange={(mode) => change(mode, until)}
+        options={[
+          { value: "available", label: m.phone_status_available() },
+          { value: "dnd", label: m.phone_status_dnd() },
+          { value: "away", label: m.phone_status_away() },
+        ]}
         className="w-auto"
-      >
-        <option value="available">{m.phone_status_available()}</option>
-        <option value="dnd">{m.phone_status_dnd()}</option>
-        <option value="away">{m.phone_status_away()}</option>
-      </Select>
+      />
       {status.mode === "away" ? (
         <Input
           type="datetime-local"

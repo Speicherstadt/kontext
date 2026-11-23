@@ -1,7 +1,7 @@
 /** The app's language on this device: as the browser says, or German or English. */
 import { useId } from "react";
 import { SettingsCard } from "@/components/settings-card";
-import { Select } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { chooseLanguage, chosenLanguage } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
 import { getLocale, isLocale, type Locale } from "@/paraglide/runtime";
@@ -24,18 +24,13 @@ export const LanguageCard = () => {
         <Select
           id={id}
           value={chosenLanguage() ?? SYSTEM}
-          onChange={({ target }) =>
-            chooseLanguage(isLocale(target.value) ? target.value : undefined)
-          }
+          onValueChange={(value) => chooseLanguage(isLocale(value) ? value : undefined)}
+          options={[
+            { value: SYSTEM, label: m.settings_language_system({ language: current }) },
+            ...LANGUAGES.map(([value, label]) => ({ value: value as string, label })),
+          ]}
           className="w-auto"
-        >
-          <option value={SYSTEM}>{m.settings_language_system({ language: current })}</option>
-          {LANGUAGES.map(([locale, name]) => (
-            <option key={locale} value={locale}>
-              {name}
-            </option>
-          ))}
-        </Select>
+        />
       </div>
     </SettingsCard>
   );
