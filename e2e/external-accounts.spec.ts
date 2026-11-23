@@ -93,7 +93,7 @@ test("Weiteres Postfach: abrufen, als diese Adresse antworten, ohne Bcc versende
       await route.continue();
     });
     await page.goto(replyUrl);
-    await expect(sender).toHaveText(`Anna (privat) <${address("max")}>`);
+    await expect(sender).toContainText(`Anna (privat)${address("max")}`);
     await page.unroute("**/api/external-accounts");
 
     // Removing it ends fetching and sending as that address.

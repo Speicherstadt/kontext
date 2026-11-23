@@ -269,7 +269,7 @@ test.describe("Kalender", () => {
     await manage.getByRole("button", { name: "Anlegen" }).click();
     await manage.getByRole("button", { name: `Erinnerung: ${calendar}` }).click();
     const defaults = page.getByRole("dialog", { name: `Erinnerung für „${calendar}“` });
-    await expect(defaults.getByLabel("Termine mit Uhrzeit")).toContainText("Keine");
+    await expect(defaults.getByLabel("Termine mit Uhrzeit")).toContainText("Wie üblich");
     await choose(defaults.getByLabel("Termine mit Uhrzeit"), "1 Tag vorher");
     await choose(defaults.getByLabel("Erinnern per"), "Mail");
     await defaults.getByRole("button", { name: "Speichern" }).click();

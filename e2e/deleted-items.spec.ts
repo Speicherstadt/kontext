@@ -116,7 +116,10 @@ test.describe("Gelöschte Elemente", () => {
     await expect(page.getByTestId("deleted-retention")).toHaveText(
       "Stalwart hebt Gelöschtes 30 Tage auf.",
     );
-    await expect(page.getByLabel("Postfach")).toContainText("Gemeinsam: info@");
+    // The shared mailboxes are offered beside the own one.
+    await page.getByLabel("Postfach").click();
+    await expect(page.getByRole("option", { name: /^Gemeinsam: info@/ })).toBeVisible();
+    await page.keyboard.press("Escape");
     await restoreAndDelete(page);
     expect(sent.map((s) => s.path)).toEqual([
       `/api/company/archive/accounts/${ownId}/restore`,

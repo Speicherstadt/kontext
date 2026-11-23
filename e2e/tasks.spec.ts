@@ -36,7 +36,7 @@ test.describe("Aufgaben", () => {
     await detail.getByRole("textbox", { name: "Schritt hinzufügen" }).fill("Grundriss prüfen");
     await page.keyboard.press("Enter");
     await detail.getByLabel("Notiz").fill("160 m², Fußbodenheizung");
-    await detail.getByLabel("Zuständig").click(); // leave the notes field: saved
+    await detail.getByLabel("Notiz").press("Tab"); // leave the notes field: saved
     await expect(detail).toContainText("Checkliste · 0 von 1");
     await expect.poll(async () => (await taskOf(page, name))?.status).toBe("doing");
 

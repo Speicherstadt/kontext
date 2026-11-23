@@ -183,101 +183,100 @@ export const ComposerActions = (props: Props) => {
   const fileInput = useRef<HTMLInputElement>(null);
   const toggles = togglesOf(props);
   return (
-    <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
-      <input
-        ref={fileInput}
-        type="file"
-        multiple
-        hidden
-        onChange={(e) => onAttach(e.target.files)}
-      />
-      <Button
-        variant="ghost"
-        size="icon"
-        aria-label={m.mail_attach()}
-        title={m.mail_attach()}
-        onClick={() => fileInput.current?.click()}
-      >
-        <Paperclip size={16} />
-      </Button>
-      {attachMore}
-      {toggles.map((toggle) => (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
+        <input
+          ref={fileInput}
+          type="file"
+          multiple
+          hidden
+          onChange={(e) => onAttach(e.target.files)}
+        />
         <Button
-          key={toggle.label}
           variant="ghost"
           size="icon"
-          aria-label={toggle.label}
-          title={toggle.title}
-          aria-pressed={toggle.on}
-          onClick={() => toggle.onChange(!toggle.on)}
-          className={cn("hidden md:inline-flex", toggle.on && toggle.onClass)}
+          aria-label={m.mail_attach()}
+          title={m.mail_attach()}
+          onClick={() => fileInput.current?.click()}
         >
-          {toggle.icon}
+          <Paperclip size={16} />
         </Button>
-      ))}
-      <MoreMenu toggles={toggles} onSaveDraft={onSaveDraft} />
-      {!encrypt && sign && signWith ? (
-        <span role="status" className="hidden min-w-0 truncate text-[12px] text-accent sm:inline">
-          {signNote(signWith)}
+        {attachMore}
+        {toggles.map((toggle) => (
+          <Button
+            key={toggle.label}
+            variant="ghost"
+            size="icon"
+            aria-label={toggle.label}
+            title={toggle.title}
+            aria-pressed={toggle.on}
+            onClick={() => toggle.onChange(!toggle.on)}
+            className={cn("hidden md:inline-flex", toggle.on && toggle.onClass)}
+          >
+            {toggle.icon}
+          </Button>
+        ))}
+        <MoreMenu toggles={toggles} onSaveDraft={onSaveDraft} />
+        {encrypt && !encryptBlocked && linkDays !== null ? (
+          <Select
+            aria-label={m.secure_link_days()}
+            title={m.secure_link_days()}
+            value={String(linkDays)}
+            onValueChange={(days) => onLinkDays(Number(days))}
+            options={LINK_DAY_CHOICES.map((days) => ({
+              value: String(days),
+              label: m.secure_link_days_option({ days }),
+            }))}
+            size="sm"
+            className="w-auto shrink-0"
+          />
+        ) : null}
+        <div className="flex-1" />
+        {savedAt ? (
+          <span role="status" className="hidden min-w-0 truncate text-[12px] text-muted sm:inline">
+            {m.mail_draft_autosaved({
+              time: savedAt.toLocaleTimeString(LOCALE, { hour: "2-digit", minute: "2-digit" }),
+            })}
+          </span>
+        ) : null}
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={m.mail_discard()}
+          title={m.mail_discard()}
+          onClick={onDiscard}
+        >
+          <Trash2 size={16} />
+        </Button>
+        <Button variant="ghost" size="sm" className="hidden md:inline-flex" onClick={onSaveDraft}>
+          {m.mail_save_draft()}
+        </Button>
+        <span className="flex">
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={sending || !canSend}
+            className="rounded-r-none"
+          >
+            <Send size={16} /> {sending ? m.mail_sending() : m.mail_send()}
+          </Button>
+          <SendLater disabled={sending || !canSend} onPick={onSendLater} />
         </span>
+      </div>
+      {!encrypt && sign && signWith ? (
+        <p role="status" className="m-0 truncate text-[12px] text-accent">
+          {signNote(signWith)}
+        </p>
       ) : null}
       {encrypt ? (
-        <span
+        // A line of its own below the buttons, so what happens (or why not) stays in sight.
+        <p
           role="status"
-          className={cn(
-            // Phones: a line of its own below the buttons, so a blocked send stays in sight.
-            "order-last min-w-0 basis-full truncate text-[12px] sm:order-none sm:basis-auto",
-            encryptBlocked ? "text-warn" : "text-accent",
-          )}
+          className={cn("m-0 truncate text-[12px]", encryptBlocked ? "text-warn" : "text-accent")}
         >
           {encryptBlocked ?? encryptNote}
-        </span>
+        </p>
       ) : null}
-      {encrypt && !encryptBlocked && linkDays !== null ? (
-        <Select
-          aria-label={m.secure_link_days()}
-          title={m.secure_link_days()}
-          value={String(linkDays)}
-          onValueChange={(days) => onLinkDays(Number(days))}
-          options={LINK_DAY_CHOICES.map((days) => ({
-            value: String(days),
-            label: m.secure_link_days_option({ days }),
-          }))}
-          size="sm"
-          className="w-auto shrink-0"
-        />
-      ) : null}
-      <div className="flex-1" />
-      {savedAt ? (
-        <span role="status" className="hidden text-[12px] text-muted sm:inline">
-          {m.mail_draft_autosaved({
-            time: savedAt.toLocaleTimeString(LOCALE, { hour: "2-digit", minute: "2-digit" }),
-          })}
-        </span>
-      ) : null}
-      <Button
-        variant="ghost"
-        size="icon"
-        aria-label={m.mail_discard()}
-        title={m.mail_discard()}
-        onClick={onDiscard}
-      >
-        <Trash2 size={16} />
-      </Button>
-      <Button variant="ghost" size="sm" className="hidden md:inline-flex" onClick={onSaveDraft}>
-        {m.mail_save_draft()}
-      </Button>
-      <span className="flex">
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={sending || !canSend}
-          className="rounded-r-none"
-        >
-          <Send size={16} /> {sending ? m.mail_sending() : m.mail_send()}
-        </Button>
-        <SendLater disabled={sending || !canSend} onPick={onSendLater} />
-      </span>
     </div>
   );
 };

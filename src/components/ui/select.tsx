@@ -151,16 +151,19 @@ export const Select = <T extends string>({
   ...trigger
 }: SelectProps<T>) => {
   const chosen = optionsOf(options).find((option) => option.value === value);
+  // A required field on "" ("Bitte wählen") counts as empty for the form, as a native one did:
+  // Radix's "" is nothing chosen, its hidden <select> then fails `required`.
+  const unset = !chosen || (required && value === "");
   return (
     <Primitive.Root
-      value={chosen ? toRadix(value) : undefined}
+      value={unset ? "" : toRadix(value)}
       onValueChange={(next) => onValueChange(fromRadix(next) as T)}
       disabled={disabled}
       required={required}
       name={name}
     >
       <Primitive.Trigger className={cn(triggerVariants({ variant, size }), className)} {...trigger}>
-        <Primitive.Value placeholder={placeholder}>
+        <Primitive.Value placeholder={chosen?.label ?? placeholder}>
           {chosen ? <Chosen option={chosen} showHint={showHint} /> : null}
         </Primitive.Value>
         <Primitive.Icon className="ml-auto flex shrink-0 text-muted">

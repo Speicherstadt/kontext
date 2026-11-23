@@ -71,6 +71,27 @@ describe("Select", () => {
   });
 });
 
+describe("Select in a form", () => {
+  it("leaves a required field on the empty choice invalid, as a native one", () => {
+    const { container } = render(
+      <form>
+        <Select
+          aria-label="Person"
+          value=""
+          onValueChange={() => undefined}
+          options={[
+            { value: "", label: "Bitte wählen" },
+            { value: "a", label: "Anna" },
+          ]}
+          required
+        />
+      </form>,
+    );
+    expect(screen.getByRole("combobox", { name: "Person" }).textContent).toContain("Bitte wählen");
+    expect(container.querySelector("form")?.checkValidity()).toBe(false);
+  });
+});
+
 describe("optionsOf", () => {
   it("flattens the groups", () => {
     expect(optionsOf(entries).map((option) => option.value)).toEqual(["", "a", "b"]);
