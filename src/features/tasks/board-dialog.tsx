@@ -5,7 +5,7 @@
 import { Trash2 } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -124,14 +124,14 @@ export const BoardDialog = ({
             ) : null}
           </div>
         ) : null}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onClose}>
             {m.tasks_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={busy || !name.trim() || !mailbox}>
             {board ? m.tasks_board_save() : m.tasks_board_create()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

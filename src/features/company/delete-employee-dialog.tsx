@@ -6,7 +6,7 @@ import { useState } from "react";
 import { deleteEmployee, type Employee } from "@/company-core/api";
 import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
 import { type DeleteOutcome, deleteOutcome, useDeletedAccounts } from "./deleted-accounts";
@@ -57,14 +57,14 @@ export const DeleteEmployeeDialog = ({
           {problem}
         </p>
       ) : null}
-      <div className="flex justify-end gap-2">
+      <DialogActions>
         <Button variant="ghost" onClick={onClose}>
           {m.company_cancel()}
         </Button>
         <Button variant="danger" disabled={remove.isPending} onClick={() => void submit()}>
           {outcome.kind === "final" ? m.company_delete_final_run() : m.company_delete_run()}
         </Button>
-      </div>
+      </DialogActions>
     </Dialog>
   );
 };

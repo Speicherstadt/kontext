@@ -4,6 +4,7 @@ import { ChevronLeft, Search } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -196,20 +197,22 @@ export const GroupEditor = ({ group, contacts, books, preferredBook }: Props) =>
           {problem}
         </p>
       ) : null}
-      <div className="flex flex-wrap items-center gap-2">
-        <Button type="submit" variant="primary" disabled={create.isPending || update.isPending}>
-          {m.contacts_save()}
-        </Button>
+      <DialogActions
+        leading={
+          group ? (
+            <Button variant="danger" onClick={() => void destroy()}>
+              {m.contacts_group_delete()}
+            </Button>
+          ) : null
+        }
+      >
         <Button variant="ghost" onClick={() => cancel()}>
           {m.contacts_cancel()}
         </Button>
-        <div className="flex-1" />
-        {group ? (
-          <Button variant="danger" onClick={() => void destroy()}>
-            {m.contacts_group_delete()}
-          </Button>
-        ) : null}
-      </div>
+        <Button type="submit" variant="primary" disabled={create.isPending || update.isPending}>
+          {m.contacts_save()}
+        </Button>
+      </DialogActions>
     </form>
   );
 };

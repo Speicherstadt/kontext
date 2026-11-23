@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/auth/auth";
 import { idleStore } from "@/auth/idle-store";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { useCallStore } from "@/features/calls/call-store";
 import { useIdleLogout } from "@/features/company/idle-logout";
 import { flushDrafts } from "@/lib/draft-flush";
@@ -152,12 +152,12 @@ const StayDialog = ({ timer, onLogout }: { timer: IdleTimer; onLogout: () => voi
       >
         {countdownText(seconds)}
       </div>
-      <div className="flex justify-end gap-2">
+      <DialogActions>
         <Button onClick={onLogout}>{m.logout()}</Button>
         <Button variant="primary" onClick={() => timer.stay()}>
           {m.idle_stay()}
         </Button>
-      </div>
+      </DialogActions>
     </Dialog>
   );
 };
