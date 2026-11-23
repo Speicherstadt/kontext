@@ -3,6 +3,7 @@
  * desk phone stays quiet) or away until a time. Colleagues see it, and the others ring instead.
  */
 import { useQueryClient } from "@tanstack/react-query";
+import { BellOff, CircleCheck, Clock } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -34,9 +35,13 @@ export const PhoneStatus = () => {
         value={status.mode}
         onValueChange={(mode) => change(mode, until)}
         options={[
-          { value: "available", label: m.phone_status_available() },
-          { value: "dnd", label: m.phone_status_dnd() },
-          { value: "away", label: m.phone_status_away() },
+          {
+            value: "available",
+            label: m.phone_status_available(),
+            icon: <CircleCheck size={16} />,
+          },
+          { value: "dnd", label: m.phone_status_dnd(), icon: <BellOff size={16} /> },
+          { value: "away", label: m.phone_status_away(), icon: <Clock size={16} /> },
         ]}
         className="w-auto"
       />

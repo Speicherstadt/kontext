@@ -128,6 +128,7 @@ export const VacationForm = ({
               hint: colleague.email,
             })),
           ]}
+          showHint
         />
       </Label>
       {templates.length ? (

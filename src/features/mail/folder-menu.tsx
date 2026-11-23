@@ -23,6 +23,7 @@ import {
   type FolderNode,
   findRole,
   folderActions,
+  folderPaths,
   mailboxName,
   moveTargets,
   subfolders,
@@ -205,20 +206,13 @@ const EditFolderDialog = ({ kind, mailbox, targets, busy, onClose, onSave }: Edi
   );
 };
 
-/** The folders as options, each with the path above it as hint (the tree is in depth-first order). */
-const parentOptions = (nodes: FolderNode[]): SelectOption[] => {
-  const path: string[] = [];
-  return nodes.map(({ mailbox, depth }) => {
-    const name = mailboxName(mailbox);
-    path.length = depth;
-    path.push(name);
-    return {
-      value: mailbox.id,
-      label: name,
-      hint: depth > 0 ? path.slice(0, depth).join(" / ") : undefined,
-    };
-  });
-};
+/** The folders as options, each with the path above it as hint. */
+const parentOptions = (nodes: FolderNode[]): SelectOption[] =>
+  folderPaths(nodes).map(({ mailbox, name, parent }) => ({
+    value: mailbox.id,
+    label: name,
+    hint: parent,
+  }));
 
 /** The parent of a new or moved folder; "—" is the top level. */
 export const ParentSelect = ({
