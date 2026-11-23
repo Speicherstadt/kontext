@@ -6,6 +6,7 @@
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DateInput } from "@/components/ui/date-input";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { dateKey } from "@/lib/jscalendar";
@@ -40,7 +41,7 @@ export const VacationForm = ({
   const [deputyId, setDeputyId] = useState("");
   const [picked, setPicked] = useState<Picked | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
-  const set = (key: "from" | "subject" | "text") => (event: { target: { value: string } }) =>
+  const set = (key: "subject" | "text") => (event: { target: { value: string } }) =>
     setForm((current) => ({ ...current, [key]: event.target.value }));
 
   const deputyOf = (id: string) => colleagues.find((colleague) => colleague.id === id) ?? null;
@@ -104,15 +105,15 @@ export const VacationForm = ({
       <div className="grid grid-cols-2 gap-3">
         <Label>
           {m.settings_vacation_from()}
-          <Input type="date" value={form.from} onChange={set("from")} min={dateKey(new Date())} />
+          <DateInput
+            value={form.from}
+            onChange={(from) => setForm((current) => ({ ...current, from }))}
+            min={dateKey(new Date())}
+          />
         </Label>
         <Label>
           {m.settings_vacation_to()}
-          <Input
-            type="date"
-            value={form.to}
-            onChange={(e) => change({ ...form, to: e.target.value }, deputyId)}
-          />
+          <DateInput value={form.to} onChange={(to) => change({ ...form, to }, deputyId)} />
         </Label>
       </div>
       <Label>

@@ -461,6 +461,13 @@ export const externalHintOn = (
     await route.fulfill({ json: { ...real, ...change, enabled: true } });
   });
 
+/**
+ * A day as the app's date field shows it at the desktop ("18.12.2030" for "2030-12-18"). It
+ * takes the ISO form typed in too, so a `fill(day)` needs no conversion; phones keep the
+ * system's own field, which shows the ISO value.
+ */
+export const shownDate = (iso: string) => iso.split("-").reverse().join(".");
+
 /** A day (Berlin) some days from today. */
 export const dayFromToday = (days: number) =>
   new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin" }).format(

@@ -2622,5 +2622,16 @@
   "about_project_hint": "Freie Software unter der AGPL – der Quellcode ist offen.",
   "about_website": "Webseite und Anleitung",
   "about_source": "Quellcode auf GitHub",
-  "about_license": "Lizenz: GNU AGPL 3.0"
+  "about_license": "Lizenz: GNU AGPL 3.0",
+  "field_date": "Datum",
+  "field_time": "Uhrzeit",
+  "field_date_open": "Kalender öffnen",
+  "field_date_dialog": "Datum wählen",
+  "field_date_previous_month": "Vorheriger Monat",
+  "field_date_next_month": "Nächster Monat",
+  "field_date_placeholder": "TT.MM.JJJJ",
+  "field_date_min": "Frühestens am {date}",
+  "field_date_max": "Spätestens am {date}",
+  "field_time_list": "Uhrzeiten",
+  "field_time_placeholder": "hh:mm"
 }

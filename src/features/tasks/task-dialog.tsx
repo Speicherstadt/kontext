@@ -8,6 +8,7 @@
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DateInput } from "@/components/ui/date-input";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -246,12 +247,11 @@ export const TaskDialog = ({
                 {label}
               </button>
             ))}
-            <Input
-              type="date"
+            <DateInput
               aria-label={m.tasks_due()}
               value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              className="h-8 w-auto"
+              onChange={setDueDate}
+              className="h-8 w-40"
             />
           </div>
         </fieldset>

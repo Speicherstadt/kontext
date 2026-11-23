@@ -318,7 +318,7 @@ test.describe("Aufgaben im Kontext", () => {
       await dialog.getByRole("button", { name: "Morgen" }).click();
       await choose(remind, "Am Morgen um 08:00");
       // Another day: the reminder goes along.
-      await dialog.locator('input[type="date"]').fill(day(3));
+      await dialog.getByLabel("Fällig", { exact: true }).fill(day(3));
       await expect(dialog.getByRole("combobox", { name: /^Erinnern/ })).toContainText(
         "Am Morgen um 08:00",
       );

@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { DateInput } from "@/components/ui/date-input";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -155,7 +156,10 @@ export const ContactEditor = ({ card, books, preferredBook }: Props) => {
         {text("jobTitle", m.contacts_job_title())}
         <Label>
           {m.contacts_birthday()}
-          <Input type="date" value={form.birthday} onChange={set("birthday")} />
+          <DateInput
+            value={form.birthday}
+            onChange={(birthday) => setForm((current) => ({ ...current, birthday }))}
+          />
         </Label>
         <EmailRows rows={form.emails} onChange={(emails) => setForm({ ...form, emails })} />
         <PhoneRows rows={form.phones} onChange={(phones) => setForm({ ...form, phones })} />

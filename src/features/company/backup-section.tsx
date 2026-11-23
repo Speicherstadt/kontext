@@ -14,8 +14,8 @@ import {
   saveBackupSettings,
 } from "@/company-core/api";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { TimeInput } from "@/components/ui/time-input";
 import { useToast } from "@/components/ui/toast";
 import { dayAndTime, duration, storage } from "@/lib/backup";
 import { cn } from "@/lib/cn";
@@ -115,13 +115,16 @@ const Schedule = ({ view, now }: { view: BackupView; now: Date }) => {
           onChange={(on) => change({ enabled: on, time })}
         />
         <span className="text-[14px]">{m.backup_automatic_at()}</span>
-        <Input
-          type="time"
+        <TimeInput
           aria-label={m.backup_time()}
           value={time}
-          disabled={!enabled || save.isPending}
-          onChange={(event) => setTime(event.target.value)}
-          onBlur={() => time !== view.settings.time && change({ enabled, time })}
+          // Not while saving: the field reports a time once it is complete, not each digit, and
+          // is saved right away – the focus stays for the next change.
+          disabled={!enabled}
+          onChange={(next) => {
+            setTime(next);
+            if (next !== view.settings.time) change({ enabled, time: next });
+          }}
           className="w-[7.5rem]"
         />
       </div>

@@ -2,8 +2,9 @@
  * "Erinnern": when the assignee gets a push about the task – choices from its due day and time,
  * or a time picked by hand. The server sends it, also with Kontext closed (server/tasks/notices.ts).
  */
-import { useState } from "react";
-import { Input, Label } from "@/components/ui/input";
+import { useId, useState } from "react";
+import { DateTimeInput } from "@/components/ui/date-time-input";
+import { Label } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { fromLocal, toLocal } from "@/lib/jscalendar";
 import { reminderChoices, reminderKey } from "@/lib/task-reminders";
@@ -22,6 +23,7 @@ export const TaskReminder = ({
   const current = reminderKey(task.remindAt, choices);
   const [custom, setCustom] = useState(current === "custom");
   const key = custom ? "custom" : current;
+  const whenId = useId();
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -43,16 +45,14 @@ export const TaskReminder = ({
         />
       </Label>
       {key === "custom" ? (
-        <Label>
-          {m.tasks_remind_when()}
-          <Input
-            type="datetime-local"
+        <div className="flex flex-col gap-1.5 text-[13px] text-muted">
+          <span id={whenId}>{m.tasks_remind_when()}</span>
+          <DateTimeInput
+            aria-labelledby={whenId}
             value={task.remindAt ? toLocal(new Date(task.remindAt)).slice(0, 16) : ""}
-            onChange={(e) =>
-              onChange(e.target.value ? fromLocal(`${e.target.value}:00`).toISOString() : null)
-            }
+            onChange={(when) => onChange(when ? fromLocal(`${when}:00`).toISOString() : null)}
           />
-        </Label>
+        </div>
       ) : (
         <p className="m-0 self-end pb-2 text-[12px] text-muted">{m.tasks_remind_hint()}</p>
       )}
