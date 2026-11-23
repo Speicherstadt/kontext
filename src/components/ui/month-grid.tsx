@@ -11,6 +11,7 @@ import { dayAfterKey, monthDays, shiftMonths, withinRange } from "@/lib/date-fie
 import { weekdayHeads } from "@/lib/format";
 import { LOCALE } from "@/lib/locale";
 import { m } from "@/paraglide/messages";
+import { Tooltip } from "./tooltip";
 
 const utc = (key: string) => new Date(`${key}T12:00:00Z`);
 const monthTitle = new Intl.DateTimeFormat(LOCALE, {
@@ -44,15 +45,16 @@ const MonthButton = ({
   onClick: () => void;
   children: ReactNode;
 }) => (
-  <button
-    type="button"
-    aria-label={label}
-    title={label}
-    onClick={onClick}
-    className="flex size-8 items-center justify-center rounded-md text-muted hover:bg-hover"
-  >
-    {children}
-  </button>
+  <Tooltip label={label}>
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className="flex size-8 items-center justify-center rounded-md text-muted hover:bg-hover"
+    >
+      {children}
+    </button>
+  </Tooltip>
 );
 
 const Day = ({

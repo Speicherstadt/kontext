@@ -15,6 +15,7 @@ import { m } from "@/paraglide/messages";
 import { FieldPopoverContent, useNativePicker } from "./field-popover";
 import { Input } from "./input";
 import { MonthGrid } from "./month-grid";
+import { Tooltip } from "./tooltip";
 import { useTypedValue } from "./typed-value";
 
 export type DateInputProps = {
@@ -92,14 +93,15 @@ const DateField = ({
             onKeyDown={onKeyDown}
             className="h-full pr-9 tabular-nums"
           />
-          <Popover.Trigger
-            disabled={disabled}
-            aria-label={m.field_date_open()}
-            title={m.field_date_open()}
-            className="absolute inset-y-0 right-0 flex w-9 items-center justify-center rounded-r-lg text-muted hover:text-fg disabled:opacity-50"
-          >
-            <Calendar size={16} />
-          </Popover.Trigger>
+          <Tooltip label={m.field_date_open()}>
+            <Popover.Trigger
+              disabled={disabled}
+              aria-label={m.field_date_open()}
+              className="absolute inset-y-0 right-0 flex w-9 items-center justify-center rounded-r-lg text-muted hover:text-fg disabled:opacity-50"
+            >
+              <Calendar size={16} />
+            </Popover.Trigger>
+          </Tooltip>
         </div>
       </Popover.Anchor>
       <FieldPopoverContent
