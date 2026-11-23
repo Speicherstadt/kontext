@@ -14,6 +14,7 @@ import { m } from "@/paraglide/messages";
 import type { OutgoingMail } from "./composer-files";
 import type { useComposerImages } from "./composer-images";
 import type { ComposerState } from "./composer-state";
+import { removeDraft, settleDraft } from "./draft-place";
 
 export type DraftInput = {
   state: ComposerState;
@@ -24,7 +25,6 @@ export type DraftInput = {
   pics: ReturnType<typeof useComposerImages>;
   identity: Identity | undefined;
   drafts: Mailbox | undefined;
-  sendAccountId: string;
   /** The mail as a draft, its files kept in the browser uploaded. */
   draftMail: () => Promise<OutgoingMail>;
   toast: ReturnType<typeof useToast>;
@@ -64,16 +64,18 @@ const autosaveWith = (input: DraftInput, isEmpty: () => boolean) => async (): Pr
   if (!identity || !drafts || isEmpty() || state.encrypt) return;
   const run = (async () => {
     const mail = await input.draftMail();
-    state.draftId.current = await saveDraft(client, mail, drafts.id);
+    const id = await saveDraft(client, mail, drafts.id);
+    // Only now: the files of a draft left in another account are still its blobs until here.
+    await settleDraft(input, mail.accountId, id);
     state.setSavedAt(new Date());
     // Files and pictures now live in the draft just written; the one replaced took its own.
     if (mail.attachments.length || mail.images.length) {
-      const parts = await draftParts(client, mail.accountId, state.draftId.current);
+      const parts = await draftParts(client, mail.accountId, id);
       const saved = savedBlobs(mail.attachments, mail.images, parts);
       state.setAttachments((current) => current.map(withSavedBlob(saved)));
       pics.setImages((current) => current.map(withSavedBlob(saved)));
     }
-    void input.queryClient.invalidateQueries({ queryKey: [input.sendAccountId, "emails"] });
+    void input.queryClient.invalidateQueries({ queryKey: [mail.accountId, "emails"] });
   })();
   state.saving.current = run;
   try {
@@ -122,7 +124,7 @@ const useAutosave = (input: DraftInput, autosave: () => Promise<void>, isEmpty: 
 };
 
 export const useComposerDraft = (input: DraftInput) => {
-  const { state, client, queryClient, editor, pics, sendAccountId, toast } = input;
+  const { state, client, queryClient, editor, pics, toast } = input;
   const leave = useLeave(state, input.mode);
   const isEmpty = () =>
     state.to.length + state.cc.length + state.bcc.length === 0 &&
@@ -143,11 +145,10 @@ export const useComposerDraft = (input: DraftInput) => {
   const discard = async () => {
     markSaved();
     if (state.saving.current) await state.saving.current;
-    if (state.draftId.current) {
-      await client
-        .call("Email/set", { accountId: sendAccountId, destroy: [state.draftId.current] })
-        .catch(() => undefined);
-      void queryClient.invalidateQueries({ queryKey: [sendAccountId] });
+    const saved = state.savedDraft.current;
+    if (saved) {
+      await removeDraft(client, saved).catch(() => undefined);
+      void queryClient.invalidateQueries({ queryKey: [saved.accountId] });
     }
     await leave();
   };

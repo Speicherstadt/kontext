@@ -5,6 +5,7 @@ import type { KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { usePrincipals } from "@/directory/queries";
 import { AttachFromDocuments } from "@/features/documents/document-actions";
+import { sameAddress } from "@/lib/addresses";
 import { EditorToolbar } from "@/mail-core/editor-toolbar";
 import { m } from "@/paraglide/messages";
 import { SnippetMenu } from "../snippets/snippet-menu";
@@ -66,9 +67,13 @@ const ComposerHeader = ({ c, mode }: View) => (
 );
 
 /** Whom one can send as, with what each address is (alias, shared mailbox, other mailbox). */
-const useSenders = ({ sender, login }: Composing) => {
+const useSenders = ({ sender, login, viaGroup }: Composing) => {
   const { data: principals = [] } = usePrincipals();
-  const groups = principals.flatMap((p) => (p.type === "group" && p.email ? [p.email] : []));
+  const groups = principals.flatMap(({ type, email }) =>
+    type === "group" && email
+      ? [{ email, sendsAs: viaGroup.find((via) => sameAddress(via.email, email))?.name }]
+      : [],
+  );
   return senderOptions(sender.identities, {
     login,
     groups,

@@ -165,6 +165,13 @@ IMAP und SMTP.
   Postfächer bei Gmail, GMX & Co. stehen getrennt unter „Weitere Postfächer“. Im gemeinsamen
   Postfach zeigt die Auswahl, unter welchem Namen die Mail ankommt („erscheint als „Jonas Weber
   (Weber Haustechnik)““). Gibt es nur eine Adresse, steht sie ohne Auswahl da.
+- **Als info@ aus dem eigenen Postfach:** Wer im eigenen Postfach die Adresse eines gemeinsamen
+  Postfachs wählt, schreibt wie in diesem Postfach: Der Entwurf liegt in dessen Entwürfen, die
+  gesendete Mail in dessen Gesendet-Ordner (für die Kollegen sichtbar), und der Absendername ist
+  „Jonas Weber (Weber Haustechnik)“ – die Auswahl sagt das schon vorher („erscheint als …“). Ein
+  bereits gespeicherter Entwurf zieht beim Wechsel des Absenders mit um. „Rückgängig“ öffnet die
+  Mail danach im gemeinsamen Postfach. Ist das Postfach nur zum Lesen geteilt, bleibt die Mail
+  wie bisher im eigenen Konto. [Mehr](architecture.md#gemeinsame-postfacher)
 - **Die Leiste unter der Mail:** links Anhängen und die Schalter (Lese- und Zustellbestätigung,
   Vertraulich senden, Unterschreiben), rechts Verwerfen, „Als Entwurf speichern“ und ganz rechts
   „Senden“ mit „Später senden“, wo der Blick nach dem Schreiben ankommt.

@@ -25,7 +25,12 @@ const texts = {
 const jonas = identity("i1", "Jonas Weber", "jonas@weber.test");
 const alias = identity("i2", "Jonas Weber", "j.weber@weber.test");
 const info = identity("i3", "Weber Haustechnik", "info@weber.test");
-const context = { login: "jonas@weber.test", groups: ["info@weber.test"], shared: null, texts };
+const context = {
+  login: "jonas@weber.test",
+  groups: [{ email: "info@weber.test" }],
+  shared: null,
+  texts,
+};
 
 describe("senderOptions", () => {
   it("puts the login address first and marks aliases and shared mailboxes", () => {
@@ -35,6 +40,14 @@ describe("senderOptions", () => {
       ["Weber Haustechnik", "info@weber.test", "Gruppe"],
       ["Jonas Weber", "j.weber@weber.test", "Alias"],
     ]);
+  });
+
+  it("says the name a shared mailbox's address goes out with from the own mailbox", () => {
+    const groups = [{ email: "INFO@weber.test", sendsAs: "Jonas Weber (Weber Haustechnik)" }];
+    const options = senderOptions([jonas, info], { ...context, groups }) as SelectOption[];
+    expect(options[1]?.hint).toBe(
+      "info@weber.test · erscheint als „Jonas Weber (Weber Haustechnik)“",
+    );
   });
 
   it("groups one's other mailboxes apart from the own addresses", () => {

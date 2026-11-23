@@ -9,10 +9,12 @@ import { withSavedBlob } from "@/lib/draft-blobs";
 import { formatSize } from "@/lib/format";
 import { fitsEncrypted, HELD_LIMIT } from "@/lib/held-files";
 import { htmlToText } from "@/lib/html";
+import { draftSwap } from "@/lib/send-route";
 import { m } from "@/paraglide/messages";
 import type { ComposePrefill } from "./composer";
 import type { useComposerImages } from "./composer-images";
 import type { ComposerState } from "./composer-state";
+import { removeDraft } from "./draft-place";
 import type { HeldFiles } from "./use-held-files";
 
 type Pictures = ReturnType<typeof useComposerImages>;
@@ -49,7 +51,7 @@ export const outgoingMail = (input: OutgoingInput, { draft = false } = {}) => {
     images,
     inReplyTo: state.threading.inReplyTo,
     references: state.threading.references,
-    draftId: state.draftId.current,
+    draftId: draftSwap(state.savedDraft.current, input.sendAccountId).replaces,
     requestReceipt: state.receipt,
     requestDelivery: state.delivery,
     autocrypt: input.autocrypt,
@@ -64,7 +66,6 @@ type FilesInput = {
   held: HeldFiles;
   client: JmapClient;
   queryClient: QueryClient;
-  sendAccountId: string;
   onError: (message: string) => void;
 };
 
@@ -75,7 +76,6 @@ export const useComposerFiles = ({
   held,
   client,
   queryClient,
-  sendAccountId,
   onError,
 }: FilesInput) => {
   /**
@@ -123,14 +123,12 @@ export const useComposerFiles = ({
     try {
       if (state.saving.current) await state.saving.current;
       takeBlobs(await held.pull(files));
-      if (state.draftId.current) {
-        await client.call("Email/set", {
-          accountId: sendAccountId,
-          destroy: [state.draftId.current],
-        });
-        state.draftId.current = null;
+      const saved = state.savedDraft.current;
+      if (saved) {
+        await removeDraft(client, saved);
+        state.savedDraft.current = null;
         state.setSavedAt(null);
-        void queryClient.invalidateQueries({ queryKey: [sendAccountId, "emails"] });
+        void queryClient.invalidateQueries({ queryKey: [saved.accountId, "emails"] });
       }
     } catch (error) {
       state.setEncrypt(false);

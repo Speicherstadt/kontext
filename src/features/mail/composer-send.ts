@@ -16,6 +16,7 @@ import type { useLegalFooter } from "../company/legal-footer";
 import type { OutgoingMail } from "./composer-files";
 import { signatureOf } from "./composer-fill";
 import type { ComposerState } from "./composer-state";
+import { settleDraft } from "./draft-place";
 import type { useTakeBack } from "./take-back";
 import type { useEncryptedSend } from "./use-encrypted-send";
 
@@ -59,7 +60,7 @@ const sendExternal = async (
   folders: Folders,
 ) => {
   const emailId = await saveDraft(input.client, mail, folders.draftsId);
-  input.state.draftId.current = emailId;
+  await settleDraft(input, mail.accountId, emailId);
   return (await sendThroughExternal(externalId, { emailId, ...folders })).refused;
 };
 
@@ -94,6 +95,8 @@ const deliver = async (
       : state.sign
         ? await pgp.sendSigned(mail, folders, hold)
         : await sendEmail(input.client, mail, folders, hold);
+  // Sent through a shared mailbox: the draft written in the own account before goes.
+  if (!externalId) await settleDraft(input, mail.accountId, null);
   // Links and other mailboxes go out at once: nothing to take back, nothing held.
   return { kept: held && !(state.encrypt && pgp.viaLink.length) ? held : null, refused };
 };
@@ -207,7 +210,7 @@ export const sendWith = (input: SendInput) => {
     } catch (error) {
       if (isRefusedError(error)) {
         // Back among the drafts (or, encrypted, only here in the form): the old draft is gone.
-        state.draftId.current = error.draftId;
+        await settleDraft(input, sendAccountId, error.draftId);
         toast.show(m.mail_refused({ reasons: error.message }), "error");
       } else toast.show(m.common_error({ message: (error as Error).message }), "error");
     } finally {

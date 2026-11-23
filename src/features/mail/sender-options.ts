@@ -1,7 +1,9 @@
 /**
  * The senders of the composer as choices: the login address first, then the account's other
- * addresses (aliases, and the addresses of the shared mailboxes one belongs to), then one's other mailboxes (Gmail, GMX, …). In a shared mailbox the
- * mailbox's addresses, each with the name the recipient will see ("Jonas Weber (Info)").
+ * addresses (aliases, and the addresses of the shared mailboxes one belongs to, which go out
+ * through that mailbox), then one's other mailboxes (Gmail, GMX, …). In a shared mailbox the
+ * mailbox's addresses. Wherever a mail goes out through a shared mailbox, its option says the
+ * name the recipient will see ("Jonas Weber (Info)").
  */
 import type { SelectEntry, SelectOption } from "@/components/ui/select";
 import { externalIdOf } from "@/external-accounts/api";
@@ -20,8 +22,11 @@ export type SenderTexts = {
 type Context = {
   /** The address signed in with; its identity comes first and has no badge. */
   login: string;
-  /** The addresses of shared mailboxes (group accounts); one may send as them. */
-  groups: string[];
+  /**
+   * The addresses of shared mailboxes (group accounts); one may send as them. `sendsAs`: the name
+   * the recipient sees when the mail goes out through that mailbox (lib/send-route.ts).
+   */
+  groups: { email: string; sendsAs?: string }[];
   /** Set when writing from a shared mailbox: its name and the person writing. */
   shared: { mailbox: string; person: string } | null;
   texts: SenderTexts;
@@ -51,12 +56,17 @@ export const senderOptions = (identities: Identity[], context: Context): SelectE
   }
   const own = identities.filter((identity) => !externalIdOf(identity)).sort(byLoginFirst(login));
   const other = identities.filter((identity) => externalIdOf(identity));
+  const groupOf = (email: string) => groups.find((group) => sameAddress(group.email, email));
   const badgeOf = (email: string) => {
     if (sameAddress(email, login)) return undefined;
-    return groups.some((group) => sameAddress(group, email)) ? texts.group : texts.alias;
+    return groupOf(email) ? texts.group : texts.alias;
+  };
+  const hintOf = (email: string) => {
+    const sendsAs = groupOf(email)?.sendsAs;
+    return sendsAs ? `${email} · ${texts.appearsAs(sendsAs)}` : email;
   };
   const ownOptions = own.map((identity) =>
-    option(identity, identity.email, badgeOf(identity.email)),
+    option(identity, hintOf(identity.email), badgeOf(identity.email)),
   );
   if (!other.length) return ownOptions;
   return [

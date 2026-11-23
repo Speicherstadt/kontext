@@ -84,6 +84,19 @@ im Postfach hat (Stalwart gibt Identitäten nur Mitgliedern), antwortet vom eige
 Antwort liegt dann im eigenen Gesendet-Ordner. Beide Stufen setzt die Firmenverwaltung; „Nur
 lesen“ teilt dabei alle vorhandenen Ordner des Postfachs (später angelegte Ordner nicht).
 
+Stalwart führt die Adressen der Gruppen, in denen man Mitglied ist, auch als Identitäten des
+eigenen Kontos. Eine Mail, die im eigenen Postfach als info@ geschrieben wird, schickt Kontext
+trotzdem über das Konto der Gruppe (`src/lib/send-route.ts`): `EmailSubmission/set` liest
+Identität und Mail aus dem Konto der Anfrage, und `onSuccessUpdateEmail` wird zu einem
+`Email/set` im selben Konto (`crates/jmap/src/submission/set.rs`) – Entwürfe und Gesendet von
+info@ erreicht nur eine Einreichung in info@, mit dessen Identität. Mitglieder dürfen das
+(`assert_is_member` in `crates/jmap/src/api/request.rs`). Hochgeladene Dateien gehen mit, denn
+Stalwart prüft den Zugriff auf einen Blob am Anmeldenden, nicht am Konto
+(`crates/jmap/src/blob/download.rs`). Ein Entwurf kann nicht zwischen Konten wandern: Wechselt der
+Absender, schreibt die nächste Speicherung ihn im neuen Konto und löscht danach den alten
+(`src/features/mail/draft-place.ts`). Liefert das Konto der Gruppe keine Identitäten oder fehlen
+ihm Entwürfe oder Gesendet, bleibt die Mail im eigenen Konto.
+
 Der Server (Aufgaben, Kategorien, Textbausteine, Chat, DAV) liest die Stufe nicht aus `isReadOnly`
 der Session: Stalwart (0.16 wie 1.0) schickt jedes weitere Konto mit `isReadOnly: false` und `isPersonal:
 false`, auch das einer Kollegin, die nur ein Adressbuch teilt. Mitglied einer Gruppe ist, bei
