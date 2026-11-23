@@ -10,6 +10,7 @@ import { useSave, useTwoFactor } from "@/account/queries";
 import { useClient } from "@/auth/auth";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
+import { DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { CredentialFields, type Credentials } from "@/features/agents/credential-fields";
@@ -159,14 +160,14 @@ const NewPasskeyForm = ({ onDone }: { onDone: () => void }) => {
           {problem}
         </p>
       ) : null}
-      <div className="flex gap-2">
-        <Button type="submit" variant="primary" disabled={create.isPending}>
-          {m.passkeys_create()}
-        </Button>
+      <DialogActions>
         <Button variant="ghost" onClick={onDone}>
           {m.contacts_cancel()}
         </Button>
-      </div>
+        <Button type="submit" variant="primary" disabled={create.isPending}>
+          {m.passkeys_create()}
+        </Button>
+      </DialogActions>
     </form>
   );
 };

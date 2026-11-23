@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { sendEmail, setKeyword } from "@/jmap/mail";
 import type { EmailDetail } from "@/jmap/types";
@@ -161,14 +161,14 @@ const UnsubscribeDialog = ({
         <Checkbox checked={remove} onChange={(event) => setRemove(event.target.checked)} />
         {m.mail_unsubscribe_delete()}
       </label>
-      <div className="flex justify-end gap-2">
+      <DialogActions>
         <Button variant="ghost" onClick={onClose}>
           {m.tasks_cancel()}
         </Button>
         <Button variant="primary" disabled={busy} onClick={() => void unsubscribe()}>
           {m.mail_unsubscribe()}
         </Button>
-      </div>
+      </DialogActions>
     </Dialog>
   );
 };

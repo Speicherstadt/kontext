@@ -47,7 +47,7 @@ vi.mock("./place-queries", () => ({ usePlaceSuggestions: () => [] }));
 const refs = vi.hoisted(() => ({ calendars: [] as unknown[] }));
 const createEvent = vi.fn(async (_input: { event: Record<string, unknown> }) => {});
 vi.mock("./queries", () => ({
-  calendarLabel: () => "Kalender",
+  calendarOption: (calendar: { key: string }) => ({ value: calendar.key, label: "Kalender" }),
   calendarOf: () => refs.calendars[0],
   useCalendarRefs: () => refs,
   useMyAddresses: () => ["jonas@weber.test"],

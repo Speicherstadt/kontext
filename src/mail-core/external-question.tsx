@@ -4,7 +4,7 @@
  */
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { externalAddresses } from "@/lib/external-hint";
 import { useInsideDomains } from "@/mail-core/external-hint";
 import { m } from "@/paraglide/messages";
@@ -36,7 +36,7 @@ export const useExternalQuestion = (kind: "mail" | "invitation") => {
             </li>
           ))}
         </ul>
-        <div className="flex flex-wrap justify-end gap-2">
+        <DialogActions>
           {/* Enter right away goes back: sending outside should be a choice. */}
           <Button variant="ghost" autoFocus onClick={() => setAsked(null)}>
             {m.mail_external_back()}
@@ -51,7 +51,7 @@ export const useExternalQuestion = (kind: "mail" | "invitation") => {
           >
             {m.mail_external_send()}
           </Button>
-        </div>
+        </DialogActions>
       </Dialog>
     ),
   };

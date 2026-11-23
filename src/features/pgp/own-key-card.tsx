@@ -9,7 +9,7 @@ import { useSession } from "@/auth/session";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { downloadText } from "@/lib/download";
@@ -175,7 +175,7 @@ const NewKeyDialog = ({ mode, onClose }: { mode: "create" | "import"; onClose: (
               {problem}
             </p>
           ) : null}
-          <div className="flex justify-end gap-2">
+          <DialogActions>
             <Button variant="ghost" onClick={onClose}>
               {m.tasks_cancel()}
             </Button>
@@ -186,7 +186,7 @@ const NewKeyDialog = ({ mode, onClose }: { mode: "create" | "import"; onClose: (
             >
               {busy ? m.pgp_working() : m.pgp_next()}
             </Button>
-          </div>
+          </DialogActions>
         </form>
       )}
     </Dialog>
@@ -270,14 +270,14 @@ const PassphraseDialog = ({
             {problem}
           </p>
         ) : null}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onClose}>
             {m.tasks_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={busy || !current || Boolean(problem)}>
             {m.company_save()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

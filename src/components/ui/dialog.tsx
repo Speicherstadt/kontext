@@ -22,6 +22,26 @@ const keepOpenForList = (event: KeyboardEvent) => {
     event.preventDefault();
 };
 
+/**
+ * The footer of a dialog or form: the main action sits at the far right, "Cancel" and other
+ * secondary actions to its left (DOM order = visual order, so Tab goes the same way). A
+ * destructive or side action such as "Delete" goes in `leading`, at the far left.
+ */
+export const DialogActions = ({
+  leading,
+  className,
+  children,
+}: {
+  leading?: ReactNode;
+  className?: string;
+  children: ReactNode;
+}) => (
+  <div className={cn("flex flex-wrap items-center justify-end gap-2", className)}>
+    {leading ? <div className="mr-auto flex items-center gap-2">{leading}</div> : null}
+    {children}
+  </div>
+);
+
 /** A centered dialog on desktop, a bottom sheet on phones that stays above the keyboard. */
 export const Dialog = ({
   open,
