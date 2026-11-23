@@ -5,7 +5,7 @@
 import { Paperclip } from "lucide-react";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { m } from "@/paraglide/messages";
 
 type Props = {
@@ -35,14 +35,14 @@ export const ForgottenAttachment = ({ word, onAttach, onSendAnyway, onClose }: P
           onClose();
         }}
       />
-      <div className="flex flex-wrap justify-end gap-2">
+      <DialogActions>
         <Button variant="ghost" onClick={onSendAnyway}>
           {m.mail_attachment_send_anyway()}
         </Button>
         <Button variant="primary" autoFocus onClick={() => fileInput.current?.click()}>
           <Paperclip size={16} /> {m.mail_attachment_add()}
         </Button>
-      </div>
+      </DialogActions>
     </Dialog>
   );
 };

@@ -20,7 +20,7 @@ import {
 import { eventStartShort } from "@/lib/event-when";
 import { type FileEvent, fileEvents, importPlan } from "@/lib/ics-import";
 import { m } from "@/paraglide/messages";
-import { type CalendarRef, calendarLabel, useCalendarAccountId, useCalendarRefs } from "./queries";
+import { type CalendarRef, calendarOption, useCalendarAccountId, useCalendarRefs } from "./queries";
 
 /** More would make the dialog long; the count says the rest. */
 const SHOWN = 50;
@@ -162,10 +162,8 @@ export const IcsImport = () => {
             aria-label={m.calendar_import_target()}
             value={target?.key ?? ""}
             onValueChange={setTargetKey}
-            options={writable.map((calendar) => ({
-              value: calendar.key,
-              label: calendarLabel(calendar),
-            }))}
+            options={writable.map(calendarOption)}
+            showHint
           />
         </Label>
       </div>

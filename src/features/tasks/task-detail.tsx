@@ -175,8 +175,10 @@ export const TaskDetail = ({ task, onClose }: { task: Task; onClose?: () => void
                   ...people.map((person) => ({
                     value: person.id,
                     label: person.id === me ? m.tasks_me({ name: person.name }) : person.name,
+                    hint: person.email || undefined,
                   })),
                 ]}
+                showHint
               />
             </Label>
             <Label>

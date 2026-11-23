@@ -7,7 +7,7 @@ import { type FormEvent, useState } from "react";
 import { useSession } from "@/auth/session";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { downloadText } from "@/lib/download";
@@ -88,14 +88,14 @@ const ImportDialog = ({ onClose }: { onClose: () => void }) => {
             {problem}
           </span>
         ) : null}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onClose}>
             {m.tasks_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={busy || !file}>
             {busy ? m.pgp_working() : m.smime_import()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

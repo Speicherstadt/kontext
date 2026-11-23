@@ -6,7 +6,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { Plus, Trash2 } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import {
@@ -157,7 +157,7 @@ export const CategoryDialog = ({
           {problem}
         </p>
       ) : null}
-      <div className="flex justify-end gap-2 border-t border-border pt-4">
+      <DialogActions className="border-t border-border pt-4">
         <Button variant="ghost" onClick={onClose}>
           {m.rules_cancel()}
         </Button>
@@ -168,7 +168,7 @@ export const CategoryDialog = ({
         >
           {m.contacts_save()}
         </Button>
-      </div>
+      </DialogActions>
     </Dialog>
   );
 };

@@ -8,7 +8,7 @@ import { Users } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Select } from "@/components/ui/select";
 import { useColleagues } from "@/directory/queries";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
@@ -160,14 +160,14 @@ export const ShareDialog = ({
             {problem}
           </p>
         ) : null}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
             {m.contacts_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={saving}>
             {m.contacts_save()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

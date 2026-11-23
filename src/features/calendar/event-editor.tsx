@@ -7,6 +7,7 @@ import { type FormEvent, useRef, useState } from "react";
 import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DialogActions } from "@/components/ui/dialog";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -44,7 +45,7 @@ import { AvailabilityPanel } from "./availability-panel";
 import { attendeeList } from "./availability-queries";
 import { useEventMutations } from "./mutations";
 import { PlaceField } from "./place-field";
-import { calendarLabel, calendarOf, useCalendarRefs, useMyAddresses } from "./queries";
+import { calendarOf, calendarOption, useCalendarRefs, useMyAddresses } from "./queries";
 import { ReminderFields } from "./reminder-fields";
 import { RepeatFields } from "./repeat-fields";
 import { useSplitSeries } from "./split-series";
@@ -250,10 +251,8 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
             aria-label={m.calendar_calendar()}
             value={target?.key ?? ""}
             onValueChange={setCalendarKey}
-            options={writable.map((calendar) => ({
-              value: calendar.key,
-              label: calendarLabel(calendar),
-            }))}
+            options={writable.map(calendarOption)}
+            showHint
           />
         </Label>
       ) : null}
@@ -366,14 +365,14 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
           {problem}
         </p>
       ) : null}
-      <div className="flex gap-2">
-        <Button type="submit" variant="primary" disabled={create.isPending || update.isPending}>
-          {m.calendar_event_save()}
-        </Button>
+      <DialogActions>
         <Button variant="ghost" onClick={onCancel}>
           {m.calendar_event_cancel()}
         </Button>
-      </div>
+        <Button type="submit" variant="primary" disabled={create.isPending || update.isPending}>
+          {m.calendar_event_save()}
+        </Button>
+      </DialogActions>
       {external.dialog}
     </form>
   );

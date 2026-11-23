@@ -605,6 +605,7 @@
   "calendar_private": "Nur für mich",
   "calendar_availability_everyone": "Alle sehen die Verfügbarkeit",
   "calendar_of": "{calendar} · {owner}",
+  "calendar_shared_by": "geteilt von {owner}",
   "calendar_show": "{name} anzeigen",
   "calendar_in": "Kalender: {name}",
   "calendar_read_only": "Von {owner} geteilt, nur zum Lesen.",

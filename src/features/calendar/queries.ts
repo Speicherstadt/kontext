@@ -191,6 +191,19 @@ export const calendarLabel = (calendar: CalendarRef): string =>
     ? calendar.name
     : m.calendar_of({ calendar: calendar.name, owner: calendar.owner });
 
+/** "geteilt von Anna" under the name of a calendar that belongs to someone else. */
+export const calendarHint = (calendar: CalendarRef): string | undefined =>
+  calendar.isPersonal || calendar.name === calendar.owner
+    ? undefined
+    : m.calendar_shared_by({ owner: calendar.owner });
+
+/** A calendar as a choice: its name, and whose it is when it is shared. */
+export const calendarOption = (calendar: CalendarRef) => ({
+  value: calendar.key,
+  label: calendar.name,
+  hint: calendarHint(calendar),
+});
+
 /** The calendar an event is in (the first visible one it belongs to). */
 export const calendarOf = (
   calendars: CalendarRef[],

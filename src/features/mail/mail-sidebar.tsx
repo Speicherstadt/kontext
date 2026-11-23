@@ -3,7 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, SquarePen } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import type { Mailbox } from "@/jmap/types";
@@ -173,14 +173,14 @@ const NewFolderDialog = ({
         {parents.length > 0 ? (
           <ParentSelect value={parentId} onValueChange={setParentId} options={parents} />
         ) : null}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
             {m.contacts_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={create.isPending}>
             {m.mail_new_folder()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

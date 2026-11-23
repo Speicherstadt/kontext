@@ -4,7 +4,7 @@
  */
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
 import { m } from "@/paraglide/messages";
@@ -74,14 +74,14 @@ export const NameDialog = ({ title, nameLabel, colors, onSave, onClose, ...start
             {problem}
           </p>
         ) : null}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button type="button" variant="ghost" onClick={onClose}>
             {m.calendar_event_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={busy || !name.trim()}>
             {m.calendar_event_save()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

@@ -7,7 +7,7 @@ import { Check, Search } from "lucide-react";
 import { type FormEvent, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
@@ -195,14 +195,14 @@ export const ChatDialog = ({
             </span>
           </label>
         )}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onClose}>
             {m.chat_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={!ready || busy}>
             {editing ? m.chat_save() : mode === "direct" ? m.chat_start() : m.chat_create()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

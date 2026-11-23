@@ -82,6 +82,22 @@ export const mailboxPath = (mailbox: Mailbox, mailboxes: Mailbox[]): string => {
   return parts.join(" / ");
 };
 
+export type FolderPath = { mailbox: Mailbox; name: string; parent?: string };
+
+/**
+ * Each folder with its own name and the path above it (undefined at the top level), for menus that
+ * show the path as a second line. Takes the folders depth-first, as `flattenTree` gives them.
+ */
+export const folderPaths = (nodes: FolderNode[]): FolderPath[] => {
+  const path: string[] = [];
+  return nodes.map(({ mailbox, depth }) => {
+    const name = mailboxName(mailbox);
+    path.length = depth;
+    path.push(name);
+    return { mailbox, name, parent: depth > 0 ? path.slice(0, depth).join(" / ") : undefined };
+  });
+};
+
 export const findRole = (mailboxes: Mailbox[], role: MailboxRole): Mailbox | undefined =>
   mailboxes.find((mailbox) => mailbox.role === role);
 

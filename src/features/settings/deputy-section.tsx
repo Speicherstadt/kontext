@@ -74,8 +74,13 @@ const GrantForm = ({ colleagues }: { colleagues: Principal[] }) => {
             onValueChange={setPerson}
             options={[
               { value: "", label: m.deputy_choose() },
-              ...colleagues.map((p) => ({ value: p.id, label: principalName(p) })),
+              ...colleagues.map((p) => ({
+                value: p.id,
+                label: principalName(p),
+                hint: p.email ?? undefined,
+              })),
             ]}
+            showHint
             required
           />
         </div>

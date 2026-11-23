@@ -6,7 +6,7 @@ import { Plus, X } from "lucide-react";
 import { type FormEvent, type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
@@ -240,7 +240,12 @@ export const RuleDialog = ({
               aria-label={m.rules_choose_folder()}
               value={rule.moveTo?.id ?? ""}
               onValueChange={chooseFolder}
-              options={folders.map((folder) => ({ value: folder.id, label: folder.label }))}
+              options={folders.map((folder) => ({
+                value: folder.id,
+                label: folder.name,
+                hint: folder.parent,
+              }))}
+              showHint
             />
           </Action>
           <Action
@@ -326,24 +331,26 @@ export const RuleDialog = ({
             {problem}
           </p>
         ) : null}
-        <div className="flex gap-2">
-          {isNew ? null : (
-            <Button
-              variant="danger"
-              disabled={store.saving}
-              onClick={() => (confirmDelete ? void remove() : setConfirmDelete(true))}
-            >
-              {confirmDelete ? m.rules_delete_really() : m.rules_delete()}
-            </Button>
-          )}
-          <div className="flex-1" />
+        <DialogActions
+          leading={
+            isNew ? null : (
+              <Button
+                variant="danger"
+                disabled={store.saving}
+                onClick={() => (confirmDelete ? void remove() : setConfirmDelete(true))}
+              >
+                {confirmDelete ? m.rules_delete_really() : m.rules_delete()}
+              </Button>
+            )
+          }
+        >
           <Button variant="ghost" onClick={onClose}>
             {m.rules_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={store.saving || !rules}>
             {m.rules_save()}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );

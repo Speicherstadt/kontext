@@ -6,7 +6,7 @@ import { Link } from "@tanstack/react-router";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { m } from "@/paraglide/messages";
 import { showCodes, useShownCodes } from "./queries";
 
@@ -49,14 +49,17 @@ export const SecureCodesDialog = () => {
           </li>
         ))}
       </ul>
-      <div className="flex items-center justify-between gap-2">
-        <Link to="/secure" onClick={() => showCodes([])} className="text-[13px] text-muted">
-          {m.secure_list_link()}
-        </Link>
+      <DialogActions
+        leading={
+          <Link to="/secure" onClick={() => showCodes([])} className="text-[13px] text-muted">
+            {m.secure_list_link()}
+          </Link>
+        }
+      >
         <Button variant="primary" onClick={() => showCodes([])}>
           {m.secure_codes_done()}
         </Button>
-      </div>
+      </DialogActions>
     </Dialog>
   );
 };

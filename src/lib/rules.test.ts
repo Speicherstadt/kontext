@@ -44,9 +44,21 @@ describe("ruleFolders", () => {
       mailbox("h", "Hoffmann", "k"),
     ];
     expect(ruleFolders(boxes)).toEqual([
-      { id: "t", label: "Papierkorb", path: "Deleted Items" },
-      { id: "k", label: "Kunden", path: "Kunden" },
-      { id: "h", label: "Kunden / Hoffmann", path: "Kunden/Hoffmann" },
+      {
+        id: "t",
+        label: "Papierkorb",
+        name: "Papierkorb",
+        parent: undefined,
+        path: "Deleted Items",
+      },
+      { id: "k", label: "Kunden", name: "Kunden", parent: undefined, path: "Kunden" },
+      {
+        id: "h",
+        label: "Kunden / Hoffmann",
+        name: "Hoffmann",
+        parent: "Kunden",
+        path: "Kunden/Hoffmann",
+      },
     ]);
   });
 });

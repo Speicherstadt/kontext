@@ -10,7 +10,7 @@ import { CheckCheck, Download, Ellipsis, FolderInput, Pencil, Trash2 } from "luc
 import { type FormEvent, type ReactNode, useState } from "react";
 import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogActions } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import { Select, type SelectOption } from "@/components/ui/select";
@@ -23,6 +23,7 @@ import {
   type FolderNode,
   findRole,
   folderActions,
+  folderPaths,
   mailboxName,
   moveTargets,
   subfolders,
@@ -137,14 +138,14 @@ export const FolderRow = ({ accountId, mailbox, mailboxes, activeId, children }:
           title={m.mail_folder_delete_title({ name })}
           description={deleteHint(mailbox, mailboxes)}
         >
-          <div className="flex flex-wrap justify-end gap-2">
+          <DialogActions>
             <Button variant="ghost" onClick={() => setDialog(null)}>
               {m.contacts_cancel()}
             </Button>
             <Button variant="danger" disabled={busy} onClick={() => void run(remove)}>
               {m.mail_folder_delete()}
             </Button>
-          </div>
+          </DialogActions>
         </Dialog>
       ) : null}
     </div>
@@ -192,33 +193,26 @@ const EditFolderDialog = ({ kind, mailbox, targets, busy, onClose, onSave }: Edi
         ) : (
           <ParentSelect value={parentId} onValueChange={setParentId} options={targets} />
         )}
-        <div className="flex justify-end gap-2">
+        <DialogActions>
           <Button variant="ghost" onClick={onClose}>
             {m.contacts_cancel()}
           </Button>
           <Button type="submit" variant="primary" disabled={busy}>
             {title}
           </Button>
-        </div>
+        </DialogActions>
       </form>
     </Dialog>
   );
 };
 
-/** The folders as options, each with the path above it as hint (the tree is in depth-first order). */
-const parentOptions = (nodes: FolderNode[]): SelectOption[] => {
-  const path: string[] = [];
-  return nodes.map(({ mailbox, depth }) => {
-    const name = mailboxName(mailbox);
-    path.length = depth;
-    path.push(name);
-    return {
-      value: mailbox.id,
-      label: name,
-      hint: depth > 0 ? path.slice(0, depth).join(" / ") : undefined,
-    };
-  });
-};
+/** The folders as options, each with the path above it as hint. */
+const parentOptions = (nodes: FolderNode[]): SelectOption[] =>
+  folderPaths(nodes).map(({ mailbox, name, parent }) => ({
+    value: mailbox.id,
+    label: name,
+    hint: parent,
+  }));
 
 /** The parent of a new or moved folder; "—" is the top level. */
 export const ParentSelect = ({
