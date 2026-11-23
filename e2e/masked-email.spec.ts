@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { login } from "./helpers";
+import { choose, login } from "./helpers";
 
 /**
  * Masked addresses against the e2e Stalwart, a Community edition without a license: since
@@ -17,7 +17,7 @@ const createAddress = async (page: Page, description: string, prefix: string) =>
   await page.getByLabel("Wofür").fill(description);
   await page.getByLabel("Website (optional)").fill("https://www.baumarkt.de/konto");
   await page.getByLabel("Anfang der Adresse (optional)").fill(prefix);
-  await page.getByLabel("Gültig").selectOption({ label: "1 Woche" });
+  await choose(page.getByLabel("Gültig"), "1 Woche");
   await page.getByRole("button", { name: "Adresse anlegen" }).click();
 };
 

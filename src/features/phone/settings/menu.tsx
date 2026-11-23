@@ -8,7 +8,8 @@ import { useCompany } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
 import { type Admin, send, useAdminChange } from "./api";
@@ -39,14 +40,9 @@ const OptionEditor = ({
           {m.phone_menu_digit()}
           <Select
             value={option.digit}
-            onChange={(event) => onChange({ ...option, digit: event.target.value })}
-          >
-            {DIGITS.map((digit) => (
-              <option key={digit} value={digit}>
-                {digit}
-              </option>
-            ))}
-          </Select>
+            onValueChange={(digit) => onChange({ ...option, digit })}
+            options={DIGITS.map((digit) => ({ value: digit, label: digit }))}
+          />
         </Label>
         <Label className="min-w-0 flex-1">
           {m.phone_menu_label()}
@@ -111,7 +107,7 @@ export const MenuForm = ({ menu, sounds }: { menu: Admin["menu"]; sounds: Admin[
           sounds={sounds}
           none={m.phone_menu_no_greeting()}
           value={greeting}
-          onChange={(event) => setGreeting(event.target.value)}
+          onValueChange={setGreeting}
         />
       </Label>
       {options.map((option, index) => (

@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { login } from "./helpers";
+import { choose, login } from "./helpers";
 
 const ANSWER = "Der Entwurf an Frau Keller liegt in „Entwürfe“.";
 const DONE = "Entwurf an petra.keller@keller-elektro.test liegt in „Entwürfe“ von Jonas Weber.";
@@ -34,7 +34,7 @@ test.describe("Assistent im Chat", () => {
 
     await page.goto("/settings?section=company-chat");
     await page.getByLabel("API-Schlüssel").fill("sk-ant-api03-e2e-nur-ein-test-schluessel-ABCD");
-    await page.getByLabel("Modell").selectOption("claude-haiku-5-5");
+    await choose(page.getByLabel("Modell"), "Claude Haiku 5.5 – günstiger, einfacher");
     try {
       await page
         .getByRole("region", { name: "Assistent im Chat" })

@@ -1,7 +1,7 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import { type Browser, expect, type Page, test } from "@playwright/test";
 import { encodeWav } from "../server/model/phone-sounds";
-import { login } from "./helpers";
+import { choose, login } from "./helpers";
 
 /**
  * Telephony with the fake box (dev/fake-box.ts): it pairs and talks to the e2e server like the
@@ -103,9 +103,7 @@ test.describe("Telefonie über die Telefonbox", () => {
     await ring.getByRole("button", { name: "Speichern" }).click();
 
     const callbacks = page.getByRole("region", { name: "Verpasste Anrufe" });
-    await callbacks
-      .getByLabel("Aufgabe anlegen auf dem Board")
-      .selectOption({ label: "Jonas Weber" });
+    await choose(callbacks.getByLabel("Aufgabe anlegen auf dem Board"), "Jonas Weber");
     await callbacks.getByRole("button", { name: "Speichern" }).click();
 
     // A greeting as an uploaded file (any rate; the browser makes 8 kHz of it).
@@ -119,9 +117,9 @@ test.describe("Telefonie über die Telefonbox", () => {
     await expect(sounds.getByRole("listitem")).toContainText("Mailbox Büro · 0:02");
     const mailbox = page.getByRole("region", { name: "Mailbox", exact: true });
     await mailbox.getByLabel("Mailbox einschalten").check();
-    await mailbox.getByLabel("Mailbox nach").selectOption({ label: "20 Sekunden Klingeln" });
-    await mailbox.getByLabel("Ansage").selectOption({ label: "Mailbox Büro" });
-    await mailbox.getByLabel("Nachrichten als Mail an").selectOption({ label: "Jonas Weber" });
+    await choose(mailbox.getByLabel("Mailbox nach"), "20 Sekunden Klingeln");
+    await choose(mailbox.getByLabel("Ansage"), "Mailbox Büro");
+    await choose(mailbox.getByLabel("Nachrichten als Mail an"), "Jonas Weber");
     await mailbox.getByRole("button", { name: "Speichern" }).click();
 
     const hours = page.getByRole("region", { name: "Öffnungszeiten" });
@@ -130,7 +128,7 @@ test.describe("Telefonie über die Telefonbox", () => {
     await hours.getByLabel("Samstag", { exact: true }).check();
     await hours.getByLabel("Samstag bis").fill("12:00");
     // A company in Hamburg: Reformationstag closes, Allerheiligen (Baden-Württemberg) does not.
-    await hours.getByLabel("Bundesland").selectOption({ label: "Hamburg" });
+    await choose(hours.getByLabel("Bundesland"), "Hamburg");
     await hours.getByRole("button", { name: "Feiertage eintragen" }).click();
     const closed = hours.getByRole("list", { name: "Geschlossene Tage" });
     await expect(closed).toContainText("1. Weihnachtstag");
@@ -405,9 +403,10 @@ test.describe("Telefonie über die Telefonbox", () => {
     await page.goto("/settings?section=phone");
     const settings = page.getByRole("region", { name: "Gespräche aufnehmen" });
     await settings.getByLabel("Aufnehmen erlauben").check();
-    await settings
-      .getByRole("combobox", { name: /^Ansage vor der Aufnahme/ })
-      .selectOption({ label: "Mailbox Büro" });
+    await choose(
+      settings.getByRole("combobox", { name: /^Ansage vor der Aufnahme/ }),
+      "Mailbox Büro",
+    );
     await settings.getByRole("button", { name: "Speichern" }).click();
     await expect
       .poll(async () => (await box.state()).config?.recording?.notice)
@@ -442,13 +441,13 @@ test.describe("Telefonie über die Telefonbox", () => {
   }) => {
     await login(page);
     await page.getByRole("link", { name: "Telefon", exact: true }).click();
-    await page.getByLabel("Erreichbarkeit").selectOption({ label: "Bitte nicht stören" });
+    await choose(page.getByLabel("Erreichbarkeit"), "Bitte nicht stören");
     const anna = await colleague(browser, "anna");
     const { call } = await box.ring("07223 81234");
     await expect(anna.page.getByRole("dialog", { name: /^Anruf von/ })).toBeVisible();
     await expect(page.getByRole("dialog", { name: /^Anruf von/ })).toHaveCount(0);
     await box.hangup(call);
-    await page.getByLabel("Erreichbarkeit").selectOption({ label: "Erreichbar" });
+    await choose(page.getByLabel("Erreichbarkeit"), "Erreichbar");
     await anna.close();
   });
 
@@ -460,9 +459,7 @@ test.describe("Telefonie über die Telefonbox", () => {
     await page.goto("/settings?section=phone");
     const menu = page.getByRole("region", { name: "Sprachmenü" });
     await menu.getByLabel("Sprachmenü einschalten").check();
-    await menu
-      .getByRole("combobox", { name: /^Ansage des Menüs/ })
-      .selectOption({ label: "Mailbox Büro" });
+    await choose(menu.getByRole("combobox", { name: /^Ansage des Menüs/ }), "Mailbox Büro");
     await menu.getByRole("button", { name: "Taste hinzufügen" }).click();
     const key = menu.getByRole("group", { name: "Taste 1" });
     await key.getByLabel("Wofür").fill("Kundendienst");
@@ -513,12 +510,8 @@ test.describe("Telefonie über die Telefonbox", () => {
     await page.goto("/settings?section=phone");
     const fax = page.getByRole("region", { name: "Fax", exact: true });
     await fax.getByLabel("Faxe empfangen").check();
-    await fax
-      .getByRole("combobox", { name: /^Faxnummer/ })
-      .selectOption({ label: "Durchwahl Anna" });
-    await fax
-      .getByRole("combobox", { name: /^Faxe als Mail an/ })
-      .selectOption({ label: "Jonas Weber" });
+    await choose(fax.getByRole("combobox", { name: /^Faxnummer/ }), "Durchwahl Anna");
+    await choose(fax.getByRole("combobox", { name: /^Faxe als Mail an/ }), "Jonas Weber");
     await fax.getByRole("button", { name: "Speichern" }).click();
     await expect.poll(async () => (await box.state()).config?.fax).toEqual({ line: "kontext621" });
 
@@ -632,14 +625,15 @@ test.describe("Telefonie über die Telefonbox", () => {
     await login(page);
     await page.goto("/settings?section=phone");
     const ring = page.getByRole("region", { name: "Wer klingelt" });
-    await ring
-      .getByRole("combobox", { name: /^Klingeln/ })
-      .selectOption({ label: "Der Reihe nach, dann bei allen" });
+    await choose(
+      ring.getByRole("combobox", { name: /^Klingeln/ }),
+      "Der Reihe nach, dann bei allen",
+    );
     await expect(ring.getByRole("list", { name: "Reihenfolge" })).toContainText("Jonas Weber");
-    await ring.getByLabel("Jeweils").selectOption({ label: "10 Sekunden" });
+    await choose(ring.getByLabel("Jeweils"), "10 Sekunden");
     await ring.getByLabel("Auch auf einem Handy klingeln lassen").check();
     await ring.getByLabel("Handynummer").fill("0171 2345678");
-    await ring.getByRole("combobox", { name: /^Nach/ }).selectOption({ label: "10 Sekunden" });
+    await choose(ring.getByRole("combobox", { name: /^Nach/ }), "10 Sekunden");
     await ring.getByRole("button", { name: "Speichern" }).click();
     await expect
       .poll(async () => (await box.state()).config)

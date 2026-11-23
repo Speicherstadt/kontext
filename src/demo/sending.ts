@@ -15,7 +15,7 @@ import {
   resolveId,
   state,
 } from "./methods";
-import { accountOf, newId, type Store, type StoredEmail } from "./store";
+import { accountOf, type DemoAccount, newId, type Store, type StoredEmail } from "./store";
 
 export type Submission = {
   id: string;
@@ -78,23 +78,26 @@ export const sendAtOf = (envelope: Args | undefined, now: Date): Date => {
   return now;
 };
 
+const identityOf = (account: DemoAccount) => ({
+  id: `identity-${account.id}`,
+  name: account.isGroup ? "Weber Haustechnik" : account.fullName,
+  email: account.email,
+  replyTo: null,
+  bcc: null,
+  textSignature: "",
+  htmlSignature: "",
+  mayDelete: false,
+});
+
+/**
+ * A person's identities: their own address and, as Stalwart lists them, the addresses of the
+ * shared mailboxes they belong to; a shared mailbox has only its own.
+ */
 export const identityGet = (store: Store, args: Args): Result => {
   const accountId = String(args.accountId);
   const account = accountOf(store, accountId);
-  const list = account
-    ? [
-        {
-          id: `identity-${account.id}`,
-          name: account.isGroup ? "Weber Haustechnik" : account.fullName,
-          email: account.email,
-          replyTo: null,
-          bcc: null,
-          textSignature: "",
-          htmlSignature: "",
-          mayDelete: false,
-        },
-      ]
-    : [];
+  const groups = store.accounts.filter((group) => account?.groups.includes(group.id));
+  const list = account ? [account, ...groups].map(identityOf) : [];
   return { accountId, state: state(store), list, notFound: [] };
 };
 

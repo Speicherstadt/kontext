@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Label } from "@/components/ui/input";
 import { MenuContent, MenuItem, MenuRoot, MenuTrigger } from "@/components/ui/menu";
+import { Select, type SelectOption } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { deleteMailboxes, markMailboxRead, updateMailbox } from "@/jmap/folders";
 import { exportMailbox } from "@/jmap/mbox-export";
@@ -189,7 +190,7 @@ const EditFolderDialog = ({ kind, mailbox, targets, busy, onClose, onSave }: Edi
             <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} required />
           </Label>
         ) : (
-          <ParentSelect value={parentId} onChange={setParentId} options={targets} />
+          <ParentSelect value={parentId} onValueChange={setParentId} options={targets} />
         )}
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={onClose}>
@@ -204,30 +205,37 @@ const EditFolderDialog = ({ kind, mailbox, targets, busy, onClose, onSave }: Edi
   );
 };
 
+/** The folders as options, each with the path above it as hint (the tree is in depth-first order). */
+const parentOptions = (nodes: FolderNode[]): SelectOption[] => {
+  const path: string[] = [];
+  return nodes.map(({ mailbox, depth }) => {
+    const name = mailboxName(mailbox);
+    path.length = depth;
+    path.push(name);
+    return {
+      value: mailbox.id,
+      label: name,
+      hint: depth > 0 ? path.slice(0, depth).join(" / ") : undefined,
+    };
+  });
+};
+
 /** The parent of a new or moved folder; "—" is the top level. */
 export const ParentSelect = ({
   value,
-  onChange,
+  onValueChange,
   options,
 }: {
   value: string;
-  onChange: (id: string) => void;
+  onValueChange: (id: string) => void;
   options: FolderNode[];
 }) => (
   <Label>
     {m.mail_folders()}
-    <select
+    <Select
       value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="h-10 rounded-lg border border-border bg-bg px-2 text-[14px] text-fg"
-    >
-      <option value="">—</option>
-      {options.map((node) => (
-        <option key={node.mailbox.id} value={node.mailbox.id}>
-          {"  ".repeat(node.depth)}
-          {mailboxName(node.mailbox)}
-        </option>
-      ))}
-    </select>
+      onValueChange={onValueChange}
+      options={[{ value: "", label: "—" }, ...parentOptions(options)]}
+    />
   </Label>
 );

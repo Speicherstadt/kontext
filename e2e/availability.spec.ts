@@ -4,6 +4,7 @@ import { newEmployee, stamp } from "./company-helpers";
 import {
   addAttendees,
   address,
+  choose,
   jmapAs,
   login,
   personalAccountId,
@@ -120,7 +121,7 @@ test.describe("Verfügbarkeit", () => {
     await anna.goto(`/calendar?date=${day}&event=new&start=${day}T14:00`);
     const annas = anna.getByRole("dialog");
     await annas.getByLabel("Titel").fill(unique("Fortbildung online"));
-    await annas.getByLabel("Anzeigen als").selectOption("free");
+    await choose(annas.getByLabel("Anzeigen als"), "Frei");
     await annas.getByRole("button", { name: "Speichern" }).click();
     await expect(annas).toBeHidden();
 
@@ -137,7 +138,8 @@ test.describe("Verfügbarkeit", () => {
     const day = wednesday();
     const remove = await busyAt("max", day, "10:00", "PT1H");
     const max = await signedIn(browser, "max");
-    const share = async (from: string, to: "none" | "availability") => {
+    const LABELS = { none: "Kein Zugriff", availability: "Nur Verfügbarkeit" };
+    const share = async (from: keyof typeof LABELS, to: keyof typeof LABELS) => {
       await max.goto("/calendar");
       await max.getByRole("button", { name: "Kalender verwalten" }).first().click();
       const manage = max.getByRole("dialog", { name: "Kalender verwalten" });
@@ -146,8 +148,8 @@ test.describe("Verfügbarkeit", () => {
         .first()
         .click();
       const dialog = max.getByRole("dialog", { name: /teilen$/ });
-      await expect(dialog.getByLabel("Alle Kollegen")).toHaveValue(from);
-      await dialog.getByLabel("Alle Kollegen").selectOption(to);
+      await expect(dialog.getByLabel("Alle Kollegen")).toContainText(LABELS[from]);
+      await choose(dialog.getByLabel("Alle Kollegen"), LABELS[to]);
       await dialog.getByRole("button", { name: "Speichern" }).click();
       await expect(max.getByRole("status")).toHaveText("Freigabe gespeichert");
     };

@@ -4,7 +4,8 @@ import { type Company, createSync, setSyncPassword } from "@/company-core/api";
 import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { m } from "@/paraglide/messages";
 import { PROVIDERS, type ProviderId } from "../../../server/migration/providers";
 import { M365Fields } from "./m365-fields";
@@ -58,23 +59,24 @@ export const ConnectDialog = ({ company, onClose }: { company: Company; onClose:
       <div className="flex flex-col gap-4">
         <Label>
           {m.company_migration_person()}
-          <Select value={accountId} onChange={(e) => setAccountId(e.target.value)}>
-            {people.map((person) => (
-              <option key={person.id} value={person.id}>
-                {person.fullName} ({person.email})
-              </option>
-            ))}
-          </Select>
+          <Select
+            value={accountId}
+            onValueChange={setAccountId}
+            showHint
+            options={people.map((person) => ({
+              value: person.id,
+              label: person.fullName,
+              hint: person.email,
+            }))}
+          />
         </Label>
         <Label>
           {m.company_sync_provider()}
-          <Select value={provider} onChange={(e) => setProvider(e.target.value as ProviderId)}>
-            {PROVIDERS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </Select>
+          <Select
+            value={provider}
+            onValueChange={setProvider}
+            options={PROVIDERS.map((p) => ({ value: p.id, label: p.name }))}
+          />
         </Label>
       </div>
       {provider === "m365" ? (

@@ -6,7 +6,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type FormEvent, useState } from "react";
 import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {
   createMaskedEmail,
   EXPIRY_CHOICES,
@@ -91,13 +92,14 @@ export const NewMaskedEmailForm = ({ onCreated }: { onCreated: (email: string) =
       </Label>
       <Label>
         {m.masked_expiry()}
-        <Select value={input.expiry} onChange={(e) => change("expiry")(e.target.value)}>
-          {EXPIRY_CHOICES.map((choice) => (
-            <option key={choice} value={choice}>
-              {EXPIRY_LABEL[choice]()}
-            </option>
-          ))}
-        </Select>
+        <Select
+          value={input.expiry}
+          onValueChange={change("expiry")}
+          options={EXPIRY_CHOICES.map((choice) => ({
+            value: choice,
+            label: EXPIRY_LABEL[choice](),
+          }))}
+        />
       </Label>
       {problem ? (
         <p role="alert" className="m-0 text-[13px] text-danger">

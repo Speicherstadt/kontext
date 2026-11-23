@@ -2,7 +2,7 @@
  * The columns of a CSV file and the contact field each goes to, with the values of the first rows
  * as a preview. The fields are guessed from the headers (`guessField`); the person corrects them.
  */
-import { Select } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { CSV_FIELDS, type CsvField } from "@/lib/csv-contacts";
 import { m } from "@/paraglide/messages";
 
@@ -53,18 +53,13 @@ export const CsvColumns = ({ header, rows, mapping, onChange }: Props) => (
         </span>
         <Select
           aria-label={name}
-          value={mapping[i]}
-          onChange={(e) =>
-            onChange(mapping.map((field, j) => (j === i ? (e.target.value as CsvField) : field)))
+          value={mapping[i] ?? "skip"}
+          onValueChange={(chosen) =>
+            onChange(mapping.map((field, j) => (j === i ? chosen : field)))
           }
+          options={CSV_FIELDS.map((field) => ({ value: field, label: label[field]() }))}
           className="basis-40"
-        >
-          {CSV_FIELDS.map((field) => (
-            <option key={field} value={field}>
-              {label[field]()}
-            </option>
-          ))}
-        </Select>
+        />
       </li>
     ))}
   </ul>

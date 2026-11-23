@@ -7,7 +7,8 @@ import { Mic, Square, Upload } from "lucide-react";
 import { type ComponentProps, useRef, useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { toPhoneWav } from "@/lib/wav";
 import { m } from "@/paraglide/messages";
@@ -135,13 +136,9 @@ export const SoundSelect = ({
   sounds,
   none,
   ...props
-}: { sounds: Admin["sounds"]; none: string } & Omit<ComponentProps<typeof Select>, "children">) => (
-  <Select {...props}>
-    <option value="">{none}</option>
-    {sounds.map((sound) => (
-      <option key={sound.id} value={sound.id}>
-        {sound.name}
-      </option>
-    ))}
-  </Select>
+}: { sounds: Admin["sounds"]; none: string } & Omit<ComponentProps<typeof Select>, "options">) => (
+  <Select
+    {...props}
+    options={[{ value: "", label: none }, ...sounds.map((s) => ({ value: s.id, label: s.name }))]}
+  />
 );

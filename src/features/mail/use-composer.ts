@@ -237,6 +237,7 @@ export const useComposer = (props: ComposerProps) => {
     pickIdentity,
     asEml,
     suggestions,
+    login: session?.username ?? "",
   };
 };
 

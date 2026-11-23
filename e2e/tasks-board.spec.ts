@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { address, login, unique } from "./helpers";
+import { address, choose, login, unique } from "./helpers";
 import { deliverMail } from "./protocols";
 
 type ApiTask = {
@@ -132,7 +132,9 @@ test.describe("Aufgaben: eigene Spalten und Wiederholung", () => {
     const { task } = (await response.json()) as { task: ApiTask };
     await page.goto(`/tasks?task=${task.id}`);
     const detail = page.getByRole("article", { name: title });
-    await expect(detail.getByRole("combobox", { name: /^Wiederholen/ })).toHaveValue("weekly");
+    await expect(detail.getByRole("combobox", { name: /^Wiederholen/ })).toContainText(
+      "Wöchentlich",
+    );
     await expect(detail).toContainText("Erledigt kommt sie wieder");
     await detail.getByRole("button", { name: "Erledigt", exact: true }).first().click();
     await expect
@@ -150,7 +152,7 @@ test.describe("Aufgaben: eigene Spalten und Wiederholung", () => {
     await page.goto("/settings?section=rules");
     await page.getByRole("button", { name: "Neue Regel" }).click();
     const dialog = page.getByRole("dialog", { name: "Neue Regel" });
-    await dialog.getByLabel("Feld").selectOption("subject");
+    await choose(dialog.getByLabel("Feld"), "Betreff");
     await dialog.getByLabel("Wert").fill(token);
     await dialog.getByLabel("Aufgabe anlegen").check();
     await dialog.getByRole("button", { name: "Regel speichern" }).click();

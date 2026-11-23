@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { login } from "./helpers";
+import { choose, login } from "./helpers";
 
 type Template = { title: string; text: string };
 
@@ -35,18 +35,16 @@ const addAndPick = async (page: Page) => {
 
   await page.goto("/settings?section=vacation");
   await page.getByLabel("Bis (optional)").fill("2030-12-18");
-  await page.getByLabel("Vertretung").selectOption({ label: "Anna Weber" });
+  await choose(page.getByLabel("Vertretung"), "Anna Weber");
   // By role: a wrapping label's text takes in the options and the text, so no exact getByLabel.
-  await page
-    .getByRole("combobox", { name: "Vorlage", exact: true })
-    .selectOption({ label: "Urlaub" });
+  await choose(page.getByRole("combobox", { name: "Vorlage", exact: true }), "Urlaub");
   const message = page.getByRole("textbox", { name: "Nachricht", exact: true });
   await expect(message).toHaveValue(
     "Jonas Weber ist bis 18. Dezember 2030 nicht im Büro.\n" +
       "In dringenden Fällen: Anna Weber (anna@weber-haustechnik.test).",
   );
   // Another deputy fills the untouched Vorlage anew; without one, its line goes.
-  await page.getByLabel("Vertretung").selectOption({ label: "Keine" });
+  await choose(page.getByLabel("Vertretung"), "Keine");
   await expect(message).toHaveValue("Jonas Weber ist bis 18. Dezember 2030 nicht im Büro.");
   // The text stays free to edit.
   await message.fill("Bin ab dem 19. Dezember wieder da.");

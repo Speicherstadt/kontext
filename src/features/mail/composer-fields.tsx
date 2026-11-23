@@ -1,7 +1,8 @@
 /** The parts of the composer around the editor: header fields and attachments. */
 import { Paperclip, X } from "lucide-react";
+import { optionsOf, Select, type SelectEntry } from "@/components/ui/select";
 import type { OutgoingAttachment } from "@/jmap/mail";
-import type { EmailAddress, Identity } from "@/jmap/types";
+import type { EmailAddress } from "@/jmap/types";
 import { formatSize } from "@/lib/format";
 import type { Suggestion } from "@/lib/groups";
 import { RecipientField } from "@/mail-core/recipient-field";
@@ -9,7 +10,8 @@ import { m } from "@/paraglide/messages";
 import { getLocale } from "@/paraglide/runtime";
 
 type FieldsProps = {
-  identities: Identity[];
+  /** The addresses one can send from (sender-options.ts). */
+  senders: SelectEntry[];
   identityId: string;
   onIdentity: (id: string) => void;
   to: EmailAddress[];
@@ -30,11 +32,43 @@ type FieldsProps = {
   autoFocusTo: boolean;
 };
 
+/** The sender: a choice when there are several, else just the address. */
+const Sender = ({
+  senders,
+  identityId,
+  onIdentity,
+}: Pick<FieldsProps, "senders" | "identityId" | "onIdentity">) => {
+  const [only, ...more] = optionsOf(senders);
+  if (only && !more.length) {
+    return (
+      <output
+        aria-label={m.mail_from()}
+        className="flex min-w-0 flex-1 items-center gap-2 px-2.5 text-[14px]"
+      >
+        <span className="truncate">{only.label}</span>
+        {only.hint ? <span className="min-w-0 truncate text-muted">{only.hint}</span> : null}
+      </output>
+    );
+  }
+  return (
+    <Select
+      aria-label={m.mail_from()}
+      value={identityId}
+      onValueChange={onIdentity}
+      options={senders}
+      variant="ghost"
+      size="sm"
+      showHint
+      className="-ml-0.5 w-auto max-w-full flex-initial text-[14px]"
+    />
+  );
+};
+
 const revealClass = "mt-2 shrink-0 text-[13px] text-muted hover:text-fg";
 
 /** From, To, Cc/Bcc, „Antwort an“ (the last two shown when asked for) and subject. */
 export const ComposerFields = ({
-  identities,
+  senders,
   identityId,
   onIdentity,
   to,
@@ -57,18 +91,7 @@ export const ComposerFields = ({
   <div className="flex flex-col border-b border-border px-3 py-1 text-[13px]">
     <div className="flex h-9 items-center gap-2.5">
       <span className="w-9 shrink-0 text-muted">{m.mail_from()}</span>
-      <select
-        aria-label={m.mail_from()}
-        value={identityId}
-        onChange={(e) => onIdentity(e.target.value)}
-        className="h-8 min-w-0 flex-1 rounded-md border-0 bg-transparent text-[14px] text-fg"
-      >
-        {identities.map((i) => (
-          <option key={i.id} value={i.id}>
-            {i.name && i.name !== i.email ? `${i.name} <${i.email}>` : i.email}
-          </option>
-        ))}
-      </select>
+      <Sender senders={senders} identityId={identityId} onIdentity={onIdentity} />
     </div>
     <div className="flex items-start gap-2">
       <RecipientField

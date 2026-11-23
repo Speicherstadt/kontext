@@ -9,7 +9,7 @@ import {
   listContacts,
   shareAddressBook,
 } from "../src/jmap/contacts";
-import { addMail, jmapAs, login, personalAccountId, unique } from "./helpers";
+import { addMail, choose, jmapAs, login, personalAccountId, unique } from "./helpers";
 
 test.describe("Kontakte", () => {
   test.beforeEach(async ({ page }) => {
@@ -161,7 +161,7 @@ test.describe("vCard", () => {
     const dialog = page.getByRole("dialog", { name: "Adressbücher" });
     await dialog.getByLabel("Name des Adressbuchs").fill(book);
     await dialog.getByRole("button", { name: "Anlegen" }).click();
-    await dialog.getByLabel("Adressbuch für Import und Export").selectOption({ label: book });
+    await choose(dialog.getByLabel("Adressbuch für Import und Export"), book);
 
     await dialog.getByLabel("vCard- oder CSV-Datei").setInputFiles(file);
     await expect(dialog.getByText("2 neue Kontakte gefunden.")).toBeVisible();
@@ -223,16 +223,16 @@ test.describe("Adressbücher teilen", () => {
     await books.getByRole("button", { name: "Anlegen" }).click();
     await books.getByRole("button", { name: `Teilen: ${book}` }).click();
     const share = page.getByRole("dialog", { name: `„${book}“ teilen` });
-    await share.getByLabel("Anna Weber").selectOption("edit");
+    await choose(share.getByLabel("Anna Weber"), "Bearbeiten");
     await share.getByRole("button", { name: "Speichern" }).click();
     await expect(page.getByRole("status")).toHaveText("Freigabe gespeichert");
     await expect(books.getByText("Geteilt mit Anna Weber")).toBeVisible();
     await page.keyboard.press("Escape");
 
     // A contact in it.
-    await page.getByLabel("Adressbuch", { exact: true }).selectOption({ label: book });
+    await choose(page.getByLabel("Adressbuch", { exact: true }), book);
     await page.getByRole("link", { name: "Neuer Kontakt" }).click();
-    await expect(page.getByLabel("Adressbuch", { exact: true }).last()).toHaveValue(/:/);
+    await expect(page.getByLabel("Adressbuch", { exact: true }).last()).toContainText(book);
     await page.getByLabel("Vorname").fill("Jan");
     await page.getByLabel("Nachname").fill(surname);
     await page.getByRole("button", { name: "Speichern" }).click();
@@ -256,9 +256,7 @@ test.describe("Adressbücher teilen", () => {
         .filter({ hasText: book }),
     ).toContainText("Jonas Weber · Darf bearbeiten");
     await anna.keyboard.press("Escape");
-    await anna
-      .getByLabel("Adressbuch", { exact: true })
-      .selectOption({ label: `${book} · Jonas Weber` });
+    await choose(anna.getByLabel("Adressbuch", { exact: true }), `${book} · Jonas Weber`);
     await anna.getByRole("link", { name: new RegExp(surname) }).click();
     await expect(anna.getByText("Von Jonas Weber geteilt.")).toBeVisible();
     await anna.getByRole("link", { name: "Bearbeiten" }).click();
@@ -271,7 +269,7 @@ test.describe("Adressbücher teilen", () => {
     await expect(page.getByText("+49 7223 9988")).toBeVisible();
     await page.getByRole("button", { name: "Adressbücher" }).click();
     await books.getByRole("button", { name: `Teilen: ${book}` }).click();
-    await share.getByLabel("Anna Weber").selectOption("read");
+    await choose(share.getByLabel("Anna Weber"), "Lesen");
     await share.getByRole("button", { name: "Speichern" }).click();
     await expect(page.getByRole("status")).toHaveText("Freigabe gespeichert");
 
@@ -313,7 +311,7 @@ test.describe("Kontakte am Handy @phone", () => {
       page.getByRole("list", { name: "Meine Adressbücher" }).getByText("Meine Kontakte"),
     ).toBeVisible();
     await page.getByRole("dialog").getByRole("button", { name: "Teilen: Meine Kontakte" }).click();
-    await expect(page.getByRole("dialog").getByLabel("Anna Weber")).toHaveValue("none");
+    await expect(page.getByRole("dialog").getByLabel("Anna Weber")).toContainText("Kein Zugriff");
   });
 
   test("Weitere Kontakte und Zusammenführen", async ({ page }) => {
@@ -609,7 +607,7 @@ test.describe("Kontakt mit mehreren Nummern", () => {
       await page.getByRole("link", { name: new RegExp(`Rita ${surname}`) }).click();
       await page.getByRole("link", { name: "Bearbeiten" }).click();
       await expect(page.getByLabel("Telefon 2", { exact: true })).toHaveValue("+49 170 200");
-      await expect(page.getByLabel("Art der Nummer 2", { exact: true })).toHaveValue("mobile");
+      await expect(page.getByLabel("Art der Nummer 2", { exact: true })).toContainText("Mobil");
       await expect(page.getByLabel("PLZ", { exact: true })).toHaveValue("77815");
       await page.getByLabel("Telefon", { exact: true }).fill("+49 7223 101");
       await page.getByLabel("Position", { exact: true }).fill("Bauleiterin");
@@ -663,12 +661,12 @@ test.describe("CSV-Import", () => {
       await dialog.getByLabel("vCard- oder CSV-Datei").setInputFiles(file);
 
       const columns = dialog.getByRole("list", { name: "Spalten der CSV-Datei" });
-      await expect(columns.getByLabel("Vorname", { exact: true })).toHaveValue("given");
-      await expect(columns.getByLabel("Mobil", { exact: true })).toHaveValue("phone:mobile");
+      await expect(columns.getByLabel("Vorname", { exact: true })).toContainText("Vorname");
+      await expect(columns.getByLabel("Mobil", { exact: true })).toContainText("Telefon (Mobil)");
       await expect(columns.getByText("Jürgen · Käthe")).toBeVisible();
       const customerNumber = columns.getByLabel("Kundennummer", { exact: true });
-      await expect(customerNumber).toHaveValue("skip");
-      await customerNumber.selectOption({ label: "Notiz" });
+      await expect(customerNumber).toContainText("nicht übernehmen");
+      await choose(customerNumber, "Notiz");
       await expect(dialog.getByText("2 neue Kontakte gefunden.")).toBeVisible();
       await dialog.getByRole("button", { name: "2 importieren" }).click();
       await expect(page.getByRole("status")).toHaveText("2 Kontakte importiert");

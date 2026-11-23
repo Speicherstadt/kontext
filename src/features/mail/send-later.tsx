@@ -33,7 +33,7 @@ export const SendLater = ({
             <ChevronDown size={16} />
           </Button>
         </MenuTrigger>
-        <MenuContent align="start" side="top">
+        <MenuContent align="end" side="top">
           {sendChoices(new Date()).map((choice) => (
             <MenuItem key={choice.label} onSelect={() => onPick(choice.at)}>
               <CalendarClock size={16} /> {choice.label}

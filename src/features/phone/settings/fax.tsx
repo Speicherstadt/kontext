@@ -7,7 +7,8 @@ import { useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label, Select } from "@/components/ui/input";
+import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
 import { type Admin, send, useAdminChange } from "./api";
@@ -33,21 +34,22 @@ export const FaxForm = ({ admin }: { admin: Admin }) => {
       </label>
       <Label>
         {m.phone_fax_line()}
-        <Select value={line} onChange={(event) => setLine(event.target.value)} disabled={!enabled}>
-          <option value="">{m.phone_fax_choose()}</option>
-          {lines.map((entry) => (
-            <option key={entry.username} value={entry.username}>
-              {entry.label}
-            </option>
-          ))}
-        </Select>
+        <Select
+          value={line}
+          onValueChange={setLine}
+          options={[
+            { value: "", label: m.phone_fax_choose() },
+            ...lines.map((entry) => ({ value: entry.username, label: entry.label })),
+          ]}
+          disabled={!enabled}
+        />
       </Label>
       <Label>
         {m.phone_fax_deliver()}
         <OwnerSelect
           none={m.phone_mailbox_deliver_none()}
           value={deliverTo}
-          onChange={(event) => setDeliverTo(event.target.value)}
+          onValueChange={setDeliverTo}
           disabled={!enabled}
         />
       </Label>

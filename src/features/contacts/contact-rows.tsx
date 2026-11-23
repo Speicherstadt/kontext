@@ -2,7 +2,8 @@
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { Input, Select } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { type EmailRow, PHONE_KINDS, type PhoneKind, type PhoneRow } from "@/lib/contact-form";
 import { m } from "@/paraglide/messages";
 
@@ -87,15 +88,10 @@ export const PhoneRows = (props: { rows: PhoneRow[]; onChange: (rows: PhoneRow[]
         <Select
           aria-label={rowLabel(m.contacts_phone_kind(), index)}
           value={row.kind}
-          onChange={(e) => set({ ...row, kind: e.target.value as PhoneKind })}
+          onValueChange={(kind) => set({ ...row, kind })}
+          options={PHONE_KINDS.map((kind) => ({ value: kind, label: phoneKindText(kind) }))}
           className="w-28 shrink-0"
-        >
-          {PHONE_KINDS.map((kind) => (
-            <option key={kind} value={kind}>
-              {phoneKindText(kind)}
-            </option>
-          ))}
-        </Select>
+        />
         <Input
           type="tel"
           aria-label={rowLabel(m.contacts_phone(), index)}

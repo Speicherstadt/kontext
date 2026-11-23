@@ -7,7 +7,8 @@ import { type FormEvent, useState } from "react";
 import { type Company, connectM365, createSync, getM365 } from "@/company-core/api";
 import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { m } from "@/paraglide/messages";
 
 const Problem = ({ text }: { text: string | null }) =>
@@ -134,13 +135,17 @@ export const M365Fields = ({
       <p className="m-0 text-[13px] text-muted">{m.company_m365_hint()}</p>
       <Label>
         {m.company_m365_mailbox()}
-        <Select value={login} onChange={(e) => setChosen(e.target.value)} required>
-          {state.users.map((user) => (
-            <option key={user.login} value={user.login}>
-              {user.name} ({user.address})
-            </option>
-          ))}
-        </Select>
+        <Select
+          value={login}
+          onValueChange={setChosen}
+          required
+          showHint
+          options={state.users.map((user) => ({
+            value: user.login,
+            label: user.name,
+            hint: user.address,
+          }))}
+        />
       </Label>
       <Problem text={problem ?? state.error ?? null} />
       <Button

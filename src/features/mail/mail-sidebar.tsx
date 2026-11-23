@@ -165,7 +165,7 @@ const NewFolderDialog = ({
           <Input autoFocus value={name} onChange={(e) => setName(e.target.value)} required />
         </Label>
         {parents.length > 0 ? (
-          <ParentSelect value={parentId} onChange={setParentId} options={parents} />
+          <ParentSelect value={parentId} onValueChange={setParentId} options={parents} />
         ) : null}
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={() => onOpenChange(false)}>

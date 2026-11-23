@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { address, jmapAs, login, personalAccountId, revokeDeputy } from "./helpers";
+import { address, choose, jmapAs, login, personalAccountId, revokeDeputy } from "./helpers";
 
 /**
  * Sandra gives Max her mailbox and calendar to read, then takes it all back. Max and Sandra are
@@ -18,8 +18,8 @@ test.describe("Vertretung", () => {
     try {
       await login(page, "sandra");
       await page.goto("/settings?section=deputy");
-      await page.getByLabel("Kollegin oder Kollege").selectOption({ label: "Max Becker" });
-      await page.getByLabel("Zugriff", { exact: true }).selectOption({ label: "Lesen" });
+      await choose(page.getByLabel("Kollegin oder Kollege"), "Max Becker");
+      await choose(page.getByLabel("Zugriff", { exact: true }), "Lesen");
       await page.getByRole("checkbox", { name: "Kontakte" }).uncheck();
       await page.getByRole("button", { name: "Freigeben" }).click();
       await expect(

@@ -1,5 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
-import { login } from "./helpers";
+import { choose, login } from "./helpers";
 
 // A fixed week: Monday 2 to Sunday 8 November 2026; 56 px per hour (week-grid.tsx HOUR_HEIGHT).
 const MONDAY = "2026-11-02";
@@ -39,8 +39,8 @@ test.describe("Arbeitswoche und Arbeitszeit", () => {
     expect(await shadedHeights(page, SATURDAY)).toEqual([]);
 
     await page.goto("/settings?section=appearance");
-    await page.getByLabel("Von", { exact: true }).selectOption("8");
-    await page.getByLabel("bis", { exact: true }).selectOption("16");
+    await choose(page.getByLabel("Von", { exact: true }), "08:00");
+    await choose(page.getByLabel("bis", { exact: true }), "16:00");
     await page.goto(`/calendar?view=workweek&date=${MONDAY}`);
     const column = page.locator(`[data-day="${MONDAY}"]`);
     await expect(column).toBeVisible();
@@ -63,7 +63,7 @@ test.describe("Arbeitswoche und Arbeitszeit", () => {
     expect(await shadedHeights(page, MONDAY)).toEqual([7 * HOUR, 6 * HOUR]);
 
     await page.goto("/settings?section=appearance");
-    await page.getByLabel("Von", { exact: true }).selectOption("6");
+    await choose(page.getByLabel("Von", { exact: true }), "06:00");
     await page.goto(`/calendar?date=${MONDAY}`);
     await expect(page.locator(`[data-day="${MONDAY}"]`)).toBeVisible();
     expect(await shadedHeights(page, MONDAY)).toEqual([6 * HOUR, 6 * HOUR]);

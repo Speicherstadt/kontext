@@ -1,6 +1,6 @@
 import { expect, type Page, test } from "@playwright/test";
 import { decryptKey, encryptKey, generateKey, readPrivateKey } from "openpgp";
-import { address, jmapAs, login, recentMails, unique } from "./helpers";
+import { address, choose, jmapAs, login, recentMails, unique } from "./helpers";
 
 const PASSPHRASE = "Im Keller steht die Pumpe";
 
@@ -71,8 +71,8 @@ test.describe("Vertraulich senden", () => {
     await expect(page.getByRole("status").filter({ hasText: "per Link mit Code" })).toBeVisible();
     // A week is enough here (30 days are the usual).
     const days = page.getByRole("combobox", { name: "Wie lange der Link gilt" });
-    await expect(days).toHaveValue("30");
-    await days.selectOption({ label: "Link 7 Tage gültig" });
+    await expect(days).toContainText("Link 30 Tage gültig");
+    await choose(days, "Link 7 Tage gültig");
     await page.getByRole("button", { name: "Senden", exact: true }).click();
 
     const codes = page.getByRole("dialog", { name: "Zugangscodes" });

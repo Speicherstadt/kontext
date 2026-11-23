@@ -3,6 +3,24 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { Dialog } from "@/components/ui/dialog";
 import { EventEditor } from "./event-editor";
 
+// jsdom has neither; Radix Select calls them when the list opens.
+Element.prototype.hasPointerCapture ??= () => false;
+Element.prototype.scrollIntoView ??= () => undefined;
+
+/** Opens a Select's list from the keyboard and picks the option by its label. */
+const choose = (trigger: HTMLElement, label: string) => {
+  fireEvent.keyDown(trigger, { key: "Enter" });
+  fireEvent.click(screen.getByRole("option", { name: label }));
+};
+
+/** The labels of a Select's options; opens the list and closes it again. */
+const optionLabels = (trigger: HTMLElement) => {
+  fireEvent.keyDown(trigger, { key: "Enter" });
+  const labels = screen.getAllByRole("option").map((option) => option.textContent);
+  fireEvent.keyDown(screen.getByRole("listbox"), { key: "Escape" });
+  return labels;
+};
+
 const anna = { name: "Anna Weber", email: "anna@weber.test" };
 
 vi.mock("@/auth/session", () => ({
@@ -91,19 +109,21 @@ describe("EventEditor times", () => {
 describe("EventEditor reminder", () => {
   it("offers how long before and how, and keeps a reminder when it becomes all-day", () => {
     render(<EventEditor start="2026-10-31T09:00" onDone={vi.fn()} onCancel={vi.fn()} />);
-    const when = screen.getByLabelText("Erinnerung") as HTMLSelectElement;
-    expect(when.selectedOptions[0]?.textContent).toBe("15 Minuten vorher");
-    fireEvent.change(when, { target: { value: "1440" } });
-    fireEvent.change(screen.getByLabelText("Erinnern per"), { target: { value: "email" } });
-    expect(when.selectedOptions[0]?.textContent).toBe("1 Tag vorher");
+    const when = screen.getByLabelText("Erinnerung");
+    expect(when.textContent).toContain("15 Minuten vorher");
+    choose(when, "1 Tag vorher");
+    choose(screen.getByLabelText("Erinnern per"), "Mail");
+    expect(when.textContent).toContain("1 Tag vorher");
     fireEvent.click(screen.getByLabelText("Ganztägig"));
-    expect(
-      [...(screen.getByLabelText("Erinnerung") as HTMLSelectElement).options].map(
-        (option) => option.textContent,
-      ),
-    ).toEqual(["Keine", "Am Tag", "1 Tag vorher", "2 Tage vorher", "1 Woche vorher"]);
-    expect((screen.getByLabelText("Erinnern per") as HTMLSelectElement).value).toBe("email");
-    fireEvent.change(screen.getByLabelText("Erinnerung"), { target: { value: "none" } });
+    expect(optionLabels(screen.getByLabelText("Erinnerung"))).toEqual([
+      "Keine",
+      "Am Tag",
+      "1 Tag vorher",
+      "2 Tage vorher",
+      "1 Woche vorher",
+    ]);
+    expect(screen.getByLabelText("Erinnern per").textContent).toContain("Mail");
+    choose(screen.getByLabelText("Erinnerung"), "Keine");
     expect(screen.queryByLabelText("Erinnern per")).toBeNull();
   });
 });
@@ -254,10 +274,10 @@ describe("EventEditor reminder of a new appointment", () => {
       },
     ];
     render(<EventEditor start="2026-11-02T09:00" onDone={vi.fn()} onCancel={vi.fn()} />);
-    expect(screen.getByLabelText("Erinnerung")).toHaveProperty("value", "1440");
-    expect(screen.getByLabelText("Erinnern per")).toHaveProperty("value", "email");
+    expect(screen.getByLabelText("Erinnerung").textContent).toContain("1 Tag vorher");
+    expect(screen.getByLabelText("Erinnern per").textContent).toContain("Mail");
     fireEvent.click(screen.getByLabelText("Ganztägig"));
-    expect(screen.getByLabelText("Erinnerung")).toHaveProperty("value", "-540");
+    expect(screen.getByLabelText("Erinnerung").textContent).toContain("Am Tag");
     fireEvent.click(screen.getByLabelText("Ganztägig"));
     fireEvent.change(screen.getByLabelText("Titel"), { target: { value: "Abnahme" } });
     await act(async () => {
@@ -283,8 +303,8 @@ describe("EventEditor reminder of a new appointment", () => {
       },
     ];
     render(<EventEditor start="2026-11-02T09:00" onDone={vi.fn()} onCancel={vi.fn()} />);
-    expect(screen.getByLabelText("Erinnerung")).toHaveProperty("value", "15");
-    fireEvent.change(screen.getByLabelText("Erinnerung"), { target: { value: "60" } });
+    expect(screen.getByLabelText("Erinnerung").textContent).toContain("15 Minuten vorher");
+    choose(screen.getByLabelText("Erinnerung"), "1 Stunde vorher");
     fireEvent.change(screen.getByLabelText("Titel"), { target: { value: "Abnahme" } });
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: "Speichern" }));

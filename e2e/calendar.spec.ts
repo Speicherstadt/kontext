@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import {
   addAttendees,
+  choose,
   inboxSubjects,
   jmapAs,
   login,
@@ -233,9 +234,9 @@ test.describe("Kalender", () => {
     await page.goto(`/calendar?date=${date}&event=new&start=${date}T${time}`);
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Titel").fill(title);
-    await expect(dialog.getByLabel("Erinnerung")).toHaveValue("15");
-    await dialog.getByLabel("Erinnerung").selectOption({ label: "5 Minuten vorher" });
-    await dialog.getByLabel("Erinnern per").selectOption({ label: "Mail" });
+    await expect(dialog.getByLabel("Erinnerung")).toContainText("15 Minuten vorher");
+    await choose(dialog.getByLabel("Erinnerung"), "5 Minuten vorher");
+    await choose(dialog.getByLabel("Erinnern per"), "Mail");
     await dialog.getByRole("button", { name: "Speichern" }).click();
     await expect(dialog).toHaveCount(0);
     expect(await alertsOf("jonas", title)).toEqual([{ offset: "-PT5M", action: "email" }]);
@@ -243,8 +244,10 @@ test.describe("Kalender", () => {
     // Opened again, the editor shows what was chosen.
     await page.locator(`[data-day="${date}"]`).getByText(title).click();
     await page.getByRole("dialog").getByRole("button", { name: "Bearbeiten" }).click();
-    await expect(page.getByRole("dialog").getByLabel("Erinnerung")).toHaveValue("5");
-    await expect(page.getByRole("dialog").getByLabel("Erinnern per")).toHaveValue("email");
+    await expect(page.getByRole("dialog").getByLabel("Erinnerung")).toContainText(
+      "5 Minuten vorher",
+    );
+    await expect(page.getByRole("dialog").getByLabel("Erinnern per")).toContainText("Mail");
     await page.close();
 
     await expect
@@ -266,9 +269,9 @@ test.describe("Kalender", () => {
     await manage.getByRole("button", { name: "Anlegen" }).click();
     await manage.getByRole("button", { name: `Erinnerung: ${calendar}` }).click();
     const defaults = page.getByRole("dialog", { name: `Erinnerung für „${calendar}“` });
-    await expect(defaults.getByLabel("Termine mit Uhrzeit")).toHaveValue("none");
-    await defaults.getByLabel("Termine mit Uhrzeit").selectOption({ label: "1 Tag vorher" });
-    await defaults.getByLabel("Erinnern per").selectOption({ label: "Mail" });
+    await expect(defaults.getByLabel("Termine mit Uhrzeit")).toContainText("Wie üblich");
+    await choose(defaults.getByLabel("Termine mit Uhrzeit"), "1 Tag vorher");
+    await choose(defaults.getByLabel("Erinnern per"), "Mail");
     await defaults.getByRole("button", { name: "Speichern" }).click();
     await expect(page.getByRole("status")).toHaveText("Erinnerung gespeichert");
     await page.keyboard.press("Escape");
@@ -277,10 +280,10 @@ test.describe("Kalender", () => {
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Titel").fill(title);
     // The usual 15 minutes in the default calendar; the calendar's own in the new one.
-    await expect(dialog.getByLabel("Erinnerung")).toHaveValue("15");
-    await dialog.getByLabel("Kalender", { exact: true }).selectOption({ label: calendar });
-    await expect(dialog.getByLabel("Erinnerung")).toHaveValue("1440");
-    await expect(dialog.getByLabel("Erinnern per")).toHaveValue("email");
+    await expect(dialog.getByLabel("Erinnerung")).toContainText("15 Minuten vorher");
+    await choose(dialog.getByLabel("Kalender", { exact: true }), calendar);
+    await expect(dialog.getByLabel("Erinnerung")).toContainText("1 Tag vorher");
+    await expect(dialog.getByLabel("Erinnern per")).toContainText("Mail");
     await dialog.getByRole("button", { name: "Speichern" }).click();
     await expect(dialog).toHaveCount(0);
     expect(await alertsOf("jonas", title)).toEqual([{ offset: "-P1D", action: "email" }]);
@@ -298,8 +301,8 @@ test.describe("Kalender", () => {
     await page.goto(`/calendar?date=${tomorrow()}&event=new&start=${tomorrow()}T08:00`);
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Titel").fill(title);
-    await dialog.getByLabel("Wiederholen").selectOption("weekly");
-    await dialog.getByLabel("Endet").selectOption("count");
+    await choose(dialog.getByLabel("Wiederholen"), "Wöchentlich");
+    await choose(dialog.getByLabel("Endet"), "Nach Anzahl");
     await dialog.getByLabel("Anzahl Termine").fill("3");
     await dialog.getByRole("button", { name: "Speichern" }).click();
     // The dialog closes once the series is stored; navigating earlier cuts off the save.
@@ -337,8 +340,8 @@ test.describe("Kalender", () => {
     await page.goto(`/calendar?date=${tomorrow()}&event=new&start=${tomorrow()}T07:30`);
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Titel").fill(title);
-    await dialog.getByLabel("Wiederholen").selectOption("daily");
-    await dialog.getByLabel("Endet").selectOption("count");
+    await choose(dialog.getByLabel("Wiederholen"), "Täglich");
+    await choose(dialog.getByLabel("Endet"), "Nach Anzahl");
     await dialog.getByLabel("Anzahl Termine").fill("5");
     await dialog.getByRole("button", { name: "Speichern" }).click();
     await expect(dialog).toHaveCount(0);
@@ -486,7 +489,7 @@ test.describe("Kalender teilen", () => {
     await manage.getByRole("button", { name: "Anlegen" }).click();
     await manage.getByRole("button", { name: `Teilen: ${calendar}` }).click();
     const share = page.getByRole("dialog", { name: `„${calendar}“ teilen` });
-    await share.getByLabel("Anna Weber").selectOption("edit");
+    await choose(share.getByLabel("Anna Weber"), "Bearbeiten");
     await share.getByRole("button", { name: "Speichern" }).click();
     await expect(page.getByRole("status")).toHaveText("Freigabe gespeichert");
     await expect(
@@ -501,7 +504,7 @@ test.describe("Kalender teilen", () => {
     await page.goto(`/calendar?date=${tomorrow()}&event=new&start=${tomorrow()}T11:00`);
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Titel").fill(title);
-    await dialog.getByLabel("Kalender", { exact: true }).selectOption({ label: calendar });
+    await choose(dialog.getByLabel("Kalender", { exact: true }), calendar);
     await dialog.getByRole("button", { name: "Speichern" }).click();
     await expect(page.locator(`[data-day="${tomorrow()}"]`).getByText(title)).toBeVisible();
 
@@ -539,7 +542,7 @@ test.describe("Kalender teilen", () => {
     ).toContainText("12:00–13:00");
     await page.getByRole("button", { name: "Kalender verwalten" }).first().click();
     await manage.getByRole("button", { name: `Teilen: ${calendar}` }).click();
-    await share.getByLabel("Anna Weber").selectOption("read");
+    await choose(share.getByLabel("Anna Weber"), "Lesen");
     await share.getByRole("button", { name: "Speichern" }).click();
     await expect(page.getByRole("status")).toHaveText("Freigabe gespeichert");
 
@@ -572,7 +575,7 @@ test.describe("Feiertage", () => {
     await page.goto("/calendar");
     await page.getByRole("button", { name: "Kalender verwalten" }).first().click();
     const manage = page.getByRole("dialog", { name: "Kalender verwalten" });
-    await manage.getByLabel("Bundesland").selectOption({ label: "Saarland" });
+    await choose(manage.getByLabel("Bundesland"), "Saarland");
     await manage.getByRole("button", { name: "Feiertage eintragen" }).click();
     // Twelve days in the Saarland, this year and next.
     await expect(
@@ -679,7 +682,7 @@ test.describe("Termine aus Datei", () => {
     await expect(row).toBeVisible();
 
     const file = { name: "termine.ics", mimeType: "text/calendar" };
-    await manage.getByLabel("In Kalender", { exact: true }).selectOption({ label: calendar });
+    await choose(manage.getByLabel("In Kalender", { exact: true }), calendar);
     await manage
       .getByLabel("Datei (.ics)", { exact: true })
       .setInputFiles({ ...file, buffer: Buffer.from(icsFile(run, year)) });
@@ -780,7 +783,7 @@ test.describe("Kalender am Handy @phone", () => {
     await page.goto(`/calendar?event=new&start=${tomorrow()}T10:00`);
     const sheet = page.getByRole("dialog");
     await sheet.getByLabel("Titel").fill(title);
-    await sheet.getByLabel("Erinnerung").selectOption({ label: "1 Stunde vorher" });
+    await choose(sheet.getByLabel("Erinnerung"), "1 Stunde vorher");
     await sheet.getByRole("button", { name: "Speichern" }).click();
     await expect(sheet).toHaveCount(0);
     expect(await alertsOf("jonas", title)).toEqual([{ offset: "-PT1H", action: "display" }]);
@@ -792,8 +795,8 @@ test.describe("Kalender am Handy @phone", () => {
     await page.goto(`/calendar?date=${tomorrow()}&event=new&start=${tomorrow()}T06:00`);
     const sheet = page.getByRole("dialog");
     await sheet.getByLabel("Titel").fill(title);
-    await sheet.getByLabel("Wiederholen").selectOption("daily");
-    await sheet.getByLabel("Endet").selectOption("count");
+    await choose(sheet.getByLabel("Wiederholen"), "Täglich");
+    await choose(sheet.getByLabel("Endet"), "Nach Anzahl");
     await sheet.getByLabel("Anzahl Termine").fill("3");
     await sheet.getByRole("button", { name: "Speichern" }).click();
     await expect(sheet).toHaveCount(0);

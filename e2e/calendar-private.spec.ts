@@ -1,5 +1,5 @@
 import { type Browser, expect, type Page, test } from "@playwright/test";
-import { jmapAs, login, personalAccountId, unique } from "./helpers";
+import { choose, jmapAs, login, personalAccountId, unique } from "./helpers";
 
 const USING = ["urn:ietf:params:jmap:core", "urn:ietf:params:jmap:calendars"];
 
@@ -45,7 +45,7 @@ const privateEvent = async (page: Page, browser: Browser) => {
   await page.goto(`/calendar?date=${day}&event=new&start=${day}T15:15`);
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Titel").fill(title);
-  await dialog.getByLabel("Kalender", { exact: true }).selectOption({ label: name });
+  await choose(dialog.getByLabel("Kalender", { exact: true }), name);
   await dialog.getByRole("checkbox", { name: /^Privat/ }).check();
   await dialog.getByRole("button", { name: "Speichern" }).click();
   await expect(dialog).toHaveCount(0);

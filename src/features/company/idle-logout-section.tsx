@@ -5,7 +5,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Label, Select } from "@/components/ui/input";
+import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { IDLE_MINUTES } from "@/lib/idle-logout";
 import { m } from "@/paraglide/messages";
@@ -32,13 +33,14 @@ const IdleLogoutForm = ({ saved }: { saved: number }) => {
       <p className="m-0 text-[13px] text-muted">{m.company_idle_hint()}</p>
       <Label>
         {m.company_idle_label()}
-        <Select value={minutes} onChange={(event) => setMinutes(Number(event.target.value))}>
-          {IDLE_MINUTES.map((value) => (
-            <option key={value} value={value}>
-              {idleChoiceText(value)}
-            </option>
-          ))}
-        </Select>
+        <Select
+          value={String(minutes)}
+          onValueChange={(value) => setMinutes(Number(value))}
+          options={IDLE_MINUTES.map((value) => ({
+            value: String(value),
+            label: idleChoiceText(value),
+          }))}
+        />
       </Label>
       <div>
         <Button

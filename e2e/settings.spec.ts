@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { DEV_PASSWORD } from "../dev/config";
 import packageJson from "../package.json" with { type: "json" };
 import { totp } from "../src/lib/totp";
-import { address, inboxMails, jmapAs, login, unique } from "./helpers";
+import { address, choose, inboxMails, jmapAs, login, unique } from "./helpers";
 
 test.describe("Einstellungen", () => {
   test("Signatur erscheint in neuen Mails", async ({ page }) => {
@@ -54,15 +54,17 @@ test.describe("Einstellungen", () => {
   test("Sprache wechseln: Englisch und zurück zu wie das Gerät", async ({ page }) => {
     await login(page, "anna");
     await page.goto("/settings?section=appearance");
-    await page.getByRole("combobox", { name: "Sprache", exact: true }).selectOption("en");
+    await choose(page.getByRole("combobox", { name: "Sprache", exact: true }), "English");
     // Paraglide reloads the page in the new language.
-    await expect(page.getByRole("combobox", { name: "Language", exact: true })).toHaveValue("en");
+    await expect(page.getByRole("combobox", { name: "Language", exact: true })).toContainText(
+      "English",
+    );
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.getByRole("heading", { name: "Appearance" }).first()).toBeVisible();
 
-    await page.getByRole("combobox", { name: "Language", exact: true }).selectOption("system");
-    await expect(page.getByRole("combobox", { name: "Sprache", exact: true })).toHaveValue(
-      "system",
+    await choose(page.getByRole("combobox", { name: "Language", exact: true }), /^Same as device/);
+    await expect(page.getByRole("combobox", { name: "Sprache", exact: true })).toContainText(
+      "Wie das Gerät",
     );
     await expect(page.locator("html")).toHaveAttribute("lang", "de");
   });
@@ -205,7 +207,7 @@ test.describe("Tab-Leiste am Handy @phone", () => {
     const tabBar = page.getByRole("navigation", { name: "Apps" });
     await page.goto("/settings?section=appearance");
     const card = page.locator("section").filter({ hasText: "Tab-Leiste am Handy" });
-    await card.getByLabel("Tab-Leiste, Platz 4").selectOption({ label: "Kontakte" });
+    await choose(card.getByLabel("Tab-Leiste, Platz 4"), "Kontakte");
     await expect(card).toContainText("Unter „Mehr“: Aufgaben");
 
     await page.goto("/mail");
@@ -219,12 +221,12 @@ test.describe("Tab-Leiste am Handy @phone", () => {
 
     // Picking an app that already has a place swaps the two.
     await page.goto("/settings?section=appearance");
-    await card.getByLabel("Tab-Leiste, Platz 1").selectOption({ label: "Kontakte" });
-    await expect(card.getByLabel("Tab-Leiste, Platz 4")).toHaveValue("/mail");
+    await choose(card.getByLabel("Tab-Leiste, Platz 1"), "Kontakte");
+    await expect(card.getByLabel("Tab-Leiste, Platz 4")).toContainText("Mail");
 
     await card.getByRole("button", { name: "Zurücksetzen" }).click();
-    await expect(card.getByLabel("Tab-Leiste, Platz 1")).toHaveValue("/mail");
-    await expect(card.getByLabel("Tab-Leiste, Platz 4")).toHaveValue("/tasks");
+    await expect(card.getByLabel("Tab-Leiste, Platz 1")).toContainText("Mail");
+    await expect(card.getByLabel("Tab-Leiste, Platz 4")).toContainText("Aufgaben");
     await page.goto("/mail");
     await expect(tabBar.getByRole("link", { name: "Aufgaben" })).toBeVisible();
   });

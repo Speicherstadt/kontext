@@ -5,6 +5,7 @@ import { newEmployee, signInWith, stamp } from "./company-helpers";
 import { pstFixture } from "./fixtures";
 import {
   address,
+  choose,
   givenKeywords,
   jmapAs,
   login,
@@ -24,7 +25,7 @@ test.describe("Umzug", () => {
     const upload = async (file: string) => {
       await page.getByRole("button", { name: "Datei hochladen" }).click();
       const dialog = page.getByRole("dialog", { name: "Datei hochladen" });
-      await dialog.getByLabel("Für").selectOption({ label: `Uwe Umzug (${address(local)})` });
+      await choose(dialog.getByLabel("Für"), "Uwe Umzug");
       await dialog.getByLabel("Datei (.pst, .vcf oder .ics)").setInputFiles(file);
       await dialog.getByRole("button", { name: "Hochladen und übernehmen" }).click();
       await expect(dialog).toBeHidden({ timeout: 30_000 });
@@ -132,8 +133,8 @@ test.describe("Umzug", () => {
     await page.goto("/settings?section=migration");
     await page.getByRole("button", { name: "Postfach verbinden" }).click();
     const dialog = page.getByRole("dialog", { name: "Postfach verbinden" });
-    await dialog.getByLabel("Für").selectOption({ label: `${target} (${address(local)})` });
-    await dialog.getByLabel("Anbieter").selectOption({ label: "Anderer Server" });
+    await choose(dialog.getByLabel("Für"), target);
+    await choose(dialog.getByLabel("Anbieter"), "Anderer Server");
     await dialog.getByLabel("Server", { exact: true }).fill("127.0.0.1");
     await dialog.getByLabel("Port").fill("20143");
     await dialog.getByLabel("Bisherige E-Mail-Adresse").fill(address("max"));
@@ -202,7 +203,7 @@ test.describe("Umzug", () => {
     const upload = async (name: string, text: string, mimeType: string) => {
       await page.getByRole("button", { name: "Datei hochladen" }).click();
       const dialog = page.getByRole("dialog", { name: "Datei hochladen" });
-      await dialog.getByLabel("Für").selectOption({ label: `Gina Google (${address(local)})` });
+      await choose(dialog.getByLabel("Für"), "Gina Google");
       await dialog
         .getByLabel("Datei (.pst, .vcf oder .ics)")
         .setInputFiles({ name, mimeType, buffer: Buffer.from(text) });
@@ -245,10 +246,8 @@ test.describe("Umzug", () => {
     await page.goto("/settings?section=migration");
     await page.getByRole("button", { name: "Postfach verbinden" }).click();
     const dialog = page.getByRole("dialog", { name: "Postfach verbinden" });
-    await dialog.getByLabel("Für").selectOption({ label: `Petra Wechsel (${address(local)})` });
-    await dialog
-      .getByLabel("Anbieter")
-      .selectOption({ label: "Microsoft 365 (Outlook, Exchange Online)" });
+    await choose(dialog.getByLabel("Für"), "Petra Wechsel");
+    await choose(dialog.getByLabel("Anbieter"), "Microsoft 365 (Outlook, Exchange Online)");
 
     // Once per company: the app's credentials (dev/fake-graph.ts plays Microsoft).
     const setup = async (secret: string) => {
@@ -261,7 +260,9 @@ test.describe("Umzug", () => {
     await expect(dialog.getByRole("alert")).toContainText("Invalid client secret");
     await setup("geheim");
     await expect(dialog.getByText("Verbunden mit Mandant contoso.")).toBeVisible();
-    await expect(dialog.getByLabel("Postfach in Microsoft 365")).toHaveValue("petra@contoso.test");
+    await expect(dialog.getByLabel("Postfach in Microsoft 365")).toContainText(
+      "petra@contoso.test",
+    );
     await dialog.getByRole("button", { name: "Verbinden und übernehmen" }).click();
     await expect(dialog).toBeHidden();
 

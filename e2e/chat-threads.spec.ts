@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page, test } from "@playwright/test";
 import { colleague, messageIn, newChannel, openChannel, write } from "./chat-helpers";
-import { addMail, login, longPress, unique } from "./helpers";
+import { addMail, choose, login, longPress, unique } from "./helpers";
 
 const PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
@@ -333,7 +333,7 @@ test.describe("Firmenverwaltung: Team-Chat", () => {
     const save = page.getByRole("button", { name: "Speichern" }).first();
     await page.goto("/settings?section=company-chat");
     const keep = page.getByRole("combobox", { name: /Nachrichten aufbewahren/ });
-    await keep.selectOption({ label: "5 Jahre" });
+    await choose(keep, "5 Jahre");
     page.once("dialog", (dialog) => void dialog.accept());
     await save.click();
     await expect(page.getByRole("status").filter({ hasText: /Gespeichert/ })).toBeVisible();
@@ -344,7 +344,7 @@ test.describe("Firmenverwaltung: Team-Chat", () => {
 
     // Back to for ever, as the other tests expect.
     await page.goto("/settings?section=company-chat");
-    await keep.selectOption({ label: "Unbegrenzt" });
+    await choose(keep, "Unbegrenzt");
     await save.click();
     await expect(page.getByRole("status").filter({ hasText: /Gespeichert/ })).toBeVisible();
   });

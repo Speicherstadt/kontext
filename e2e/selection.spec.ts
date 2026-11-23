@@ -2,6 +2,7 @@ import { expect, type Page, test } from "@playwright/test";
 import {
   addMail,
   address,
+  choose,
   givenKeywords,
   jmapAs,
   login,
@@ -331,8 +332,8 @@ test.describe("Wischen am Handy @phone", () => {
     await addMail("max", "max", subject);
     await login(page, "max");
     await page.goto("/settings?section=appearance");
-    await page.getByLabel("Nach links wischen").selectOption({ label: "Löschen" });
-    await page.getByLabel("Nach rechts wischen").selectOption({ label: "Nichts" });
+    await choose(page.getByLabel("Nach links wischen"), "Löschen");
+    await choose(page.getByLabel("Nach rechts wischen"), "Nichts");
     await page.goto("/");
     await expect(page.getByText(subject)).toBeVisible();
 

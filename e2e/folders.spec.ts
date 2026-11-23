@@ -1,5 +1,13 @@
 import { expect, type Page, test } from "@playwright/test";
-import { address, jmapAs, login, mailsWithSubject, personalAccountId, unique } from "./helpers";
+import {
+  address,
+  choose,
+  jmapAs,
+  login,
+  mailsWithSubject,
+  personalAccountId,
+  unique,
+} from "./helpers";
 
 /** Max's own folders: made for each test and deleted by it. */
 const USER = "max";
@@ -68,7 +76,7 @@ const manageFolder = async (page: Page, folder: string, parent: string, subject:
 
   await folderMenu(page, renamed).click();
   await page.getByRole("menuitem", { name: "Verschieben" }).click();
-  await page.getByRole("dialog").getByRole("combobox").selectOption({ label: parent });
+  await choose(page.getByRole("dialog").getByRole("combobox"), parent);
   await page.getByRole("dialog").getByRole("button", { name: "Verschieben" }).click();
   const parentId = (await byName(parent))!.id;
   await expect.poll(async () => (await byName(renamed))?.parentId).toBe(parentId);

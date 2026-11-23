@@ -8,7 +8,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDeferredValue, useMemo, useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
-import { Label, Select, Textarea } from "@/components/ui/input";
+import { Label, Textarea } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import {
   CALENDAR_TEMPLATE_KINDS,
@@ -100,24 +101,23 @@ export const BrandingTemplatesCard = ({ view }: { view: BrandingView }) => {
           {m.company_branding_kind()}
           <Select
             value={kind}
-            onChange={(event) => setKind(event.target.value as CalendarTemplateKind)}
-          >
-            {CALENDAR_TEMPLATE_KINDS.map((option) => (
-              <option key={option} value={option}>
-                {KIND_LABEL[option]()}
-              </option>
-            ))}
-          </Select>
+            onValueChange={setKind}
+            options={CALENDAR_TEMPLATE_KINDS.map((option) => ({
+              value: option,
+              label: KIND_LABEL[option](),
+            }))}
+          />
         </Label>
         <Label>
           {m.company_branding_language()}
           <Select
             value={language}
-            onChange={(event) => setLanguage(event.target.value as TemplateLanguage)}
-          >
-            <option value="de">Deutsch</option>
-            <option value="en">English</option>
-          </Select>
+            onValueChange={setLanguage}
+            options={[
+              { value: "de", label: "Deutsch" },
+              { value: "en", label: "English" },
+            ]}
+          />
         </Label>
       </div>
       <p className="m-0 text-[13px] text-muted" data-testid="branding-template-state">

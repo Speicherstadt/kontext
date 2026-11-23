@@ -417,10 +417,7 @@ test.describe("Mail", () => {
     const list = page.getByRole("list", { name: "Posteingang" });
     await list.getByText("Anfrage Wärmepumpe Neubau").click();
     await page.getByRole("link", { name: /Antworten an Thomas/ }).click();
-    await expect(page.getByLabel("Von")).toHaveValue(/.+/);
-    await expect(page.getByLabel("Von").locator("option:checked")).toHaveText(
-      /info@weber-haustechnik\.test/,
-    );
+    await expect(page.getByLabel("Von")).toContainText(/info@weber-haustechnik\.test/);
   });
 });
 
@@ -564,7 +561,7 @@ test("sendet aus dem gemeinsamen Postfach als info@", async ({ page }) => {
   await login(page);
   await page.getByRole("link", { name: "info@" }).click();
   await page.getByRole("link", { name: "Neue Mail" }).first().click();
-  await expect(page.getByLabel("Von").locator("option:checked")).toHaveText(/info@/);
+  await expect(page.getByLabel("Von")).toContainText(/info@/);
   await page.getByRole("combobox", { name: "An" }).fill("anna@weber-haustechnik.test");
   await page.keyboard.press("Enter");
   await page.getByLabel("Betreff").fill(subject);
@@ -617,7 +614,7 @@ test.describe("Postfach nur zum Lesen", () => {
     await expect(page.getByRole("button", { name: "Archivieren" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Löschen" })).toHaveCount(0);
     await page.getByRole("link", { name: "Antworten" }).first().click();
-    await expect(page.getByLabel("Von").locator("option:checked")).toHaveText(/max@/);
+    await expect(page.getByLabel("Von")).toContainText(/max@/);
   });
 });
 
@@ -814,8 +811,8 @@ test.describe("Mail am Handy @phone", () => {
     const form = page.getByRole("form", { name: "Neue Mail" });
     // From info@ there is never an own key for the sender, so encrypting is blocked.
     const from = form.getByLabel("Von");
-    const shared = await from.locator("option", { hasText: "info@" }).first().getAttribute("value");
-    await from.selectOption(shared!);
+    await from.click();
+    await page.getByRole("option").filter({ hasText: "info@" }).first().click();
     await form.getByLabel("Betreff").fill(unique("Vertraulich am Handy"));
     await form.getByRole("button", { name: "Weitere Aktionen" }).click();
     const menu = page.getByRole("menu");
@@ -1125,7 +1122,7 @@ test.describe("Alle Posteingänge", () => {
       await shared.click();
       await expect(page.getByRole("heading", { name: request.subject })).toBeVisible();
       await page.getByRole("link", { name: "Antworten" }).first().click();
-      await expect(page.getByLabel("Von").locator("option:checked")).toContainText("info@");
+      await expect(page.getByLabel("Von")).toContainText("info@");
     } finally {
       await offer.remove();
       await request.remove();

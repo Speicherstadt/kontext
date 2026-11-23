@@ -1,12 +1,15 @@
 /** Per device: the working hours the calendar's day and week start at and shade around. */
 import { useId } from "react";
 import { SettingsCard } from "@/components/settings-card";
-import { Select } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { timeLabel } from "@/lib/jscalendar";
 import { m } from "@/paraglide/messages";
 import { setWorkHours, useWorkHours } from "../calendar/work-hours-setting";
 
 const HOURS = Array.from({ length: 25 }, (_, hour) => hour);
+
+const hourOptions = (hours: number[]) =>
+  hours.map((hour) => ({ value: String(hour), label: timeLabel(hour * 60) }));
 
 export const WorkHoursCard = () => {
   const hours = useWorkHours();
@@ -18,29 +21,19 @@ export const WorkHoursCard = () => {
         <label htmlFor={fromId}>{m.settings_work_hours_from()}</label>
         <Select
           id={fromId}
-          value={hours.startHour}
-          onChange={(event) => setWorkHours({ ...hours, startHour: Number(event.target.value) })}
+          value={String(hours.startHour)}
+          onValueChange={(value) => setWorkHours({ ...hours, startHour: Number(value) })}
+          options={hourOptions(HOURS.filter((hour) => hour < hours.endHour))}
           className="w-auto"
-        >
-          {HOURS.filter((hour) => hour < hours.endHour).map((hour) => (
-            <option key={hour} value={hour}>
-              {timeLabel(hour * 60)}
-            </option>
-          ))}
-        </Select>
+        />
         <label htmlFor={toId}>{m.settings_work_hours_to()}</label>
         <Select
           id={toId}
-          value={hours.endHour}
-          onChange={(event) => setWorkHours({ ...hours, endHour: Number(event.target.value) })}
+          value={String(hours.endHour)}
+          onValueChange={(value) => setWorkHours({ ...hours, endHour: Number(value) })}
+          options={hourOptions(HOURS.filter((hour) => hour > hours.startHour))}
           className="w-auto"
-        >
-          {HOURS.filter((hour) => hour > hours.startHour).map((hour) => (
-            <option key={hour} value={hour}>
-              {timeLabel(hour * 60)}
-            </option>
-          ))}
-        </Select>
+        />
       </div>
     </SettingsCard>
   );

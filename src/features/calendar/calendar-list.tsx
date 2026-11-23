@@ -261,7 +261,7 @@ const Holidays = () => {
       <h3 className="m-0 text-[12px] font-medium text-muted">{m.calendar_holidays()}</h3>
       <p className="m-0 text-[13px] text-muted">{m.calendar_holidays_hint()}</p>
       <div className="flex items-end gap-2">
-        <StateSelect value={state} onChange={setState} className="flex-1" />
+        <StateSelect value={state} onValueChange={setState} className="flex-1" />
         <Button variant="outline" onClick={add} disabled={addHolidays.isPending}>
           {m.calendar_holidays_add()}
         </Button>

@@ -17,7 +17,8 @@ import {
 import { useCompanyChange } from "@/company-core/queries";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { uploadInPieces } from "@/lib/chunked-upload";
 import { formatSize } from "@/lib/format";
 import { m } from "@/paraglide/messages";
@@ -201,13 +202,16 @@ const UploadDialog = ({ company, onClose }: { company: Company; onClose: () => v
       <form onSubmit={submit} className="flex flex-col gap-4">
         <Label>
           {m.company_migration_person()}
-          <Select value={accountId} onChange={(e) => setAccountId(e.target.value)}>
-            {people.map((person) => (
-              <option key={person.id} value={person.id}>
-                {person.fullName} ({person.email})
-              </option>
-            ))}
-          </Select>
+          <Select
+            value={accountId}
+            onValueChange={setAccountId}
+            showHint
+            options={people.map((person) => ({
+              value: person.id,
+              label: person.fullName,
+              hint: person.email,
+            }))}
+          />
         </Label>
         <Label>
           {m.company_migration_file()}

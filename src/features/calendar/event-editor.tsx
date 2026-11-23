@@ -7,7 +7,8 @@ import { type FormEvent, useRef, useState } from "react";
 import { useSession } from "@/auth/session";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input, Label, Select, Textarea } from "@/components/ui/input";
+import { Input, Label, Textarea } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { useAddressSuggestions } from "@/contacts-core/use-suggestions";
 import { MeetingField } from "@/features/calls/meeting-field";
@@ -248,14 +249,12 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
           <Select
             aria-label={m.calendar_calendar()}
             value={target?.key ?? ""}
-            onChange={(e) => setCalendarKey(e.target.value)}
-          >
-            {writable.map((calendar) => (
-              <option key={calendar.key} value={calendar.key}>
-                {calendarLabel(calendar)}
-              </option>
-            ))}
-          </Select>
+            onValueChange={setCalendarKey}
+            options={writable.map((calendar) => ({
+              value: calendar.key,
+              label: calendarLabel(calendar),
+            }))}
+          />
         </Label>
       ) : null}
       <label className="flex items-center gap-2 text-[14px]">
@@ -322,13 +321,12 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
         {m.calendar_event_show_as()}
         <Select
           value={form.showAs}
-          onChange={(e) =>
-            setForm((current) => ({ ...current, showAs: e.target.value as EventForm["showAs"] }))
-          }
-        >
-          <option value="busy">{m.calendar_event_show_busy()}</option>
-          <option value="free">{m.calendar_event_show_free()}</option>
-        </Select>
+          onValueChange={(showAs) => setForm((current) => ({ ...current, showAs }))}
+          options={[
+            { value: "busy", label: m.calendar_event_show_busy() },
+            { value: "free", label: m.calendar_event_show_free() },
+          ]}
+        />
       </Label>
       <ReminderFields
         value={reminder}

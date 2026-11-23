@@ -3,6 +3,7 @@ import { createJmapClient } from "../src/jmap/client";
 import { newEmployee, signInWith, stamp } from "./company-helpers";
 import {
   address,
+  choose,
   inboxMails,
   jmapAs,
   login,
@@ -128,8 +129,8 @@ test.describe("Firmenverwaltung", () => {
     let dialog = page.getByRole("dialog", { name: "Postfach anlegen" });
     await dialog.getByLabel("Name vor dem @").fill(local);
     await dialog.getByLabel("Bezeichnung").fill("Kundendienst");
-    await dialog.getByLabel("Zugriff für Sandra Klein").selectOption("Lesen und senden");
-    await dialog.getByLabel("Zugriff für Max Becker").selectOption("Lesen und senden");
+    await choose(dialog.getByLabel("Zugriff für Sandra Klein"), "Lesen und senden");
+    await choose(dialog.getByLabel("Zugriff für Max Becker"), "Lesen und senden");
     await dialog.getByRole("button", { name: "Anlegen" }).click();
     const row = page.getByRole("button", { name: new RegExp(`^${local}@`) });
     await expect(row).toContainText("Max, Sandra");
@@ -141,7 +142,7 @@ test.describe("Firmenverwaltung", () => {
       .first()
       .fill(`kd-${local}@weber-haustechnik.test`);
     await dialog.getByLabel("Adresse hinzufügen").first().press("Enter");
-    await dialog.getByLabel("Zugriff für Max Becker").selectOption("Kein Zugriff");
+    await choose(dialog.getByLabel("Zugriff für Max Becker"), "Kein Zugriff");
     await dialog.getByRole("button", { name: "Speichern" }).click();
     await expect(row).toContainText("Sandra");
     await expect(row).not.toContainText("Max");
@@ -178,7 +179,7 @@ test.describe("Firmenverwaltung", () => {
     await page.goto("/settings?section=mailboxes");
     await page.getByRole("button", { name: /^rechnung@/ }).click();
     const dialog = page.getByRole("dialog", { name: "Postfach bearbeiten" });
-    await dialog.getByLabel("Zugriff für Max Becker").selectOption("Nur lesen");
+    await choose(dialog.getByLabel("Zugriff für Max Becker"), "Nur lesen");
     await dialog.getByRole("button", { name: "Speichern" }).click();
     await expect(page.getByRole("button", { name: /^rechnung@/ })).toContainText("nur lesen: Max");
 
@@ -195,7 +196,7 @@ test.describe("Firmenverwaltung", () => {
 
     // and back, so the other tests see Max without rechnung@
     await page.getByRole("button", { name: /^rechnung@/ }).click();
-    await dialog.getByLabel("Zugriff für Max Becker").selectOption("Kein Zugriff");
+    await choose(dialog.getByLabel("Zugriff für Max Becker"), "Kein Zugriff");
     await dialog.getByRole("button", { name: "Speichern" }).click();
     await expect(page.getByRole("button", { name: /^rechnung@/ })).not.toContainText("Max");
   });
@@ -208,7 +209,7 @@ test.describe("Firmenverwaltung", () => {
     await page.getByRole("button", { name: "Abwesenheit eintragen" }).click();
     const dialog = page.getByRole("dialog", { name: "Abwesenheit von Tom Krank" });
     await dialog.getByLabel("Abwesenheitsnotiz einschalten").check();
-    await dialog.getByLabel("Vertretung").selectOption({ label: "Anna Weber" });
+    await choose(dialog.getByLabel("Vertretung"), "Anna Weber");
     await dialog.getByLabel("Betreff").fill("Nicht im Büro");
     await dialog.getByRole("button", { name: "Speichern" }).click();
     await expect(
@@ -301,8 +302,8 @@ test.describe("Firmenverwaltung", () => {
     await karlRow.click();
     await page.getByRole("dialog").getByRole("button", { name: "Austritt" }).click();
     const dialog = page.getByRole("dialog", { name: "Austritt von Karl Geht" });
-    await dialog.getByLabel("Postfach übergeben an").selectOption({ label: "Sandra Klein" });
-    await dialog.getByLabel("Neue Mails weiterleiten an").selectOption({ label: "Anna Weber" });
+    await choose(dialog.getByLabel("Postfach übergeben an"), "Sandra Klein");
+    await choose(dialog.getByLabel("Neue Mails weiterleiten an"), "Anna Weber");
     await expect(dialog.getByLabel("Nachricht")).toHaveValue(/Anna Weber \(anna@/);
     await dialog.getByRole("button", { name: "Austritt durchführen" }).click();
     await dialog.getByRole("button", { name: "Ja, weiter" }).click();

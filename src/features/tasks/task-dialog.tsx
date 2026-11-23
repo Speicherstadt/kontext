@@ -9,7 +9,8 @@ import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { type Contact, useContacts } from "@/contacts-core/queries";
 import { useMe, usePeople } from "@/directory/queries";
@@ -262,24 +263,25 @@ export const TaskDialog = ({
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Label>
             {m.tasks_assignee()}
-            <Select value={assigneeId} onChange={(e) => setAssigneeId(e.target.value)}>
-              <option value="">{m.tasks_nobody()}</option>
-              {people.map((person) => (
-                <option key={person.id} value={person.id}>
-                  {person.id === me ? m.tasks_me({ name: person.name }) : person.name}
-                </option>
-              ))}
-            </Select>
+            <Select
+              value={assigneeId}
+              onValueChange={setAssigneeId}
+              options={[
+                { value: "", label: m.tasks_nobody() },
+                ...people.map((person) => ({
+                  value: person.id,
+                  label: person.id === me ? m.tasks_me({ name: person.name }) : person.name,
+                })),
+              ]}
+            />
           </Label>
           <Label>
             {m.tasks_board()}
-            <Select value={boardId} onChange={(e) => setBoardId(e.target.value)}>
-              {boards.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
+            <Select
+              value={boardId}
+              onValueChange={setBoardId}
+              options={boards.map((option) => ({ value: option.id, label: option.label }))}
+            />
           </Label>
         </div>
         {onArchive ? (

@@ -3,7 +3,8 @@ import { type FormEvent, type ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { changeExternalAccount, createExternalAccount } from "@/external-accounts/api";
 import { useExternalChange } from "@/external-accounts/queries";
 import { m } from "@/paraglide/messages";
@@ -112,13 +113,11 @@ export const ConnectDialog = ({ onClose }: { onClose: () => void }) => {
       <form onSubmit={submit} className="flex flex-col gap-4">
         <Label>
           {m.company_sync_provider()}
-          <Select value={provider} onChange={(e) => setProvider(e.target.value as MailProviderId)}>
-            {MAIL_PROVIDERS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </Select>
+          <Select
+            value={provider}
+            onValueChange={(id) => setProvider(id as MailProviderId)}
+            options={MAIL_PROVIDERS.map((p) => ({ value: p.id, label: p.name }))}
+          />
         </Label>
         {hint ? <p className="m-0 text-[13px] text-muted">{hint()}</p> : null}
         {other ? (
@@ -169,10 +168,14 @@ export const ConnectDialog = ({ onClose }: { onClose: () => void }) => {
         </Label>
         <Label>
           {m.external_target()}
-          <Select value={target} onChange={(e) => setTarget(e.target.value as "inbox" | "folder")}>
-            <option value="inbox">{m.external_target_inbox()}</option>
-            <option value="folder">{m.external_target_folder()}</option>
-          </Select>
+          <Select
+            value={target}
+            onValueChange={setTarget}
+            options={[
+              { value: "inbox", label: m.external_target_inbox() },
+              { value: "folder", label: m.external_target_folder() },
+            ]}
+          />
         </Label>
         <label className="flex items-start gap-2 text-[13px]">
           <Checkbox

@@ -6,7 +6,8 @@ import { type FormEvent, useId, useState } from "react";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label, Select } from "@/components/ui/input";
+import { Label } from "@/components/ui/input";
+import { Select, type SelectOption } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { useColleagues } from "@/directory/queries";
 import { ColleagueAvatar } from "@/features/photos/colleague-avatar";
@@ -33,6 +34,11 @@ const LEVEL_LABELS: Record<DeputyLevel, () => string> = {
   read: m.sharing_read,
   edit: m.sharing_edit,
 };
+
+const levelOptions = (): SelectOption<DeputyLevel>[] => [
+  { value: "read", label: m.sharing_read() },
+  { value: "edit", label: m.sharing_edit() },
+];
 
 const GrantForm = ({ colleagues }: { colleagues: Principal[] }) => {
   const toast = useToast();
@@ -65,27 +71,22 @@ const GrantForm = ({ colleagues }: { colleagues: Principal[] }) => {
           <Select
             id={`${id}-person`}
             value={person}
-            onChange={(e) => setPerson(e.target.value)}
+            onValueChange={setPerson}
+            options={[
+              { value: "", label: m.deputy_choose() },
+              ...colleagues.map((p) => ({ value: p.id, label: principalName(p) })),
+            ]}
             required
-          >
-            <option value="">{m.deputy_choose()}</option>
-            {colleagues.map((p) => (
-              <option key={p.id} value={p.id}>
-                {principalName(p)}
-              </option>
-            ))}
-          </Select>
+          />
         </div>
         <div className="flex flex-col gap-1.5">
           <Label htmlFor={`${id}-level`}>{m.deputy_level()}</Label>
           <Select
             id={`${id}-level`}
             value={level}
-            onChange={(e) => setLevel(e.target.value as DeputyLevel)}
-          >
-            <option value="read">{m.sharing_read()}</option>
-            <option value="edit">{m.sharing_edit()}</option>
-          </Select>
+            onValueChange={setLevel}
+            options={levelOptions()}
+          />
         </div>
       </div>
       <fieldset className="m-0 flex flex-wrap gap-x-5 gap-y-2 border-0 p-0">

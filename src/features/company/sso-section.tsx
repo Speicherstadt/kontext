@@ -10,7 +10,8 @@ import { useCompanyChange } from "@/company-core/queries";
 import { SettingsCard } from "@/components/settings-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
 import { ConfirmButton } from "./fields";
@@ -132,10 +133,14 @@ const ProviderCard = ({ view }: { view: SsoView }) => {
         ))}
         <Label>
           {m.company_sso_token_check()}
-          <Select value={form.tokenCheck} onChange={(e) => set("tokenCheck")(e.target.value)}>
-            <option value="jwt">{m.company_sso_token_jwt()}</option>
-            <option value="userInfo">{m.company_sso_token_userinfo()}</option>
-          </Select>
+          <Select
+            value={form.tokenCheck}
+            onValueChange={set("tokenCheck")}
+            options={[
+              { value: "jwt", label: m.company_sso_token_jwt() },
+              { value: "userInfo", label: m.company_sso_token_userinfo() },
+            ]}
+          />
         </Label>
         <Problem text={problem} />
         <div className="flex flex-wrap justify-end gap-2">

@@ -1,5 +1,6 @@
 /** "Erinnerung" in the event editor: when before the start, and as a notice or a mail. */
-import { Label, Select } from "@/components/ui/input";
+import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { timeLabel } from "@/lib/jscalendar";
 import { type ReminderAction, type ReminderChoice, reminderMinutes } from "@/lib/reminders";
 import { m } from "@/paraglide/messages";
@@ -54,15 +55,18 @@ export const ReminderFields = ({ value, allDay, onChange, label, noneLabel, howL
     <div className="flex gap-2">
       <Label className="flex-1">
         {label ?? m.calendar_reminder()}
-        <Select value={selected} onChange={(e) => pick(e.target.value)}>
-          <option value="none">{noneLabel ?? m.calendar_reminder_none()}</option>
-          {value === "kept" ? <option value="kept">{m.calendar_reminder_kept()}</option> : null}
-          {reminderMinutes(value, allDay).map((minutes) => (
-            <option key={minutes} value={minutes}>
-              {reminderLabel(minutes, allDay)}
-            </option>
-          ))}
-        </Select>
+        <Select
+          value={selected}
+          onValueChange={pick}
+          options={[
+            { value: "none", label: noneLabel ?? m.calendar_reminder_none() },
+            ...(value === "kept" ? [{ value: "kept", label: m.calendar_reminder_kept() }] : []),
+            ...reminderMinutes(value, allDay).map((minutes) => ({
+              value: String(minutes),
+              label: reminderLabel(minutes, allDay),
+            })),
+          ]}
+        />
       </Label>
       {value && value !== "kept" ? (
         <Label className="flex-1">
@@ -70,11 +74,12 @@ export const ReminderFields = ({ value, allDay, onChange, label, noneLabel, howL
           <Select
             aria-label={howLabel}
             value={value.action}
-            onChange={(e) => onChange({ ...value, action: e.target.value as ReminderAction })}
-          >
-            <option value="display">{m.calendar_reminder_display()}</option>
-            <option value="email">{m.calendar_reminder_email()}</option>
-          </Select>
+            onValueChange={(next) => onChange({ ...value, action: next as ReminderAction })}
+            options={[
+              { value: "display", label: m.calendar_reminder_display() },
+              { value: "email", label: m.calendar_reminder_email() },
+            ]}
+          />
         </Label>
       ) : null}
     </div>

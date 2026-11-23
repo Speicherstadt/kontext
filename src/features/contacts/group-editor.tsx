@@ -4,7 +4,8 @@ import { ChevronLeft, Search } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import {
   type BookRef,
@@ -166,17 +167,12 @@ export const GroupEditor = ({ group, contacts, books, preferredBook }: Props) =>
           <Select
             aria-label={m.contacts_book()}
             value={bookKey}
-            onChange={(e) => {
-              setBookKey(e.target.value);
+            onValueChange={(key) => {
+              setBookKey(key);
               setMembers(new Set());
             }}
-          >
-            {writable.map((book) => (
-              <option key={book.key} value={book.key}>
-                {bookLabel(book)}
-              </option>
-            ))}
-          </Select>
+            options={writable.map((book) => ({ value: book.key, label: bookLabel(book) }))}
+          />
         </Label>
       ) : null}
       <Label>

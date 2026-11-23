@@ -100,8 +100,12 @@ const createWithAttendees = async (
   await dialog.getByLabel("Titel").fill(title);
   if (calendarOf) {
     const calendar = dialog.getByLabel("Kalender", { exact: true });
-    const option = calendar.locator("option", { hasText: address(calendarOf) }).first();
-    await calendar.selectOption((await option.getAttribute("value"))!);
+    await calendar.click();
+    await page
+      .getByRole("option")
+      .filter({ hasText: address(calendarOf) })
+      .first()
+      .click();
   }
   await dialog.getByLabel("Ort").fill("Hauptstraße 41, Ettlingen");
   await addAttendees(dialog, attendees);

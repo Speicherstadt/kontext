@@ -8,7 +8,8 @@ import { Repeat } from "lucide-react";
 import { useState } from "react";
 import { useClient } from "@/auth/auth";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Select } from "@/components/ui/input";
+import { Input, Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import {
   accountUids,
@@ -159,15 +160,13 @@ export const IcsImport = () => {
           {m.calendar_import_target()}
           <Select
             aria-label={m.calendar_import_target()}
-            value={target?.key}
-            onChange={(event) => setTargetKey(event.target.value)}
-          >
-            {writable.map((calendar) => (
-              <option key={calendar.key} value={calendar.key}>
-                {calendarLabel(calendar)}
-              </option>
-            ))}
-          </Select>
+            value={target?.key ?? ""}
+            onValueChange={setTargetKey}
+            options={writable.map((calendar) => ({
+              value: calendar.key,
+              label: calendarLabel(calendar),
+            }))}
+          />
         </Label>
       </div>
       {!file ? null : unreadable ? (

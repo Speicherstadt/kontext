@@ -160,6 +160,14 @@ IMAP und SMTP.
 
 - **Formatierter Text**, Antworten mit Zitat, Anhänge, Empfänger-Vorschläge aus der Firma und den Kontakten,
   Signatur je Absenderadresse.
+- **Absender („Von“):** Die eigene Adresse steht oben, darunter weitere Adressen des Kontos,
+  gekennzeichnet als „Alias“ oder – bei gemeinsamen Postfächern wie info@ – als „Gruppe“; eigene
+  Postfächer bei Gmail, GMX & Co. stehen getrennt unter „Weitere Postfächer“. Im gemeinsamen
+  Postfach zeigt die Auswahl, unter welchem Namen die Mail ankommt („erscheint als „Jonas Weber
+  (Weber Haustechnik)““). Gibt es nur eine Adresse, steht sie ohne Auswahl da.
+- **Die Leiste unter der Mail:** links Anhängen und die Schalter (Lese- und Zustellbestätigung,
+  Vertraulich senden, Unterschreiben), rechts Verwerfen, „Als Entwurf speichern“ und ganz rechts
+  „Senden“ mit „Später senden“, wo der Blick nach dem Schreiben ankommt.
 - **Rechtschreibprüfung:** Text und Betreff prüft die Rechtschreibprüfung des Browsers bzw. des
   Betriebssystems, in der Sprache der Oberfläche (*Einstellungen → Sprache*); falsch geschriebene
   Wörter werden unterstrichen, Vorschläge gibt es per Rechtsklick. Eine Grammatikprüfung gibt es

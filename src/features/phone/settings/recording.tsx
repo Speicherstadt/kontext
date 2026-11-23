@@ -36,7 +36,7 @@ export const RecordingForm = ({
           sounds={sounds}
           none={m.phone_recording_no_notice()}
           value={notice}
-          onChange={(event) => setNotice(event.target.value)}
+          onValueChange={setNotice}
           disabled={!enabled}
         />
       </Label>
