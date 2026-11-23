@@ -8,7 +8,9 @@ import { SettingsCard } from "@/components/settings-card";
 import { StateSelect } from "@/components/state-select";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input, Label } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
+import { Label } from "@/components/ui/input";
+import { TimeInput } from "@/components/ui/time-input";
 import { useToast } from "@/components/ui/toast";
 import { comingHolidays, type State } from "@/lib/holidays";
 import { LOCALE } from "@/lib/locale";
@@ -44,23 +46,21 @@ const SpanInputs = ({
   label: string;
   onChange: (span: Span) => void;
 }) => (
-  <span className="flex items-center gap-1">
-    <Input
-      type="time"
+  <div className="flex items-center gap-1">
+    <TimeInput
       aria-label={m.phone_hours_from({ day: label })}
       value={span.from}
-      onChange={(event) => onChange({ ...span, from: event.target.value })}
+      onChange={(from) => onChange({ ...span, from })}
       className="w-[7.5rem]"
     />
     –
-    <Input
-      type="time"
+    <TimeInput
       aria-label={m.phone_hours_to({ day: label })}
       value={span.to}
-      onChange={(event) => onChange({ ...span, to: event.target.value })}
+      onChange={(to) => onChange({ ...span, to })}
       className="w-[7.5rem]"
     />
-  </span>
+  </div>
 );
 
 const DayRow = ({ row, onChange }: { row: WeekRow; onChange: (row: WeekRow) => void }) => {
@@ -205,11 +205,7 @@ export const HoursForm = ({
             <div className="flex flex-wrap items-end gap-2">
               <Label>
                 {m.phone_hours_add_day()}
-                <Input
-                  type="date"
-                  value={newDay}
-                  onChange={(event) => setNewDay(event.target.value)}
-                />
+                <DateInput value={newDay} onChange={setNewDay} />
               </Label>
               <Button
                 disabled={!newDay}

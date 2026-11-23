@@ -5,7 +5,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { BellOff, CircleCheck, Clock } from "lucide-react";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import { DateTimeInput } from "@/components/ui/date-time-input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { m } from "@/paraglide/messages";
@@ -46,15 +46,13 @@ export const PhoneStatus = () => {
         className="w-auto"
       />
       {status.mode === "away" ? (
-        <Input
-          type="datetime-local"
+        <DateTimeInput
           aria-label={m.phone_status_until()}
           value={until}
-          onChange={(event) => {
-            setUntil(event.target.value);
-            change("away", event.target.value);
+          onChange={(next) => {
+            setUntil(next);
+            change("away", next);
           }}
-          className="w-auto"
         />
       ) : null}
     </div>

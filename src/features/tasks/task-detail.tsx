@@ -7,8 +7,10 @@ import { useNavigate } from "@tanstack/react-router";
 import { Check, ChevronLeft, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input, Label, Textarea } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
+import { Label, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { TimeInput } from "@/components/ui/time-input";
 import { useToast } from "@/components/ui/toast";
 import { useMe, usePeople } from "@/directory/queries";
 import { LinkDocument } from "@/features/documents/document-actions";
@@ -202,21 +204,17 @@ export const TaskDetail = ({ task, onClose }: { task: Task; onClose?: () => void
             </Label>
             <Label>
               {m.tasks_due()}
-              <Input
-                type="date"
+              <DateInput
                 value={task.dueDate ?? ""}
-                onChange={(e) =>
-                  saveDue(e.target.value || null, e.target.value ? task.dueTime : null)
-                }
+                onChange={(day) => saveDue(day || null, day ? task.dueTime : null)}
               />
             </Label>
             <Label>
               {m.tasks_time()}
-              <Input
-                type="time"
+              <TimeInput
                 value={task.dueTime ?? ""}
                 disabled={!task.dueDate}
-                onChange={(e) => saveDue(task.dueDate, e.target.value || null)}
+                onChange={(time) => saveDue(task.dueDate, time || null)}
               />
             </Label>
           </div>

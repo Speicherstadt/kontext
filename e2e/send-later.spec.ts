@@ -50,7 +50,9 @@ test.describe("Senden rückgängig und später senden", () => {
     const dialog = page.getByRole("dialog", { name: "Später senden" });
     const tomorrow = new Date(Date.now() + 86_400_000);
     const day = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin" }).format(tomorrow);
-    await dialog.getByLabel("Senden am").fill(`${day}T08:00`);
+    const when = dialog.getByRole("group", { name: "Senden am" });
+    await when.getByLabel("Datum").fill(day);
+    await when.getByLabel("Uhrzeit").fill("08:00");
     await dialog.getByRole("button", { name: "Planen" }).click();
     await expect(
       page.getByRole("status").filter({ hasText: /^Wird .* 08:00 gesendet/ }),

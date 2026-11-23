@@ -25,7 +25,12 @@ Arbeitsplätze von Beschäftigten mit Behinderung (SGB IX § 164) ist das die Me
   Menüs halten den Fokus, Escape schließt sie, danach steht er wieder auf dem, was sie geöffnet
   hat; ein neuer Dialog beginnt im ersten Feld. Der kleine Monat im Kalender ist ein einziger
   Tab-Stopp: die Pfeiltasten gehen von Tag zu Tag (hoch und runter um eine Woche), Bild auf und
-  Bild ab um einen Monat, Enter zeigt den Tag. Strg+Enter sendet die Mail, die man schreibt.
+  Bild ab um einen Monat, Enter zeigt den Tag. Datums- und Uhrzeitfelder nehmen getippte Werte
+  in der Sprache der App („18.12.2026“, „14:30“, auch kurz „24.12.“ oder „930“); ↓ öffnet am
+  Datum einen Monat zum Wählen (Pfeiltasten, Bild auf/ab um einen Monat, Pos1/Ende zu den Enden
+  der Woche, Enter wählt, Escape geht ins Feld zurück) und an der Uhrzeit die Viertelstunden
+  (↑/↓, Enter übernimmt). Am Handy und Tablet bleiben die Auswahlen des Systems, die für den
+  Finger gemacht sind. Strg+Enter sendet die Mail, die man schreibt.
   Was sich ziehen lässt, geht auch ohne Maus: Mails über „Verschieben nach …“, Aufgaben über
   ihre Spalte in der Aufgabe, Termine über Datum und Uhrzeit im Termin, Dateien über „Anhängen“.
   Dazu kommen Tastaturkürzel wie in Gmail; `?` zeigt sie ([App, Handy und Konto](app.md)).

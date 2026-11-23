@@ -102,7 +102,7 @@ describe("EventEditor times", () => {
     const date = screen.getByLabelText("Beginn Datum");
     fireEvent.change(date, { target: { value: "" } });
     fireEvent.change(date, { target: { value: "2026-11-02" } });
-    expect((screen.getByLabelText("Ende Datum") as HTMLInputElement).value).toBe("2026-11-02");
+    expect((screen.getByLabelText("Ende Datum") as HTMLInputElement).value).toBe("02.11.2026");
   });
 });
 
