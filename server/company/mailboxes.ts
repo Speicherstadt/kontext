@@ -19,6 +19,7 @@ import {
   usersOf,
 } from "./context";
 import { addRulesRoutes } from "./rules-routes";
+import { sentCopySchema } from "./sent-copies";
 import { READ_ONLY, sharePatches } from "./sharing";
 
 const newMailbox = z.object({
@@ -26,12 +27,14 @@ const newMailbox = z.object({
   description: z.string().trim().max(200).default(""),
   memberIds: ids.default([]),
   readerIds: ids.default([]),
+  sentCopy: sentCopySchema.optional(),
 });
 const mailboxPatch = z.object({
   description: z.string().trim().max(200).optional(),
   aliases: addresses.optional(),
   memberIds: ids.optional(),
   readerIds: ids.optional(),
+  sentCopy: sentCopySchema.optional(),
 });
 
 const knownPeople = (loaded: Loaded, people: string[]) => people.every((id) => userOf(loaded, id));
@@ -40,6 +43,7 @@ export const mailboxRoutes = ({
   management,
   mailstore,
   categories,
+  settings,
   mailboxChanged,
 }: CompanyDeps) => {
   /** Members and readers of a mailbox; someone in both lists is a member. */
@@ -84,6 +88,7 @@ export const mailboxRoutes = ({
     if (!created.ok) return bad(created.error);
     const access = await setAccess(loaded, created.value, body);
     if (!access.ok) return bad(access.error);
+    if (body.sentCopy) await settings.saveSentCopy(created.value, body.sentCopy);
     mailboxChanged?.(created.value);
     return c.json({ id: created.value }, 201);
   });
@@ -110,6 +115,7 @@ export const mailboxRoutes = ({
     }
     const access = await setAccess(loaded, id, change);
     if (!access.ok) return bad(access.error);
+    if (change.sentCopy) await settings.saveSentCopy(id, change.sentCopy);
     if (change.memberIds || change.readerIds) mailboxChanged?.(id);
     return c.json({ ok: true });
   });

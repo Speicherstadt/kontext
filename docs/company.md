@@ -21,6 +21,13 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   bis wann sie gilt und für welche Domain; ab 90 % belegt oder 30 Tage vor dem Ende warnt sie.
 - **Gemeinsame Postfächer** mit Rechten je Person: kein Zugriff, nur lesen, lesen und senden;
   eigene Regeln je Postfach.
+- **Gesendete Mails ablegen** je gemeinsamem Postfach (im Dialog des Postfachs): *Nur im
+  gemeinsamen Postfach* (Standard) – Entwurf und gesendete Mail liegen in dessen Ordnern, auch wenn
+  jemand aus dem eigenen Postfach als diese Adresse schreibt; *Im gemeinsamen Postfach und beim
+  Absender* – dazu eine gelesene Kopie im Gesendet-Ordner der Person, die schreibt; *Nur beim
+  Absender* – wer aus dem eigenen Postfach als diese Adresse schreibt, behält Entwurf und gesendete
+  Mail im eigenen Postfach, ohne „(Postfach)“ im Absendernamen. Wer im gemeinsamen Postfach selbst
+  schreibt, sendet immer über das Postfach. [Mehr](mail.md#schreiben)
 - **Abwesenheit für Kollegen** (etwa bei Krankheit) mit Vertretung in der Antwort.
 - **Abwesenheitsvorlagen** unter *Einstellungen → Firma → Abwesenheitsvorlagen*: ein paar Texte
   mit Titel („Urlaub“, „Krank“), die jede Person für ihre Abwesenheitsnotiz auswählen kann, und die

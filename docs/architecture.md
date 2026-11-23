@@ -97,6 +97,23 @@ Absender, schreibt die nächste Speicherung ihn im neuen Konto und löscht danac
 (`src/features/mail/draft-place.ts`). Liefert das Konto der Gruppe keine Identitäten oder fehlen
 ihm Entwürfe oder Gesendet, bleibt die Mail im eigenen Konto.
 
+„Gesendete Mails ablegen“ (`src/lib/sent-copy.ts`) hält der Kontext-Server je Gruppe in
+`company_setting` (Schlüssel `sentCopies`, nur abweichend vom Standard `group`); jeder
+Angemeldete liest es über `GET /api/company/sent-copies`, die Firmenverwaltung setzt es mit
+`PATCH /api/company/mailboxes/:id` (`sentCopy`). Bei `sender` geht eine Mail aus dem eigenen
+Postfach über das eigene Konto und dessen Identität – der Absendername ist dann der der
+Identität, denn „Person (Postfach)“ gehört zu Mails, die im Gesendet des Postfachs liegen. Im
+gemeinsamen Postfach selbst bleibt es beim Konto der Gruppe: wer dort schreibt, arbeitet bewusst
+im Postfach. Bei `both` kopiert die App die Mail gleich nach der Einreichung mit `Email/copy`
+(RFC 8621 §4.7, `crates/jmap/src/email/copy.rs`) in den eigenen Gesendet-Ordner, gelesen und
+mit einem verborgenen Schlüsselwort, das auf die Mail im Postfach zeigt
+(`src/jmap/sent-copy.ts`). Sofort statt erst beim tatsächlichen Versand, weil eine
+zurückgehaltene Mail („Rückgängig“, „Später senden“) schon im Gesendet des Postfachs liegt und
+die App nach Stunden nicht mehr offen sein muss; nimmt man sie zurück, löscht `take-back.ts` die
+Kopie über dieses Schlüsselwort, das Stalwart sofort aus seinem Cache beantwortet (eine Suche
+nach der Message-ID wartet auf den Suchindex). Scheitert die Kopie, ist die Mail trotzdem
+gesendet; die App sagt es nur.
+
 Der Server (Aufgaben, Kategorien, Textbausteine, Chat, DAV) liest die Stufe nicht aus `isReadOnly`
 der Session: Stalwart (0.16 wie 1.0) schickt jedes weitere Konto mit `isReadOnly: false` und `isPersonal:
 false`, auch das einer Kollegin, die nur ein Adressbuch teilt. Mitglied einer Gruppe ist, bei

@@ -174,6 +174,7 @@ const useSending = (
     queryClient: form.queryClient,
     toast: form.toast,
     sendAccountId: route.accountId,
+    copyTo: route.copyTo,
     identity,
     drafts,
     sent,

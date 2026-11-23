@@ -1,13 +1,15 @@
 /**
  * "Rückgängig" and "Nicht senden": stops a mail the server still holds and opens it again as a
- * draft. Too late (already out) says so instead.
+ * draft. Too late (already out) says so instead. A copy made in the own Sent (`both`) goes too.
  */
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { useClient } from "@/auth/auth";
 import { useToast } from "@/components/ui/toast";
+import { useMe } from "@/directory/queries";
 import { isJmapError } from "@/jmap/client";
+import { removeSentCopies } from "@/jmap/sent-copy";
 import { type HeldMail, unsend } from "@/jmap/submissions";
 import { m } from "@/paraglide/messages";
 
@@ -16,6 +18,7 @@ export const useTakeBack = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const me = useMe();
   return useCallback(
     async (
       accountId: string,
@@ -25,6 +28,12 @@ export const useTakeBack = () => {
       try {
         await unsend(client, accountId, held, draftsId);
         void queryClient.invalidateQueries({ queryKey: [accountId] });
+        // Sent through a shared mailbox, a copy in the own Sent goes too (jmap/sent-copy.ts).
+        if (accountId !== me) {
+          const copy = { fromAccountId: accountId, emailId: held.emailId, accountId: me };
+          await removeSentCopies(client, copy).catch((error) => console.warn("Kopie", error));
+          void queryClient.invalidateQueries({ queryKey: [me] });
+        }
         toast.show(m.mail_unsent());
         await navigate({
           to: "/mail/$accountId/$mailboxId",
@@ -39,6 +48,6 @@ export const useTakeBack = () => {
         );
       }
     },
-    [client, navigate, toast, queryClient],
+    [client, navigate, toast, queryClient, me],
   );
 };

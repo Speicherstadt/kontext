@@ -3,6 +3,7 @@
  * Unlike mail, contacts and calendar this is not JMAP: the server works with its own Stalwart key.
  */
 
+import type { SentCopy } from "@/lib/sent-copy";
 import type { Category } from "../../server/categories/categories";
 import type {
   Company as CompanyData,
@@ -53,12 +54,15 @@ export type NewMailbox = {
   description: string;
   memberIds: string[];
   readerIds: string[];
+  /** „Gesendete Mails ablegen“ (lib/sent-copy.ts); the default when left out. */
+  sentCopy?: SentCopy;
 };
 export type MailboxChange = Partial<{
   description: string;
   aliases: string[];
   memberIds: string[];
   readerIds: string[];
+  sentCopy: SentCopy;
 }>;
 
 const send = async <T>(method: string, path: string, body?: unknown): Promise<T> => {

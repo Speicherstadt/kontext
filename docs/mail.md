@@ -171,7 +171,12 @@ IMAP und SMTP.
   „Jonas Weber (Weber Haustechnik)“ – die Auswahl sagt das schon vorher („erscheint als …“). Ein
   bereits gespeicherter Entwurf zieht beim Wechsel des Absenders mit um. „Rückgängig“ öffnet die
   Mail danach im gemeinsamen Postfach. Ist das Postfach nur zum Lesen geteilt, bleibt die Mail
-  wie bisher im eigenen Konto. [Mehr](architecture.md#gemeinsame-postfacher)
+  wie bisher im eigenen Konto. Die Firmenverwaltung stellt je Postfach ein, wo gesendete Mails
+  liegen ([Gesendete Mails ablegen](company.md)): mit *Im gemeinsamen Postfach und beim Absender*
+  kommt eine gelesene Kopie in den eigenen Gesendet-Ordner – auch beim Schreiben im gemeinsamen
+  Postfach selbst; „Rückgängig“ und „Senden abbrechen“ nehmen sie wieder heraus. Mit *Nur beim
+  Absender* geht die Mail aus dem eigenen Postfach über das eigene Konto (eigene Entwürfe und
+  Gesendet, Absendername ohne Postfach). [Mehr](architecture.md#gemeinsame-postfacher)
 - **Die Leiste unter der Mail:** links Anhängen und die Schalter (Lese- und Zustellbestätigung,
   Vertraulich senden, Unterschreiben), rechts Verwerfen, „Als Entwurf speichern“ und ganz rechts
   „Senden“ mit „Später senden“, wo der Blick nach dem Schreiben ankommt.

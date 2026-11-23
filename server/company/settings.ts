@@ -1,5 +1,6 @@
 /** The Firmenverwaltung's own settings in Kontext's SQLite (Stalwart has no place for them). */
 import { eq } from "drizzle-orm";
+import { type SentCopy, withSentCopy } from "../../src/lib/sent-copy";
 import type { VacationTemplate } from "../../src/lib/vacation-template";
 import type { Sealer } from "../crypto";
 import type { Db } from "../db";
@@ -25,6 +26,9 @@ export type CompanySettings = {
   /** Where „Als Phishing melden“ sends a mail (phishing-report.ts); empty while there is none. */
   phishingReport: () => Promise<string>;
   savePhishingReport: (address: string) => Promise<void>;
+  /** „Gesendete Mails ablegen“ per shared mailbox (sent-copies.ts); only those not the default. */
+  sentCopies: () => Promise<Record<string, SentCopy>>;
+  saveSentCopy: (accountId: string, copy: SentCopy) => Promise<void>;
   /** The assistant in the chat (assistant.ts): Claude API key and model; the key sealed at rest. */
   assistant: () => Promise<AssistantSetting | null>;
   /** null takes the assistant away. */
@@ -40,6 +44,7 @@ const IDLE_LOGOUT = "idleLogout";
 const VACATION_TEMPLATES = "vacationTemplates";
 const PHISHING_REPORT = "phishingReport";
 const ASSISTANT = "assistant";
+const SENT_COPIES = "sentCopies";
 
 export const createCompanySettings = (db: Db, sealer: Sealer): CompanySettings => {
   const read = async (key: string): Promise<string | null> => {
@@ -55,6 +60,11 @@ export const createCompanySettings = (db: Db, sealer: Sealer): CompanySettings =
       .insert(schema.companySetting)
       .values(row)
       .onConflictDoUpdate({ target: schema.companySetting.key, set: row });
+  };
+
+  const sentCopies = async (): Promise<Record<string, SentCopy>> => {
+    const value = await read(SENT_COPIES);
+    return value ? (JSON.parse(value) as Record<string, SentCopy>) : {};
   };
 
   return {
@@ -79,6 +89,9 @@ export const createCompanySettings = (db: Db, sealer: Sealer): CompanySettings =
     saveVacationTemplates: (templates) => write(VACATION_TEMPLATES, JSON.stringify(templates)),
     phishingReport: async () => (await read(PHISHING_REPORT)) ?? "",
     savePhishingReport: (address) => write(PHISHING_REPORT, address),
+    sentCopies,
+    saveSentCopy: async (accountId, copy) =>
+      write(SENT_COPIES, JSON.stringify(withSentCopy(await sentCopies(), accountId, copy))),
     assistant: async () => {
       const value = await read(ASSISTANT);
       return value ? (JSON.parse(await sealer.open(value)) as AssistantSetting) : null;
