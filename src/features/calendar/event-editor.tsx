@@ -45,7 +45,7 @@ import { AvailabilityPanel } from "./availability-panel";
 import { attendeeList } from "./availability-queries";
 import { useEventMutations } from "./mutations";
 import { PlaceField } from "./place-field";
-import { calendarLabel, calendarOf, useCalendarRefs, useMyAddresses } from "./queries";
+import { calendarOf, calendarOption, useCalendarRefs, useMyAddresses } from "./queries";
 import { ReminderFields } from "./reminder-fields";
 import { RepeatFields } from "./repeat-fields";
 import { useSplitSeries } from "./split-series";
@@ -251,10 +251,8 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
             aria-label={m.calendar_calendar()}
             value={target?.key ?? ""}
             onValueChange={setCalendarKey}
-            options={writable.map((calendar) => ({
-              value: calendar.key,
-              label: calendarLabel(calendar),
-            }))}
+            options={writable.map(calendarOption)}
+            showHint
           />
         </Label>
       ) : null}

@@ -240,7 +240,12 @@ export const RuleDialog = ({
               aria-label={m.rules_choose_folder()}
               value={rule.moveTo?.id ?? ""}
               onValueChange={chooseFolder}
-              options={folders.map((folder) => ({ value: folder.id, label: folder.label }))}
+              options={folders.map((folder) => ({
+                value: folder.id,
+                label: folder.name,
+                hint: folder.parent,
+              }))}
+              showHint
             />
           </Action>
           <Action

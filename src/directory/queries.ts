@@ -34,7 +34,7 @@ export const useMe = (): string => {
 };
 
 /** The company's people, to assign a task to. */
-export const usePeople = (): { id: string; name: string }[] => {
+export const usePeople = (): { id: string; name: string; email: string }[] => {
   const { data = [] } = usePrincipals();
   return (
     data
@@ -43,6 +43,7 @@ export const usePeople = (): { id: string; name: string }[] => {
       .map((principal) => ({
         id: principal.id,
         name: principal.description || principal.name || principal.email || "",
+        email: principal.email ?? "",
       }))
       .sort((a, b) => a.name.localeCompare(b.name, "de"))
   );

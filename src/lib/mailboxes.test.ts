@@ -4,6 +4,7 @@ import {
   canAssignIn,
   flattenTree,
   folderActions,
+  folderPaths,
   folderTree,
   mailboxName,
   mailboxPath,
@@ -76,6 +77,17 @@ describe("folderTree", () => {
 describe("mailboxPath", () => {
   it("joins the names from the top", () => {
     expect(mailboxPath(mailboxes.find((m) => m.id === "h")!, mailboxes)).toBe("Kunden / Hoffmann");
+  });
+});
+
+describe("folderPaths", () => {
+  it("gives sub-folders the path above them and top-level folders none", () => {
+    expect(folderPaths(flattenTree(folderTree(mailboxes))).map((p) => [p.name, p.parent])).toEqual([
+      ["Buchhaltung", undefined],
+      ["Kunden", undefined],
+      ["Hoffmann", "Kunden"],
+      ["Keller Elektro", "Kunden"],
+    ]);
   });
 });
 
