@@ -1,4 +1,5 @@
 /** "Wiederholen" in the event editor: how often, and when the series ends. */
+import { DateInput } from "@/components/ui/date-input";
 import { Input, Label } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { type Repeat, type RepeatEnd, type RepeatForm, repeatLabel } from "@/lib/recurrence";
@@ -57,10 +58,9 @@ export const RepeatFields = ({ value, onChange }: Props) => {
           {value.repeatEnd === "until" ? (
             <Label className="flex-1">
               {m.calendar_repeat_until()}
-              <Input
-                type="date"
+              <DateInput
                 value={value.repeatUntil}
-                onChange={(e) => set({ repeatUntil: e.target.value })}
+                onChange={(repeatUntil) => set({ repeatUntil })}
                 required
               />
             </Label>

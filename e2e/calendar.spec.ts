@@ -7,6 +7,7 @@ import {
   login,
   personalAccountId,
   showKeyboard,
+  shownDate,
   unique,
 } from "./helpers";
 
@@ -173,10 +174,10 @@ test.describe("Kalender", () => {
     await dialog.getByRole("button", { name: "Duplizieren" }).click();
     await expect(dialog.getByRole("heading", { name: "Termin duplizieren" })).toBeVisible();
     await expect(dialog.getByLabel("Titel")).toHaveValue(title);
-    await expect(dialog.getByLabel("Beginn Datum")).toHaveValue(tomorrow());
+    await expect(dialog.getByLabel("Beginn Datum")).toHaveValue(shownDate(tomorrow()));
     await dialog.getByLabel("Beginn Datum").fill(day(2));
     // The end moves along, so the copy is as long as the original.
-    await expect(dialog.getByLabel("Ende Datum")).toHaveValue(day(2));
+    await expect(dialog.getByLabel("Ende Datum")).toHaveValue(shownDate(day(2)));
     await expect(dialog.getByLabel("Ende Uhrzeit")).toHaveValue("15:30");
     await dialog.getByRole("button", { name: "Speichern" }).click();
     await expect(page.getByRole("status")).toHaveText("Einladungen werden verschickt");
