@@ -93,6 +93,8 @@ export const useHeldMails = (accountId: string) => {
       queryKey: [accountId, "held"],
       queryFn: () => heldMails(client, accountId),
       enabled: Boolean(accountId),
+      // While the server holds any: a mail past its time goes out, or is retried after a refusal.
+      refetchInterval: (query) => (query.state.data?.length ? 30_000 : false),
     }).data ?? []
   );
 };

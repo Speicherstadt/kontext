@@ -141,7 +141,9 @@ const Timing = ({ sendAt, snoozedUntil }: Pick<Row, "sendAt" | "snoozedUntil">) 
     {sendAt ? (
       <span className={cn(PILL, "bg-warn/10 text-warn")}>
         <CalendarClock size={12} aria-hidden="true" />
-        {m.mail_scheduled_at({ when: sendTimeLabel(new Date(sendAt)) })}
+        {Date.parse(sendAt) <= Date.now()
+          ? m.mail_delivery_on_its_way()
+          : m.mail_scheduled_at({ when: sendTimeLabel(new Date(sendAt)) })}
       </span>
     ) : null}
     {snoozedUntil ? (

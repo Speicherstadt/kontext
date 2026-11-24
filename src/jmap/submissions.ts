@@ -13,7 +13,39 @@ export type HeldMail = {
   emailId: string;
   sendAt: string;
   email: EmailSummary | undefined;
+  /** Why it has not gone out yet: the receiving server's last answer, while it is retried. */
+  delay: string | undefined;
 };
+
+/** RFC 8621 §7: per recipient, whether it got the mail, and the last SMTP reply. */
+type DeliveryStatus = Record<string, { delivered?: string; smtpReply?: string }>;
+
+/** Stalwart's reply for a recipient not tried yet (crates/email/src/submission/mod.rs). */
+const QUEUED_REPLY = "250 2.1.5 Queued";
+
+/**
+ * The reply of a recipient still queued after a try failed for now (a 4xx such as greylisting):
+ * Stalwart then puts the error in place of QUEUED_REPLY ("Code: 451, Enhanced code: 4.7.1,
+ * Message: …", crates/smtp/src/queue/submission.rs). Only the message part; none while each
+ * recipient is untried or done. Pure.
+ */
+export const delayReason = (status: DeliveryStatus | null | undefined): string | undefined => {
+  const reply = Object.values(status ?? {})
+    .filter(({ delivered }) => delivered === "queued")
+    .map(({ smtpReply }) => smtpReply?.trim() ?? "")
+    .find((text) => text !== "" && text !== QUEUED_REPLY);
+  return reply?.match(/Message:\s*(.+)$/s)?.[1]?.trim() ?? reply;
+};
+
+/**
+ * Where a held mail stands: still to go out at its time, out of its time and on its way, or
+ * turned away for now by the receiving server and retried. Pure.
+ */
+export const heldState = (
+  held: Pick<HeldMail, "sendAt" | "delay">,
+  now: Date,
+): "scheduled" | "sending" | "delayed" =>
+  Date.parse(held.sendAt) > now.getTime() ? "scheduled" : held.delay ? "delayed" : "sending";
 
 /** What the server still holds, the next first, with the mails themselves. */
 export const heldMails = async (client: JmapClient, accountId: string): Promise<HeldMail[]> => {
@@ -25,7 +57,7 @@ export const heldMails = async (client: JmapClient, accountId: string): Promise<
         {
           accountId,
           "#ids": { resultOf: "q", name: "EmailSubmission/query", path: "/ids" },
-          properties: ["emailId", "sendAt", "undoStatus"],
+          properties: ["emailId", "sendAt", "undoStatus", "deliveryStatus"],
         },
         "g",
       ],
@@ -45,14 +77,21 @@ export const heldMails = async (client: JmapClient, accountId: string): Promise<
     ((got![1].list as EmailSummary[]) ?? []).map((email) => [email.id, email]),
   );
   return (
-    (get![1].list as { id: string; emailId: string; sendAt: string; undoStatus: string }[]) ?? []
+    (get![1].list as {
+      id: string;
+      emailId: string;
+      sendAt: string;
+      undoStatus: string;
+      deliveryStatus?: DeliveryStatus | null;
+    }[]) ?? []
   )
     .filter((submission) => submission.undoStatus === "pending")
-    .map(({ id, emailId, sendAt }) => ({
+    .map(({ id, emailId, sendAt, deliveryStatus }) => ({
       submissionId: id,
       emailId,
       sendAt,
       email: emails.get(emailId),
+      delay: delayReason(deliveryStatus),
     }))
     .sort((a, b) => a.sendAt.localeCompare(b.sendAt));
 };
