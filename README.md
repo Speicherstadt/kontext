@@ -131,7 +131,7 @@ eintragen. Diese Schritte, DNS, Telefonie, Backups und Updates stehen in der
 gibt es die Seite [VPS einrichten](https://kontext.email/vps.html).
 
 Keinen eigenen Server oder keine eigene IT? Kontext gibt es gehostet oder über einen IT-Dienstleister
-aus dem [Partnerprogramm](https://speicherstadt.app/partner/).
+aus dem [Partnerprogramm](https://speicherstadt.org/partner/).
 
 ## FAQ
 
@@ -277,7 +277,7 @@ Releases: [Entwicklung](https://kontext.email/development.html).
 
 ## Mehr von uns
 
-Weitere Open-Source-Apps für deinen eigenen Server, etwa für Buchhaltung, Office-Dokumente, ein Dokumentenarchiv und mehr: **[speicherstadt.app](https://speicherstadt.app)**
+Weitere Open-Source-Apps für deinen eigenen Server, etwa für Buchhaltung, Office-Dokumente, ein Dokumentenarchiv und mehr: **[speicherstadt.org](https://speicherstadt.org)**
 
 ## Mitwirken
 
@@ -304,7 +304,7 @@ Request laufen muss, steht in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <sub>Lizenz: <a href="LICENSE">AGPL-3.0</a> · © Tristan Teufel und Mitwirkende<br>
 Wer eine veränderte Version weitergibt oder für andere betreibt, muss ihren Quellcode unter der AGPL anbieten.<br>
-Für IT-Dienstleister und Hoster: <a href="https://speicherstadt.app/partner/">Partnerprogramm</a>.<br>
+Für IT-Dienstleister und Hoster: <a href="https://speicherstadt.org/partner/">Partnerprogramm</a>.<br>
 Kontext ist keine Rechtsberatung: Datenschutz und Aufbewahrungspflichten setzt die Firma um, die Software unterstützt dabei.<br>
 Kontext steht in keiner Verbindung zu Stalwart Labs, AVM (FRITZ!Box), Snom, Google, Microsoft, Anthropic oder den Anbietern der übrigen hier genannten Produkte; die Namen sind Marken ihrer Inhaber.</sub>
 
