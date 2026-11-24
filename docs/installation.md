@@ -92,6 +92,37 @@ Image baut es deshalb selbst aus den Quellen von libpst
 CI vergleicht seine Ausgabe mit der von Debians `pst-utils`. Der Benutzer `bun` hat wie bisher die
 UID 1000, bestehende Volumes bleiben lesbar.
 
+### Sperrlisten { #sperrlisten }
+
+Stalwarts Spamfilter fragt bei jeder Mail per DNS Sperrlisten ab, vor allem Spamhaus: ob die IP
+des Absenders (ZEN) oder seine Domain und die Links in der Mail (DBL) als Spam bekannt sind.
+Spamhaus beantwortet keine Abfragen über die gemeinsamen Resolver der Hoster (netcup, Hetzner …)
+und über öffentliche wie 1.1.1.1 oder 8.8.8.8; es antwortet dort `127.255.255.254` („gesperrt“).
+Stalwart wertet das mit 0 Punkten (`RBL_SPAMHAUS_BLOCKED_OPENRESOLVER`) und filtert still ohne
+Spamhaus weiter.
+
+Deshalb läuft neben Stalwart ein eigener Resolver, **Unbound** (`unbound` in
+`deploy/compose.yaml`, `deploy/quadlet/unbound.container`): Er löst selbst auf, ohne den Resolver
+des Hosters, und fragt Spamhaus von der eigenen IP des Servers. Stalwart bekommt ihn als DNS
+(`dns:` bzw. `DNS=10.89.250.53`); er hat die feste Adresse `10.89.250.53` im Netz von Kontext und
+ist von außen nicht erreichbar. Gehärtet wie Stalwart; er braucht `NET_BIND_SERVICE` für Port 53
+sowie `SETUID` und `SETGID`, um danach als eigener Benutzer zu laufen. Sein Volume `unbound-data`
+hält nur den DNSSEC-Schlüssel der Root-Zone.
+
+Prüfen, ob Stalwart Antworten bekommt:
+
+```bash
+podman exec stalwart getent ahostsv4 2.0.0.127.zen.spamhaus.org   # Compose: docker compose -f deploy/compose.yaml exec stalwart getent …
+```
+
+Richtig sind `127.0.0.2`, `127.0.0.4` und `127.0.0.10` (die Testeinträge von Spamhaus);
+`127.255.255.254` heißt, die Abfrage geht noch über einen gesperrten Resolver.
+
+Für den Mailserver einer Firma mit üblicher Menge Mails ist die Abfrage kostenlos (Spamhaus:
+unter 100.000 SMTP-Verbindungen und 300.000 Abfragen am Tag, keine kommerzielle Nutzung der
+Listen selbst). Wer darüber liegt oder Mail als Dienst verkauft, braucht den Data Query Service
+(DQS) von Spamhaus mit eigenem Schlüssel.
+
 ## 3. Stalwart einrichten
 
 Stalwarts eigene Verwaltung lauscht nur auf dem Server selbst (`127.0.0.1:8080`), nie im
@@ -901,7 +932,7 @@ kein `schreibzeug`, ohne Anrufe kein `redis`, `livekit`, `livekit-sip`).
 
 ```bash
 docker compose -f compose.yaml up -d                                      # Compose
-systemctl start stalwart redis livekit livekit-sip kontext schreibzeug caddy   # Quadlet
+systemctl start unbound stalwart redis livekit livekit-sip kontext schreibzeug caddy   # Quadlet
 ```
 
 Danach in Kontext anmelden: Mails, Termine, Aufgaben und Chat sind wieder da. Ändern sich auf
@@ -937,7 +968,7 @@ docker compose -f deploy/compose.yaml pull && docker compose -f deploy/compose.y
   Mailserver nie von selbst. Die Version aus `.env.example` mit dem `KONTEXT_VERSION` derselben
   Kontext-Version heben, und vorher die Schritte machen, die das Changelog dafür nennt (wie den
   Scope bei [Stalwart 1.0.3](#stalwart-103) oder die Rollen bei [Stalwart 1.1.0](#stalwart-110)).
-- LiveKit, LiveKit SIP, Redis und Caddy stehen mit festen Versionen in `deploy/compose.yaml`;
+- Unbound, LiveKit, LiveKit SIP, Redis und Caddy stehen mit festen Versionen in `deploy/compose.yaml`;
   neue kommen mit `git pull`, und `pull` holt sie.
 - Hat sich `deploy/Caddyfile` geändert, Caddy neu laden:
   `docker compose -f deploy/compose.yaml restart caddy`.
@@ -1224,6 +1255,13 @@ Datei per `Volume=/opt/kontext/deploy/smime-roots.pem:/etc/kontext/smime-roots.p
 
 Die Logs: `docker compose -f deploy/compose.yaml logs <dienst>` (Compose) bzw.
 `podman logs <dienst>` (Quadlet), für die Sicherung `journalctl -u kontext-backup`.
+
+- **Offensichtlicher Spam landet im Posteingang:** in den Details der Mail die Spam-Bewertung
+  ansehen und prüfen, ob Stalwart die Sperrlisten erreicht
+  ([Sperrlisten](#sperrlisten)): `podman exec stalwart getent ahostsv4 2.0.0.127.zen.spamhaus.org`
+  muss `127.0.0.2` zeigen. Steht dort `127.255.255.254`, fragt Stalwart nicht über Unbound
+  (`DNS=` in `stalwart.container` bzw. `dns:` in `compose.yaml` fehlt, oder `unbound` läuft nicht).
+  Sonst „Als Spam markieren“: Der Filter lernt daraus.
 
 - **Niemand kann sich mehr anmelden, auch mit richtigem Passwort:** Stalwart hat Kontexts Adresse
   gesperrt. Kontext meldet alle von einer Adresse an; ohne den Eintrag **`10.89.250.0/24`** unter

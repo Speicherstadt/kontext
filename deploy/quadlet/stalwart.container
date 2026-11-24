@@ -1,11 +1,16 @@
 # Podman Quadlet: copy to /etc/containers/systemd/ and run `systemctl daemon-reload`.
 [Unit]
 Description=Stalwart mail server (Kontext)
+# Its DNS resolver, for the spam filter's block lists (unbound.container)
+Wants=unbound.service
+After=unbound.service
 
 [Container]
 Image=docker.io/stalwartlabs/stalwart:v1.1.1
 ContainerName=stalwart
 Network=kontext.network
+# DNS through Unbound (unbound.container), not the provider's resolver, which Spamhaus refuses
+DNS=10.89.250.53
 PublishPort=25:25
 PublishPort=465:465
 PublishPort=587:587

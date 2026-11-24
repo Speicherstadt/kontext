@@ -9,11 +9,41 @@
 name: kontext
 
 services:
+  # Stalwart's own DNS resolver (full recursion, DNSSEC). Spamhaus and other block lists refuse
+  # lookups from the hosting provider's shared resolvers and from public ones: they answer
+  # 127.255.255.254, which Stalwart's spam filter scores 0, so it would run without them and
+  # nobody would notice. Asked from the server's own address, they answer (docs/installation.md,
+  # Sperrlisten).
+  unbound:
+    image: docker.io/klutchell/unbound:1.26.1
+    restart: unless-stopped
+    # Fixed, so Stalwart can name it as its DNS server; not published on the host
+    networks:
+      default:
+        ipv4_address: 10.89.250.53
+    # Unbound updates the DNSSEC trust anchor (root.key) here; a named volume starts with the image's
+    volumes:
+      - unbound-data:/var/unbound
+    # Hardened like Stalwart; Unbound binds 53 as root, then drops to its own user
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE, SETUID, SETGID]
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "drill-hc", "@127.0.0.1", "cloudflare.com"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
   stalwart:
     # The version comes from deploy/.env like Kontext's, so `git pull` never changes the mail server
     # on its own; raise both together as the changelog says
     image: docker.io/stalwartlabs/stalwart:v${STALWART_VERSION:?STALWART_VERSION in deploy/.env setzen}
     restart: unless-stopped
+    depends_on: [unbound]
+    # DNS through Unbound above, not the provider's resolver, which Spamhaus refuses
+    dns: 10.89.250.53
     ports:
       - "25:25"
       - "465:465"
@@ -169,6 +199,7 @@ services:
       - caddy-config:/config
 
 volumes:
+  unbound-data:
   stalwart-config:
   stalwart-data:
   kontext-data:
