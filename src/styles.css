@@ -204,6 +204,12 @@
   padding-left: 12px;
   color: var(--muted);
 }
+/* A quoted mail brings its own blank lines (Outlook's `<p>&nbsp;</p>`, Apple Mail's
+   `<div><br></div>`) and set its paragraphs without a gap (MsoNormal's margin:0 from a <style>
+   block the sanitizer drops); our gap below each one would double every line break. */
+.editor-content .ProseMirror blockquote p {
+  margin: 0;
+}
 .editor-content .ProseMirror a {
   color: var(--accent);
   text-decoration: underline;
