@@ -8,7 +8,7 @@ import { sharedSenderName } from "@/lib/compose";
 import { withSavedBlob } from "@/lib/draft-blobs";
 import { formatSize } from "@/lib/format";
 import { fitsEncrypted, HELD_LIMIT } from "@/lib/held-files";
-import { htmlToText } from "@/lib/html";
+import { htmlToText, unspacedQuotes } from "@/lib/html";
 import { draftSwap } from "@/lib/send-route";
 import { m } from "@/paraglide/messages";
 import type { ComposePrefill } from "./composer";
@@ -33,7 +33,9 @@ export type OutgoingInput = {
 /** The mail from the form; a draft keeps its pictures as they are (composer-images.tsx). */
 export const outgoingMail = (input: OutgoingInput, { draft = false } = {}) => {
   const { state, identity } = input;
-  const { html, images } = input.pics.outgoing(input.editor?.getHTML() ?? "", { draft });
+  const { html, images } = input.pics.outgoing(unspacedQuotes(input.editor?.getHTML() ?? ""), {
+    draft,
+  });
   return {
     accountId: input.sendAccountId,
     identity:

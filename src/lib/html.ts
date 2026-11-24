@@ -279,3 +279,15 @@ export const htmlToText = (html: string): string => {
 /** The original below a reply, as an HTML quote. */
 export const quoteHtml = (header: string, originalHtml: string): string =>
   `<p></p><p>${escapeHtml(header)}</p><blockquote>${originalHtml}</blockquote>`;
+
+/**
+ * The quote's paragraphs go out without a gap of their own (`margin:0`), as the composer shows
+ * them: the quoted mail brings its blank lines along, and the reader's default gap below each
+ * paragraph would double every line break.
+ */
+export const unspacedQuotes = (html: string): string => {
+  if (typeof DOMParser === "undefined" || !html.includes("<blockquote")) return html;
+  const parsed = new DOMParser().parseFromString(html, "text/html");
+  for (const p of parsed.body.querySelectorAll<HTMLElement>("blockquote p")) p.style.margin = "0";
+  return parsed.body.innerHTML;
+};

@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { escapeHtml, htmlToText, mailDocument, sanitizeMailHtml, textToHtml } from "./html";
+import {
+  escapeHtml,
+  htmlToText,
+  mailDocument,
+  sanitizeMailHtml,
+  textToHtml,
+  unspacedQuotes,
+} from "./html";
 import { parseColor } from "./mail-colors";
 
 const clean = (html: string, allowRemote = false) =>
@@ -294,5 +301,17 @@ describe("text and HTML", () => {
     const created = vi.spyOn(document, "createElement");
     expect(htmlToText('<img src="x" onerror="alert(1)">Text')).toBe("Text");
     expect(created).not.toHaveBeenCalled();
+  });
+});
+
+describe("unspacedQuotes", () => {
+  it("sets the quote's paragraphs without a gap and leaves the own text alone", () => {
+    expect(
+      unspacedQuotes(
+        "<p>Hallo</p><blockquote><p>Zitat</p><blockquote><p>Alt</p></blockquote></blockquote>",
+      ),
+    ).toBe(
+      '<p>Hallo</p><blockquote><p style="margin: 0px;">Zitat</p><blockquote><p style="margin: 0px;">Alt</p></blockquote></blockquote>',
+    );
   });
 });
