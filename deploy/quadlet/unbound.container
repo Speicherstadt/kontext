@@ -1,0 +1,29 @@
+# Podman Quadlet: copy to /etc/containers/systemd/ and run `systemctl daemon-reload`.
+# Stalwart's own DNS resolver (full recursion, DNSSEC). Spamhaus and other block lists refuse
+# lookups from the hosting provider's shared resolvers and from public ones (1.1.1.1, 8.8.8.8):
+# they answer 127.255.255.254, which Stalwart's spam filter scores 0 (RBL_SPAMHAUS_BLOCKED_OPENRESOLVER,
+# spam-filter-rules.json), so the filter would run without them and nobody would notice.
+# Asked from the server's own address, they answer (docs/installation.md, Sperrlisten).
+[Unit]
+Description=Unbound DNS resolver for Stalwart (Kontext)
+
+[Container]
+Image=docker.io/klutchell/unbound:1.26.1
+ContainerName=unbound
+Network=kontext.network
+# Fixed, so stalwart.container can name it as its DNS server; not published on the host
+IP=10.89.250.53
+# Unbound updates the DNSSEC trust anchor (root.key) here; a named volume starts with the image's
+Volume=unbound-data:/var/unbound
+# Hardened like Stalwart; Unbound binds 53 as root, then drops to its own user
+ReadOnly=true
+DropCapability=ALL
+AddCapability=CAP_NET_BIND_SERVICE CAP_SETUID CAP_SETGID
+NoNewPrivileges=true
+HealthCmd=["drill-hc", "@127.0.0.1", "cloudflare.com"]
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

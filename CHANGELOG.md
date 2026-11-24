@@ -7,6 +7,17 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
 
 ## Unreleased
 
+- Deploy: Stalwart gets its own DNS resolver, Unbound (`unbound` in `deploy/compose.yaml`,
+  `deploy/quadlet/unbound.container`, `docker.io/klutchell/unbound:1.26.1`). Spamhaus refuses
+  lookups through the hosting provider's shared resolvers and public ones and answers
+  `127.255.255.254`, which Stalwart's spam filter scores 0, so it ran without Spamhaus ZEN and DBL
+  and nothing said so. **Upgrade** (Compose): `git pull`, then `docker compose -f
+  deploy/compose.yaml up -d`. **Upgrade** (Quadlet): copy `deploy/quadlet/unbound.container` to
+  `/etc/containers/systemd/`, add the `Wants=`, `After=` and `DNS=` lines of
+  `deploy/quadlet/stalwart.container` to the copy, `systemctl daemon-reload`, `systemctl start
+  unbound`, `systemctl restart stalwart`. Check: `podman exec stalwart getent ahostsv4
+  2.0.0.127.zen.spamhaus.org` shows `127.0.0.2`, not `127.255.255.254` (installation guide,
+  "Sperrlisten").
 - README, roadmap and documentation are German only: `README.en.md`, the English roadmap and the
   English pages of kontext.email are gone; the old `kontext.email/en/…` addresses redirect to the
   German page. The app itself stays in German and English.

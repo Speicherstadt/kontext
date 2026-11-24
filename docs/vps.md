@@ -292,7 +292,7 @@ Datei):
 
 ```bash
 for i in $(grep -h '^Image=' *.container | cut -d= -f2); do podman pull $i; done
-systemctl start stalwart redis livekit livekit-sip kontext schreibzeug caddy
+systemctl start unbound stalwart redis livekit livekit-sip kontext schreibzeug caddy
 podman ps
 ```
 
@@ -553,12 +553,14 @@ echo QUIT | openssl s_client -starttls smtp -connect mail.firma.de:25 -verify_re
     VPS-Anbieter vergeben IP-Adressen neu; die neue kann von einem früheren Mieter auf einer
     Sperrliste stehen (beim ersten Server: Spamhaus CSS). GMX, WEB.DE, T-Online und viele
     Firmen-Server lehnen Mails von dort ab, Gmail sortiert sie in den Spam. Vor der Umstellung
-    prüfen (über den Resolver des Anbieters; öffentliche wie 1.1.1.1 beantwortet Spamhaus nicht):
+    prüfen – über Stalwart, das über den eigenen Resolver fragt ([Sperrlisten](installation.md#sperrlisten));
+    der Resolver des Anbieters und öffentliche wie 1.1.1.1 bekommen von Spamhaus nur
+    `127.255.255.254` („gesperrt“):
 
     ```bash
     R=10.113.0.203   # die IP rückwärts, für 203.0.113.10
     for bl in zen.spamhaus.org b.barracudacentral.org bl.spamcop.net bl.mailspike.net; do
-      echo "$bl: $(dig +short $R.$bl | head -1)"; done
+      echo "$bl: $(podman exec stalwart getent ahostsv4 $R.$bl | head -1)"; done
     ```
 
     Leer heißt nicht gelistet. Bei Spamhaus auf *check.spamhaus.org* die IP prüfen und die
