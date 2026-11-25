@@ -10,6 +10,7 @@
 **Mail, Kalender, Chat, Dokumente und Telefon für dein Team – auf deinem eigenen Server, Open Source**<br>
 Ohne Kosten pro Benutzer. Made in Europe.
 
+![Status: Beta](https://img.shields.io/badge/Status-Beta-orange)
 [![CI](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml/badge.svg)](https://github.com/Speicherstadt/kontext/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Speicherstadt/kontext?logo=github&label=release)](https://github.com/Speicherstadt/kontext/releases/latest)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
@@ -27,6 +28,10 @@ Ohne Kosten pro Benutzer. Made in Europe.
 🖱️ **[Demo ausprobieren](https://kontext.email/demo/)** – im Browser, ohne Installation
 
 </div>
+
+> [!WARNING]
+> **Beta:** Kontext wird noch stark weiterentwickelt. Vor jedem Update ein Backup machen
+> ([Backups](https://kontext.email/installation.html#5-backups)).
 
 ## Warum Kontext?
 
