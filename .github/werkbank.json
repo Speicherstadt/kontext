@@ -1,0 +1,13 @@
+{
+  "$kommentar": "Einstellungen für die Werkbank (https://github.com/Speicherstadt/werkbank); Standards in werkzeug/konfiguration.ts",
+  "board": { "owner": "Speicherstadt", "nummer": 0 },
+  "anleitung": "https://kontext.email/mitwirken.html#wenn-eine-pruefung-anschlaegt",
+  "uebernehmen": "https://kontext.email/mitwirken.html#etwas-uebernehmen",
+  "konventionen": "AGENTS.md, Arbeitsweise",
+  "code": ["^(src|server)/.*\\.tsx?$"],
+  "funktionen": ["^(src|server|dev)/.*\\.tsx?$"],
+  "heikel": [
+    "^server/(auth|crypto|csrf|secure|smime|pgp|session-info|sso|oidc|access|account-rights)"
+  ],
+  "grosseDateien": ".checks/large-files.txt"
+}
