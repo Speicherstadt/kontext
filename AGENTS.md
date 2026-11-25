@@ -46,8 +46,7 @@ Verzeichnis klonen und die Quelldatei in Kommentaren und Commit-Nachrichten nenn
 - Eine Abhängigkeit hinzufügen, ohne zuerst eigenen Code zu versuchen und den Grund je Paket unter
   „## Neue Abhängigkeiten“ im Pull Request zu nennen.
 - Befehle als root (`sudo`, `pkexec`) ausführen oder umgehen; die führt die Nutzerin oder der Nutzer aus. Laufende
-  Prozesse von ihnen stoppen; für Tests andere Ports nehmen (Dev: Stalwart 18080, Server 18090, Vite 5173; E2E: 28080,
-  28090, 5174).
+  Prozesse von ihnen stoppen; für Tests andere Ports nehmen (Skill `checks`).
 - Dem Browser mehr als ein httpOnly-Cookie geben: Den Token von Stalwart hält nur der Server.
 
 ## Bei jeder Änderung
