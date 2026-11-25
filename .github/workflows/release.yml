@@ -82,3 +82,15 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -am "deploy: images of v$version"
           git push origin HEAD:main
+
+  # Eine fertige Version schließt die Issues, die seit der vorigen mit `Umgesetzt #…` gemergt wurden (Werkbank)
+  issues-schliessen:
+    needs: docker
+    if: ${{ !cancelled() && needs.docker.result == 'success' }}
+    uses: Speicherstadt/werkbank/.github/workflows/issues-schliessen.yml@main
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    with:
+      tag: ${{ github.ref_name }}
