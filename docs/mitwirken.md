@@ -31,7 +31,7 @@ Wer mitbauen will, sucht sich eine Aufgabe im [Board](https://github.com/orgs/Sp
 
 ## Branches, Titel und Commits { #branches }
 
-- **Branch:** Wer Schreibrecht hat, legt den Branch im Repository an, alle anderen in ihrem Fork. Direkt auf `main` wird nicht gepusht, außer zur Reparatur eines roten `main` ([Wer mergt was](#wer-mergt-was)). Vor jedem Push prüfen, ob der Pull Request des Branches noch offen ist; ist er gemergt, neu von `origin/main`.
+- **Branch:** Wer Schreibrecht hat, legt den Branch im Repository an, alle anderen in ihrem Fork. Direkt auf `main` wird nicht gepusht, außer zur Reparatur eines roten `main` ([Wer mergt was](#wer-mergt-was)). Vor jedem Push prüfen, ob der Pull Request des Branches noch offen ist; ist er gemergt, neu von `origin/main`. Sonst vor dem Push `git fetch origin main` und, wenn nötig, auf `origin/main` rebasen.
 - **Entwurf:** Ein Pull Request bleibt Entwurf, solange noch an ihm gearbeitet wird. Commits sammeln und gemeinsam pushen; die Runner teilt sich die ganze Organisation.
 - **Titel:** `Bereich: was sich ändert (#Issue)`, etwa „Export: PDF mit Lesezeichen (#104)“; die Nummer nur, falls es ein Issue gibt, jede aus `Umgesetzt #…` gehört hinein. Der Bereich ist ein bis drei Wörter, groß geschrieben, ohne Punkt am Ende. Pull Requests werden per **Squash** gemergt; der Titel wird der Commit auf `main`.
 - **Beschreibung:** Beim Squash wird sie die Nachricht des Commits auf `main` (Einstellung des Repositorys: „Default to pull request title and description“). Sie passt deshalb bis zum Merge zum Stand: Ändert ein Push, was der Pull Request tut oder wie er geprüft wurde, ändert sie sich mit. Sie beschreibt das Ergebnis, nicht den Weg.
