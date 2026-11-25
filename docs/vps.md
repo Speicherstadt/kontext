@@ -553,9 +553,9 @@ echo QUIT | openssl s_client -starttls smtp -connect mail.firma.de:25 -verify_re
     VPS-Anbieter vergeben IP-Adressen neu; die neue kann von einem früheren Mieter auf einer
     Sperrliste stehen (beim ersten Server: Spamhaus CSS). GMX, WEB.DE, T-Online und viele
     Firmen-Server lehnen Mails von dort ab, Gmail sortiert sie in den Spam. Vor der Umstellung
-    prüfen – über Stalwart, das über den eigenen Resolver fragt ([Sperrlisten](installation.md#sperrlisten));
-    der Resolver des Anbieters und öffentliche wie 1.1.1.1 bekommen von Spamhaus nur
-    `127.255.255.254` („gesperrt“):
+    prüfen – über Stalwart, das über den eigenen Resolver fragt ([Sperrlisten](installation.md#sperrlisten)).
+    Öffentliche Resolver wie 1.1.1.1 und die von netcup bekommen von Spamhaus nur
+    `127.255.255.254` („gesperrt“); das ist kein Eintrag der eigenen IP:
 
     ```bash
     R=10.113.0.203   # die IP rückwärts, für 203.0.113.10

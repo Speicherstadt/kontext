@@ -96,8 +96,9 @@ UID 1000, bestehende Volumes bleiben lesbar.
 
 Stalwarts Spamfilter fragt bei jeder Mail per DNS Sperrlisten ab, vor allem Spamhaus: ob die IP
 des Absenders (ZEN) oder seine Domain und die Links in der Mail (DBL) als Spam bekannt sind.
-Spamhaus beantwortet keine Abfragen über die gemeinsamen Resolver der Hoster (netcup, Hetzner …)
-und über öffentliche wie 1.1.1.1 oder 8.8.8.8; es antwortet dort `127.255.255.254` („gesperrt“).
+Spamhaus nimmt keine Abfragen über öffentliche Resolver (Google, Cloudflare, Quad9 …) und aus
+großen geteilten Hosting-Umgebungen an. Über einen öffentlichen Resolver antwortet es
+`127.255.255.254` („gesperrt“), ebenso über die von netcup (geprüft im November 2026).
 Stalwart wertet das mit 0 Punkten (`RBL_SPAMHAUS_BLOCKED_OPENRESOLVER`) und filtert still ohne
 Spamhaus weiter.
 
@@ -118,10 +119,24 @@ podman exec stalwart getent ahostsv4 2.0.0.127.zen.spamhaus.org   # Compose: doc
 Richtig sind `127.0.0.2`, `127.0.0.4` und `127.0.0.10` (die Testeinträge von Spamhaus);
 `127.255.255.254` heißt, die Abfrage geht noch über einen gesperrten Resolver.
 
-Für den Mailserver einer Firma mit üblicher Menge Mails ist die Abfrage kostenlos (Spamhaus:
-unter 100.000 SMTP-Verbindungen und 300.000 Abfragen am Tag, keine kommerzielle Nutzung der
-Listen selbst). Wer darüber liegt oder Mail als Dienst verkauft, braucht den Data Query Service
-(DQS) von Spamhaus mit eigenem Schlüssel.
+`127.255.255.255` heißt zu viele Abfragen, `127.255.255.252` ein Tippfehler im Namen der Liste.
+
+Der eigene Resolver allein reicht nicht: Spamhaus verlangt, dass sich die abfragende IP zuordnen
+lässt. Der Reverse-DNS des Servers muss also auf den eigenen Mailserver zeigen
+(`mail.firma.de`), nicht auf einen allgemeinen Namen des Hosters. Für den Mailversand ist er
+ohnehin nötig ([VPS einrichten, Schritt 5](vps.md#5-mail-sperre-aufheben)).
+
+**Nutzungsbedingungen.** Die kostenlosen Abfragen sind für nichtkommerzielle Nutzung durch kleine
+und mittlere Organisationen mit entsprechend kleiner Menge gedacht; eine Zahl nennt Spamhaus dafür
+nicht, und einen Anspruch darauf gibt es nicht. Internetanbieter, kommerzielle Spamfilter-Dienste
+und Netze mit viel Mail brauchen ein Abonnement
+([Fair Use Policy](https://www.spamhaus.org/blocklists/dnsbl-fair-use-policy/),
+[FAQ](https://www.spamhaus.org/faqs/dnsbl-usage/)). Der eigene
+Mailserver einer Firma und der Betrieb von Kontext für Kunden kommen in den Bedingungen nicht
+ausdrücklich vor; im Zweifel bei Spamhaus nachfragen. Der kostenlose Zugang mit eigenem Schlüssel (*Blocklists via DNS Query*,
+früher Data Query Service) ist keine Lösung für kommerzielle Nutzung: Er ist nur für kleine
+nichtkommerzielle Organisationen und Privatleute, bis 100.000 Abfragen am Tag
+([Bedingungen](https://www.spamhaus.com/terms-of-use-fair-use-policy-for-free-data-query-service/)).
 
 ## 3. Stalwart einrichten
 
