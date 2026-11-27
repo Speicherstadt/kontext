@@ -2083,6 +2083,14 @@ einschalten, ohne dass Kalender unter „Geteilt mit mir“ auftauchen.
   den sichtbaren Stundenbereich von Tag und Woche daraus ab. Fehlen der Standardrolle die Rechte
   `sysCalendarSettingsGet` / `sysCalendarSettingsUpdate` (Server vor 1.2), zeigt die Karte einen
   Hinweis auf `STALWART_UPDATE_ROLE_PERMISSIONS=true`.
+- **Räume und Geräte** (`server/company/resources.ts`, `src/features/calendar/resource-field.tsx`):
+  Stalwart 1.2 führt sie als `x:Account` mit `@type: "Resource"` (`kind: "room" | "equipment"`,
+  `booking: Automatic | Manual`, `Duration` in JMAP als Millisekunden). `Principal/get` liefert
+  Räume als `type: "location"` und Geräte als `type: "resource"` (`crates/jmap/src/principal/get.rs`);
+  `Principal/getAvailability` funktioniert direkt für sie (`principal/availability.rs`). Im Termin
+  werden sie nach RFC 8984 §4.4.6 mit `kind: "location"` bzw. `"resource"` eingetragen; Stalwart
+  beantwortet Einladungen per iTIP automatisch, und Verwalter (`delegateIds`) sehen den Kalender
+  der Ressource in ihrer JMAP-Session.
 - **Ansicht:** am Desktop eine Zeile pro Teilnehmer mit Balken über den Tag, die gewählte Zeit
   umrahmt; am Handy der Status pro Teilnehmer und ein Zeitplan mit der Zeit nach unten.
 

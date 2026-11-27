@@ -31,6 +31,10 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
   HTTP, ActiveSync, Autodiscover) in Settings → Company → Email security; `deploy/Caddyfile`
   forwards the paths to Stalwart, and Settings → Sync shows setup instructions for Outlook,
   iPhone/iPad, and Android when enabled.
+- Rooms and equipment (`x:Account` with `@type: "Resource"`): company admins can create and manage
+  meeting rooms, vehicles, and equipment with capacity, location, delegates, and automatic or
+  manual booking rules in Settings → Company → Rooms and equipment. Appointments offer a separate
+  "Room or equipment" field with availability lookup and automatic double-booking rejection.
 
 - Deploy: Stalwart gets its own DNS resolver, Unbound (`unbound` in `deploy/compose.yaml`,
   `deploy/quadlet/unbound.container`, `docker.io/klutchell/unbound:1.26.1`). Spamhaus refuses

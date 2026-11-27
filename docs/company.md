@@ -21,6 +21,10 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   bis wann sie gilt und für welche Domain; ab 90 % belegt oder 30 Tage vor dem Ende warnt sie.
 - **Gemeinsame Postfächer** mit Rechten je Person: kein Zugriff, nur lesen, lesen und senden;
   eigene Regeln je Postfach.
+- **Räume und Geräte** (*Einstellungen → Firma → Räume und Geräte*): Besprechungsräume,
+  Firmenwagen oder Geräte als eigene Ressourcenkonten (`x:Account` mit `@type: "Resource"`) mit
+  Art (Raum oder Gerät), Ort, Plätzen, Verwaltern und Buchungsregel – automatisch (optional mit
+  Doppelbuchungen, Serienterminen, externen Einladungen, Vorlauf und Höchstdauer) oder von Hand.
 - **Gesendete Mails ablegen** je gemeinsamem Postfach (im Dialog des Postfachs): *Nur im
   gemeinsamen Postfach* (Standard) – Entwurf und gesendete Mail liegen in dessen Ordnern, auch wenn
   jemand aus dem eigenen Postfach als diese Adresse schreibt; *Im gemeinsamen Postfach und beim

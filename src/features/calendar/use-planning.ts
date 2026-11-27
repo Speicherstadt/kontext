@@ -22,7 +22,9 @@ export type Editing = Slot & { invited: Set<string> };
 
 /** `editing` sits in the calendars it was sent to and must not clash with itself. */
 export const usePlanning = (form: EventForm, editing: Editing | null) => {
-  const emails = attendeeList(form.attendees);
+  const emails = [
+    ...new Set([...attendeeList(form.attendees), ...attendeeList(form.resources ?? "")]),
+  ];
   const slot = formSlot(form);
   const [day, setDay] = useState(form.date);
   const [followed, setFollowed] = useState(form.date);

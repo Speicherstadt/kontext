@@ -43,6 +43,10 @@ Kontext steht, steht auch am iPhone, unter Android (DAVx⁵) und in Thunderbird.
 
 - **Einladungen** mit Zusage und Absage; die Glocke zeigt, was noch auf Antwort wartet, und die
   Termine des Tages.
+- **Räume und Geräte buchen:** Hat die Firmenverwaltung Räume oder Geräte angelegt, erscheint im
+  Termin das Feld „Raum oder Gerät“. Die Verfügbarkeit zeigt direkt, wann der Raum frei ist;
+  Stalwart sagt automatisch zu oder lehnt eine Doppelbuchung ab, und die Antwort steht wie bei
+  Personen am Termin. Verwalter sehen die Kalender ihrer Räume direkt in der Kalenderliste.
 - **Erinnerung je Termin:** von „Zu Beginn“ bis „1 Woche vorher“, ganztägige Termine morgens am
   Tag oder an Tagen davor; als **Hinweis** auf den Geräten oder als **Mail**. Beides kommt auch,
   wenn Kontext zu ist: die Mail verschickt Stalwart, den Hinweis bringt der Kontext-Server als

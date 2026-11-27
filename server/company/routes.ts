@@ -22,6 +22,7 @@ import { readMailboxMembers } from "./mailbox-members";
 import { mailboxRoutes } from "./mailboxes";
 import { migrationRoutes } from "./migration-routes";
 import { phishingReportRoutes, readPhishingReport } from "./phishing-report";
+import { resourceRoutes } from "./resources";
 import { searchIndexStatus } from "./search-index";
 import { checkDomain, httpsCheck } from "./security";
 import { readSentCopies } from "./sent-copies";
@@ -188,6 +189,7 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
   if (deps.exchange) {
     app.route("/exchange", exchangeRoutes(deps.exchange));
   }
+  if (deps.resources) app.route("/resources", resourceRoutes(deps.resources));
   if (deps.spamAi) app.route("/spam-ai", spamAiRoutes(deps.spamAi, deps));
   if (deps.backup) app.route("/backup", backupRoutes(deps.backup));
   if (deps.serverHealth) {

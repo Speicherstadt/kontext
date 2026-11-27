@@ -37,13 +37,20 @@ vi.mock("@/contacts-core/use-suggestions", () => ({
 }));
 const hint = vi.hoisted(() => ({ inside: null as string[] | null }));
 vi.mock("@/mail-core/external-hint", () => ({ useInsideDomains: () => hint.inside }));
-vi.mock("./availability-panel", () => ({ AvailabilityPanel: () => null }));
+const captured = vi.hoisted(() => ({ editing: null as { invited: Set<string> } | null }));
+vi.mock("./availability-panel", () => ({
+  AvailabilityPanel: (props: { editing: { invited: Set<string> } | null }) => {
+    captured.editing = props.editing;
+    return null;
+  },
+}));
 const changeFollowing = vi.fn(async () => {});
 const updateEvent = vi.fn(async () => {});
 vi.mock("./split-series", () => ({
   useSplitSeries: () => ({ changeFollowing, endBeforeDate: vi.fn(), isPending: false }),
 }));
 vi.mock("./place-queries", () => ({ usePlaceSuggestions: () => [] }));
+vi.mock("./resource-field", () => ({ ResourceField: () => null, useResourceKinds: () => ({}) }));
 const refs = vi.hoisted(() => ({ calendars: [] as unknown[] }));
 const createEvent = vi.fn(async (_input: { event: Record<string, unknown> }) => {});
 vi.mock("./queries", () => ({
@@ -443,5 +450,33 @@ describe("EventEditor organizer of a shared mailbox's appointment", () => {
       "mailto:jonas@weber.test",
       "mailto:kunde@example.test",
     ]);
+  });
+
+  it("schließt gebuchte Räume beim Bearbeiten in editing.invited ein, damit sie nicht mit sich selbst kollidieren", () => {
+    captured.editing = null;
+    const event = {
+      id: "e-room",
+      accountId: "jonas",
+      calendarIds: { "1": true },
+      title: "Besprechung",
+      start: "2026-11-02T09:00:00",
+      timeZone: "Europe/Berlin",
+      duration: "PT1H",
+      organizerCalendarAddress: "mailto:jonas@weber.test",
+      participants: {
+        organizer: {
+          calendarAddress: "mailto:jonas@weber.test",
+          roles: { owner: true, attendee: true },
+        },
+        r0: {
+          calendarAddress: "mailto:raum1@weber.test",
+          kind: "location" as const,
+          roles: { attendee: true },
+        },
+      },
+    };
+    render(<EventEditor event={event} onDone={vi.fn()} onCancel={vi.fn()} />);
+    const editing = captured.editing as { invited: Set<string> } | null;
+    expect(editing?.invited.has("raum1@weber.test")).toBe(true);
   });
 });

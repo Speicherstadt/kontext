@@ -10,6 +10,8 @@ export type Participant = {
   name?: string;
   email?: string;
   calendarAddress?: string;
+  /** RFC 8984 §4.4.6: "individual", "group", "location" (Raum) oder "resource" (Gerät). */
+  kind?: "individual" | "group" | "location" | "resource";
   roles?: Record<string, boolean>;
   participationStatus?: "needs-action" | "accepted" | "declined" | "tentative" | "delegated";
   expectReply?: boolean;

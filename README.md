@@ -61,7 +61,7 @@ Kurz je Bereich; die Details stehen auf der verlinkten Seite der [Dokumentation]
 | Bereich | Was Kontext kann |
 |---|---|
 | ✉️ [Mail](https://kontext.email/mail.html) | Gemeinsame Postfächer wie info@, Mails zuweisen, Vertretung, Regeln und Kategorien, Suche auch in Anhängen, maskierte Adressen |
-| 📅 [Kalender](https://kontext.email/calendar-contacts.html) | Team-Kalender, Einladungen mit einem Klick beantworten, „Wer hat Zeit?“, Videobesprechung pro Termin |
+| 📅 [Kalender](https://kontext.email/calendar-contacts.html) | Team-Kalender, Einladungen mit einem Klick beantworten, „Wer hat Zeit?“, Räume und Geräte buchen, Videobesprechung pro Termin |
 | 👥 [Kontakte](https://kontext.email/calendar-contacts.html#kontakte) | Der Kunde auf einen Blick: letzte Mails, nächste Termine, offene Aufgaben und Anrufe |
 | ✅ [Aufgaben](https://kontext.email/tasks.html) | Liste oder Kanban-Board pro Postfach, aus Mail, Chat, Termin oder verpasstem Anruf |
 | 💬 [Team-Chat & Video](https://kontext.email/chat.html) | Kanäle und Direktnachrichten, Mails als Karten, Videocalls und Bildschirm teilen auf dem eigenen Server |
@@ -69,7 +69,7 @@ Kurz je Bereich; die Details stehen auf der verlinkten Seite der [Dokumentation]
 | 🔐 [Verschlüsselung](https://kontext.email/encryption.html) | OpenPGP und S/MIME, vertraulich senden an jeden, verschlüsselter Speicher und Backups |
 | 📄 [Dokumente](https://kontext.email/documents.html) | Word, Excel, PowerPoint und PDF im Browser mit [Schreibzeug](https://github.com/Speicherstadt/schreibzeug) |
 | 🤖 [KI-Agenten (MCP)](https://kontext.email/agents.html) | Claude und andere Agenten schlagen mit deinen Rechten nach und schreiben Entwürfe |
-| 🏢 [Firmenverwaltung](https://kontext.email/company.html) | Mitarbeiter, Postfächer und Rechte ohne IT-Kenntnisse, Firmen-Signatur, Umzug von Microsoft 365 und Gmail |
+| 🏢 [Firmenverwaltung](https://kontext.email/company.html) | Mitarbeiter, Postfächer, Räume und Geräte sowie Rechte ohne IT-Kenntnisse, Firmen-Signatur, Umzug von Microsoft 365 und Gmail |
 | 📱 [Auf jedem Gerät](https://kontext.email/app.html) | App ohne App Store, Push-Benachrichtigungen, Passkeys, hell und dunkel, Version unter „Über Kontext“ |
 | ♿ [Barrierefreiheit](https://kontext.email/accessibility.html) | Alles per Tastatur, bei jedem Push gegen WCAG 2.2 AA geprüft |
 
