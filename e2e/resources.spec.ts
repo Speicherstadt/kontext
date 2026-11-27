@@ -50,22 +50,24 @@ test.describe("Räume und Geräte", () => {
       await expect(secondDialog).toBeHidden();
 
       await page.goto(`/calendar?view=agenda&date=${day}`);
-      await page.getByRole("button", { name: new RegExp(secondTitle) }).click();
-      await expect(page.getByRole("dialog").getByText(/Abgelehnt/i)).toBeVisible({
+      await page.getByRole("link", { name: new RegExp(secondTitle) }).click();
+      await expect(page.getByRole("dialog").getByText(/abgesagt/i)).toBeVisible({
         timeout: 15_000,
       });
     } finally {
-      await page.goto("/settings?section=resources");
-      const entry = page.getByRole("button", { name: new RegExp(roomName) });
-      if (await entry.isVisible()) {
-        await entry.click();
-        const editDialog = page.getByRole("dialog");
-        await editDialog.getByRole("button", { name: "Löschen" }).click();
-        await editDialog
-          .getByRole("button", { name: /Ja|Löschen/i })
-          .last()
-          .click();
-        await expect(entry).toHaveCount(0);
+      if (!page.isClosed()) {
+        await page.goto("/settings?section=resources");
+        const entry = page.getByRole("button", { name: new RegExp(roomName) });
+        if (await entry.isVisible()) {
+          await entry.click();
+          const editDialog = page.getByRole("dialog");
+          await editDialog.getByRole("button", { name: "Löschen" }).click();
+          await editDialog
+            .getByRole("button", { name: /Ja|Löschen/i })
+            .last()
+            .click();
+          await expect(entry).toHaveCount(0);
+        }
       }
     }
   });
