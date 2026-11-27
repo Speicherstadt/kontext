@@ -120,6 +120,32 @@ describe("receiptsFor", () => {
     expect((await receiptsFor(client, "acc", sentMail)).map((r) => r.id)).toEqual(["a"]);
     expect(parsedBlobs).toEqual([]);
   });
+
+  it("teilt MDN/parse in Blöcke von höchstens 10 blobIds (Stalwart parseLimitEmail)", async () => {
+    const mails = Array.from({ length: 12 }, (_, index) => ({
+      id: `m${index}`,
+      from: "petra@keller-elektro.test",
+      original: index === 11 ? "angebot.1@weber.test" : `other-${index}@weber.test`,
+    }));
+    const { client: base } = fakeStalwart(mails);
+    const batchSizes: number[] = [];
+    const client = {
+      request: async (calls: [string, Record<string, unknown>, string][], using?: string[]) => {
+        const [method, args] = calls[0]!;
+        if (method === "MDN/parse") {
+          const blobIds = (args.blobIds as string[]) ?? [];
+          batchSizes.push(blobIds.length);
+          if (blobIds.length > 10) {
+            throw new Error("requestTooLarge");
+          }
+        }
+        return base.request(calls, using);
+      },
+    } as unknown as JmapClient;
+    const found = await receiptsFor(client, "acc", sentMail);
+    expect(found.map((r) => r.id)).toEqual(["m11"]);
+    expect(batchSizes).toEqual([10, 2]);
+  });
 });
 
 describe("receiptsToFile", () => {
