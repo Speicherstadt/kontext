@@ -21,8 +21,13 @@ const resultOf = (result: SetResult): Result<null> => {
 };
 
 export const createExchange = (request: Request) => {
-  const set = async (method: string, args: Record<string, unknown>) =>
-    resultOf((await request([[method, args, "0"]]))[0]![1] as SetResult);
+  const set = async (method: string, args: Record<string, unknown>): Promise<Result<null>> => {
+    try {
+      return resultOf((await request([[method, args, "0"]]))[0]![1] as SetResult);
+    } catch (error) {
+      return { ok: false, error: error instanceof Error ? error.message : String(error) };
+    }
+  };
 
   /** `known: false`, wenn dem Server-Schlüssel die Rechte fehlen (Einrichtungsbefehl nicht erneut gelaufen). */
   const read = async (): Promise<ExchangeView> => {
@@ -31,7 +36,8 @@ export const createExchange = (request: Request) => {
         ["x:Exchange/get", { ids: ["singleton"], properties: ["enable"] }, "e"],
       ]);
       const settings = (response![1].list as { enable?: boolean }[])[0];
-      return { known: true, enabled: Boolean(settings?.enable) };
+      if (!settings) return { known: false, enabled: false };
+      return { known: true, enabled: Boolean(settings.enable) };
     } catch {
       return { known: false, enabled: false };
     }
