@@ -129,4 +129,26 @@ describe("copyToEvent", () => {
     const data = copyToEvent(copyForm(snoozed, [me.email]), me, snoozed);
     expect(data.alerts).toEqual({ r: reminder });
   });
+
+  it("behält kind resource eines Geräts beim Duplizieren", () => {
+    const withEquipment: CalendarEvent = {
+      ...original,
+      participants: {
+        ...original.participants,
+        r1: {
+          calendarAddress: "mailto:beamer@weber.test",
+          kind: "resource",
+          roles: { attendee: true },
+          participationStatus: "accepted",
+        },
+      },
+    };
+    const data = copyToEvent(copyForm(withEquipment, [me.email]), me, withEquipment);
+    const participants = Object.values(
+      data.participants as Record<string, { calendarAddress: string; kind?: string }>,
+    );
+    expect(participants.find((p) => p.calendarAddress === "mailto:beamer@weber.test")?.kind).toBe(
+      "resource",
+    );
+  });
 });

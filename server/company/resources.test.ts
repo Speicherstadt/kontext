@@ -1,9 +1,12 @@
 // @vitest-environment node
+import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
+import type { Env, Loaded } from "./context";
 import type { Invocation } from "./management";
 import {
   createResourceObject,
   createResources,
+  resourceRoutes,
   toResource,
   toStalwartBooking,
   updateResourcePatch,
@@ -175,5 +178,90 @@ describe("createResources", () => {
       "x:Account/set",
       "x:Account/set",
     ]);
+  });
+});
+
+describe("resourceRoutes Absicherung", () => {
+  const loaded = {
+    company: { domains, employees: [], mailboxes: [] },
+    accounts: [
+      {
+        id: "u1",
+        "@type": "User",
+        name: "jonas",
+        domainId: "d1",
+        roles: { "@type": "Custom", roleIds: { userRole: true } },
+      },
+      { id: "g1", "@type": "Group", name: "info", domainId: "d1" },
+      { id: "r1", "@type": "Resource" as never, name: "raum1", domainId: "d1" },
+    ],
+    folders: {},
+    roles: { userRoleIds: ["userRole"], companyRoleId: "companyRole" },
+    selfId: "u1",
+  } as unknown as Loaded;
+
+  const validUpdate = {
+    description: "Raum 1",
+    kind: "room",
+    capacity: 6,
+    location: "1. OG",
+    delegateIds: ["u1"],
+    booking: { mode: "manual" },
+  };
+
+  const makeApp = () => {
+    const { request, calls } = fake({
+      "x:Account/set": () => ({ created: { r: { id: "r2" } }, updated: {}, destroyed: [] }),
+    });
+    const app = new Hono<Env>();
+    app.use("*", async (c, next) => {
+      c.set("loaded", loaded);
+      await next();
+    });
+    app.route("/", resourceRoutes(createResources(request)));
+    return { app, calls };
+  };
+
+  it("lehnt Ändern und Löschen von Nicht-Ressourcen-Konten (User/Group) mit 404 ab", async () => {
+    const { app, calls } = makeApp();
+    const delRes = await app.request("/u1", { method: "DELETE" });
+    expect(delRes.status).toBe(404);
+    const putRes = await app.request("/g1", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(validUpdate),
+    });
+    expect(putRes.status).toBe(404);
+    expect(calls).toEqual([]);
+  });
+
+  it("lehnt unbekannte domainId und unbekannte delegateIds mit 400 ab", async () => {
+    const { app, calls } = makeApp();
+    const badDomain = await app.request("/", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ...validUpdate, local: "raum2", domainId: "fremd" }),
+    });
+    expect(badDomain.status).toBe(400);
+
+    const badDelegateCreate = await app.request("/", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        ...validUpdate,
+        local: "raum2",
+        domainId: "d1",
+        delegateIds: ["unbekannt"],
+      }),
+    });
+    expect(badDelegateCreate.status).toBe(400);
+
+    const badDelegateUpdate = await app.request("/r1", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ...validUpdate, delegateIds: ["unbekannt"] }),
+    });
+    expect(badDelegateUpdate.status).toBe(400);
+    expect(calls).toEqual([]);
   });
 });

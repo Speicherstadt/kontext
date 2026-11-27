@@ -520,4 +520,34 @@ describe("who invites", () => {
     expect(back.attendees).toBe("anna@weber.test");
     expect(back.resources).toBe("raum1@weber.test, beamer@weber.test");
   });
+
+  it("behält kind resource eines bestehenden Geräts, auch wenn resourceKinds noch leer ist", () => {
+    const existing: CalendarEvent = {
+      id: "e3",
+      calendarIds: { "1": true },
+      start: "2026-10-23T10:00:00",
+      duration: "PT1H",
+      participants: {
+        organizer: {
+          calendarAddress: "mailto:jonas@weber.test",
+          roles: { owner: true, attendee: true },
+          participationStatus: "accepted",
+        },
+        a0: {
+          calendarAddress: "mailto:beamer@weber.test",
+          kind: "resource",
+          roles: { attendee: true },
+          participationStatus: "accepted",
+        },
+      },
+    };
+    const form = eventToForm(existing, ["jonas@weber.test"]);
+    const written = formToEvent(form, { email: "jonas@weber.test" }, existing, true, {});
+    const participants = Object.values(
+      written.participants as Record<string, { calendarAddress: string; kind?: string }>,
+    );
+    expect(participants.find((p) => p.calendarAddress === "mailto:beamer@weber.test")?.kind).toBe(
+      "resource",
+    );
+  });
 });
