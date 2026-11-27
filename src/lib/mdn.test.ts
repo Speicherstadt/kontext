@@ -41,19 +41,24 @@ describe("isReceipt", () => {
     expect(isReceipt('multipart/report; report-type=disposition-notification; boundary="x"')).toBe(
       true,
     );
-    expect(isReceipt('multipart/report; report-type="disposition-notification"')).toBe(true);
+    expect(isReceipt(' multipart/report; report-type="disposition-notification"; boundary=x')).toBe(
+      true,
+    );
     expect(isReceipt("multipart/report; report-type=delivery-status")).toBe(false);
     expect(isReceipt("text/plain")).toBe(false);
+    expect(isReceipt(null)).toBe(false);
   });
 });
 
 describe("bareMessageId und receiptTargets", () => {
   it("entfernt spitze Klammern und fasst Header mit originalMessageId zusammen", () => {
-    expect(bareMessageId("<a@b>")).toBe("a@b");
+    expect(bareMessageId(" <a@b> ")).toBe("a@b");
     expect(bareMessageId("a@b")).toBe("a@b");
+    expect(bareMessageId("two words")).toBeNull();
     expect(receiptTargets({ inReplyTo: ["m1@x"], references: ["m1@x", "m2@x"] }, "<m3@x>")).toEqual(
       ["m1@x", "m2@x", "m3@x"],
     );
+    expect(receiptTargets({ inReplyTo: null, references: null }, null)).toEqual([]);
   });
 });
 
@@ -67,6 +72,7 @@ describe("receiptsForSent", () => {
       { id: "1", targets: ["asked@x"] },
       { id: "2", targets: ["plain@x"] },
       { id: "3", targets: ["unknown@x"] },
+      { id: "4", targets: [] },
     ];
     expect(receiptsForSent(receipts, sent).map((r) => r.id)).toEqual(["1"]);
   });

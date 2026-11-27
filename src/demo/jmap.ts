@@ -25,6 +25,7 @@ const ACCOUNT_CAPABILITIES = {
   [CAPABILITIES.calendars]: { mayCreateCalendar: true },
   [CAPABILITIES.principals]: {},
   [CAPABILITIES.blob]: {},
+  [CAPABILITIES.mdn]: {},
   "urn:ietf:params:jmap:quota": {},
 };
 
