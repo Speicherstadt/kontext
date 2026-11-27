@@ -240,17 +240,17 @@ Regelsätze nebeneinander laufen können (mit echten Clients zu prüfen).
 
 ## Lesebestätigung
 
-Kontext baut Lesebestätigungen nach RFC 8098 selbst (JMAP-MDN, RFC 9007, kennt Stalwart erst seit
-1.2; Kontext nutzt es noch nicht)
-(`src/lib/mdn.ts`, `src/jmap/receipts.ts`, `src/features/mail/receipts.tsx`):
+Kontext nutzt JMAP MDN nach RFC 9007 (Stalwart 1.2: `MDN/send` und `MDN/parse`, Capability
+`urn:ietf:params:jmap:mdn`; `src/lib/mdn.ts`, `src/jmap/receipts.ts`,
+`src/features/mail/receipts.tsx`):
 
 - **Anfordern:** Der Schalter mit dem Häkchen-Brief im Fenster „Neue Mail“ setzt
   `Disposition-Notification-To` auf die eigene Adresse.
 - **Beantworten:** Eine Mail mit der Bitte zeigt „… bittet um eine Lesebestätigung“ mit
-  „Senden“ und „Nicht senden“ – nie von selbst. Die App baut die Bestätigung als
-  `multipart/report` (ein Satz für Menschen, `message/disposition-notification` für Programme,
-  `In-Reply-To` auf die Mail), legt sie per `Email/import` in „Gesendet“ und verschickt sie von der
-  Adresse, an die die Mail ging. Beides setzt `$MDNSent` (RFC 3503), danach fragt keiner mehr –
+  „Senden“ und „Nicht senden“ – nie von selbst. Beim Senden ruft Kontext `MDN/send` mit der
+  passenden Absender-Identität (`identityId`) und `onSuccessUpdateEmail` für `$mdnsent` auf;
+  Stalwart baut das `multipart/report`-Format und verschickt die Bestätigung ohne Kopie in
+  „Gesendet“ (`crates/jmap/src/mdn/send.rs`). Beim Ablehnen setzt Kontext `$MDNSent` direkt.
   Stalwart gibt Schlagworte klein zurück, verglichen wird ohne Groß und Klein.
 - **Sehen:** Eine gesendete Mail mit der Bitte zeigt „Gelesen von … · Zeit“. Eine Bestätigung
   nennt die Mail in `In-Reply-To`/`References` – oder, bei manchen Programmen, nur im Feld
@@ -260,7 +260,8 @@ Kontext baut Lesebestätigungen nach RFC 8098 selbst (JMAP-MDN, RFC 9007, kennt 
   eingeschaltet). Gesucht wird darum ab der Sendezeit nach Mails **von einem der Empfänger oder
   mit dem Betreff** (bis 20 Empfänger, seitenweise bis 500 Treffer, wie die Zustellberichte über
   `src/jmap/search-pages.ts`); behalten wird, was eine Bestätigung ist (`Content-Type`) und diese
-  Mail nennt. Den Berichtsteil lädt die App nur, wenn die Header sie nicht schon nennen.
+  Mail nennt. Nennen die Header sie noch nicht, liest Kontext die Berichte gesammelt über
+  `MDN/parse`.
 - **Still ablegen:** Eingehende Bestätigungen für eigene gesendete Mails gehören an die gesendete
   Mail, nicht in den Posteingang. Für jedes Postfach, aus dem man Mails nehmen darf (das eigene
   und gemeinsame), schaut die App bei jeder Änderung nach ungelesenen Bestätigungen der letzten

@@ -7,63 +7,16 @@ import { MailCheck } from "lucide-react";
 import { useState } from "react";
 import { useClient } from "@/auth/auth";
 import { useToast } from "@/components/ui/toast";
-import { CAPABILITIES, type JmapClient } from "@/jmap/client";
 import { setKeyword } from "@/jmap/mail";
-import { receiptsFor } from "@/jmap/receipts";
+import { receiptsFor, sendReceipt } from "@/jmap/receipts";
 import type { EmailDetail } from "@/jmap/types";
 import { displayName, noteDate } from "@/lib/format";
-import { findRole } from "@/lib/mailboxes";
-import { MDN_SENT, receiptAnswered, receiptMessage } from "@/lib/mdn";
+import { MDN_SENT, receiptAnswered, receiptText } from "@/lib/mdn";
 import { useSendAccount } from "@/mail-core/use-send-account";
 import { m } from "@/paraglide/messages";
 
 const line =
   "flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-border px-3 py-2 text-[13px]";
-
-/** The receipt as a raw message: uploaded, put into Sent, sent to who asked. */
-const sendReceipt = async (
-  client: JmapClient,
-  accountId: string,
-  identityId: string,
-  sentId: string,
-  raw: string,
-  to: string,
-  from: string,
-) => {
-  const { blobId } = await client.upload(accountId, raw, "message/rfc822");
-  const [imported] = await client.request([
-    [
-      "Email/import",
-      {
-        accountId,
-        emails: { r: { blobId, mailboxIds: { [sentId]: true }, keywords: { $seen: true } } },
-      },
-      "i",
-    ],
-  ]);
-  const emailId = (imported![1] as { created?: Record<string, { id: string }> }).created?.r?.id;
-  if (!emailId) throw new Error(m.mail_receipt_failed());
-  const [submitted] = await client.request(
-    [
-      [
-        "EmailSubmission/set",
-        {
-          accountId,
-          create: {
-            s: {
-              identityId,
-              emailId,
-              envelope: { mailFrom: { email: from }, rcptTo: [{ email: to }] },
-            },
-          },
-        },
-        "s",
-      ],
-    ],
-    [CAPABILITIES.core, CAPABILITIES.mail, CAPABILITIES.submission],
-  );
-  if (!(submitted![1] as { created?: object }).created) throw new Error(m.mail_receipt_failed());
-};
 
 /** At a mail whose sender asks for a receipt, until it is sent or declined. */
 export const ReceiptRequest = ({ accountId, email }: { accountId: string; email: EmailDetail }) => {
@@ -74,7 +27,13 @@ export const ReceiptRequest = ({ accountId, email }: { accountId: string; email:
   const [busy, setBusy] = useState(false);
   const asker = email.receiptTo?.[0];
   const own = send.identities.map((identity) => identity.email.toLowerCase());
-  if (!asker || receiptAnswered(email.keywords) || own.includes(asker.email.toLowerCase())) {
+  if (
+    !asker ||
+    receiptAnswered(email.keywords) ||
+    own.includes(asker.email.toLowerCase()) ||
+    send.sendAccountId !== accountId ||
+    send.account?.isReadOnly
+  ) {
     return null;
   }
 
@@ -86,31 +45,21 @@ export const ReceiptRequest = ({ accountId, email }: { accountId: string; email:
         const identity =
           send.identities.find((candidate) => to.includes(candidate.email.toLowerCase())) ??
           send.identities[0];
-        const sent = findRole(send.mailboxes, "sent");
-        if (!identity || !sent) throw new Error(m.mail_receipt_failed());
-        const raw = receiptMessage({
-          from: { name: identity.name || null, email: identity.email },
-          to: asker,
-          original: {
-            messageId: email.messageId?.[0] ?? email.id,
-            subject: email.subject ?? "",
-            sentAt: email.sentAt ?? email.receivedAt,
-          },
-          now: new Date(),
-          id: crypto.randomUUID(),
+        if (!identity) throw new Error(m.mail_receipt_failed());
+        await sendReceipt(client, accountId, identity.id, email.id, {
+          subject: `Gelesen: ${email.subject ?? ""}`,
+          textBody: receiptText({
+            from: { name: identity.name || null, email: identity.email },
+            original: {
+              subject: email.subject ?? "",
+              sentAt: email.sentAt ?? email.receivedAt,
+            },
+          }),
         });
-        await sendReceipt(
-          client,
-          send.sendAccountId,
-          identity.id,
-          sent.id,
-          raw,
-          asker.email,
-          identity.email,
-        );
+      } else {
+        // Abgelehnt zählt ebenfalls als beantwortet: niemand wird ein zweites Mal gefragt.
+        await setKeyword(client, accountId, [email.id], MDN_SENT, true);
       }
-      // Declined counts as answered too: nobody is asked again.
-      await setKeyword(client, accountId, [email.id], MDN_SENT, true);
       await queryClient.invalidateQueries({ queryKey: [accountId] });
       if (confirm) toast.show(m.mail_receipt_sent({ name: displayName(asker) }));
     } catch (error) {
