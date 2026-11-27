@@ -27,7 +27,13 @@ export const ReceiptRequest = ({ accountId, email }: { accountId: string; email:
   const [busy, setBusy] = useState(false);
   const asker = email.receiptTo?.[0];
   const own = send.identities.map((identity) => identity.email.toLowerCase());
-  if (!asker || receiptAnswered(email.keywords) || own.includes(asker.email.toLowerCase())) {
+  if (
+    !asker ||
+    receiptAnswered(email.keywords) ||
+    own.includes(asker.email.toLowerCase()) ||
+    send.sendAccountId !== accountId ||
+    send.account?.isReadOnly
+  ) {
     return null;
   }
 
