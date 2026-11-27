@@ -163,7 +163,8 @@ jedem Neustart vor der Einrichtung gibt es ein neues.
 3. **Port 587** (Submission mit STARTTLS) unter *Netzwerk → Listener* anlegen: Stalwarts
    Standard hat nur 465, viele Mailprogramme nehmen 587.
 4. **Den [Einrichtungsbefehl](#einrichtungsbefehl) ausführen** – nötig, nicht optional: Er trägt
-   Kontext als OAuth-Client ein (Schritt 12), erlaubt Verzeichnisabfragen (Schritt 13) und legt
+   Kontext als OAuth-Client ein (Schritt 12), erlaubt Verzeichnisabfragen (Schritt 13), lässt die
+   Verfügbarkeit nur über die Freigaben der Kalender sehen und legt
    Rolle, Konto und API-Schlüssel für die [Firmenverwaltung](#firmenverwaltung-einschalten) an;
    den Schlüssel als `STALWART_ADMIN_KEY` eintragen, dann das Konto des Chefs anlegen. Weitere
    Mitarbeiter und gemeinsame Postfächer legt der Chef danach selbst in Kontext an.
@@ -226,6 +227,9 @@ Er sorgt dafür, dass
 - der **OAuth-Client** `kontext` mit der Redirect-URI `https://kontext.invalid/oauth` und dem
   Scope `full` da ist (Schritt 12); einem älteren Client ohne `full` ergänzt er den Scope;
 - **Verzeichnisabfragen** erlaubt sind, und lädt dann die Einstellungen neu (Schritt 13);
+- die **Verfügbarkeit** nur über die Freigaben der Kalender zu sehen ist: Er schaltet Stalwarts
+  `shareFreeBusy` ab (ab Stalwart 1.2), das sonst jedem die Verfügbarkeit aller zeigt, auch wenn
+  jemand in Kontext „Kein Zugriff“ gewählt hat;
 - die **Rolle** `Kontext-Server` mit genau den Rechten aus [Firmenverwaltung
   einschalten](#firmenverwaltung-einschalten) da ist (sie erbt *User*), dazu das **Konto**
   `kontext-server@firma.de` mit dieser Rolle und einem Zufallspasswort und für dieses Konto ein
@@ -1025,6 +1029,27 @@ docker compose -f deploy/compose.yaml up -d
 Vor einem Stalwart-Update mit neuer Hauptversion die `UPGRADING`-Hinweise von Stalwart lesen und
 vorher ein Backup machen. Nach jedem Update den [Einrichtungsbefehl](#einrichtungsbefehl) noch
 einmal ausführen; er ergänzt nur, was eine neue Version braucht und noch fehlt.
+
+### Stalwart 1.2.1 { #stalwart-121 }
+
+`STALWART_VERSION=1.2.1` in `deploy/.env` (Quadlet: `Image=…/stalwart:v1.2.1`) zusammen mit der
+neuen Kontext-Version heben; diese Kontext-Version braucht Stalwart 1.2 (Regeln mit
+Abwesenheitsnotiz). Wer von 1.0.x kommt, macht auch den Schritt unter
+[Stalwart 1.1.0](#stalwart-110). Danach den [Einrichtungsbefehl](#einrichtungsbefehl) ausführen:
+Er schaltet Stalwarts neue Einstellung `shareFreeBusy` ab („Verfügbarkeit nur noch über die
+Freigaben der Kalender“).
+
+Stalwart 1.2 legt die **Abwesenheitsnotiz** in einem neuen Skript ab und übernimmt die alte nicht:
+Eine Abwesenheit, die vor dem Update an war, antwortet aus dem alten Skript weiter. Kontext liest
+Betreff, Zeitraum und Text daraus und zeigt sie wie gewohnt; beim nächsten Speichern der
+Abwesenheit oder der Regeln (auch durch den Chef) übernimmt Kontext sie in Stalwarts neues Skript
+und löscht das alte. Es ist nichts zu tun.
+
+Neu brauchen Stalwarts Mail-Regeln, Junk-Listen, Kalender-Einstellungen und Exchange eigene Rechte
+in den Standardrollen (`sysMailRule*`, `sysBlockedSender*`, `sysSafeSender*`,
+`sysCalendarSettings*`, für Admins `sysExchange*`). Kontext nutzt sie nicht; wer Stalwarts eigene
+Oberfläche oder Exchange (Outlook, ActiveSync, standardmäßig aus) nutzt, startet Stalwart einmal mit
+`STALWART_UPDATE_ROLE_PERMISSIONS=true` wie unter [Stalwart 1.1.0](#stalwart-110).
 
 ### Stalwart 1.1.1
 

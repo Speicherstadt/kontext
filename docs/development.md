@@ -91,8 +91,8 @@ unter `bun run --parallel` bekommt kein Skript die Tastatur.
 `dev/stalwart.ts` legt die Daten unter `.dev/stalwart/` ab. Beim ersten Start bootet es Stalwart
 im Wiederherstellungsmodus, legt die Listener auf Ports über 1024 an (HTTP 18080, SMTP 10025,
 IMAP 10143) und startet dann normal. Der Admin ist `admin` / `kontext-admin-dev`. Bei jedem Start
-trägt es Kontext als OAuth-Client `kontext` ein, falls er fehlt, und erlaubt
-Verzeichnisabfragen, mit demselben Code wie der [Einrichtungsbefehl](installation.md#einrichtungsbefehl)
+trägt es Kontext als OAuth-Client `kontext` ein, falls er fehlt, erlaubt Verzeichnisabfragen und
+schaltet `shareFreeBusy` ab (die Verfügbarkeit nur über die Freigaben der Kalender), mit demselben Code wie der [Einrichtungsbefehl](installation.md#einrichtungsbefehl)
 (`server/stalwart-setup.ts`). Ebenso verschlüsselt und komprimiert es den Speicher
 (`server/stalwart-storage.ts`), mit dem festen Schlüssel `DEV_BLOB_KEY` aus `dev/config.ts`, den es
 Stalwart als `STALWART_BLOB_KEY` mitgibt; so laufen Entwicklung und e2e-Tests wie ein

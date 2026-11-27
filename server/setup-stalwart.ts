@@ -17,6 +17,7 @@ import { createRequest } from "./company/management";
 import {
   checkPasskeyRights,
   ensureDirectoryQueries,
+  ensureFreeBusySharing,
   ensureOAuthClient,
   ensureRole,
   ensureServerAccount,
@@ -94,7 +95,7 @@ const main = async (): Promise<number> => {
   const asAccount = (name: string, password: string) =>
     createRequest(stalwartUrl, `${name}:${password}`);
 
-  for (const step of [ensureOAuthClient, ensureDirectoryQueries]) {
+  for (const step of [ensureOAuthClient, ensureDirectoryQueries, ensureFreeBusySharing]) {
     const result = await attempt(() => step(request));
     if (!result.ok) return report(result.error);
     console.log(result.value);

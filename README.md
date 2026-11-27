@@ -15,7 +15,7 @@ Ohne Kosten pro Benutzer. Made in Europe.
 [![Release](https://img.shields.io/github/v/release/Speicherstadt/kontext?logo=github&label=release)](https://github.com/Speicherstadt/kontext/releases/latest)
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-kontext.email-4f46e5?logo=zensical&logoColor=white)](https://kontext.email/)
-[![Stalwart 1.1](https://img.shields.io/badge/Stalwart-1.1-18181b)](https://stalw.art)
+[![Stalwart 1.2](https://img.shields.io/badge/Stalwart-1.2-18181b)](https://stalw.art)
 [![Docker Pulls](https://img.shields.io/docker/pulls/tristanteu/kontext?logo=docker&logoColor=white)](https://hub.docker.com/r/tristanteu/kontext)
 
 [Warum?](#warum-kontext) •

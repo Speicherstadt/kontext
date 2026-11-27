@@ -86,6 +86,25 @@ export const directoryQueriesPlan = (sharing: { allowDirectoryQueries?: boolean 
         message: "Verzeichnisabfragen erlaubt, Einstellungen neu geladen.",
       };
 
+/**
+ * Who sees someone's free/busy is the sharing of their calendars in Kontext ("Nur Verfügbarkeit",
+ * "Kein Zugriff"). Stalwart 1.2 adds `shareFreeBusy` (on by default), which shows everyone's
+ * free/busy to the whole server without a share and so overrides "Kein Zugriff"
+ * (crates/groupware/src/calendar/availability.rs); Kontext switches it off. Older versions do not
+ * have it and answer without the property.
+ */
+export const freeBusyPlan = (calendar: { shareFreeBusy?: boolean }): Plan =>
+  calendar.shareFreeBusy
+    ? {
+        calls: [
+          ["x:Calendar/set", { update: { singleton: { shareFreeBusy: false } } }, "0"],
+          ["x:Action/set", { create: { r: { "@type": "ReloadSettings" } } }, "1"],
+        ],
+        message:
+          "Verfügbarkeit nur noch über die Freigaben der Kalender, Einstellungen neu geladen.",
+      }
+    : none("Die Verfügbarkeit gilt schon nur über die Freigaben der Kalender.");
+
 const trueMap = (keys: readonly string[]): Record<string, true> =>
   Object.fromEntries(keys.map((key) => [key, true as const]));
 
@@ -270,6 +289,15 @@ export const ensureDirectoryQueries = async (request: Request): Promise<Result<s
     "0",
   ]);
   return withMessage(request, directoryQueriesPlan(sharing), "Verzeichnisabfragen");
+};
+
+export const ensureFreeBusySharing = async (request: Request): Promise<Result<string>> => {
+  const [calendar = {}] = await getList<{ shareFreeBusy?: boolean }>(request, [
+    "x:Calendar/get",
+    { ids: ["singleton"], properties: ["shareFreeBusy"] },
+    "0",
+  ]);
+  return withMessage(request, freeBusyPlan(calendar), "Verfügbarkeit");
 };
 
 /** The role's id, after creating it or filling in its rights. */

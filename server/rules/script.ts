@@ -7,9 +7,9 @@
  * How a mail goes through the script:
  * - Spam leaves first: Stalwart files a mail into Junk only when the script filed it nowhere
  *   (`is_spam && !did_file_into`, crates/email/src/sieve/ingest.rs).
- * - The out-of-office reply is the script Stalwart writes for VacationResponse, named "vacation"
- *   (crates/jmap/src/vacation/set.rs). It is included because Stalwart runs only one active
- *   script per account.
+ * - The out-of-office reply is the script Stalwart writes for VacationResponse, named "managed"
+ *   since Stalwart 1.2 (crates/email/src/sieve/rules/mod.rs, MANAGED_SCRIPT_NAME). It is included
+ *   because Stalwart runs only one active script per account.
  * - Every enabled rule that matches applies its marks and forwarding, top to bottom. The first
  *   folder wins, so a mail is filed once and not copied into several folders. "Stop" skips the
  *   rules below.
@@ -170,7 +170,7 @@ export const rulesScript = ({ vacation, rules }: StoredRules): string =>
     `${MARKER}${JSON.stringify({ vacation, rules })}`,
     `require [${REQUIRE.map((name) => `"${name}"`).join(", ")}];`,
     'if spamtest :percent :value "ge" :comparator "i;ascii-numeric" "50" { stop; }',
-    ...(vacation ? ['include :personal :optional "vacation";'] : []),
+    ...(vacation ? ['include :personal :optional "managed";'] : []),
     'set "dollar" "$";',
     'set "folder" "";',
     'set "path" "";',

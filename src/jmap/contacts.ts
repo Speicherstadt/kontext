@@ -114,9 +114,10 @@ const withInlinePhotos = async (
 };
 
 /**
- * Reads vCards with the server's parser (RFC 9555 mapping). `ContactCard/parse` reads one card
- * per blob, so each card becomes its own blob, created inline with `Blob/upload` (RFC 9404) in the
- * same request; 10 cards per request, Stalwart's default limit for `…/parse` (parseLimitContact),
+ * Reads vCards with the server's parser (RFC 9555 mapping). Each card becomes its own blob,
+ * created inline with `Blob/upload` (RFC 9404) in the same request, so the result maps one to one;
+ * Stalwart 1.2 answers every blob with a list of cards, earlier versions with the card itself
+ * (crates/jmap/src/contact/parse.rs); 10 cards per request, Stalwart's default limit for `…/parse` (parseLimitContact),
  * which the session does not show.
  */
 export const parseVCards = async (
@@ -138,11 +139,12 @@ export const parseVCards = async (
       using,
     );
     const blobs = (upload![1].created ?? {}) as Record<string, { id: string }>;
-    const parsed = (parse![1].parsed ?? {}) as Record<string, ContactCard>;
+    const parsed = (parse![1].parsed ?? {}) as Record<string, ContactCard | ContactCard[]>;
     results.push(
       ...page.map((_, i) => {
         const blobId = blobs[`v${i}`]?.id;
-        return blobId ? (parsed[blobId] ?? null) : null;
+        const value = blobId ? parsed[blobId] : undefined;
+        return (Array.isArray(value) ? value[0] : value) ?? null;
       }),
     );
   }

@@ -14,6 +14,7 @@ import {
   directoryQueriesPlan,
   ensureRole,
   ensureServerAccount,
+  freeBusyPlan,
   hasApiKey,
   oauthClientPlan,
   pickDomain,
@@ -66,6 +67,21 @@ describe("directory queries", () => {
 
   it("change nothing when allowed", () => {
     expect(directoryQueriesPlan({ allowDirectoryQueries: true }).calls).toEqual([]);
+  });
+});
+
+describe("free/busy", () => {
+  it("is switched off server-wide, so only the calendars' sharing counts", () => {
+    const { calls } = freeBusyPlan({ shareFreeBusy: true });
+    expect(calls).toEqual([
+      ["x:Calendar/set", { update: { singleton: { shareFreeBusy: false } } }, "0"],
+      ["x:Action/set", { create: { r: { "@type": "ReloadSettings" } } }, "1"],
+    ]);
+  });
+
+  it("changes nothing when off or unknown (before Stalwart 1.2)", () => {
+    expect(freeBusyPlan({ shareFreeBusy: false }).calls).toEqual([]);
+    expect(freeBusyPlan({}).calls).toEqual([]);
   });
 });
 

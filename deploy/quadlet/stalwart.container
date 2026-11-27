@@ -6,7 +6,7 @@ Wants=unbound.service
 After=unbound.service
 
 [Container]
-Image=docker.io/stalwartlabs/stalwart:v1.1.1
+Image=docker.io/stalwartlabs/stalwart:v1.2.1
 ContainerName=stalwart
 Network=kontext.network
 # DNS through Unbound (unbound.container), not the provider's resolver, which Spamhaus refuses

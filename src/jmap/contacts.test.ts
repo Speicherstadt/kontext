@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { contactPhoto } from "@/lib/jscontact";
 import { type JmapClient, jmapError } from "./client";
-import { listContacts } from "./contacts";
+import { listContacts, parseVCards } from "./contacts";
 
 /**
  * Stalwart 1.0.1 as checked against a running server: ContactCard/get gives a stored photo as a
@@ -51,5 +51,33 @@ describe("listContacts", () => {
     const cards = await listContacts(shared, "a", "book");
     expect(cards.map((card) => card.id)).toEqual(["c1", "c2"]);
     expect(contactPhoto(cards[0]!)).toBeUndefined();
+  });
+});
+
+describe("parseVCards", () => {
+  const parser = (wrap: (card: object) => unknown) =>
+    ({
+      request: async () => [
+        ["Blob/upload", { created: { v0: { id: "b0" }, v1: { id: "b1" } } }, "u"],
+        ["ContactCard/parse", { parsed: { b0: wrap({ uid: "erika" }) }, notParsable: ["b1"] }, "p"],
+      ],
+    }) as unknown as JmapClient;
+
+  it("reads the list of cards per blob that Stalwart 1.2 answers", async () => {
+    const cards = await parseVCards(
+      parser((card) => [card]),
+      "a",
+      ["erika", "kaputt"],
+    );
+    expect(cards).toEqual([{ uid: "erika" }, null]);
+  });
+
+  it("still reads the single card of earlier versions", async () => {
+    const cards = await parseVCards(
+      parser((card) => card),
+      "a",
+      ["erika", "kaputt"],
+    );
+    expect(cards).toEqual([{ uid: "erika" }, null]);
   });
 });

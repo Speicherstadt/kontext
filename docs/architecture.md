@@ -30,7 +30,7 @@ flowchart LR
 
 ## Die Teile
 
-- **Stalwart** (Community Edition, AGPL, Version 1.1; Enterprise mit Lizenz geht genauso, siehe
+- **Stalwart** (Community Edition, AGPL, Version 1.2; Enterprise mit Lizenz geht genauso, siehe
   [Firmenverwaltung](#firmenverwaltung)) ist Mail-, Kalender- und Kontaktserver in
   einem. Seit 0.16 liegt die ganze Konfiguration in seiner Datenbank; auf der Platte steht nur
   `config.json` mit dem Speicherort.
@@ -224,7 +224,8 @@ Ein Zustellbericht (DSN) kommt vom Mailserver, nicht vom Empfänger (`src/lib/en
 
 ## Lesebestätigung
 
-Stalwart kennt JMAP-MDN (RFC 9007) nicht; Kontext baut Lesebestätigungen nach RFC 8098 selbst
+Kontext baut Lesebestätigungen nach RFC 8098 selbst (JMAP-MDN, RFC 9007, kennt Stalwart erst seit
+1.2; Kontext nutzt es noch nicht)
 (`src/lib/mdn.ts`, `src/jmap/receipts.ts`, `src/features/mail/receipts.tsx`):
 
 - **Anfordern:** Der Schalter mit dem Häkchen-Brief im Fenster „Neue Mail“ setzt
@@ -731,12 +732,17 @@ ins eigene Konto. So wirken sie auch, wenn niemand angemeldet ist, und gleich au
   legt eine Mail nur in „Junk“, wenn das Skript sie nirgends abgelegt hat (`is_spam &&
   !did_file_into`, `crates/email/src/sieve/ingest.rs`).
 - **Abwesenheit:** Stalwart führt nur ein aktives Skript pro Konto aus, und `VacationResponse`
-  ist selbst eines (`vacation`, `crates/jmap/src/vacation/set.rs`), das beim Einschalten alle
-  anderen abschaltet. Darum gilt (`server/rules/filters.ts`, von App und Server genutzt):
-  ohne Regeln bleibt alles bei `VacationResponse`; mit Regeln bleibt `VacationResponse` „aus“,
-  behält Text und Zeitraum, und das Regel-Skript bindet es mit
-  `include :personal :optional "vacation"` ein. Ob die Abwesenheit an ist, steht dann im
-  Regel-Skript.
+  ist selbst eines, seit Stalwart 1.2 `managed` (`crates/email/src/sieve/rules/managed.rs`), das
+  beim Einschalten das aktive Skript ablöst. Darum gilt (`server/rules/filters.ts`, von App und
+  Server genutzt): ohne Regeln bleibt alles bei `VacationResponse`; mit Regeln bindet das
+  Regel-Skript es mit `include :personal :optional "managed"` ein, und `VacationResponse` behält
+  Text, Zeitraum und ob die Abwesenheit an ist (eine ausgeschaltete schreibt Stalwart als
+  `if false`). Solange das aktive Skript `managed` einbindet, lässt Stalwart es aktiv. Vor 1.2
+  hieß das Skript `vacation`; 1.2 übernimmt es nicht, es antwortet als gewöhnliches Skript weiter.
+  Solange `VacationResponse` leer ist, liest Kontext Betreff, Zeitraum und Text aus dem alten
+  Skript (`server/rules/legacy.ts`, MIME mit postal-mime), zeigt die Abwesenheit als an, solange
+  es läuft, und schreibt sie beim nächsten Speichern nach `VacationResponse`; das alte Skript
+  löscht dasselbe Speichern (vorher abgeschaltet, ein aktives lehnt Stalwart ab).
 - **Gespeichert** werden die Regeln als JSON in einer Kommentarzeile des Skripts
   (`# kontext:{…}`); die App liest nur diese Zeile, nie Sieve. Nutzertexte werden für Sieve
   maskiert, auch `${`, das sonst als Variable gelesen würde.
@@ -1903,9 +1909,10 @@ demselben Konto, weil eine `uid` nur dort eindeutig ist.
 
 ## vCard-Import und -Export
 
-Beim Import liest Stalwart die Datei (`ContactCard/parse`, Abbildung nach RFC 9555). Weil
-`parse` nur eine Karte pro Blob liest, teilt die App die Datei in einzelne Karten und legt sie mit
-`Blob/upload` (RFC 9404) im selben Request als Blobs an, 50 pro Request. Karten, die es im
+Beim Import liest Stalwart die Datei (`ContactCard/parse`, Abbildung nach RFC 9555). Die App teilt
+die Datei in einzelne Karten und legt sie mit `Blob/upload` (RFC 9404) im selben Request als Blobs
+an, 10 pro Request (Stalwarts `parseLimitContact`), damit jedes Ergebnis zu seiner Karte gehört;
+Stalwart 1.2 antwortet je Blob mit einer Liste, ältere Versionen mit der Karte selbst. Karten, die es im
 Adressbuch schon gibt (gleiche `uid`, oder gleicher Name und gleiche Mail-Adresse), werden
 übersprungen; vor dem Anlegen zeigt die App, wie viele neu sind. Der Export schreibt vCard 4.0
 (RFC 6350) aus den Feldern, die die App bearbeitet, auch Gruppen mit `MEMBER`.
@@ -2037,7 +2044,9 @@ Stalwart antwortet nur aus Kalendern, deren Verfügbarkeit man lesen darf (`mayR
 `mayReadItems` im `shareWith`), und lässt Termine weg, die auf „Frei“ stehen
 (`freeBusyStatus: "free"`, im Editor „Anzeigen als“), geheim oder abgesagt sind
 (crates/jmap/src/principal/availability.rs). Kalender mit `includeInAvailability: "none"` zählen
-nicht. Wer nichts teilt, sieht deshalb aus wie frei; das sagt der Editor dazu. Externe Teilnehmer
+nicht. Wer nichts teilt, sieht deshalb aus wie frei; das sagt der Editor dazu. Stalwart 1.2 zeigt
+mit `shareFreeBusy` (in `x:Calendar`, Standard an) die Verfügbarkeit aller ohne Freigabe; das
+hebt „Kein Zugriff“ auf, darum schaltet der Einrichtungsbefehl es ab (`server/stalwart-setup.ts`). Externe Teilnehmer
 (keine Person der Firma unter `Principal/get`) zeigt er als „Keine Info“.
 
 Eine Freigabe nur für die Verfügbarkeit hängt das Konto des Kollegen nicht an die JMAP-Session an

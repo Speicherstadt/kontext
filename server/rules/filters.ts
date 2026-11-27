@@ -1,15 +1,19 @@
 /**
  * The rules and the out-of-office reply as one setting, because Stalwart runs one Sieve script per
- * account and switching VacationResponse on activates its own script (crates/jmap/src/vacation/
- * set.rs), which would switch the rules off:
+ * account and VacationResponse lives in its own script, "managed" since Stalwart 1.2
+ * (crates/email/src/sieve/rules/managed.rs):
  * - without rules: VacationResponse alone, as RFC 8621 means it;
- * - with rules: the rules script runs and includes the reply; VacationResponse keeps the text and
- *   the dates and stays "off", and the script stores whether the reply is on.
+ * - with rules: the rules script runs and includes "managed"; VacationResponse keeps the text, the
+ *   dates and whether the reply is on (Stalwart writes a reply that is off as `if false`), and
+ *   leaves the rules script active while it includes "managed". The rules script stores whether
+ *   the reply is on as well, for the first save, when switching the reply on activates "managed"
+ *   until the rules script is activated in the same request.
  * While someone's offboarding script runs (forwarding and the reply of the departed, see
  * company/offboarding.ts), nothing here switches it off: saving stores, but activates nothing.
  * The JMAP access is passed in, so the app (through the server's proxy) and the server (with its
  * own key) do the same.
  */
+import { LEGACY_VACATION_SCRIPT, readLegacyReply } from "./legacy";
 import { OFFBOARDING_SCRIPT } from "./offboarding";
 import { isEffective, parseRules, RULES_SCRIPT, type Rule, rulesScript } from "./script";
 
@@ -38,6 +42,27 @@ export type LoadedFilters = Filters & { departed: boolean };
 
 type Script = { id: string; name: string; isActive: boolean; blobId: string };
 
+/**
+ * The calls that remove the reply script from before Stalwart 1.2 (server/rules/legacy.ts), whose
+ * reply the same save writes to VacationResponse: deactivated first, because Stalwart refuses to
+ * destroy the active script (`sieveIsActive`, crates/jmap/src/sieve/set.rs).
+ */
+export const legacyCalls = (accountId: string, legacy: Script | undefined): Invocation[] =>
+  legacy
+    ? [
+        ...(legacy.isActive
+          ? [
+              [
+                "SieveScript/set",
+                { accountId, onSuccessDeactivateScript: true },
+                "legacy",
+              ] as Invocation,
+            ]
+          : []),
+        ["SieveScript/set", { accountId, destroy: [legacy.id] }, "legacy"],
+      ]
+    : [];
+
 const USING = [
   "urn:ietf:params:jmap:core",
   "urn:ietf:params:jmap:vacationresponse",
@@ -61,8 +86,8 @@ export const readFilters = (
 };
 
 /**
- * The calls that store `filters`, in this order: VacationResponse first (switching it off
- * deactivates its script), then the rules script, activated or not. `blobId` is the uploaded
+ * The calls that store `filters`, in this order: VacationResponse first (switching it on may
+ * activate its script), then the rules script, activated or not. `blobId` is the uploaded
  * script, or null when there are no rules and never were. `departed`: the offboarding script runs
  * and keeps running.
  */
@@ -79,7 +104,7 @@ export const saveCalls = (
     {
       accountId,
       update: {
-        singleton: { ...vacation, isEnabled: rulesRun || departed ? false : vacation.isEnabled },
+        singleton: { ...vacation, isEnabled: departed ? false : vacation.isEnabled },
       },
     },
     "vacation",
@@ -109,16 +134,39 @@ const listScripts = async (access: FilterAccess, accountId: string) => {
     vacation: (vacation![1].list as Vacation[])[0]!,
     script: list.find((candidate) => candidate.name === RULES_SCRIPT),
     departed: list.some((candidate) => candidate.isActive && candidate.name === OFFBOARDING_SCRIPT),
+    legacy: list.find((candidate) => candidate.name === LEGACY_VACATION_SCRIPT),
   };
+};
+
+const isEmpty = (vacation: Vacation) =>
+  vacation.subject === null && vacation.textBody === null && vacation.htmlBody === null;
+
+/**
+ * VacationResponse as Stalwart 1.2 shows it, completed from the script of before 1.2 while
+ * "managed" has no reply yet: its text and dates, and on while it still answers. The next save
+ * writes them to VacationResponse and removes the old script.
+ */
+const withLegacy = async (
+  access: FilterAccess,
+  accountId: string,
+  vacation: Vacation,
+  legacy: Script | undefined,
+): Promise<Vacation> => {
+  if (!legacy || !isEmpty(vacation)) return vacation;
+  const reply = await readLegacyReply(await access.download(accountId, legacy.blobId));
+  return { ...vacation, ...reply, isEnabled: vacation.isEnabled || legacy.isActive };
 };
 
 export const loadFilters = async (
   access: FilterAccess,
   accountId: string,
 ): Promise<LoadedFilters> => {
-  const { vacation, script, departed } = await listScripts(access, accountId);
+  const { vacation, script, departed, legacy } = await listScripts(access, accountId);
   const content = script ? await access.download(accountId, script.blobId) : null;
-  return { ...readFilters(vacation, script, content), departed };
+  return {
+    ...readFilters(await withLegacy(access, accountId, vacation, legacy), script, content),
+    departed,
+  };
 };
 
 type SetError = { type: string; description?: string };
@@ -126,7 +174,11 @@ type SetError = { type: string; description?: string };
 /** Stalwart's reason when a call did not go through, e.g. a script it would not compile. */
 const failure = (responses: Invocation[]): string | null => {
   for (const [, result] of responses) {
-    const failed = { ...(result.notCreated as object), ...(result.notUpdated as object) };
+    const failed = {
+      ...(result.notCreated as object),
+      ...(result.notUpdated as object),
+      ...(result.notDestroyed as object),
+    };
     const error = Object.values(failed)[0] as SetError | undefined;
     if (error) return error.description ?? error.type;
   }
@@ -157,7 +209,7 @@ export const saveFilters = async (
   accountId: string,
   filters: Filters,
 ): Promise<string | null> => {
-  const { script, departed } = await listScripts(access, accountId);
+  const { script, departed, legacy } = await listScripts(access, accountId);
   const blobId =
     filters.rules.length || script
       ? await access.upload(
@@ -166,6 +218,12 @@ export const saveFilters = async (
         )
       : null;
   return failure(
-    await access.request(saveCalls(accountId, filters, script, blobId, departed), USING),
+    await access.request(
+      [
+        ...legacyCalls(accountId, legacy),
+        ...saveCalls(accountId, filters, script, blobId, departed),
+      ],
+      USING,
+    ),
   );
 };

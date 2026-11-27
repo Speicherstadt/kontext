@@ -41,7 +41,7 @@ describe("rulesScript", () => {
 
   it("includes the out-of-office script only when the reply is on", () => {
     expect(rulesScript({ vacation: true, rules: [] })).toContain(
-      'include :personal :optional "vacation";',
+      'include :personal :optional "managed";',
     );
     expect(rulesScript({ vacation: false, rules: [] })).not.toContain("include :personal");
   });
