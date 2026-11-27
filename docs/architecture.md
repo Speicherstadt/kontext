@@ -739,8 +739,10 @@ ins eigene Konto. So wirken sie auch, wenn niemand angemeldet ist, und gleich au
   Text, Zeitraum und ob die Abwesenheit an ist (eine ausgeschaltete schreibt Stalwart als
   `if false`). Solange das aktive Skript `managed` einbindet, lässt Stalwart es aktiv. Vor 1.2
   hieß das Skript `vacation`; 1.2 übernimmt es nicht, es antwortet als gewöhnliches Skript weiter.
-  Kontext zeigt eine solche Abwesenheit als an und löscht das alte Skript beim nächsten
-  Speichern (vorher abgeschaltet, ein aktives lehnt Stalwart ab).
+  Solange `VacationResponse` leer ist, liest Kontext Betreff, Zeitraum und Text aus dem alten
+  Skript (`server/rules/legacy.ts`, MIME mit postal-mime), zeigt die Abwesenheit als an, solange
+  es läuft, und schreibt sie beim nächsten Speichern nach `VacationResponse`; das alte Skript
+  löscht dasselbe Speichern (vorher abgeschaltet, ein aktives lehnt Stalwart ab).
 - **Gespeichert** werden die Regeln als JSON in einer Kommentarzeile des Skripts
   (`# kontext:{…}`); die App liest nur diese Zeile, nie Sieve. Nutzertexte werden für Sieve
   maskiert, auch `${`, das sonst als Variable gelesen würde.
@@ -1907,9 +1909,10 @@ demselben Konto, weil eine `uid` nur dort eindeutig ist.
 
 ## vCard-Import und -Export
 
-Beim Import liest Stalwart die Datei (`ContactCard/parse`, Abbildung nach RFC 9555). Weil
-`parse` nur eine Karte pro Blob liest, teilt die App die Datei in einzelne Karten und legt sie mit
-`Blob/upload` (RFC 9404) im selben Request als Blobs an, 50 pro Request. Karten, die es im
+Beim Import liest Stalwart die Datei (`ContactCard/parse`, Abbildung nach RFC 9555). Die App teilt
+die Datei in einzelne Karten und legt sie mit `Blob/upload` (RFC 9404) im selben Request als Blobs
+an, 10 pro Request (Stalwarts `parseLimitContact`), damit jedes Ergebnis zu seiner Karte gehört;
+Stalwart 1.2 antwortet je Blob mit einer Liste, ältere Versionen mit der Karte selbst. Karten, die es im
 Adressbuch schon gibt (gleiche `uid`, oder gleicher Name und gleiche Mail-Adresse), werden
 übersprungen; vor dem Anlegen zeigt die App, wie viele neu sind. Der Export schreibt vCard 4.0
 (RFC 6350) aus den Feldern, die die App bearbeitet, auch Gruppen mit `MEMBER`.

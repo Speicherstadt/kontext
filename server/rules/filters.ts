@@ -13,6 +13,7 @@
  * The JMAP access is passed in, so the app (through the server's proxy) and the server (with its
  * own key) do the same.
  */
+import { LEGACY_VACATION_SCRIPT, readLegacyReply } from "./legacy";
 import { OFFBOARDING_SCRIPT } from "./offboarding";
 import { isEffective, parseRules, RULES_SCRIPT, type Rule, rulesScript } from "./script";
 
@@ -42,14 +43,8 @@ export type LoadedFilters = Filters & { departed: boolean };
 type Script = { id: string; name: string; isActive: boolean; blobId: string };
 
 /**
- * Before Stalwart 1.2, VacationResponse wrote a script named "vacation"; 1.2 keeps its reply in
- * "managed" and leaves the old script as an ordinary one (crates/jmap/src/vacation/set.rs), so a
- * reply switched on before the update keeps running and VacationResponse shows it as off.
- */
-const LEGACY_VACATION_SCRIPT = "vacation";
-
-/**
- * The calls that remove the old reply script: deactivated first, because Stalwart refuses to
+ * The calls that remove the reply script from before Stalwart 1.2 (server/rules/legacy.ts), whose
+ * reply the same save writes to VacationResponse: deactivated first, because Stalwart refuses to
  * destroy the active script (`sieveIsActive`, crates/jmap/src/sieve/set.rs).
  */
 export const legacyCalls = (accountId: string, legacy: Script | undefined): Invocation[] =>
@@ -143,15 +138,35 @@ const listScripts = async (access: FilterAccess, accountId: string) => {
   };
 };
 
+const isEmpty = (vacation: Vacation) =>
+  vacation.subject === null && vacation.textBody === null && vacation.htmlBody === null;
+
+/**
+ * VacationResponse as Stalwart 1.2 shows it, completed from the script of before 1.2 while
+ * "managed" has no reply yet: its text and dates, and on while it still answers. The next save
+ * writes them to VacationResponse and removes the old script.
+ */
+const withLegacy = async (
+  access: FilterAccess,
+  accountId: string,
+  vacation: Vacation,
+  legacy: Script | undefined,
+): Promise<Vacation> => {
+  if (!legacy || !isEmpty(vacation)) return vacation;
+  const reply = await readLegacyReply(await access.download(accountId, legacy.blobId));
+  return { ...vacation, ...reply, isEnabled: vacation.isEnabled || legacy.isActive };
+};
+
 export const loadFilters = async (
   access: FilterAccess,
   accountId: string,
 ): Promise<LoadedFilters> => {
   const { vacation, script, departed, legacy } = await listScripts(access, accountId);
   const content = script ? await access.download(accountId, script.blobId) : null;
-  // A reply from before Stalwart 1.2 still answers: shown as on, so it can be switched off.
-  const shown = legacy?.isActive ? { ...vacation, isEnabled: true } : vacation;
-  return { ...readFilters(shown, script, content), departed };
+  return {
+    ...readFilters(await withLegacy(access, accountId, vacation, legacy), script, content),
+    departed,
+  };
 };
 
 type SetError = { type: string; description?: string };

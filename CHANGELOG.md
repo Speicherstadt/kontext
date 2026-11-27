@@ -14,7 +14,9 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
     instead of `vacation` and writes a reply that is off as `if false`; the rules script now
     includes `managed`, and VacationResponse keeps whether the reply is on. A reply switched on
     before the update keeps answering from the old `vacation` script, which 1.2 does not take
-    over: Kontext shows it as on and deletes the old script on the next save.
+    over: Kontext reads its subject, dates and text from the old script, shows it as before, and
+    the next save (of the reply or the rules) moves it to VacationResponse and deletes the old
+    script.
   - Free/busy: Stalwart 1.2's new `shareFreeBusy` (on by default) shows everyone's free/busy
     without a share and so overrode "Kein Zugriff"; the setup command switches it off.
   - vCard import: `ContactCard/parse` answers every file with a list of cards since 1.2.

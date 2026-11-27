@@ -421,7 +421,8 @@ systemctl restart stalwart
 
 **Kontext als OAuth-Client, Verzeichnisabfragen, Firmenverwaltung.** Das alles richtet der
 [Einrichtungsbefehl](installation.md#einrichtungsbefehl) im Kontext-Container ein: den OAuth-Client
-`kontext` mit dem Scope `full`, die Verzeichnisabfragen, die Rolle `Kontext-Server`, das Konto
+`kontext` mit dem Scope `full`, die Verzeichnisabfragen, die Verfügbarkeit nur über die Freigaben
+der Kalender, die Rolle `Kontext-Server`, das Konto
 `kontext-server@firma.de` und dessen API-Schlüssel. Den Admin-Zugang nimmt er hier aus
 `/root/.stalwart-admin` (`-e STALWART_ADMIN` reicht die Variable durch, ohne sie in die
 Befehlszeile zu schreiben); die ausgegebene Zeile `STALWART_ADMIN_KEY=…` kommt in

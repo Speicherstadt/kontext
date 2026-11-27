@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { legacyCalls, readFilters, saveCalls, type Vacation } from "./filters";
+import {
+  type FilterAccess,
+  type Invocation,
+  legacyCalls,
+  loadFilters,
+  readFilters,
+  saveCalls,
+  saveFilters,
+  type Vacation,
+} from "./filters";
 import { type Rule, rulesScript } from "./script";
 
 const vacation = (isEnabled: boolean): Vacation => ({
@@ -133,5 +142,60 @@ describe("legacyCalls", () => {
       ["SieveScript/set", { accountId: "a", destroy: ["v1"] }, "legacy"],
     ]);
     expect(legacyCalls("a", undefined)).toEqual([]);
+  });
+});
+
+describe("a reply from before Stalwart 1.2", () => {
+  const LEGACY =
+    'require ["vacation", "relational", "date"];\r\n\r\n' +
+    'vacation :mime :subject "Urlaub" "Content-Type: text/plain; charset=utf-8\r\n' +
+    'Content-Transfer-Encoding: 7bit\r\n\r\nBin bis Montag weg.\r\n";\r\n';
+  const empty = { ...vacation(false), subject: null, textBody: null };
+  const fake = (scripts: { id: string; name: string; isActive: boolean; blobId: string }[]) => {
+    const sent: Invocation[][] = [];
+    const contents: Record<string, string> = {
+      legacy: LEGACY,
+      rules: rulesScript({ vacation: true, rules: [rule] }),
+    };
+    const access: FilterAccess = {
+      request: async (calls) => {
+        sent.push(calls);
+        return calls.map(([name, , id]): Invocation => {
+          if (name === "VacationResponse/get") return [name, { list: [empty] }, id];
+          if (name === "SieveScript/get") return [name, { list: scripts }, id];
+          return [name, {}, id];
+        });
+      },
+      upload: async () => "uploaded",
+      download: async (_, blobId) => contents[blobId]!,
+    };
+    return { access, sent };
+  };
+
+  it("is loaded with its text and as on while it still answers", async () => {
+    const { access } = fake([{ id: "v1", name: "vacation", isActive: true, blobId: "legacy" }]);
+    const { vacation: loaded } = await loadFilters(access, "a");
+    expect(loaded).toMatchObject({
+      isEnabled: true,
+      subject: "Urlaub",
+      textBody: "Bin bis Montag weg.",
+    });
+  });
+
+  it("keeps its text when saving the rules removes the old script", async () => {
+    const { access, sent } = fake([
+      { id: "v1", name: "vacation", isActive: false, blobId: "legacy" },
+      { id: "s1", name: "kontext-regeln", isActive: true, blobId: "rules" },
+    ]);
+    const loaded = await loadFilters(access, "a");
+    await saveFilters(access, "a", { rules: loaded.rules, vacation: loaded.vacation });
+    const calls = sent.at(-1)!;
+    const reply = calls.find(([name]) => name === "VacationResponse/set")!;
+    expect((reply[1].update as { singleton: Vacation }).singleton).toMatchObject({
+      isEnabled: true,
+      subject: "Urlaub",
+      textBody: "Bin bis Montag weg.",
+    });
+    expect(calls[0]).toEqual(["SieveScript/set", { accountId: "a", destroy: ["v1"] }, "legacy"]);
   });
 });
