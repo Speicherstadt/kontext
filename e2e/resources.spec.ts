@@ -19,8 +19,8 @@ test.describe("Räume und Geräte", () => {
     await page.goto("/settings?section=resources");
     await page.getByRole("button", { name: "Raum oder Gerät anlegen" }).click();
     const createDialog = page.getByRole("dialog");
-    await createDialog.getByLabel("Name").fill(roomName);
-    await createDialog.getByLabel("Adresse").fill(local);
+    await createDialog.getByLabel("Name", { exact: true }).fill(roomName);
+    await createDialog.getByLabel("Name vor dem @").fill(local);
     await createDialog.getByLabel("Ort").fill("1. OG");
     await createDialog.getByLabel("Plätze").fill("6");
     await createDialog.getByRole("button", { name: "Anlegen" }).click();
