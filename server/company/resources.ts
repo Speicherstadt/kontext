@@ -9,7 +9,7 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import type { Domain, Result } from "./accounts";
-import { bad, bodyOf, type Env } from "./context";
+import { bad, bodyOf, type Env, type Loaded, notFound, userOf } from "./context";
 import { firstError, type Invocation, type SetResult } from "./management";
 
 type Request = (methodCalls: Invocation[]) => Promise<Invocation[]>;
@@ -228,25 +228,44 @@ export const createResources = (request: Request) => {
 
 export type Resources = ReturnType<typeof createResources>;
 
+const isResourceAccount = (loaded: Loaded, id: string) =>
+  loaded.accounts.some(
+    (account) => account.id === id && (account["@type"] as string) === "Resource",
+  );
+
+const knownDomain = (loaded: Loaded, domainId: string) =>
+  loaded.company.domains.some((domain) => domain.id === domainId);
+
+const knownDelegates = (loaded: Loaded, ids: string[]) => ids.every((id) => userOf(loaded, id));
+
 export const resourceRoutes = (resources: Resources) => {
   const app = new Hono<Env>();
   app.get("/", async (c) =>
     c.json({ resources: await resources.list(c.get("loaded").company.domains) }),
   );
   app.post("/", async (c) => {
+    const loaded = c.get("loaded");
     const body = await bodyOf(c, newResourceSchema);
     if (!body) return bad("Angaben unvollständig oder ungültig.");
+    if (!knownDomain(loaded, body.domainId)) return bad("Unbekannte Domain.");
+    if (!knownDelegates(loaded, body.delegateIds)) return bad("Unbekannte Person.");
     const result = await resources.create(body);
     return result.ok ? c.json(result.value, 201) : bad(result.error);
   });
   app.put("/:id", async (c) => {
+    const loaded = c.get("loaded");
+    const id = c.req.param("id");
+    if (!isResourceAccount(loaded, id)) return notFound();
     const body = await bodyOf(c, resourceUpdateSchema);
     if (!body) return bad("Angaben unvollständig oder ungültig.");
-    const result = await resources.update(c.req.param("id"), body);
+    if (!knownDelegates(loaded, body.delegateIds)) return bad("Unbekannte Person.");
+    const result = await resources.update(id, body);
     return result.ok ? c.json({ ok: true }) : bad(result.error);
   });
   app.delete("/:id", async (c) => {
-    const result = await resources.remove(c.req.param("id"));
+    const id = c.req.param("id");
+    if (!isResourceAccount(c.get("loaded"), id)) return notFound();
+    const result = await resources.remove(id);
     return result.ok ? c.json({ ok: true }) : bad(result.error);
   });
   return app;
