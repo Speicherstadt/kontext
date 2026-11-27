@@ -93,10 +93,24 @@ export const fromStalwartWorkingHours = (
   };
 };
 
-/** Wandelt die Formular-Daten zurück in Stalwarts `workingHours`-Objekt. */
+const isValidSlot = (slot: WorkingHoursSlot): boolean => {
+  if (slot.days.length === 0) return false;
+  const start = parseLocalTime(slot.start);
+  const end = parseLocalTime(slot.end);
+  return start !== null && end !== null && start < end;
+};
+
+/**
+ * Wandelt die Formular-Daten zurück in Stalwarts `workingHours`-Objekt.
+ * Beim Ausschalten werden unvollständige Blöcke weggelassen, da Stalwart `WorkingSchedule::parse`
+ * auch bei `enable: false` ausführt (`crates/jmap/src/registry/mapping/calendar_settings.rs`).
+ */
 export const toStalwartWorkingHours = (form: WorkingHoursForm): StalwartWorkingHours => {
+  const source = form.enable
+    ? form.slots
+    : form.slots.filter(isValidSlot).slice(0, MAX_WORKING_HOURS_SLOTS);
   const slots: Record<string, StalwartWorkingHoursSlot> = {};
-  form.slots.forEach((slot, index) => {
+  source.forEach((slot, index) => {
     const days: Partial<Record<Weekday, boolean>> = {};
     for (const day of WEEKDAYS) {
       if (slot.days.includes(day)) days[day] = true;
