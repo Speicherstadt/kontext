@@ -18,8 +18,8 @@ Was Stalwart 1.0.2 bis 1.2 mitbringen und Kontext noch nicht nutzt.
 
 | # | Funktion | Worum es geht |
 | --- | --- | --- |
-| 4 | **Telefonbox als eigene Telefonanlage (SIP-Trunk)** | Die Telefonbox meldet sich per SIP-Trunk direkt beim Anbieter an (etwa Telekom, sipgate, easybell), statt sich als IP-Telefon an der Fritzbox anzumelden. Damit wird sie selbst die Telefonanlage, wie 3CX oder Placetel, aber in Kontext und ohne Lizenz pro Nebenstelle: Rufnummern, Durchwahlen, Weiterleitungen und Tischtelefone hängen an Kontext, die Fritzbox ist nur noch Router oder entfällt. Dazu SIP über TLS, eine Warteschleife mit Position und weitere Tischtelefone (Yealink, Grandstream). Die Fritzbox bleibt als einfacher Weg für Betriebe, die sie behalten wollen. |
-| 5 | **Weitere Sprachen** | Nach Deutsch und Englisch weitere europäische Sprachen. |
+| 3 | **Telefonbox als eigene Telefonanlage (SIP-Trunk)** | Die Telefonbox meldet sich per SIP-Trunk direkt beim Anbieter an (etwa Telekom, sipgate, easybell), statt sich als IP-Telefon an der Fritzbox anzumelden. Damit wird sie selbst die Telefonanlage, wie 3CX oder Placetel, aber in Kontext und ohne Lizenz pro Nebenstelle: Rufnummern, Durchwahlen, Weiterleitungen und Tischtelefone hängen an Kontext, die Fritzbox ist nur noch Router oder entfällt. Dazu SIP über TLS, eine Warteschleife mit Position und weitere Tischtelefone (Yealink, Grandstream). Die Fritzbox bleibt als einfacher Weg für Betriebe, die sie behalten wollen. |
+| 4 | **Weitere Sprachen** | Nach Deutsch und Englisch weitere europäische Sprachen. |
 
 ## Weitere Ideen
 
@@ -28,6 +28,5 @@ Noch nicht eingeplant; was davon kommt, entscheidet sich später.
 | Idee | Worum es geht |
 | --- | --- |
 | **Online-Terminbuchung** | Eine Buchungsseite für Kunden mit den freien Zeiten aus dem Kalender; der gebuchte Termin landet direkt im Kalender, mit Bestätigung per Mail. Für Praxen, Kanzleien und Handwerk; „Wer hat Zeit?“ und die Gast-Links für Videobesprechungen sind schon da. |
-| **Räume, Firmenwagen und Geräte buchen** | Buchbare Ressourcen mit eigenem Kalender, die man zum Termin einlädt und die Doppelbuchungen ablehnen. Seit Stalwart 1.2 gibt es dafür Ressourcenkonten (oben, Nummer 2). |
 | **GoBD-Mail-Archiv** | Geschäftsmails unveränderbar und jahrelang aufbewahren, wie es die deutschen Aufbewahrungsregeln verlangen; heute braucht es dafür ein Archiv daneben. Groß, eher als eigenes Modul wie [Schreibzeug](https://github.com/Speicherstadt/schreibzeug). |
 | **Serienmail an eine Kontaktgruppe** | Eine Mail an alle einer Gruppe, jede einzeln und persönlich mit Anrede, etwa für Betriebsurlaub oder neue Preise. |
