@@ -22,7 +22,11 @@ import { existsSync, mkdirSync, openSync } from "node:fs";
 import { chmod, mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { ensureDirectoryQueries, ensureOAuthClient } from "../server/stalwart-setup";
+import {
+  ensureDirectoryQueries,
+  ensureFreeBusySharing,
+  ensureOAuthClient,
+} from "../server/stalwart-setup";
 import { BLOB_KEY_VARIABLE, ensureStorage } from "../server/stalwart-storage";
 import { DEV_BLOB_KEY, STALWART_ADMIN, STALWART_VERSION } from "./config";
 import { download } from "./download";
@@ -269,12 +273,12 @@ const withoutStalwartRsvp = (port: number) =>
 
 /**
  * As on a customer's server (docs/installation.md, server/setup-stalwart.ts): the OAuth client
- * `kontext` with the scope `full`, directory queries and the encrypted, compressed storage, from
+ * `kontext` with the scope `full`, directory queries, free/busy only by sharing and the encrypted, compressed storage, from
  * the same modules.
  */
 const setUpForKontext = async (port: number): Promise<void> => {
   const request = (calls: Invocation[]) => adminRequest(port, calls);
-  for (const step of [ensureOAuthClient, ensureDirectoryQueries]) {
+  for (const step of [ensureOAuthClient, ensureDirectoryQueries, ensureFreeBusySharing]) {
     const result = await step(request);
     if (!result.ok) throw new Error(`Stalwart setup failed: ${result.error}`);
   }

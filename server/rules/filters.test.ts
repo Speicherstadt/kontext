@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readFilters, saveCalls, type Vacation } from "./filters";
+import { legacyCalls, readFilters, saveCalls, type Vacation } from "./filters";
 import { type Rule, rulesScript } from "./script";
 
 const vacation = (isEnabled: boolean): Vacation => ({
@@ -61,14 +61,14 @@ describe("saveCalls", () => {
     ]);
   });
 
-  it("keeps VacationResponse off and activates the rules script, which includes the reply", () => {
+  it("keeps VacationResponse on and activates the rules script, which includes the reply", () => {
     const [reply, rules] = saveCalls(
       "a",
       { rules: [rule], vacation: vacation(true) },
       undefined,
       "blob",
     );
-    expect(reply![1]).toEqual({ accountId: "a", update: { singleton: vacation(false) } });
+    expect(reply![1]).toEqual({ accountId: "a", update: { singleton: vacation(true) } });
     expect(rules).toEqual([
       "SieveScript/set",
       {
@@ -115,5 +115,23 @@ describe("saveCalls", () => {
       update: { s1: { blobId: "blob" } },
       onSuccessDeactivateScript: true,
     });
+  });
+});
+
+describe("legacyCalls", () => {
+  const legacy = (isActive: boolean) => ({ id: "v1", name: "vacation", isActive, blobId: "b" });
+
+  it("deactivates the reply script from before Stalwart 1.2 first, then destroys it", () => {
+    expect(legacyCalls("a", legacy(true))).toEqual([
+      ["SieveScript/set", { accountId: "a", onSuccessDeactivateScript: true }, "legacy"],
+      ["SieveScript/set", { accountId: "a", destroy: ["v1"] }, "legacy"],
+    ]);
+  });
+
+  it("only destroys it when it no longer runs, and does nothing without it", () => {
+    expect(legacyCalls("a", legacy(false))).toEqual([
+      ["SieveScript/set", { accountId: "a", destroy: ["v1"] }, "legacy"],
+    ]);
+    expect(legacyCalls("a", undefined)).toEqual([]);
   });
 });

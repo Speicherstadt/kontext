@@ -7,6 +7,20 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
 
 ## Unreleased
 
+- **Upgrade** Stalwart 1.2.1: raise `STALWART_VERSION=1.2.1` in `deploy/.env` (Quadlet:
+  `Image=…/stalwart:v1.2.1`) with this release, then run the setup command once more
+  (installation guide, "Stalwart 1.2.1"). This release needs Stalwart 1.2:
+  - Rules with an out-of-office reply: Stalwart 1.2 keeps the reply in a script named `managed`
+    instead of `vacation` and writes a reply that is off as `if false`; the rules script now
+    includes `managed`, and VacationResponse keeps whether the reply is on. A reply switched on
+    before the update keeps answering from the old `vacation` script, which 1.2 does not take
+    over: Kontext shows it as on and deletes the old script on the next save.
+  - Free/busy: Stalwart 1.2's new `shareFreeBusy` (on by default) shows everyone's free/busy
+    without a share and so overrode "Kein Zugriff"; the setup command switches it off.
+  - vCard import: `ContactCard/parse` answers every file with a list of cards since 1.2.
+  - Stalwart's new default-role rights (`sysMailRule*`, `sysCalendarSettings*`, …) are not
+    needed by Kontext; only for Stalwart's own web UI or Exchange.
+
 - Deploy: Stalwart gets its own DNS resolver, Unbound (`unbound` in `deploy/compose.yaml`,
   `deploy/quadlet/unbound.container`, `docker.io/klutchell/unbound:1.26.1`). Spamhaus refuses
   lookups through the hosting provider's shared resolvers and public ones and answers

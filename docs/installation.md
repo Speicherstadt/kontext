@@ -1026,6 +1026,27 @@ Vor einem Stalwart-Update mit neuer Hauptversion die `UPGRADING`-Hinweise von St
 vorher ein Backup machen. Nach jedem Update den [Einrichtungsbefehl](#einrichtungsbefehl) noch
 einmal ausführen; er ergänzt nur, was eine neue Version braucht und noch fehlt.
 
+### Stalwart 1.2.1 { #stalwart-121 }
+
+`STALWART_VERSION=1.2.1` in `deploy/.env` (Quadlet: `Image=…/stalwart:v1.2.1`) zusammen mit der
+neuen Kontext-Version heben; diese Kontext-Version braucht Stalwart 1.2 (Regeln mit
+Abwesenheitsnotiz). Wer von 1.0.x kommt, macht auch den Schritt unter
+[Stalwart 1.1.0](#stalwart-110). Danach den [Einrichtungsbefehl](#einrichtungsbefehl) ausführen:
+Er schaltet Stalwarts neue Einstellung `shareFreeBusy` ab, die sonst jedem die Verfügbarkeit aller
+Kollegen zeigt, auch wenn jemand in Kontext „Kein Zugriff“ gewählt hat („Verfügbarkeit nur noch
+über die Freigaben der Kalender“).
+
+Stalwart 1.2 legt die **Abwesenheitsnotiz** in einem neuen Skript ab und übernimmt die alte nicht:
+Eine Abwesenheit, die vor dem Update an war, antwortet weiter, aber ohne Text in Kontext. Sie
+erscheint als eingeschaltet; einmal öffnen, Text eintragen oder ausschalten und speichern, dann
+räumt Kontext das alte Skript weg.
+
+Neu brauchen Stalwarts Mail-Regeln, Junk-Listen, Kalender-Einstellungen und Exchange eigene Rechte
+in den Standardrollen (`sysMailRule*`, `sysBlockedSender*`, `sysSafeSender*`,
+`sysCalendarSettings*`, für Admins `sysExchange*`). Kontext nutzt sie nicht; wer Stalwarts eigene
+Oberfläche oder Exchange (Outlook, ActiveSync, standardmäßig aus) nutzt, startet Stalwart einmal mit
+`STALWART_UPDATE_ROLE_PERMISSIONS=true` wie unter [Stalwart 1.1.0](#stalwart-110).
+
 ### Stalwart 1.1.1
 
 Mit Stalwart 1.1.1 gibt es **maskierte Adressen** in jeder Ausgabe, auch ohne Enterprise-Lizenz:
