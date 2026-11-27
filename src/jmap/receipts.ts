@@ -1,84 +1,123 @@
 /**
- * Read receipts (RFC 8098) over JMAP: the receipts for a sent mail, and the ones in the inbox
- * that confirm one of the account's sent mails, to be filed away quietly. A receipt names the
- * mail in In-Reply-To or References, or only in its report's Original-Message-ID, which Stalwart
- * does not index – so receipts are looked for by who sent them, and their report is read.
+ * Lesebestätigungen über JMAP MDN (RFC 9007, Stalwart 1.2: `MDN/send` in `crates/jmap/src/mdn/send.rs`,
+ * `MDN/parse` in `crates/jmap/src/mdn/parse.rs`): Bestätigungen senden (mit `onSuccessUpdateEmail`
+ * für `$mdnsent`), eingehende Bestätigungen für eine gesendete Mail finden und im Posteingang
+ * still ablegen.
  */
 
-import {
-  dispositionPart,
-  isReceipt,
-  parseDisposition,
-  receiptsForSent,
-  receiptTargets,
-  type SentMail,
-} from "@/lib/mdn";
-import type { JmapClient } from "./client";
+import { isReceipt, receiptsForSent, receiptTargets, type SentMail } from "@/lib/mdn";
+import { CAPABILITIES, type JmapClient } from "./client";
 import { searchPages } from "./search-pages";
-import type { BodyStructure, EmailAddress } from "./types";
+import type { EmailAddress } from "./types";
+
+const MDN_USING = [CAPABILITIES.core, CAPABILITIES.mail, CAPABILITIES.mdn];
 
 export type Receipt = {
   id: string;
+  blobId: string;
   from: EmailAddress[] | null;
   receivedAt: string;
   inReplyTo: string[] | null;
   references: string[] | null;
   "header:Content-Type": string | null;
-  bodyStructure: BodyStructure | null;
 };
 
-/** A receipt with the Message-IDs it confirms. */
+/** Eine Bestätigung mit den Message-IDs, die sie bestätigt. */
 export type ReadReceipt = Receipt & { targets: string[] };
 
 const RECEIPT_QUERY = {
-  properties: [
-    "from",
-    "receivedAt",
-    "inReplyTo",
-    "references",
-    "header:Content-Type",
-    "bodyStructure",
-  ],
-  bodyProperties: ["partId", "blobId", "type", "subParts"],
+  properties: ["blobId", "from", "receivedAt", "inReplyTo", "references", "header:Content-Type"],
 };
 
-/** Pages a search reads at most (500 mails from those people after the send). */
+/** Seiten, die eine Suche höchstens liest (500 Mails dieser Absender nach dem Senden). */
 const MAX_PAGES = 10;
-/** People asked for at most; a mail to more is a newsletter, not one to confirm. */
+/** Höchstens so viele Empfänger; eine Mail an mehr ist ein Rundschreiben. */
 const MAX_PEOPLE = 20;
 
 const keepReceipt = (mail: Receipt) => isReceipt(mail["header:Content-Type"]);
 
 /**
- * What a receipt confirms. Its own headers first; the report is read only when they do not
- * already name the mail `wanted` (or nothing is wanted in particular).
+ * Sendet eine Lesebestätigung über `MDN/send` (RFC 9007 §2.1) und setzt `$mdnsent` atomar per
+ * `onSuccessUpdateEmail`. Stalwart baut das MIME-Format und versendet ohne Kopie in „Gesendet“.
  */
-const readTargets = async (
+export const sendReceipt = async (
   client: JmapClient,
   accountId: string,
-  mail: Receipt,
-  wanted?: string,
-): Promise<ReadReceipt> => {
-  const fromHeaders = receiptTargets(mail, null);
-  const part = dispositionPart(mail.bodyStructure);
-  if ((wanted && fromHeaders.includes(wanted)) || !part?.blobId) {
-    return { ...mail, targets: fromHeaders };
-  }
-  const blob = await client.download(accountId, part.blobId, "mdn.txt", "text/plain");
-  return {
-    ...mail,
-    targets: receiptTargets(mail, parseDisposition(await blob.text()).originalMessageId),
+  identityId: string,
+  forEmailId: string,
+  { subject, textBody }: { subject: string; textBody: string },
+): Promise<void> => {
+  const [response] = await client.request(
+    [
+      [
+        "MDN/send",
+        {
+          accountId,
+          identityId,
+          send: {
+            r: {
+              forEmailId,
+              subject,
+              textBody,
+              reportingUA: "Kontext",
+              disposition: {
+                actionMode: "manual-action",
+                sendingMode: "mdn-sent-manually",
+                type: "displayed",
+              },
+            },
+          },
+          onSuccessUpdateEmail: { "#r": { "keywords/$mdnsent": true } },
+        },
+        "m",
+      ],
+    ],
+    MDN_USING,
+  );
+  const result = response![1] as {
+    sent?: Record<string, unknown>;
+    notSent?: Record<string, { description?: string; type?: string }>;
   };
+  if (!result.sent?.r) {
+    const err = result.notSent?.r;
+    throw new Error(err?.description ?? err?.type ?? "MDN/send fehlgeschlagen");
+  }
 };
 
-/** "after" a minute early: the receipt may carry the same second as the mail. */
+/**
+ * Ermittelt die bestätigten Message-IDs: zuerst aus den eigenen Headern; nur wenn diese die
+ * gesuchte Mail noch nicht nennen (oder alle gefragt sind), liest `MDN/parse` den Bericht.
+ */
+const parseReceiptTargets = async (
+  client: JmapClient,
+  accountId: string,
+  mails: Receipt[],
+  wanted?: string,
+): Promise<ReadReceipt[]> => {
+  const needsParse = mails.filter((mail) => {
+    const fromHeaders = receiptTargets(mail, null);
+    return !(wanted && fromHeaders.includes(wanted)) && Boolean(mail.blobId);
+  });
+  let parsed: Record<string, { originalMessageId?: string | null }> = {};
+  if (needsParse.length) {
+    const [response] = await client.request(
+      [["MDN/parse", { accountId, blobIds: needsParse.map((mail) => mail.blobId) }, "p"]],
+      MDN_USING,
+    );
+    parsed =
+      (response![1] as { parsed?: Record<string, { originalMessageId?: string | null }> }).parsed ??
+      {};
+  }
+  return mails.map((mail) => ({
+    ...mail,
+    targets: receiptTargets(mail, parsed[mail.blobId]?.originalMessageId ?? null),
+  }));
+};
+
+/** "after" eine Minute früher: die Bestätigung kann dieselbe Sekunde tragen wie die Mail. */
 const afterOf = (time: number) => new Date(time - 60_000).toISOString().replace(/\.\d+Z$/, "Z");
 
-/**
- * The receipts for a sent mail: mails after it from one of its recipients or with its subject
- * ("Gelesen: …" carries it, unless the program says something else), kept when they are receipts
- * that name this mail.
- */
+/** Die Lesebestätigungen für eine gesendete Mail. */
 export const receiptsFor = async (
   client: JmapClient,
   accountId: string,
@@ -109,18 +148,15 @@ export const receiptsFor = async (
     keepReceipt,
     who.length ? MAX_PAGES : 1,
   );
-  const read = await Promise.all(
-    found.map((mail) => readTargets(client, accountId, mail, messageId)),
-  );
+  const read = await parseReceiptTargets(client, accountId, found, messageId);
   return read.filter((mail) => mail.targets.includes(messageId));
 };
 
-/** How far back unread receipts in the inbox are filed. */
+/** Wie weit zurück ungelesene Bestätigungen im Posteingang abgelegt werden. */
 const RECENT_DAYS = 14;
-/** Sent mails to the receipts' senders compared at most, newest first. */
+/** Höchstens so viele gesendete Mails an die Absender der Bestätigungen, neueste zuerst. */
 const SENT_LIMIT = 200;
 
-/** The sent mails to these people, newest first: their Message-ID and whether they asked. */
 const sentTo = async (
   client: JmapClient,
   accountId: string,
@@ -164,11 +200,7 @@ const sentTo = async (
   }));
 };
 
-/**
- * The unread receipts of the last days in the inbox that confirm a mail sent from this account
- * with a request for one – nothing else: a mail that only looks like a receipt, or one for a mail
- * not found in Sent, stays where it is.
- */
+/** Ungelesene Bestätigungen der letzten Tage im Posteingang für eigene gesendete Mails. */
 export const receiptsToFile = async (
   client: JmapClient,
   accountId: string,
@@ -183,7 +215,6 @@ export const receiptsToFile = async (
       { after: afterOf(now.getTime() - RECENT_DAYS * 86_400_000) },
     ],
   };
-  // Newest first: the unread mails that are not receipts stay, and must not hide the new ones.
   const found = await searchPages(
     client,
     accountId,
@@ -192,7 +223,7 @@ export const receiptsToFile = async (
     2,
   );
   if (!found.length) return [];
-  const read = await Promise.all(found.map((mail) => readTargets(client, accountId, mail)));
+  const read = await parseReceiptTargets(client, accountId, found);
   const people = [
     ...new Set(read.flatMap((mail) => mail.from ?? []).map((a) => a.email.toLowerCase())),
   ].slice(0, MAX_PEOPLE);

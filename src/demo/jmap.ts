@@ -196,6 +196,25 @@ const METHODS: Record<string, Method> = {
       updated: { singleton: null },
     };
   },
+  "MDN/send": (store, args) => {
+    const send = (args.send as Record<string, { forEmailId?: string }> | undefined) ?? {};
+    const sent: Record<string, Record<string, unknown>> = {};
+    for (const [id, mdn] of Object.entries(send)) {
+      const email = mdn.forEmailId ? store.emails.get(mdn.forEmailId) : undefined;
+      if (email) {
+        email.keywords = { ...email.keywords, $mdnsent: true };
+        store.state++;
+      }
+      sent[id] = {};
+    }
+    return { accountId: String(args.accountId ?? ""), sent };
+  },
+  "MDN/parse": (_store, args) => ({
+    accountId: String(args.accountId ?? ""),
+    parsed: {},
+    notParsable: [],
+    notFound: [],
+  }),
 };
 
 /** The methods that answer twice: the second response is the implicit Email/set. */

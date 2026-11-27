@@ -12,14 +12,13 @@ Was Stalwart 1.0.2 bis 1.2 mitbringen und Kontext noch nicht nutzt.
 | # | Funktion | Worum es geht |
 | --- | --- | --- |
 | 1 | **Mailprogramme ohne App-Passwort** | Mit Zwei-Faktor-Anmeldung brauchen Apple Mail und Thunderbird kein App-Passwort mehr: Stalwart 1.0 setzt das OAuth-Profil für Mailprogramme um. Dafür muss die OAuth-Erkennung unter `/.well-known` zu Stalwart statt zu Kontext (Caddy) und Stalwarts Anmeldeseite öffentlich erreichbar sein. Dann gelten auch die Passkeys (Stalwart 1.1.0, in Kontext schon da) für Mailprogramme. |
-| 2 | **Lesebestätigungen über JMAP** | Stalwart 1.2 kann MDN über JMAP (RFC 9007, `MDN/send`, `MDN/parse`); Kontext baut sie bisher selbst. |
 
 ## Weitere Funktionen
 
 | # | Funktion | Worum es geht |
 | --- | --- | --- |
-| 3 | **Telefonbox als eigene Telefonanlage (SIP-Trunk)** | Die Telefonbox meldet sich per SIP-Trunk direkt beim Anbieter an (etwa Telekom, sipgate, easybell), statt sich als IP-Telefon an der Fritzbox anzumelden. Damit wird sie selbst die Telefonanlage, wie 3CX oder Placetel, aber in Kontext und ohne Lizenz pro Nebenstelle: Rufnummern, Durchwahlen, Weiterleitungen und Tischtelefone hängen an Kontext, die Fritzbox ist nur noch Router oder entfällt. Dazu SIP über TLS, eine Warteschleife mit Position und weitere Tischtelefone (Yealink, Grandstream). Die Fritzbox bleibt als einfacher Weg für Betriebe, die sie behalten wollen. |
-| 4 | **Weitere Sprachen** | Nach Deutsch und Englisch weitere europäische Sprachen. |
+| 2 | **Telefonbox als eigene Telefonanlage (SIP-Trunk)** | Die Telefonbox meldet sich per SIP-Trunk direkt beim Anbieter an (etwa Telekom, sipgate, easybell), statt sich als IP-Telefon an der Fritzbox anzumelden. Damit wird sie selbst die Telefonanlage, wie 3CX oder Placetel, aber in Kontext und ohne Lizenz pro Nebenstelle: Rufnummern, Durchwahlen, Weiterleitungen und Tischtelefone hängen an Kontext, die Fritzbox ist nur noch Router oder entfällt. Dazu SIP über TLS, eine Warteschleife mit Position und weitere Tischtelefone (Yealink, Grandstream). Die Fritzbox bleibt als einfacher Weg für Betriebe, die sie behalten wollen. |
+| 3 | **Weitere Sprachen** | Nach Deutsch und Englisch weitere europäische Sprachen. |
 
 ## Weitere Ideen
 

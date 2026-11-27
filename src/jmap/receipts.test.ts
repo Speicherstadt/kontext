@@ -1,32 +1,32 @@
 import { describe, expect, it } from "vitest";
-import type { JmapClient } from "./client";
-import { receiptsFor, receiptsToFile } from "./receipts";
+import { CAPABILITIES, type JmapClient } from "./client";
+import { receiptsFor, receiptsToFile, sendReceipt } from "./receipts";
 
 const REPORT = 'multipart/report; report-type=disposition-notification; boundary="mdn"';
 
 /** A mail the search finds: ordinary, or a receipt naming a Message-ID in its headers or report. */
 type Mail = { id: string; from: string; inReplyTo?: string; original?: string; plain?: boolean };
-
-const disposition = (original: string) =>
-  [
-    "Reporting-UA: Outlook",
-    "Final-Recipient: rfc822;petra@keller-elektro.test",
-    `Original-Message-ID: <${original}>`,
-    "Disposition: manual-action/MDN-sent-manually; displayed",
-    "",
-  ].join("\r\n");
-
 type Sent = { messageId: string; asked: boolean };
 
-/** A Stalwart with these mails found by any search, and these in Sent; it keeps the filters. */
+/** A Stalwart with these mails found by any search, and these in Sent; answers MDN/parse too. */
 const fakeStalwart = (mails: Mail[], sent: Sent[] = []) => {
   const filters: Record<string, unknown>[] = [];
-  const downloads: string[] = [];
+  const parsedBlobs: string[] = [];
   const client = {
     request: async (calls: [string, Record<string, unknown>, string][]) => {
-      const [, query] = calls[0]!;
-      filters.push(query.filter as Record<string, unknown>);
-      const inSent = JSON.stringify(query.filter).includes('"inMailbox":"sent"');
+      const [method, args] = calls[0]!;
+      if (method === "MDN/parse") {
+        const blobIds = (args.blobIds as string[]) ?? [];
+        parsedBlobs.push(...blobIds);
+        const parsed: Record<string, { originalMessageId?: string }> = {};
+        for (const blobId of blobIds) {
+          const mail = mails.find((candidate) => `blob-${candidate.id}` === blobId);
+          if (mail?.original) parsed[blobId] = { originalMessageId: `<${mail.original}>` };
+        }
+        return [["MDN/parse", { parsed }, "p"]];
+      }
+      filters.push(args.filter as Record<string, unknown>);
+      const inSent = JSON.stringify(args.filter).includes('"inMailbox":"sent"');
       const list = inSent
         ? sent.map((mail) => ({
             messageId: [mail.messageId],
@@ -34,39 +34,22 @@ const fakeStalwart = (mails: Mail[], sent: Sent[] = []) => {
               ? [{ name: null, email: "jonas@weber.test" }]
               : null,
           }))
-        : mails.slice((query.position as number) ?? 0).map((mail) => ({
+        : mails.slice((args.position as number) ?? 0).map((mail) => ({
             id: mail.id,
+            blobId: `blob-${mail.id}`,
             from: [{ name: null, email: mail.from }],
             receivedAt: "2026-10-29T10:00:00Z",
             inReplyTo: mail.inReplyTo ? [mail.inReplyTo] : null,
             references: null,
             "header:Content-Type": mail.plain ? "text/plain" : REPORT,
-            bodyStructure: mail.plain
-              ? { type: "text/plain", subParts: null }
-              : {
-                  type: "multipart/report",
-                  subParts: [
-                    { type: "text/plain", subParts: null },
-                    {
-                      type: "message/disposition-notification",
-                      blobId: `mdn-${mail.id}`,
-                      subParts: null,
-                    },
-                  ],
-                },
           }));
       return [
         ["Email/query", { ids: [] }, "q"],
         ["Email/get", { list }, "g"],
       ];
     },
-    download: async (_accountId: string, blobId: string) => {
-      downloads.push(blobId);
-      const mail = mails.find((candidate) => `mdn-${candidate.id}` === blobId)!;
-      return new Blob([disposition(mail.original ?? "")]);
-    },
   } as unknown as JmapClient;
-  return { client, filters, downloads };
+  return { client, filters, parsedBlobs };
 };
 
 const sentMail = {
@@ -76,27 +59,66 @@ const sentMail = {
   recipients: ["petra@keller-elektro.test"],
 };
 
+describe("sendReceipt", () => {
+  it("sendet über MDN/send mit Capability mdn und onSuccessUpdateEmail für $mdnsent", async () => {
+    const calls: { calls: unknown[]; using?: string[] }[] = [];
+    const client = {
+      request: async (methodCalls: unknown[], using?: string[]) => {
+        calls.push({ calls: methodCalls, using });
+        return [["MDN/send", { sent: { r: {} } }, "m"]];
+      },
+    } as unknown as JmapClient;
+    await sendReceipt(client, "acc", "id1", "mail-1", {
+      subject: "Gelesen: Angebot",
+      textBody: "Geöffnet.",
+    });
+    expect(calls).toHaveLength(1);
+    expect(calls[0]!.using).toContain(CAPABILITIES.mdn);
+    expect(calls[0]!.calls[0]).toEqual([
+      "MDN/send",
+      {
+        accountId: "acc",
+        identityId: "id1",
+        send: {
+          r: {
+            forEmailId: "mail-1",
+            subject: "Gelesen: Angebot",
+            textBody: "Geöffnet.",
+            reportingUA: "Kontext",
+            disposition: {
+              actionMode: "manual-action",
+              sendingMode: "mdn-sent-manually",
+              type: "displayed",
+            },
+          },
+        },
+        onSuccessUpdateEmail: { "#r": { "keywords/$mdnsent": true } },
+      },
+      "m",
+    ]);
+  });
+});
+
 describe("receiptsFor", () => {
-  it("finds a receipt by Original-Message-ID alone, whatever its subject", async () => {
-    const { client, filters, downloads } = fakeStalwart([
+  it("finds a receipt by Original-Message-ID alone via MDN/parse", async () => {
+    const { client, filters, parsedBlobs } = fakeStalwart([
       { id: "a", from: "petra@keller-elektro.test", original: "angebot.1@weber.test" },
       { id: "b", from: "petra@keller-elektro.test", original: "other@weber.test" },
       { id: "c", from: "petra@keller-elektro.test", plain: true },
     ]);
     const found = await receiptsFor(client, "acc", sentMail);
     expect(found.map((receipt) => receipt.id)).toEqual(["a"]);
-    expect(downloads).toEqual(["mdn-a", "mdn-b"]);
-    // Asked for by subject or by who sent it, after the mail.
+    expect(parsedBlobs).toEqual(["blob-a", "blob-b"]);
     expect(JSON.stringify(filters[0])).toContain('"from":"petra@keller-elektro.test"');
     expect(JSON.stringify(filters[0])).toContain('"subject":"Angebot Bad"');
   });
 
-  it("does not read the report when In-Reply-To names the mail already", async () => {
-    const { client, downloads } = fakeStalwart([
+  it("does not call MDN/parse when In-Reply-To names the mail already", async () => {
+    const { client, parsedBlobs } = fakeStalwart([
       { id: "a", from: "petra@keller-elektro.test", inReplyTo: "angebot.1@weber.test" },
     ]);
     expect((await receiptsFor(client, "acc", sentMail)).map((r) => r.id)).toEqual(["a"]);
-    expect(downloads).toEqual([]);
+    expect(parsedBlobs).toEqual([]);
   });
 });
 
@@ -118,7 +140,6 @@ describe("receiptsToFile", () => {
       ],
     );
     expect(await receiptsToFile(client, "acc", boxes, now)).toEqual(["a"]);
-    // Unread receipts of the last 14 days, then the sent mails to their senders.
     expect(JSON.stringify(filters[0])).toContain('"notKeyword":"$seen"');
     expect(JSON.stringify(filters[0])).toContain('"after":"2026-10-15T11:59:00Z"');
     expect(JSON.stringify(filters.at(-1))).toContain('"to":"fake@example.test"');
@@ -133,30 +154,30 @@ describe("receiptsToFile", () => {
 
 describe("receiptsToFile in a busy inbox", () => {
   it("files a new receipt behind more than a hundred unread mails", async () => {
-    // A Stalwart that keeps to sort, position and limit: 120 unread mails, then the receipt.
     const at = (index: number) => new Date(Date.UTC(2026, 9, 20) + index * 3_600_000).toISOString();
     const ordinary = Array.from({ length: 120 }, (_, index) => ({
       id: `m${index}`,
+      blobId: `blob-m${index}`,
       from: [{ name: null, email: "kunde@example.test" }],
       receivedAt: at(index),
       inReplyTo: null,
       references: null,
       "header:Content-Type": "text/plain",
-      bodyStructure: { type: "text/plain", subParts: null },
     }));
     const receipt = {
       id: "r",
+      blobId: "blob-r",
       from: [{ name: null, email: "petra@keller-elektro.test" }],
       receivedAt: at(120),
       inReplyTo: ["angebot.1@weber.test"],
       references: null,
       "header:Content-Type": REPORT,
-      bodyStructure: { type: "multipart/report", subParts: [] },
     };
     const inbox = [...ordinary, receipt];
     const client = {
       request: async (calls: [string, Record<string, unknown>, string][]) => {
-        const [, query] = calls[0]!;
+        const [method, query] = calls[0]!;
+        if (method === "MDN/parse") return [["MDN/parse", { parsed: {} }, "p"]];
         if (JSON.stringify(query.filter).includes('"inMailbox":"sent"')) {
           const list = [
             {
@@ -178,7 +199,6 @@ describe("receiptsToFile in a busy inbox", () => {
           ["Email/get", { list }, "g"],
         ];
       },
-      download: async () => new Blob([""]),
     } as unknown as JmapClient;
     const now = new Date("2026-10-29T12:00:00Z");
     expect(await receiptsToFile(client, "acc", { inboxId: "inbox", sentId: "sent" }, now)).toEqual([

@@ -35,6 +35,9 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
   meeting rooms, vehicles, and equipment with capacity, location, delegates, and automatic or
   manual booking rules in Settings → Company → Rooms and equipment. Appointments offer a separate
   "Room or equipment" field with availability lookup and automatic double-booking rejection.
+- Read receipts over JMAP MDN (RFC 9007): Kontext now uses Stalwart 1.2's `MDN/send` (with
+  `onSuccessUpdateEmail` for `$mdnsent`) and `MDN/parse` instead of building and parsing raw
+  `multipart/report` messages itself.
 
 - Deploy: Stalwart gets its own DNS resolver, Unbound (`unbound` in `deploy/compose.yaml`,
   `deploy/quadlet/unbound.container`, `docker.io/klutchell/unbound:1.26.1`). Spamhaus refuses
