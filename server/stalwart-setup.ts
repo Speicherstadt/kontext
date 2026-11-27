@@ -15,9 +15,9 @@ import { CLIENT_ID, REDIRECT_URI } from "./stalwart";
 import {
   isGrantRefusal,
   KONTEXT_SERVER_RIGHTS,
-  passkeyRightsMessage,
   ROLE_FALLBACKS,
   type Role,
+  userRightsMessage,
 } from "./stalwart-rights";
 
 /** One management request (x:<Object>/get|set), as the admin or as the Kontext server. */
@@ -342,7 +342,7 @@ export const checkPasskeyRights = async (request: Request): Promise<Result<strin
     },
     "0",
   ]);
-  return ok(passkeyRightsMessage(roles, Object.keys(auth?.defaultUserRoleIds ?? {})));
+  return ok(userRightsMessage(roles, Object.keys(auth?.defaultUserRoleIds ?? {})));
 };
 
 const applyRole = async (request: Request, plan: Plan, hint?: string) => ({

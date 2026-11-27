@@ -164,6 +164,38 @@ const METHODS: Record<string, Method> = {
   "Principal/query": principalQuery,
   "Principal/get": principalGet,
   "Principal/getAvailability": principalAvailability,
+  "x:CalendarSettings/get": (store) => ({
+    accountId: store.user ?? "",
+    state: String(store.state),
+    list: [
+      {
+        id: "singleton",
+        workingHours: store.workingHours.get(store.user ?? "") ?? {
+          enable: false,
+          timeZone: null,
+          slots: {},
+        },
+      },
+    ],
+    notFound: [],
+  }),
+  "x:CalendarSettings/set": (store, args) => {
+    const patch = (args.update as Record<string, { workingHours?: unknown }> | undefined)
+      ?.singleton;
+    if (store.user && patch?.workingHours) {
+      store.workingHours.set(
+        store.user,
+        patch.workingHours as NonNullable<ReturnType<typeof store.workingHours.get>>,
+      );
+      store.state++;
+    }
+    return {
+      accountId: store.user ?? "",
+      oldState: String(store.state),
+      newState: String(store.state),
+      updated: { singleton: null },
+    };
+  },
 };
 
 /** The methods that answer twice: the second response is the implicit Email/set. */

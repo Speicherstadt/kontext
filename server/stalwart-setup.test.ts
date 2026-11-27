@@ -2,6 +2,9 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Invocation } from "./company/management";
 import {
+  CALENDAR_SETTINGS_RIGHTS,
+  CALENDAR_SETTINGS_RIGHTS_HINT,
+  calendarSettingsRightsMessage,
   KONTEXT_SERVER_RIGHTS,
   PASSKEY_RIGHTS,
   PASSKEY_RIGHTS_HINT,
@@ -376,5 +379,19 @@ describe("the passkey rights of new users", () => {
       { id: "b", description: "B", roleIds: { a: true } },
     ];
     expect(passkeyRightsMessage(roles, ["a"])).toBe(PASSKEY_RIGHTS_HINT);
+  });
+});
+
+describe("Arbeitszeiten-Rechte der Standardrolle", () => {
+  const all = Object.fromEntries(CALENDAR_SETTINGS_RIGHTS.map((right) => [right, true]));
+
+  it("meldet erlaubt, wenn beide Rechte gesetzt sind", () => {
+    const roles = [{ id: "b", description: "User", enabledPermissions: all }];
+    expect(calendarSettingsRightsMessage(roles, ["b"])).not.toBe(CALENDAR_SETTINGS_RIGHTS_HINT);
+  });
+
+  it("meldet Hinweis, wenn die Rechte fehlen", () => {
+    const roles = [{ id: "b", description: "User", enabledPermissions: { emailSend: true } }];
+    expect(calendarSettingsRightsMessage(roles, ["b"])).toBe(CALENDAR_SETTINGS_RIGHTS_HINT);
   });
 });

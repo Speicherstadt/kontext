@@ -2059,6 +2059,14 @@ einschalten, ohne dass Kalender unter „Geteilt mit mir“ auftauchen.
   Termins; vorläufige Termine zählen als belegt. Beim Ändern eines Termins bleibt seine alte Zeit
   bei denen außen vor, die ihn schon bekommen haben; wer gerade erst dazukommt, hat zu derselben
   Zeit einen echten anderen Termin.
+- **Arbeitszeiten** (`src/jmap/calendar-settings.ts`, `src/lib/working-hours.ts`): jede Person
+  pflegt ihre Arbeitszeiten in Stalwarts Singleton `x:CalendarSettings.workingHours` (Tage,
+  mehrere Zeitblöcke pro Tag als `List`-Objekt, Uhrzeiten als `HH:MM`, Zeitzone). Stalwart
+  meldet Zeiten außerhalb in `Principal/getAvailability` als `busyStatus: "unavailable"`. Kontext
+  zeigt sie schraffiert als „Außerhalb der Arbeitszeit“, schlägt dort keine Termine vor und leitet
+  den sichtbaren Stundenbereich von Tag und Woche daraus ab. Fehlen der Standardrolle die Rechte
+  `sysCalendarSettingsGet` / `sysCalendarSettingsUpdate` (Server vor 1.2), zeigt die Karte einen
+  Hinweis auf `STALWART_UPDATE_ROLE_PERMISSIONS=true`.
 - **Ansicht:** am Desktop eine Zeile pro Teilnehmer mit Balken über den Tag, die gewählte Zeit
   umrahmt; am Handy der Status pro Teilnehmer und ein Zeitplan mit der Zeit nach unten.
 

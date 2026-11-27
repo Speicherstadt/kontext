@@ -51,8 +51,8 @@ export const usePlanning = (form: EventForm, editing: Editing | null) => {
     showDay: setDay,
     rows,
     slot,
-    /** Who is busy at the chosen time (tentative counts). */
-    busyNow: rows.filter((row) => row.status.kind === "busy"),
+    /** Who is busy or outside working hours at the chosen time (tentative counts). */
+    busyNow: rows.filter((row) => row.status.kind === "busy" || row.status.kind === "unavailable"),
     suggestions: freeSlots(known, range.suggestFrom, minutes, { days: LOOKAHEAD_DAYS }),
     hasAttendees: emails.length > 0,
     isPending,
