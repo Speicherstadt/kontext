@@ -67,6 +67,27 @@ describe("fromStalwartWorkingHours und toStalwartWorkingHours", () => {
     const form = fromStalwartWorkingHours(undefined, "Europe/Berlin");
     expect(form).toEqual({ enable: false, timeZone: "Europe/Berlin", slots: [] });
   });
+
+  it("lässt beim Ausschalten unvollständige Blöcke weg, damit Stalwart nicht ablehnt", () => {
+    // Stalwart v1.2.1 prüft in calendar_settings_set immer WorkingSchedule::parse,
+    // auch wenn enable: false ist (crates/jmap/src/registry/mapping/calendar_settings.rs).
+    const stalwart = toStalwartWorkingHours({
+      enable: false,
+      timeZone: "Europe/Berlin",
+      slots: [
+        { days: ["monday"], start: "08:00", end: "16:00" },
+        { days: [], start: "13:00", end: "17:00" },
+        { days: ["tuesday"], start: "17:00", end: "09:00" },
+      ],
+    });
+    expect(stalwart).toEqual({
+      enable: false,
+      timeZone: "Europe/Berlin",
+      slots: {
+        "0": { days: { monday: true }, start: "08:00", end: "16:00" },
+      },
+    });
+  });
 });
 
 describe("validateWorkingHours", () => {
