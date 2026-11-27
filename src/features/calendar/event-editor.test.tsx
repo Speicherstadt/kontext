@@ -476,6 +476,7 @@ describe("EventEditor organizer of a shared mailbox's appointment", () => {
       },
     };
     render(<EventEditor event={event} onDone={vi.fn()} onCancel={vi.fn()} />);
-    expect(captured.editing?.invited.has("raum1@weber.test")).toBe(true);
+    const editing = captured.editing as { invited: Set<string> } | null;
+    expect(editing?.invited.has("raum1@weber.test")).toBe(true);
   });
 });

@@ -120,6 +120,7 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
           ...slot,
           invited: new Set([
             ...attendeeList(initial.attendees),
+            ...attendeeList(initial.resources ?? ""),
             ...mine.map((address) => address.toLowerCase()),
           ]),
         }
@@ -200,7 +201,7 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
     const by = { email: organizer };
     const data =
       copyOf && !event
-        ? copyToEvent(filled, by, copyOf)
+        ? copyToEvent(filled, by, copyOf, resourceKinds)
         : formToEvent(
             filled,
             by,

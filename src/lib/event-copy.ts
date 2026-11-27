@@ -5,7 +5,7 @@
  */
 
 import { type EventForm, eventToForm, formToEvent } from "./event-form";
-import type { CalendarEvent } from "./jscalendar";
+import { attendees, type CalendarEvent, participantEmail } from "./jscalendar";
 import { NO_REPEAT } from "./recurrence";
 import type { Alert } from "./reminders";
 
@@ -27,8 +27,14 @@ export const copyToEvent = (
   form: EventForm,
   organizer: { email: string; name?: string },
   original: CalendarEvent,
+  resourceKinds: Record<string, "location" | "resource"> = {},
 ): Record<string, unknown> => {
-  const data = formToEvent(form, organizer);
+  const fromOriginal: Record<string, "location" | "resource"> = Object.fromEntries(
+    attendees(original)
+      .filter(([, p]) => p.kind === "location" || p.kind === "resource")
+      .map(([, p]) => [participantEmail(p).toLowerCase(), p.kind as "location" | "resource"]),
+  );
+  const data = formToEvent(form, organizer, undefined, true, { ...fromOriginal, ...resourceKinds });
   if (form.reminder !== "kept" || !original.alerts) return data;
   return { ...data, alerts: freshAlerts(original.alerts) };
 };

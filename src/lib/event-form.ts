@@ -204,11 +204,12 @@ export const formToEvent = (
     const lower = email.toLowerCase();
     return lower !== orgLower && !peopleSet.has(lower);
   });
-  const invited: { email: string; kind?: "location" | "resource" }[] = [
-    ...people.map((email) => ({ email })),
+  const invited: { email: string; isResource: boolean; kind?: "location" | "resource" }[] = [
+    ...people.map((email) => ({ email, isResource: false })),
     ...resources.map((email) => ({
       email,
-      kind: resourceKinds[email.toLowerCase()] ?? "location",
+      isResource: true,
+      kind: resourceKinds[email.toLowerCase()],
     })),
   ];
   const previous = new Map(
@@ -232,10 +233,10 @@ export const formToEvent = (
               (organizerBefore?.roles?.owner && organizerBefore.participationStatus) || "accepted",
           },
         ],
-        ...invited.map(({ email, kind }, index) => {
+        ...invited.map(({ email, isResource, kind }, index) => {
           const known = previous.get(email.toLowerCase());
-          const resolvedKind =
-            kind ?? (isResourceParticipant(known?.[1].kind) ? known?.[1].kind : undefined);
+          const knownKind = isResourceParticipant(known?.[1].kind) ? known?.[1].kind : undefined;
+          const resolvedKind = isResource ? (kind ?? knownKind ?? "location") : undefined;
           return [
             known?.[0] ?? `a${index}`,
             {

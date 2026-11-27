@@ -54,6 +54,7 @@ describe("copyForm", () => {
       location: "Baustelle Hauptstraße 5",
       meeting,
       attendees: "anna@weber.test",
+      resources: "",
       showAs: "free",
       private: false,
       description: "Pläne mitbringen",
