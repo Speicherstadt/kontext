@@ -58,6 +58,8 @@ export type CompanyDeps = {
   };
   /** Mails beim Versand verschlüsseln: Stalwart's encryption gateway (encryption-gateway.ts). */
   encryptionGateway?: import("./encryption-gateway").EncryptionGateway;
+  /** Exchange und ActiveSync: `x:Exchange.enable` (exchange.ts). */
+  exchange?: import("./exchange").Exchange;
   /** The Datensicherung, through files the host reads and writes (backup.ts). */
   backup?: BackupControl;
   /** Stalwart Community or Enterprise (edition.ts); Enterprise-only parts ask it. */

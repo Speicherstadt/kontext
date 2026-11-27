@@ -112,6 +112,13 @@ export const SSO_RIGHTS = [
   "scimAccess",
 ] as const;
 
+/**
+ * Exchange und ActiveSync (company/exchange.ts, neu in Stalwart 1.2): `x:Exchange` lesen und
+ * umschalten (wirksam nach `ReloadSettings`). Optional wie `GATEWAY_RIGHTS`, damit ältere
+ * Admin-Rollen vor Stalwart 1.2 nicht scheitern.
+ */
+export const EXCHANGE_RIGHTS = ["sysExchangeGet", "sysExchangeUpdate"] as const;
+
 /** The rights the Kontext server's key needs beside those of User (docs/installation.md). */
 export const KONTEXT_SERVER_RIGHTS = [
   "sysAccountGet",
@@ -130,6 +137,7 @@ export const KONTEXT_SERVER_RIGHTS = [
   ...SPAM_AI_RIGHTS,
   ...DELETED_ACCOUNT_RIGHTS,
   ...SSO_RIGHTS,
+  ...EXCHANGE_RIGHTS,
   "impersonate",
 ] as const;
 
@@ -137,7 +145,9 @@ const without = (rights: readonly string[], left: readonly string[]): readonly s
   rights.filter((right) => !left.includes(right));
 
 const withoutArchiveRights = without(KONTEXT_SERVER_RIGHTS, ARCHIVE_RIGHTS);
-const withoutOptionalRights = without(withoutArchiveRights, GATEWAY_RIGHTS);
+const withoutExchangeRights = without(KONTEXT_SERVER_RIGHTS, EXCHANGE_RIGHTS);
+const withoutArchiveAndExchange = without(withoutArchiveRights, EXCHANGE_RIGHTS);
+const withoutOptionalRights = without(withoutArchiveAndExchange, GATEWAY_RIGHTS);
 
 /** What the admin reads when its role may not grant the gateway rights. */
 export const GATEWAY_RIGHTS_HINT =
@@ -151,6 +161,13 @@ export const ARCHIVE_RIGHTS_HINT =
   "Hinweis: Stalwarts Admin-Rolle fehlen die Rechte für gelöschte Elemente (sysArchivedItem…, " +
   "sysDataRetention…); ohne sie kann Kontext mit Stalwart Enterprise Gelöschtes nicht " +
   "wiederherstellen. Der Admin-Rolle die Rechte geben, dann den Befehl erneut ausführen.";
+
+/** Hinweis, wenn der Admin-Rolle die Exchange-Rechte (Stalwart 1.2) fehlen. */
+export const EXCHANGE_RIGHTS_HINT =
+  "Hinweis: Stalwarts Admin-Rolle fehlen die Rechte für Exchange (sysExchangeGet, " +
+  "sysExchangeUpdate; Stalwart wurde von einer Version vor 1.2 aktualisiert); ohne sie lässt sich " +
+  "Exchange in der Firmenverwaltung nicht einschalten. Stalwart einmal mit " +
+  "STALWART_UPDATE_ROLE_PERMISSIONS=true starten, dann den Befehl erneut ausführen.";
 
 /**
  * What the passkeys in the settings need (x:Passkey, src/jmap/passkeys.ts). A new server's User
@@ -236,5 +253,10 @@ export const isGrantRefusal = (error: string): boolean =>
 /** The rights to try when the admin may not grant all of them, each with what the admin reads. */
 export const ROLE_FALLBACKS: [readonly string[], string][] = [
   [withoutArchiveRights, ARCHIVE_RIGHTS_HINT],
-  [withoutOptionalRights, `${GATEWAY_RIGHTS_HINT}\n${ARCHIVE_RIGHTS_HINT}`],
+  [withoutExchangeRights, EXCHANGE_RIGHTS_HINT],
+  [withoutArchiveAndExchange, `${ARCHIVE_RIGHTS_HINT}\n${EXCHANGE_RIGHTS_HINT}`],
+  [
+    withoutOptionalRights,
+    `${GATEWAY_RIGHTS_HINT}\n${ARCHIVE_RIGHTS_HINT}\n${EXCHANGE_RIGHTS_HINT}`,
+  ],
 ];

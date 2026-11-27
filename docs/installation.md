@@ -1045,6 +1045,13 @@ Betreff, Zeitraum und Text daraus und zeigt sie wie gewohnt; beim nächsten Spei
 Abwesenheit oder der Regeln (auch durch den Chef) übernimmt Kontext sie in Stalwarts neues Skript
 und löscht das alte. Es ist nichts zu tun.
 
+Für **Exchange und ActiveSync (Beta)** leitet `deploy/Caddyfile` die Pfade `/autodiscover`,
+`/EWS`, `/mapi`, `/oab` und `/Microsoft-Server-ActiveSync` (ohne Groß-/Kleinschreibung, mit
+`flush_interval -1` für ActiveSync-Ping) an Stalwart weiter. Soll Outlook den Server automatisch
+finden, hilft ein SRV-Eintrag `_autodiscover._tcp.<domain>` auf `$KONTEXT_DOMAIN` Port 443 (oder
+ein A/AAAA-Eintrag `autodiscover.<domain>` auf denselben Server). Nach dem Update Caddy neu laden
+und Exchange bei Bedarf in der Firmenverwaltung einschalten.
+
 Neu brauchen Stalwarts Mail-Regeln, Junk-Listen, Kalender-Einstellungen und Exchange eigene Rechte
 in den Standardrollen (`sysMailRule*`, `sysBlockedSender*`, `sysSafeSender*`,
 `sysCalendarSettings*`, für Admins `sysExchange*`). Für die Arbeitszeiten in Kontexts

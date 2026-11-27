@@ -27,6 +27,10 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
   multiple time blocks per day, and time zone in Settings → Appearance → Working hours. Colleagues
   see time outside as "Outside working hours" in availability planning, suggestions skip those
   periods, and the calendar day/week grid derives its visible working-hour span from them.
+- Exchange and ActiveSync (Beta): admins can enable Stalwart 1.2's `x:Exchange` (EWS, MAPI over
+  HTTP, ActiveSync, Autodiscover) in Settings → Company → Email security; `deploy/Caddyfile`
+  forwards the paths to Stalwart, and Settings → Sync shows setup instructions for Outlook,
+  iPhone/iPad, and Android when enabled.
 
 - Deploy: Stalwart gets its own DNS resolver, Unbound (`unbound` in `deploy/compose.yaml`,
   `deploy/quadlet/unbound.container`, `docker.io/klutchell/unbound:1.26.1`). Spamhaus refuses

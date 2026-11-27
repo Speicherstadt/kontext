@@ -51,6 +51,7 @@ import { BrandingSection } from "@/features/company/branding-section";
 import { ChatSection } from "@/features/company/chat-section";
 import { EmployeesSection } from "@/features/company/employees-section";
 import { EncryptionGatewaySection } from "@/features/company/encryption-gateway-section";
+import { ExchangeSection } from "@/features/company/exchange-section";
 import { ExternalHintSection } from "@/features/company/external-hint-section";
 import { IdleLogoutSection } from "@/features/company/idle-logout-section";
 import { LegalFooterSection } from "@/features/company/legal-footer-section";
@@ -188,6 +189,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
     <>
       <CompanySecuritySection />
       <EncryptionGatewaySection />
+      <ExchangeSection />
       <PhishingReportSection />
       <SpamAiSection />
     </>

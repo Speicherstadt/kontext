@@ -16,6 +16,7 @@ import { createCalendars } from "../company/calendars";
 import { createDeletedAccounts } from "../company/deleted-accounts";
 import { createEditionCheck } from "../company/edition";
 import { createEncryptionGateway } from "../company/encryption-gateway";
+import { createExchange } from "../company/exchange";
 import { createExternalHintStore } from "../company/external-hint";
 import { createLicenseCheck } from "../company/license";
 import { createMailstore } from "../company/mailstore";
@@ -160,6 +161,7 @@ export const mountCompany = async (app: Hono, deps: CompanyDeps) => {
     pruneChat: deps.chatPruner.tick,
     security: { publicUrl: env.BETTER_AUTH_URL, resolve: dohResolver(env.DOH_URL) },
     encryptionGateway: createEncryptionGateway(request),
+    exchange: createExchange(request),
     spamAi: createSpamAi(request),
     backup: createBackupControl(join(dirname(env.DATABASE_PATH), "backup-control")),
     edition: createEditionCheck({ stalwartUrl: env.STALWART_URL, key: adminKey }),
