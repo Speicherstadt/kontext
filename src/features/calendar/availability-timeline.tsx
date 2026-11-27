@@ -139,6 +139,10 @@ const Legend = () => (
       {m.availability_legend_tentative()}
     </span>
     <span className="inline-flex items-center gap-1.5">
+      <span className="h-2.5 w-3.5 rounded-sm" style={barStyle("unavailable")} />
+      {m.availability_legend_unavailable()}
+    </span>
+    <span className="inline-flex items-center gap-1.5">
       <span className="h-2.5 w-3.5 rounded-sm border border-dashed border-muted" />
       {m.availability_legend_unknown()}
     </span>

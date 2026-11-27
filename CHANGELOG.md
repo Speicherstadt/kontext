@@ -20,8 +20,13 @@ Steps that an update needs beyond raising the version are marked **Upgrade**.
   - Free/busy: Stalwart 1.2's new `shareFreeBusy` (on by default) shows everyone's free/busy
     without a share and so overrode "Kein Zugriff"; the setup command switches it off.
   - vCard import: `ContactCard/parse` answers every file with a list of cards since 1.2.
-  - Stalwart's new default-role rights (`sysMailRule*`, `sysCalendarSettings*`, …) are not
-    needed by Kontext; only for Stalwart's own web UI or Exchange.
+  - Stalwart's new default-role rights (`sysCalendarSettingsGet`, `sysCalendarSettingsUpdate`)
+    are needed for working hours in Settings; run Stalwart once with
+    `STALWART_UPDATE_ROLE_PERMISSIONS=true` on servers upgraded from before 1.2.
+- Working hours (`x:CalendarSettings.workingHours`): each person can configure their working days,
+  multiple time blocks per day, and time zone in Settings → Appearance → Working hours. Colleagues
+  see time outside as "Outside working hours" in availability planning, suggestions skip those
+  periods, and the calendar day/week grid derives its visible working-hour span from them.
 
 - Deploy: Stalwart gets its own DNS resolver, Unbound (`unbound` in `deploy/compose.yaml`,
   `deploy/quadlet/unbound.container`, `docker.io/klutchell/unbound:1.26.1`). Spamhaus refuses

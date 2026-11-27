@@ -12,6 +12,7 @@ import type { PlanningRow } from "./use-planning";
 export const statusText = (status: PersonStatus, day: string): string => {
   if (status.kind === "free") return m.availability_free();
   if (status.kind === "unknown") return m.availability_unknown();
+  if (status.kind === "unavailable") return m.availability_outside_working_hours();
   const time = whenLabel(status.until, day);
   return status.tentative
     ? m.availability_tentative_until({ time })
@@ -21,27 +22,44 @@ export const statusText = (status: PersonStatus, day: string): string => {
 export const STATUS_TONE: Record<PersonStatus["kind"], string> = {
   free: "text-ok",
   busy: "text-warn",
+  unavailable: "text-muted",
   unknown: "text-muted",
 };
 
-/** How a busy period is drawn: solid when busy, hatched when tentative. */
-export const barStyle = (status: BusyStatus): CSSProperties =>
-  status === "tentative"
-    ? {
-        background: "repeating-linear-gradient(135deg, var(--muted) 0 3px, var(--subtle) 3px 6px)",
-      }
-    : { background: "var(--muted)" };
+/** Balkenstil: voll für belegt, dunkel schraffiert für vielleicht, hell schraffiert für außerhalb der Arbeitszeit. */
+export const barStyle = (status: BusyStatus): CSSProperties => {
+  if (status === "tentative") {
+    return {
+      background: "repeating-linear-gradient(135deg, var(--muted) 0 3px, var(--subtle) 3px 6px)",
+    };
+  }
+  if (status === "unavailable") {
+    return {
+      background: "repeating-linear-gradient(45deg, var(--border) 0 3px, var(--subtle) 3px 6px)",
+    };
+  }
+  return { background: "var(--muted)" };
+};
 
 const firstName = (row: PlanningRow) => row.name.split(" ")[0] ?? row.name;
 
 const list = new Intl.ListFormat(LOCALE, { type: "conjunction" });
 
-/** "Anna ist zu dieser Zeit belegt." or that everyone is free. */
+/** "Anna ist zu dieser Zeit belegt." / "Anna ist außerhalb der Arbeitszeit." oder alle frei. */
 export const clashText = (busy: PlanningRow[]): string => {
   if (!busy.length) return m.availability_all_free();
   const others = busy.filter((row) => !row.isMe);
-  if (!others.length) return m.availability_conflict_me();
+  if (!others.length) {
+    return busy.every((row) => row.status.kind === "unavailable")
+      ? m.availability_unavailable_me()
+      : m.availability_conflict_me();
+  }
   const names = list.format(others.map(firstName));
+  if (others.every((row) => row.status.kind === "unavailable")) {
+    return others.length === 1
+      ? m.availability_unavailable_one({ names })
+      : m.availability_unavailable_many({ names });
+  }
   return others.length === 1
     ? m.availability_conflict({ names })
     : m.availability_conflict_many({ names });

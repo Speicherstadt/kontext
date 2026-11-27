@@ -1,45 +1,46 @@
 /**
- * The working hours of the calendar grid (src/lib/work-hours.ts), per device like the other
- * choices that only make the app nicer to use; storage may be missing, then the default.
+ * Arbeitszeiten des Kontos aus Stalwarts `x:CalendarSettings.workingHours` (src/jmap/calendar-settings.ts).
+ * Der Stundenbereich des Kalenders (`useWorkHours`) wird direkt daraus abgeleitet; ohne Rechte
+ * oder ausgeschaltete Arbeitszeiten gilt `DEFAULT_WORK_HOURS`.
  */
-import { useSyncExternalStore } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useClient } from "@/auth/auth";
+import { getCalendarSettings, updateWorkingHours } from "@/jmap/calendar-settings";
+import { DEFAULT_WORK_HOURS, type WorkHours } from "@/lib/work-hours";
 import {
-  DEFAULT_WORK_HOURS,
-  readWorkHours,
-  type WorkHours,
-  writeWorkHours,
-} from "@/lib/work-hours";
+  calendarWorkHours,
+  fromStalwartWorkingHours,
+  toStalwartWorkingHours,
+  type WorkingHoursForm,
+} from "@/lib/working-hours";
 
-const KEY = "kontext.calendar.workHours";
-const listeners = new Set<() => void>();
+export const CALENDAR_SETTINGS_KEY = ["settings", "calendar-working-hours"] as const;
 
-const read = (): WorkHours => {
-  try {
-    return readWorkHours(window.localStorage.getItem(KEY));
-  } catch {
-    return DEFAULT_WORK_HOURS;
-  }
+export const localTimeZone = (): string =>
+  Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Berlin";
+
+export const useCalendarSettings = () => {
+  const client = useClient();
+  return useQuery({
+    queryKey: CALENDAR_SETTINGS_KEY,
+    queryFn: () => getCalendarSettings(client),
+    retry: false,
+  });
 };
 
-// Kept here, so the choice lasts until a reload where storage is refused.
-let current: WorkHours = typeof window === "undefined" ? DEFAULT_WORK_HOURS : read();
-
-export const setWorkHours = (hours: WorkHours) => {
-  current = hours;
-  try {
-    window.localStorage.setItem(KEY, writeWorkHours(hours));
-  } catch {
-    // Private windows may refuse storage; the choice then lasts until the page is reloaded.
-  }
-  for (const listener of listeners) listener();
+export const useSaveWorkingHours = () => {
+  const client = useClient();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (form: WorkingHoursForm) =>
+      updateWorkingHours(client, toStalwartWorkingHours(form)),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: CALENDAR_SETTINGS_KEY }),
+  });
 };
 
-export const useWorkHours = (): WorkHours =>
-  useSyncExternalStore(
-    (listener) => {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-    () => current,
-    () => DEFAULT_WORK_HOURS,
-  );
+/** Stundenbereich für Tag und Woche im Kalender, abgeleitet aus den gespeicherten Arbeitszeiten. */
+export const useWorkHours = (): WorkHours => {
+  const { data } = useCalendarSettings();
+  if (!data || data.status !== "ok") return DEFAULT_WORK_HOURS;
+  return calendarWorkHours(fromStalwartWorkingHours(data.workingHours, localTimeZone()));
+};

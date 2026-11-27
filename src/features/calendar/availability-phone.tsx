@@ -25,6 +25,7 @@ import type { Planning, PlanningRow } from "./use-planning";
 const DOT: Record<PlanningRow["status"]["kind"], string> = {
   free: "bg-ok",
   busy: "bg-warn",
+  unavailable: "bg-muted",
   unknown: "border-[1.5px] border-muted",
 };
 

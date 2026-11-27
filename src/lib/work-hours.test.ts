@@ -1,11 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  DEFAULT_WORK_HOURS,
-  offHours,
-  readWorkHours,
-  workWeek,
-  writeWorkHours,
-} from "./work-hours";
+import { DEFAULT_WORK_HOURS, offHours, workWeek } from "./work-hours";
 
 describe("workWeek", () => {
   it("is Monday to Friday of the week around the day", () => {
@@ -24,24 +18,9 @@ describe("workWeek", () => {
   });
 });
 
-describe("readWorkHours", () => {
-  it("reads what writeWorkHours stored", () => {
-    expect(readWorkHours(writeWorkHours({ startHour: 6, endHour: 16 }))).toEqual({
-      startHour: 6,
-      endHour: 16,
-    });
-  });
-
-  it("falls back to the planning's working day", () => {
-    for (const stored of [null, "", "x", "18-7", "8-8", "0-25"]) {
-      expect(readWorkHours(stored)).toEqual(DEFAULT_WORK_HOURS);
-    }
-    expect(DEFAULT_WORK_HOURS).toEqual({ startHour: 7, endHour: 18 });
-  });
-});
-
 describe("offHours", () => {
   it("is the time before and after the working hours", () => {
+    expect(DEFAULT_WORK_HOURS).toEqual({ startHour: 7, endHour: 18 });
     expect(offHours({ startHour: 7, endHour: 17 })).toEqual([
       { top: 0, bottom: 420 },
       { top: 1020, bottom: 1440 },

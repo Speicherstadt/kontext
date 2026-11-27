@@ -113,4 +113,21 @@ describe("availability", () => {
       width: 1 / 17,
     });
   });
+
+  it("unterscheidet unavailable (außerhalb der Arbeitszeit) von belegt und schlägt dort nichts vor", () => {
+    const partTime: Schedule = {
+      email: "anna@weber.test",
+      busy: [busy("12:00", "18:00", "unavailable")],
+    };
+    expect(statusDuring(partTime.busy, at("15:00"), at("16:00"))).toEqual({
+      kind: "unavailable",
+      until: at("18:00"),
+    });
+    const slots = freeSlots([partTime], at("13:00"), 60, { limit: 1 });
+    expect(slots).toEqual([{ start: at("07:00", "2026-10-28"), end: at("08:00", "2026-10-28") }]);
+
+    const editing = { start: at("15:00"), end: at("16:00"), invited: new Set([partTime.email]) };
+    const [kept] = withoutEvent([partTime], editing);
+    expect(kept!.busy).toEqual(partTime.busy);
+  });
 });

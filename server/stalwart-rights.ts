@@ -197,6 +197,18 @@ const rightsOf = (roles: Role[], ids: string[]): Set<string> => {
   );
 };
 
+/** Rechte für Arbeitszeiten (`x:CalendarSettings`, neu in Stalwart 1.2). */
+export const CALENDAR_SETTINGS_RIGHTS = [
+  "sysCalendarSettingsGet",
+  "sysCalendarSettingsUpdate",
+] as const;
+
+export const CALENDAR_SETTINGS_RIGHTS_HINT =
+  "Hinweis: Die Standardrolle der Benutzer hat keine Rechte für Arbeitszeiten (Stalwart wurde " +
+  "von einer Version vor 1.2 aktualisiert); ohne sie fehlen die Arbeitszeiten in Kontexts " +
+  "Einstellungen. Stalwart einmal mit STALWART_UPDATE_ROLE_PERMISSIONS=true starten, danach die " +
+  "Variable wieder entfernen (docs/installation.md, Stalwart 1.2.1).";
+
 /** Whether the roles new users get let them keep passkeys; a hint for the admin when not. Pure. */
 export const passkeyRightsMessage = (roles: Role[], userRoleIds: string[]): string => {
   const rights = rightsOf(roles, userRoleIds);
@@ -204,6 +216,18 @@ export const passkeyRightsMessage = (roles: Role[], userRoleIds: string[]): stri
     ? "Passkeys sind für die Benutzer erlaubt."
     : PASSKEY_RIGHTS_HINT;
 };
+
+/** Prüft, ob die Standardrollen Arbeitszeiten (`x:CalendarSettings`) erlauben. */
+export const calendarSettingsRightsMessage = (roles: Role[], userRoleIds: string[]): string => {
+  const rights = rightsOf(roles, userRoleIds);
+  return CALENDAR_SETTINGS_RIGHTS.every((right) => rights.has(right))
+    ? "Arbeitszeiten sind für die Benutzer erlaubt."
+    : CALENDAR_SETTINGS_RIGHTS_HINT;
+};
+
+/** Prüft Passkeys und Arbeitszeiten in den Standardrollen der Benutzer. */
+export const userRightsMessage = (roles: Role[], userRoleIds: string[]): string =>
+  `${passkeyRightsMessage(roles, userRoleIds)}\n${calendarSettingsRightsMessage(roles, userRoleIds)}`;
 
 /** Stalwart's refusal of rights the admin does not hold (build_set_error, principal.rs). */
 export const isGrantRefusal = (error: string): boolean =>

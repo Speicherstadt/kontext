@@ -269,6 +269,42 @@ test.describe("Verfügbarkeit in der Firma", () => {
       true,
     );
   });
+
+  test("zeigt „Außerhalb der Arbeitszeit“, wenn Anna nur vormittags arbeitet", async ({ page }) => {
+    const day = wednesday();
+    const STALWART_CAP = ["urn:ietf:params:jmap:core", "urn:stalwart:jmap"];
+    const setAnnaHours = (workingHours: Record<string, unknown>) =>
+      jmapAs("anna").call(
+        "x:CalendarSettings/set",
+        { update: { singleton: { workingHours } } },
+        STALWART_CAP,
+      );
+    await setAnnaHours({
+      enable: true,
+      timeZone: "Europe/Berlin",
+      slots: {
+        "0": {
+          days: { monday: true, tuesday: true, wednesday: true, thursday: true, friday: true },
+          start: "08:00",
+          end: "12:00",
+        },
+      },
+    });
+    try {
+      await login(page);
+      await page.goto(`/calendar?date=${day}&event=new&start=${day}T15:00`);
+      const dialog = page.getByRole("dialog");
+      await dialog.getByLabel("Titel").fill(unique("Nachmittagstermin"));
+      await addAttendees(dialog, "anna@weber-haustechnik.test");
+      const planning = dialog.getByRole("region", { name: "Verfügbarkeit" });
+      await expect(planning.getByText("Anna ist außerhalb der Arbeitszeit.")).toBeVisible();
+      await expect(planning.getByRole("listitem").filter({ hasText: "Anna Weber" })).toContainText(
+        "Außerhalb der Arbeitszeit",
+      );
+    } finally {
+      await setAnnaHours({ enable: false, timeZone: null, slots: {} });
+    }
+  });
 });
 
 test.describe("Verfügbarkeit am Handy @phone", () => {

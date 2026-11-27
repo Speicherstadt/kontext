@@ -6,6 +6,7 @@
 import { DEV_DOMAIN } from "../../dev/config";
 import { folders, groups, mails, type SeedMail, users } from "../../dev/seed-data";
 import type { Category } from "../../server/categories/categories";
+import type { StalwartWorkingHours } from "../lib/working-hours";
 import type { Submission } from "./sending";
 
 export type DemoAccount = {
@@ -79,6 +80,8 @@ export type Store = {
   categories: Map<string, Category[]>;
   /** Senders whose pictures from the internet load at once. */
   imageSenders: string[];
+  /** Arbeitszeiten je Konto (`x:CalendarSettings.workingHours`). */
+  workingHours: Map<string, StalwartWorkingHours>;
   /** One state for everything; it counts the changes (RFC 8620 §1.2 `state`). */
   state: number;
   nextId: number;
@@ -288,6 +291,7 @@ export const createStore = (now = Date.now()): Store => {
     submissions: new Map(),
     categories: new Map(),
     imageSenders: [],
+    workingHours: new Map(),
     state: 1,
     nextId: 1,
   };

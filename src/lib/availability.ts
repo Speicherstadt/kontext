@@ -16,6 +16,7 @@ export type Schedule = { email: string; busy: Busy[] | null };
 export type PersonStatus =
   | { kind: "free" }
   | { kind: "busy"; until: number; tentative: boolean }
+  | { kind: "unavailable"; until: number }
   | { kind: "unknown" };
 
 export type Slot = { start: number; end: number };
@@ -28,15 +29,17 @@ export const WORKDAY: Workday = { startHour: 7, endHour: 18, weekdays: [1, 2, 3,
 const overlaps = (busy: Busy, start: number, end: number): boolean =>
   busy.start < end && busy.end > start;
 
-/** Whether the attendee is free between `start` and `end`; when not, until when they are busy. */
+/** Whether the attendee is free between `start` and `end`; when not, until when they are busy or unavailable. */
 export const statusDuring = (busy: Busy[] | null, start: number, end: number): PersonStatus => {
   if (!busy) return { kind: "unknown" };
   const hits = busy.filter((b) => overlaps(b, start, end));
   if (!hits.length) return { kind: "free" };
+  const until = Math.max(...hits.map((b) => b.end));
+  if (hits.every((b) => b.status === "unavailable")) return { kind: "unavailable", until };
   return {
     kind: "busy",
-    until: Math.max(...hits.map((b) => b.end)),
-    tentative: hits.every((b) => b.status === "tentative"),
+    until,
+    tentative: hits.every((b) => b.status === "tentative" || b.status === "unavailable"),
   };
 };
 
@@ -136,7 +139,7 @@ export const dayBars = (
 
 /** A period with the slot cut out of it: the parts before and after, none when it is inside. */
 const cutOut = (busy: Busy, slot: Slot): Busy[] =>
-  busy.start <= slot.start && busy.end >= slot.end
+  busy.status !== "unavailable" && busy.start <= slot.start && busy.end >= slot.end
     ? [
         { ...busy, end: slot.start },
         { ...busy, start: slot.end },
