@@ -26,6 +26,7 @@ import {
   createRequest,
   createUpload,
 } from "../company/management";
+import { createResources } from "../company/resources";
 import { createCompanyRoutes } from "../company/routes";
 import { dohResolver } from "../company/security";
 import { createServerHealth } from "../company/server-health-routes";
@@ -162,6 +163,7 @@ export const mountCompany = async (app: Hono, deps: CompanyDeps) => {
     security: { publicUrl: env.BETTER_AUTH_URL, resolve: dohResolver(env.DOH_URL) },
     encryptionGateway: createEncryptionGateway(request),
     exchange: createExchange(request),
+    resources: createResources(request),
     spamAi: createSpamAi(request),
     backup: createBackupControl(join(dirname(env.DATABASE_PATH), "backup-control")),
     edition: createEditionCheck({ stalwartUrl: env.STALWART_URL, key: adminKey }),

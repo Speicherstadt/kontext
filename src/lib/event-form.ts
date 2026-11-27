@@ -33,6 +33,8 @@ export type EventForm = {
   /** The link of the event's Kontext video meeting, or "". */
   meeting: string;
   attendees: string;
+  /** Eingeladene Räume und Geräte (RFC 8984 §4.4.6 kind "location" / "resource"). */
+  resources?: string;
   /** Whether the time counts as busy for colleagues planning a meeting (RFC 8984 freeBusyStatus). */
   showAs: "busy" | "free";
   /** Whether people the calendar is shared with see only the time (RFC 8984 privacy). */
@@ -46,6 +48,9 @@ export type EventForm = {
   documents: LinkedDocument[];
 };
 
+const isResourceParticipant = (kind: string | undefined): boolean =>
+  kind === "location" || kind === "resource";
+
 /** `series` is the base event of an instance; its rule is what the form shows. */
 export const eventToForm = (
   event: CalendarEvent,
@@ -56,6 +61,10 @@ export const eventToForm = (
   const startLocal = toLocal(start);
   const endLocal = toLocal(allDay ? new Date(end.getTime() - 1) : end);
   const mine = new Set(myAddresses.map((a) => a.toLowerCase()));
+  const all = attendees(event).filter(([, p]) => {
+    const email = participantEmail(p);
+    return email && !mine.has(email.toLowerCase());
+  });
   return {
     title: event.title ?? "",
     date: startLocal.slice(0, 10),
@@ -65,9 +74,13 @@ export const eventToForm = (
     allDay,
     location: locationName(event),
     meeting: meetingLink(event),
-    attendees: attendees(event)
+    attendees: all
+      .filter(([, p]) => !isResourceParticipant(p.kind))
       .map(([, p]) => participantEmail(p))
-      .filter((email) => email && !mine.has(email.toLowerCase()))
+      .join(", "),
+    resources: all
+      .filter(([, p]) => isResourceParticipant(p.kind))
+      .map(([, p]) => participantEmail(p))
       .join(", "),
     showAs: event.freeBusyStatus === "free" ? "free" : "busy",
     private: isPrivate(event),
@@ -91,6 +104,7 @@ export const newEventForm = (startLocal: string, minutes = 60): EventForm => {
     location: "",
     meeting: "",
     attendees: "",
+    resources: "",
     showAs: "busy",
     private: false,
     description: "",
@@ -175,6 +189,7 @@ export const formToEvent = (
   existing?: CalendarEvent,
   /** False when only one instance of a series changes: its rule stays with the series. */
   withRecurrence = true,
+  resourceKinds: Record<string, "location" | "resource"> = {},
 ): Record<string, unknown> => {
   const startLocal = form.allDay ? `${form.date}T00:00:00` : `${form.date}T${form.startTime}:00`;
   const minutes = form.allDay
@@ -182,17 +197,28 @@ export const formToEvent = (
       1440
     : // On the wall clock, the way Stalwart reads it back (see localEnd in jscalendar.ts).
       Math.max(0, localDiff(startLocal, `${form.endDate}T${form.endTime}:00`));
-  const emails = attendeeEmails(form.attendees).filter(
-    (email) => email.toLowerCase() !== organizer.email.toLowerCase(),
-  );
+  const orgLower = organizer.email.toLowerCase();
+  const people = attendeeEmails(form.attendees).filter((email) => email.toLowerCase() !== orgLower);
+  const peopleSet = new Set(people.map((e) => e.toLowerCase()));
+  const resources = attendeeEmails(form.resources ?? "").filter((email) => {
+    const lower = email.toLowerCase();
+    return lower !== orgLower && !peopleSet.has(lower);
+  });
+  const invited: { email: string; kind?: "location" | "resource" }[] = [
+    ...people.map((email) => ({ email })),
+    ...resources.map((email) => ({
+      email,
+      kind: resourceKinds[email.toLowerCase()] ?? "location",
+    })),
+  ];
   const previous = new Map(
     attendees(existing ?? ({} as CalendarEvent)).map(([id, p]) => [
       participantEmail(p).toLowerCase(),
       [id, p] as const,
     ]),
   );
-  const [organizerId, organizerBefore] = previous.get(organizer.email.toLowerCase()) ?? [];
-  const participants = emails.length
+  const [organizerId, organizerBefore] = previous.get(orgLower) ?? [];
+  const participants = invited.length
     ? Object.fromEntries([
         [
           organizerId ?? "organizer",
@@ -206,8 +232,10 @@ export const formToEvent = (
               (organizerBefore?.roles?.owner && organizerBefore.participationStatus) || "accepted",
           },
         ],
-        ...emails.map((email, index) => {
+        ...invited.map(({ email, kind }, index) => {
           const known = previous.get(email.toLowerCase());
+          const resolvedKind =
+            kind ?? (isResourceParticipant(known?.[1].kind) ? known?.[1].kind : undefined);
           return [
             known?.[0] ?? `a${index}`,
             {
@@ -216,6 +244,7 @@ export const formToEvent = (
               roles: { attendee: true },
               participationStatus: known?.[1].participationStatus ?? "needs-action",
               expectReply: true,
+              ...(resolvedKind ? { kind: resolvedKind } : {}),
               ...(known?.[1].name ? { name: known[1].name } : {}),
             },
           ];

@@ -486,4 +486,38 @@ describe("who invites", () => {
       participationStatus: "tentative",
     });
   });
+
+  it("trennt Räume und Geräte von Personen und setzt kind nach RFC 8984", () => {
+    const form = {
+      ...newEventForm("2026-10-23T10:00:00"),
+      title: "Teambesprechung",
+      attendees: "anna@weber.test",
+      resources: "raum1@weber.test, beamer@weber.test",
+    };
+    const written = formToEvent(form, { email: "jonas@weber.test" }, undefined, true, {
+      "raum1@weber.test": "location",
+      "beamer@weber.test": "resource",
+    });
+    const participants = Object.values(
+      written.participants as Record<string, { calendarAddress: string; kind?: string }>,
+    );
+    expect(participants.find((p) => p.calendarAddress === "mailto:raum1@weber.test")?.kind).toBe(
+      "location",
+    );
+    expect(participants.find((p) => p.calendarAddress === "mailto:beamer@weber.test")?.kind).toBe(
+      "resource",
+    );
+    const back = eventToForm(
+      {
+        id: "e2",
+        calendarIds: { "1": true },
+        start: "2026-10-23T10:00:00",
+        duration: "PT1H",
+        participants: written.participants as CalendarEvent["participants"],
+      },
+      ["jonas@weber.test"],
+    );
+    expect(back.attendees).toBe("anna@weber.test");
+    expect(back.resources).toBe("raum1@weber.test, beamer@weber.test");
+  });
 });

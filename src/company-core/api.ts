@@ -15,6 +15,13 @@ import type { DeletedAccount, DeletedAccountsView } from "../../server/company/d
 import type { GatewayView, NewKey } from "../../server/company/encryption-gateway";
 import type { ExchangeView } from "../../server/company/exchange";
 import type { FolderName } from "../../server/company/mailstore";
+import type {
+  NewResource,
+  Resource,
+  ResourceBooking,
+  ResourceKind,
+  ResourceUpdate,
+} from "../../server/company/resources";
 import type { SearchIndexStatus } from "../../server/company/search-index";
 import type { Check } from "../../server/company/security";
 import type { Period } from "../../server/company/server-health";
@@ -220,6 +227,20 @@ export const saveSignature = (template: SignatureTemplate & { apply: boolean }) 
 
 export const createMailbox = (mailbox: NewMailbox) =>
   send<{ id: string }>("POST", "/mailboxes", mailbox);
+
+export type { NewResource, Resource, ResourceBooking, ResourceKind, ResourceUpdate };
+
+/** Räume und Geräte (server/company/resources.ts). */
+export const getResources = () => send<{ resources: Resource[] }>("GET", "/resources");
+
+export const createResource = (resource: NewResource) =>
+  send<{ id: string }>("POST", "/resources", resource);
+
+export const updateResource = ({ id, ...patch }: ResourceUpdate & { id: string }) =>
+  send<{ ok: true }>("PUT", `/resources/${encodeURIComponent(id)}`, patch);
+
+export const deleteResource = (id: string) =>
+  send<{ ok: true }>("DELETE", `/resources/${encodeURIComponent(id)}`);
 
 export const updateMailbox = (id: string, change: MailboxChange) =>
   send<{ ok: true }>("PATCH", `/mailboxes/${encodeURIComponent(id)}`, change);

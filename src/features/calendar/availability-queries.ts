@@ -18,7 +18,11 @@ export const attendeeList = (text: string): string[] => [
 ];
 
 const colleagueByEmail = (principals: Principal[], email: string): Principal | undefined =>
-  principals.find((p) => p.type === "individual" && p.email?.toLowerCase() === email);
+  principals.find(
+    (p) =>
+      (p.type === "individual" || p.type === "location" || p.type === "resource") &&
+      p.email?.toLowerCase() === email,
+  );
 
 /** One schedule per address between two instants, the user's own first. */
 export const useSchedules = (emails: string[], from: Date, to: Date) => {

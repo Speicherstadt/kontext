@@ -44,6 +44,7 @@ vi.mock("./split-series", () => ({
   useSplitSeries: () => ({ changeFollowing, endBeforeDate: vi.fn(), isPending: false }),
 }));
 vi.mock("./place-queries", () => ({ usePlaceSuggestions: () => [] }));
+vi.mock("./resource-field", () => ({ ResourceField: () => null, useResourceKinds: () => ({}) }));
 const refs = vi.hoisted(() => ({ calendars: [] as unknown[] }));
 const createEvent = vi.fn(async (_input: { event: Record<string, unknown> }) => {});
 vi.mock("./queries", () => ({

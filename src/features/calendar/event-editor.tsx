@@ -48,6 +48,7 @@ import { PlaceField } from "./place-field";
 import { calendarOf, calendarOption, useCalendarRefs, useMyAddresses } from "./queries";
 import { ReminderFields } from "./reminder-fields";
 import { RepeatFields } from "./repeat-fields";
+import { ResourceField, useResourceKinds } from "./resource-field";
 import { useSplitSeries } from "./split-series";
 import { TimeFields } from "./time-fields";
 
@@ -97,6 +98,7 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
   const toast = useToast();
   const shareWith = useShareWith();
   const suggestions = useAddressSuggestions();
+  const resourceKinds = useResourceKinds();
   const instance = event && isInstance(event) && series ? event : undefined;
   const [initial] = useState<EventForm>(() =>
     event
@@ -199,7 +201,13 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
     const data =
       copyOf && !event
         ? copyToEvent(filled, by, copyOf)
-        : formToEvent(filled, by, instance && scope !== "this" ? series : event, forSeries);
+        : formToEvent(
+            filled,
+            by,
+            instance && scope !== "this" ? series : event,
+            forSeries,
+            resourceKinds,
+          );
     try {
       await save(data);
       // The colleagues invited can open the appointment's documents.
@@ -310,6 +318,10 @@ export const EventEditor = ({ event, series, start, copyOf, onDone, onCancel }: 
           setForm((current) => ({ ...current, attendees: formatAddressInput(addresses) }))
         }
         suggestions={suggestions}
+      />
+      <ResourceField
+        value={form.resources ?? ""}
+        onChange={(resources) => setForm((current) => ({ ...current, resources }))}
       />
       <AvailabilityPanel
         form={form}

@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
   DatabaseBackup,
+  DoorOpen,
   Globe,
   Handshake,
   Inbox,
@@ -58,6 +59,7 @@ import { LegalFooterSection } from "@/features/company/legal-footer-section";
 import { MailboxesSection } from "@/features/company/mailboxes-section";
 import { MigrationSection } from "@/features/company/migration-section";
 import { PhishingReportSection } from "@/features/company/phishing-report-section";
+import { ResourcesSection } from "@/features/company/resources-section";
 import { SecuritySection as CompanySecuritySection } from "@/features/company/security-section";
 import { ServerHealthSection } from "@/features/company/server-health-section";
 import { SmimeAuthoritiesSection } from "@/features/company/smime-authorities-section";
@@ -131,6 +133,7 @@ const OWN: Entry[] = [
 const COMPANY: Entry[] = [
   { id: "employees", label: m.company_employees, icon: Users },
   { id: "mailboxes", label: m.company_mailboxes, icon: Inbox },
+  { id: "resources", label: m.company_resources, icon: DoorOpen },
   { id: "company-signature", label: m.company_signature, icon: Signature },
   { id: "company-legal", label: m.company_legal, icon: Scale },
   { id: "company-vacation", label: m.company_vacation_templates, icon: Palmtree },
@@ -176,6 +179,7 @@ const CONTENT: Record<Section, () => ReactNode> = {
   about: () => <AboutSection />,
   employees: () => <EmployeesSection />,
   mailboxes: () => <MailboxesSection />,
+  resources: () => <ResourcesSection />,
   "company-signature": () => <CompanySignatureSection />,
   "company-legal": () => <LegalFooterSection />,
   "company-vacation": () => <VacationTemplatesSection />,

@@ -12,8 +12,7 @@ Was Stalwart 1.0.2 bis 1.2 mitbringen und Kontext noch nicht nutzt.
 | # | Funktion | Worum es geht |
 | --- | --- | --- |
 | 1 | **Mailprogramme ohne App-Passwort** | Mit Zwei-Faktor-Anmeldung brauchen Apple Mail und Thunderbird kein App-Passwort mehr: Stalwart 1.0 setzt das OAuth-Profil für Mailprogramme um. Dafür muss die OAuth-Erkennung unter `/.well-known` zu Stalwart statt zu Kontext (Caddy) und Stalwarts Anmeldeseite öffentlich erreichbar sein. Dann gelten auch die Passkeys (Stalwart 1.1.0, in Kontext schon da) für Mailprogramme. |
-| 2 | **Räume und Geräte als Ressourcen** | Stalwart 1.2 kennt Ressourcenkonten mit Kapazität, Ort, Verwaltern und automatischer oder manueller Buchung von Einladungen. Kontext könnte Räume, Firmenwagen und Geräte darüber buchen lassen (siehe die Idee unten). |
-| 3 | **Lesebestätigungen über JMAP** | Stalwart 1.2 kann MDN über JMAP (RFC 9007, `MDN/send`, `MDN/parse`); Kontext baut sie bisher selbst. |
+| 2 | **Lesebestätigungen über JMAP** | Stalwart 1.2 kann MDN über JMAP (RFC 9007, `MDN/send`, `MDN/parse`); Kontext baut sie bisher selbst. |
 
 ## Weitere Funktionen
 

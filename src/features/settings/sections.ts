@@ -19,6 +19,7 @@ export const settingsSections = [
   "about",
   "employees",
   "mailboxes",
+  "resources",
   "company-signature",
   "company-legal",
   "company-vacation",
