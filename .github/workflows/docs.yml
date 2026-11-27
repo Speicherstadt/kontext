@@ -47,6 +47,12 @@ jobs:
       - run: pip install -r requirements-docs.txt
       - run: python -m unittest discover -s dev/docs-revision-date
       - run: zensical build --strict
+      # Start page as https://kontext.email/, not index.html: canonical, og:url and sitemap. With
+      # use_directory_urls: false Zensical writes index.html, Google then reports it as a duplicate
+      - run: |
+          sed -i 's#"https://kontext.email/index.html"#"https://kontext.email/"#g' site/index.html
+          sed -i 's#<loc>https://kontext.email/index.html</loc>#<loc>https://kontext.email/</loc>#' site/sitemap.xml
+          grep -q '<link rel="canonical" href="https://kontext.email/"' site/index.html
       # Without the git history the date is missing without failing the build; here it shows
       - run: |
           grep -q 'class="revision-date"' site/index.html
