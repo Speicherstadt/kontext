@@ -31,7 +31,10 @@
 	# may hold events back until its buffer is full.
 	# The app's own files come from Kontext already compressed (Brotli, made at build time,
 	# dev/precompress.ts); Caddy passes an encoded answer on as it is.
-	@compressible not path /api/live /jmap/eventsource*
+	@compressible {
+		not path /api/live /jmap/eventsource*
+		not path_regexp ^/(?i)(ews|mapi|oab|microsoft-server-activesync)(/|$)
+	}
 	encode @compressible zstd gzip
 
 	# CalDAV/CardDAV and autoconfiguration for mail programs and phones, straight to Stalwart: its
@@ -42,13 +45,27 @@
 	# /scim/v2 with its own token (crates/scim of stalwartlabs/stalwart; docs/company.md, SSO).
 	@stalwart {
 		path /dav/cal /dav/cal/* /dav/card /dav/card/* /dav/file /dav/file/* /dav/pal /dav/pal/* /dav/itip /dav/itip/*
-		path /.well-known/* /mail/config-v1.1.xml /autodiscover/*
+		path /.well-known/* /mail/config-v1.1.xml
 		path /scim/v2 /scim/v2/*
 		not path /.well-known/oauth-protected-resource* /.well-known/oauth-authorization-server* /.well-known/openpgpkey/*
 	}
 	handle @stalwart {
 		reverse_proxy stalwart:8080 {
 			import client_address
+		}
+	}
+
+	# Exchange (EWS, MAPI über HTTP, ActiveSync, Offline-Adressbuch, Autodiscover): Stalwart prüft
+	# das erste Pfadsegment ohne Groß-/Kleinschreibung (crates/common/src/config/exchange.rs,
+	# crates/http/src/request.rs). ActiveSync-Ping hält Verbindungen bis maxHeartbeat offen; Caddy
+	# hat standardmäßig weder Body-Größen- noch Response-Header-Timeout, flush_interval -1 reicht
+	# Antworten sofort durch. Ist x:Exchange.enable aus, lehnt Stalwart EWS, MAPI, OAB und
+	# ActiveSync ab (/autodiscover beantwortet weiter klassisches IMAP/SMTP-Autodiscover).
+	@exchange path_regexp ^/(?i)(autodiscover|ews|mapi|oab|microsoft-server-activesync)(/|$)
+	handle @exchange {
+		reverse_proxy stalwart:8080 {
+			import client_address
+			flush_interval -1
 		}
 	}
 

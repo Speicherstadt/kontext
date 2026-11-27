@@ -13,6 +13,7 @@ import type {
 import type { BackupSettings, BackupView } from "../../server/company/backup-schema";
 import type { DeletedAccount, DeletedAccountsView } from "../../server/company/deleted-accounts";
 import type { GatewayView, NewKey } from "../../server/company/encryption-gateway";
+import type { ExchangeView } from "../../server/company/exchange";
 import type { FolderName } from "../../server/company/mailstore";
 import type { SearchIndexStatus } from "../../server/company/search-index";
 import type { Check } from "../../server/company/security";
@@ -202,6 +203,12 @@ export const addRecipientKey = (key: NewKey) =>
 
 export const removeRecipientKey = (id: string) =>
   send<GatewayView>("DELETE", `/encryption-gateway/keys/${encodeURIComponent(id)}`);
+
+/** Exchange und ActiveSync (server/company/exchange.ts). */
+export const getExchange = () => send<ExchangeView>("GET", "/exchange");
+
+export const setExchange = (enabled: boolean) =>
+  send<ExchangeView>("PUT", "/exchange", { enabled });
 
 export const getChatRetention = () => send<{ days: number }>("GET", "/chat-retention");
 

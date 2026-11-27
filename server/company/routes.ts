@@ -14,6 +14,7 @@ import { deletedAccountRoutes } from "./deleted-accounts";
 import { readEdition } from "./edition";
 import { employeeRoutes } from "./employees";
 import { encryptionGatewayRoutes } from "./encryption-gateway";
+import { exchangeRoutes, readExchange } from "./exchange";
 import { externalHintRoutes, readExternalHint } from "./external-hint";
 import { idleLogoutRoutes, readIdleLogout } from "./idle-logout";
 import { legalFooterRoutes, readLegalFooter } from "./legal-footer";
@@ -34,9 +35,7 @@ import { readVacationTemplates, vacationTemplateRoutes } from "./vacation-templa
 
 export type { CompanyDeps };
 
-export const createCompanyRoutes = (deps: CompanyDeps) => {
-  const load = createLoader(deps);
-  const app = new Hono<Env>();
+const mountSignedInRoutes = (app: Hono<Env>, deps: CompanyDeps) => {
   const externalHint = readExternalHint(deps);
   const legalFooter = readLegalFooter(deps);
   const idleLogout = readIdleLogout(deps);
@@ -45,11 +44,7 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
   const mailboxMembers = readMailboxMembers(deps);
   const sentCopies = readSentCopies(deps);
   const edition = readEdition(deps);
-
-  /** Whether to show the Firmenverwaltung at all; asked by every signed-in user. */
-  app.get("/me", async (c) =>
-    c.json({ admin: Boolean(await load(c.req.raw, { folders: false })) }),
-  );
+  const exchange = readExchange(deps);
 
   /** Hinweis „Extern“: every signed-in user's mail app marks and asks with it. */
   app.get("/external-hint", async (c) => {
@@ -99,8 +94,26 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
     return result ? c.json(result) : c.json({ error: "Nicht angemeldet" }, 401);
   });
 
+  /** Exchange-Status (x:Exchange.enable): Einstellungen → Synchronisieren zeigt die Anleitung nur wenn an. */
+  app.get("/exchange", async (c) => {
+    const result = await exchange(c.req.raw);
+    return result ? c.json(result) : c.json({ error: "Nicht angemeldet" }, 401);
+  });
+
   /** Gelöschte Elemente: everyone their own, the admin everyone's (archive-routes.ts). */
   app.route("/archive", archiveRoutes(deps));
+};
+
+export const createCompanyRoutes = (deps: CompanyDeps) => {
+  const load = createLoader(deps);
+  const app = new Hono<Env>();
+
+  /** Whether to show the Firmenverwaltung at all; asked by every signed-in user. */
+  app.get("/me", async (c) =>
+    c.json({ admin: Boolean(await load(c.req.raw, { folders: false })) }),
+  );
+
+  mountSignedInRoutes(app, deps);
 
   app.use("*", async (c, next) => {
     const loaded = await load(c.req.raw);
@@ -171,6 +184,9 @@ export const createCompanyRoutes = (deps: CompanyDeps) => {
   }
   if (deps.encryptionGateway) {
     app.route("/encryption-gateway", encryptionGatewayRoutes(deps.encryptionGateway));
+  }
+  if (deps.exchange) {
+    app.route("/exchange", exchangeRoutes(deps.exchange));
   }
   if (deps.spamAi) app.route("/spam-ai", spamAiRoutes(deps.spamAi, deps));
   if (deps.backup) app.route("/backup", backupRoutes(deps.backup));

@@ -222,6 +222,22 @@ Ein Zustellbericht (DSN) kommt vom Mailserver, nicht vom Empfänger (`src/lib/en
   fordern keinen Bericht an. Eine Mail ohne Betreff sucht ihren Bericht unter den ersten 50 Mails
   nach dem Senden.
 
+## Exchange und ActiveSync (Beta)
+
+Stalwart 1.2 bietet neben JMAP auch EWS, MAPI über HTTP, ActiveSync und Autodiscover auf
+denselben Postfächern, Kalendern und Kontakten (`x:Exchange` in
+`crates/registry/src/schema/structs.rs`, Routing in `crates/common/src/config/exchange.rs` und
+`crates/http/src/request.rs`). Die Firmenverwaltung schaltet `x:Exchange.enable` um und lädt die
+Einstellungen mit `ReloadSettings` neu (`server/company/exchange.ts`); ist der Schalter aus, lehnt
+Stalwart EWS, MAPI, OAB und ActiveSync ab, während `/autodiscover` weiter klassisches
+IMAP/SMTP-Autodiscover beantwortet (`crates/http/src/request.rs`). Caddy reicht `/autodiscover`,
+`/EWS`, `/mapi`, `/oab` und `/Microsoft-Server-ActiveSync` ohne Pufferung (`flush_interval -1`) an
+Stalwart durch.
+
+Regeln, die Outlook über Exchange anlegt, speichert Stalwart als `x:MailRule` im Skript `managed`;
+Kontexts eigenes Regel-Skript bindet `managed` ein (`server/rules/filters.ts`), sodass beide
+Regelsätze nebeneinander laufen können (mit echten Clients zu prüfen).
+
 ## Lesebestätigung
 
 Kontext baut Lesebestätigungen nach RFC 8098 selbst (JMAP-MDN, RFC 9007, kennt Stalwart erst seit

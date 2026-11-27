@@ -70,6 +70,8 @@ const FIXED: Record<string, (store: Store) => unknown> = {
   "GET /api/company/search-index": () => ({ pending: 0, failed: false, known: true }),
   // Stalwart's encryption gateway needs the real server (server/company/encryption-gateway.ts).
   "GET /api/company/encryption-gateway": () => ({ known: false, enabled: false, keys: [] }),
+  // Exchange braucht den echten Stalwart (server/company/exchange.ts).
+  "GET /api/company/exchange": () => ({ known: false, enabled: false }),
   // The demo stands in for a Stalwart without a license (server/company/edition.ts).
   "GET /api/company/edition": () => ({ edition: "community" }),
   // The demo is built from the same package.json as the app it serves (server/app.ts).

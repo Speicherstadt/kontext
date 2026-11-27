@@ -149,3 +149,9 @@ ohnehin die neue. Updates des Servers spielt der Betreiber ein
   an und richtet den Code neu ein ([Firmenverwaltung](company.md)).
 - Mailprogramme und Handys verbinden sich weiter direkt mit dem Mailserver (IMAP, SMTP, CalDAV,
   CardDAV); Aufgaben gibt es dort als CalDAV-Aufgabenlisten ([Aufgaben](tasks.md)).
+- **Outlook und Handy-Apps über Exchange (Beta):** Ist Exchange in der Firmenverwaltung
+  (*Einstellungen → Firma → Sicherheit der Mails*) eingeschaltet, zeigt *Einstellungen →
+  Synchronisieren* die Anleitung für Outlook (Windows und Mac), iPhone/iPad (ActiveSync) und
+  Android. Mail, Kalender und Kontakte synchronisieren dann direkt mit Push; bei aktivierter
+  Anmeldung mit Code braucht es dafür ein App-Passwort direkt aus Stalwart (Kontexts
+  App-Passwörter unter *Synchronisieren* gelten nur für Aufgaben über CalDAV).

@@ -103,6 +103,10 @@ Stalwarts Admin-Oberfläche und ohne IT-Kenntnisse.
   deren Schlüssel kennt, und die Liste dieser Schlüssel – eingefügt, von Stalwart gesucht (Web Key
   Directory, keys.openpgp.org) oder aus empfangenen Mails gelernt; jeder lässt sich entfernen
   ([Verschlüsselung](encryption.md#verschlusseln-durch-stalwart)).
+- **Outlook und Handy-Apps (Exchange, Beta)** unter *Einstellungen → Firma → Sicherheit der Mails*:
+  schaltet Exchange und ActiveSync in Stalwart ein (`x:Exchange.enable`), damit Outlook, iPhone und
+  Android Mail, Kalender und Kontakte direkt synchronisieren können
+  ([App](app.md#profil-passwort-und-anmeldung-mit-code), [Installation](installation.md#stalwart-121)).
 - **KI-Spamfilter** unter *Einstellungen → Firma → Sicherheit der Mails* (nur mit Stalwart
   Enterprise; mit Community steht dort nur ein Hinweis): Anbieter (Anthropic, OpenAI, Google
   Gemini oder ein eigener Ollama-Server), Modell, API-Schlüssel – oder der des Assistenten im Chat

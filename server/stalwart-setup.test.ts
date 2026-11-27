@@ -337,6 +337,36 @@ describe("the role when the admin may not grant the rights for deleted items", (
   });
 });
 
+describe("the role when the admin may not grant the Exchange rights (before Stalwart 1.2)", () => {
+  it("keeps the encryption and archive rights and says what is missing", async () => {
+    const sets: Record<string, unknown>[] = [];
+    const refusal = {
+      type: "forbidden",
+      description: "You are not authorized to grant permissions: sysExchangeGet",
+    };
+    const request: Request = vi.fn(async (calls: Invocation[]) =>
+      calls.map(([name, args, id]): Invocation => {
+        if (name === "x:Authentication/get")
+          return [name, { list: [{ defaultUserRoleIds: { b: true } }] }, id];
+        if (name === "x:Role/get") return [name, { list: [] }, id];
+        if (name !== "x:Role/set") return [name, {}, id];
+        sets.push(args);
+        const refused = /sysExchange/.test(JSON.stringify(args));
+        return [
+          name,
+          refused ? { notCreated: { role: refusal } } : { created: { role: { id: "f" } } },
+          id,
+        ];
+      }),
+    );
+    const result = await ensureRole(request);
+    expect(result).toMatchObject({ ok: true, value: { id: "f" } });
+    expect(result.ok && result.value.message).toContain("sysExchangeGet");
+    expect(JSON.stringify(sets.at(-1))).toContain("sysEncryptionGet");
+    expect(JSON.stringify(sets.at(-1))).toContain("sysArchivedItemGet");
+  });
+});
+
 describe("the passkey rights of new users", () => {
   const all = Object.fromEntries(PASSKEY_RIGHTS.map((right) => [right, true]));
 
