@@ -25,6 +25,8 @@ Ohne Kosten pro Benutzer. Made in Europe.
 [Dokumentation](https://kontext.email/) •
 [Entwicklung](#entwicklung)
 
+<sub>English: a self-hosted, open-source alternative to Google Workspace and Microsoft 365 for small teams: mail, calendar, contacts, tasks, team chat with video calls, the company phone and documents in one app, on your own server and with no per-user fees. Built on the Stalwart mail server (JMAP) and standard protocols, so Outlook, Thunderbird, iPhone and Android keep working. The app is in German and English; the [documentation](https://kontext.email/) is in German.</sub>
+
 🖱️ **[Demo ausprobieren](https://kontext.email/demo/)** – im Browser, ohne Installation
 
 </div>
