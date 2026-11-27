@@ -1047,9 +1047,11 @@ und löscht das alte. Es ist nichts zu tun.
 
 Neu brauchen Stalwarts Mail-Regeln, Junk-Listen, Kalender-Einstellungen und Exchange eigene Rechte
 in den Standardrollen (`sysMailRule*`, `sysBlockedSender*`, `sysSafeSender*`,
-`sysCalendarSettings*`, für Admins `sysExchange*`). Kontext nutzt sie nicht; wer Stalwarts eigene
-Oberfläche oder Exchange (Outlook, ActiveSync, standardmäßig aus) nutzt, startet Stalwart einmal mit
-`STALWART_UPDATE_ROLE_PERMISSIONS=true` wie unter [Stalwart 1.1.0](#stalwart-110).
+`sysCalendarSettings*`, für Admins `sysExchange*`). Für die Arbeitszeiten in Kontexts
+Einstellungen braucht die Standardrolle `sysCalendarSettingsGet` und `sysCalendarSettingsUpdate`
+(der Einrichtungsbefehl prüft sie mit); dafür – ebenso für Stalwarts eigene Oberfläche oder
+Exchange (Outlook, ActiveSync, standardmäßig aus) – Stalwart einmal mit
+`STALWART_UPDATE_ROLE_PERMISSIONS=true` starten wie unter [Stalwart 1.1.0](#stalwart-110).
 
 ### Stalwart 1.1.1
 
