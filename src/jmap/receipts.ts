@@ -84,6 +84,9 @@ export const sendReceipt = async (
   }
 };
 
+/** Stalwart 1.2 begrenzt `MDN/parse` standardmäßig auf `parseLimitEmail = 10` (`structs_impl.rs`). */
+const MAX_PARSE_BLOBS = 10;
+
 /**
  * Ermittelt die bestätigten Message-IDs: zuerst aus den eigenen Headern; nur wenn diese die
  * gesuchte Mail noch nicht nennen (oder alle gefragt sind), liest `MDN/parse` den Bericht.
@@ -94,19 +97,28 @@ const parseReceiptTargets = async (
   mails: Receipt[],
   wanted?: string,
 ): Promise<ReadReceipt[]> => {
-  const needsParse = mails.filter((mail) => {
-    const fromHeaders = receiptTargets(mail, null);
-    return !(wanted && fromHeaders.includes(wanted)) && Boolean(mail.blobId);
-  });
-  let parsed: Record<string, { originalMessageId?: string | null }> = {};
-  if (needsParse.length) {
+  const blobIds = [
+    ...new Set(
+      mails
+        .filter((mail) => {
+          const fromHeaders = receiptTargets(mail, null);
+          return !(wanted && fromHeaders.includes(wanted)) && Boolean(mail.blobId);
+        })
+        .map((mail) => mail.blobId),
+    ),
+  ];
+  const parsed: Record<string, { originalMessageId?: string | null }> = {};
+  for (let offset = 0; offset < blobIds.length; offset += MAX_PARSE_BLOBS) {
+    const batch = blobIds.slice(offset, offset + MAX_PARSE_BLOBS);
     const [response] = await client.request(
-      [["MDN/parse", { accountId, blobIds: needsParse.map((mail) => mail.blobId) }, "p"]],
+      [["MDN/parse", { accountId, blobIds: batch }, "p"]],
       MDN_USING,
     );
-    parsed =
+    Object.assign(
+      parsed,
       (response![1] as { parsed?: Record<string, { originalMessageId?: string | null }> }).parsed ??
-      {};
+        {},
+    );
   }
   return mails.map((mail) => ({
     ...mail,
