@@ -59,7 +59,8 @@
 	# das erste Pfadsegment ohne Groß-/Kleinschreibung (crates/common/src/config/exchange.rs,
 	# crates/http/src/request.rs). ActiveSync-Ping hält Verbindungen bis maxHeartbeat offen; Caddy
 	# hat standardmäßig weder Body-Größen- noch Response-Header-Timeout, flush_interval -1 reicht
-	# Antworten sofort durch. Ist x:Exchange.enable aus, lehnt Stalwart diese Pfade ab.
+	# Antworten sofort durch. Ist x:Exchange.enable aus, lehnt Stalwart EWS, MAPI, OAB und
+	# ActiveSync ab (/autodiscover beantwortet weiter klassisches IMAP/SMTP-Autodiscover).
 	@exchange path_regexp ^/(?i)(autodiscover|ews|mapi|oab|microsoft-server-activesync)(/|$)
 	handle @exchange {
 		reverse_proxy stalwart:8080 {

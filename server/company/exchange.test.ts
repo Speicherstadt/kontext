@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { createExchange, exchangeRoutes } from "./exchange";
+import type { CompanyDeps } from "./context";
+import { createExchange, exchangeRoutes, readExchange } from "./exchange";
 import type { Invocation } from "./management";
 
 const fake = (handlers: Record<string, (args: Record<string, unknown>) => unknown>) => {
@@ -94,3 +95,25 @@ describe("createExchange", () => {
   });
 });
 
+describe("readExchange", () => {
+  const raw = new Request("http://localhost/api/company/exchange");
+
+  it("liefert null ohne Anmeldung", async () => {
+    const deps = { currentEmail: async () => null } as unknown as CompanyDeps;
+    expect(await readExchange(deps)(raw)).toBeNull();
+  });
+
+  it("liest den Status für angemeldete Benutzer und meldet known: false ohne Konfiguration", async () => {
+    const on = fake({ "x:Exchange/get": () => ({ list: [{ enable: true }] }) });
+    const withExchange = {
+      currentEmail: async () => "anna@firma.test",
+      exchange: createExchange(on.request),
+    } as unknown as CompanyDeps;
+    expect(await readExchange(withExchange)(raw)).toEqual({ known: true, enabled: true });
+
+    const withoutExchange = {
+      currentEmail: async () => "anna@firma.test",
+    } as unknown as CompanyDeps;
+    expect(await readExchange(withoutExchange)(raw)).toEqual({ known: false, enabled: false });
+  });
+});

@@ -1751,7 +1751,7 @@
   "sync_exchange_android_title": "Android (Gmail, Samsung Mail, Outlook)",
   "sync_exchange_android_1": "Konto hinzufügen → „Exchange“ wählen.",
   "sync_exchange_android_2": "Adresse {user}, Server {host} und Passwort (oder App-Passwort) eingeben.",
-  "sync_exchange_app_password": "Mit Bestätigung in zwei Schritten brauchst du ein App-Passwort (Einstellungen → Passwort und Sicherheit → App-Passwörter).",
+  "sync_exchange_app_password": "Mit Bestätigung in zwei Schritten brauchst du ein App-Passwort direkt in Stalwart (die App-Passwörter unten gelten nur für Aufgaben über CalDAV).",
   "app_passwords_title": "App-Passwörter",
   "app_passwords_hint": "Ein eigenes Passwort für jede App, etwa Thunderbird oder das Handy – nötig mit Bestätigung in zwei Schritten. Es gilt nur für die Aufgaben dort (CalDAV), nicht für die Anmeldung in Kontext, und lässt sich einzeln widerrufen.",
   "app_passwords_none": "Noch keine App-Passwörter.",

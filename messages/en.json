@@ -1751,7 +1751,7 @@
   "sync_exchange_android_title": "Android (Gmail, Samsung Mail, Outlook)",
   "sync_exchange_android_1": "Add an account → choose “Exchange”.",
   "sync_exchange_android_2": "Enter {user}, server {host}, and your password (or app password).",
-  "sync_exchange_app_password": "With two-step verification you need an app password (Settings → Password and security → App passwords).",
+  "sync_exchange_app_password": "With two-step verification you need an app password from Stalwart (the app passwords below only work for tasks via CalDAV).",
   "app_passwords_title": "App passwords",
   "app_passwords_hint": "A password of its own for each app, such as Thunderbird or your phone – needed with two-step verification. It works only for the tasks there (CalDAV), not for signing in to Kontext, and can be revoked on its own.",
   "app_passwords_none": "No app passwords yet.",
