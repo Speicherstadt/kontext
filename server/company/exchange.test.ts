@@ -67,4 +67,30 @@ describe("createExchange", () => {
     expect(result).toEqual({ ok: false, error: "Keine Rechte" });
     expect(calls.map(([name]) => name)).toEqual(["x:Exchange/set"]);
   });
+
+  it("meldet known: false, wenn x:Exchange/get eine leere Liste liefert", async () => {
+    const empty = fake({ "x:Exchange/get": () => ({ list: [], notFound: ["singleton"] }) });
+    expect(await createExchange(empty.request).read()).toEqual({
+      known: false,
+      enabled: false,
+    });
+  });
+
+  it("liefert bei einem JMAP-Methodenfehler in PUT / einen 400-Fehler statt 500", async () => {
+    const { request, calls } = fake({
+      "x:Exchange/set": () => {
+        throw new Error("forbidden");
+      },
+    });
+    const app = exchangeRoutes(createExchange(request));
+    const response = await app.request("/", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ enabled: true }),
+    });
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({ error: "forbidden" });
+    expect(calls.map(([name]) => name)).toEqual(["x:Exchange/set"]);
+  });
 });
+
