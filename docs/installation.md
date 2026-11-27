@@ -465,12 +465,13 @@ von Hand in Stalwarts Verwaltung geht es so:
    `sysAiModelUpdate`, `sysAiModelDestroy`, `sysSpamAiGet`, `sysSpamAiUpdate`, `sysAccountDestroy`,
    `sysTaskGet`, `sysTaskQuery`, `sysTaskDestroy`, `taskDestroyAccount`, `sysDirectoryGet`,
    `sysDirectoryCreate`, `sysDirectoryUpdate`, `sysDirectoryDestroy`, `sysDomainUpdate`,
-   `scimAccess` und `impersonate`. Mit
+   `scimAccess`, `sysExchangeGet`, `sysExchangeUpdate` und `impersonate`. Mit
    `sysIndexQueueStatusGet` zeigt die Firmenverwaltung, solange Stalwart den Suchindex aufbaut.
    Mit den `sysEncryption…`- und `sysExternalPublicKey…`-Rechten schaltet sie das [Verschlüsseln
    durch Stalwart](encryption.md#verschlusseln-durch-stalwart) und verwaltet die Schlüssel der
-   Empfänger; `sysActionCreate` mit `actionReloadSettings` lässt sie Stalwart danach die
-   Einstellungen neu laden. Nur mit [Stalwart Enterprise](#stalwart-enterprise) gebraucht werden:
+   Empfänger, mit `sysExchange…` Exchange und ActiveSync; `sysActionCreate` mit
+   `actionReloadSettings` lässt sie Stalwart danach die Einstellungen neu laden. Nur mit [Stalwart
+   Enterprise](#stalwart-enterprise) gebraucht werden:
    die `sysMetric…`-, `sysTrace…`- und `…StoreGet`-Rechte, die nur lesen, was der
    [Serverzustand](#serverzustand) zeigt; die `sysEnterprise…`-, `sysCalendarAlarm…`- und
    `sysCalendarScheduling…`-Rechte mit `actionInvalidateCaches` für das
@@ -1054,11 +1055,12 @@ und Exchange bei Bedarf in der Firmenverwaltung einschalten.
 
 Neu brauchen Stalwarts Mail-Regeln, Junk-Listen, Kalender-Einstellungen und Exchange eigene Rechte
 in den Standardrollen (`sysMailRule*`, `sysBlockedSender*`, `sysSafeSender*`,
-`sysCalendarSettings*`, für Admins `sysExchange*`). Für die Arbeitszeiten in Kontexts
-Einstellungen braucht die Standardrolle `sysCalendarSettingsGet` und `sysCalendarSettingsUpdate`
-(der Einrichtungsbefehl prüft sie mit); dafür – ebenso für Stalwarts eigene Oberfläche oder
-Exchange (Outlook, ActiveSync, standardmäßig aus) – Stalwart einmal mit
-`STALWART_UPDATE_ROLE_PERMISSIONS=true` starten wie unter [Stalwart 1.1.0](#stalwart-110).
+`sysCalendarSettings*`, für Admins `sysExchange*`). Kontext nutzt davon `sysCalendarSettingsGet`
+und `sysCalendarSettingsUpdate` für die Arbeitszeiten in den Einstellungen sowie `sysExchangeGet`
+und `sysExchangeUpdate` für den Exchange-Schalter (der [Einrichtungsbefehl](#einrichtungsbefehl)
+prüft beides mit). Wer von einer Version vor 1.2 aktualisiert, startet Stalwart einmal mit
+`STALWART_UPDATE_ROLE_PERMISSIONS=true` wie unter [Stalwart 1.1.0](#stalwart-110) und führt danach
+den [Einrichtungsbefehl](#einrichtungsbefehl) erneut aus.
 
 ### Stalwart 1.1.1
 

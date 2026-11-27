@@ -229,8 +229,10 @@ denselben Postfächern, Kalendern und Kontakten (`x:Exchange` in
 `crates/registry/src/schema/structs.rs`, Routing in `crates/common/src/config/exchange.rs` und
 `crates/http/src/request.rs`). Die Firmenverwaltung schaltet `x:Exchange.enable` um und lädt die
 Einstellungen mit `ReloadSettings` neu (`server/company/exchange.ts`); ist der Schalter aus, lehnt
-Stalwart alle Exchange-Pfade ab. Caddy reicht `/autodiscover`, `/EWS`, `/mapi`, `/oab` und
-`/Microsoft-Server-ActiveSync` ohne Pufferung (`flush_interval -1`) an Stalwart durch.
+Stalwart EWS, MAPI, OAB und ActiveSync ab, während `/autodiscover` weiter klassisches
+IMAP/SMTP-Autodiscover beantwortet (`crates/http/src/request.rs`). Caddy reicht `/autodiscover`,
+`/EWS`, `/mapi`, `/oab` und `/Microsoft-Server-ActiveSync` ohne Pufferung (`flush_interval -1`) an
+Stalwart durch.
 
 Regeln, die Outlook über Exchange anlegt, speichert Stalwart als `x:MailRule` im Skript `managed`;
 Kontexts eigenes Regel-Skript bindet `managed` ein (`server/rules/filters.ts`), sodass beide

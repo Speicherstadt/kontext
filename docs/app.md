@@ -153,4 +153,5 @@ ohnehin die neue. Updates des Servers spielt der Betreiber ein
   (*Einstellungen → Firma → Sicherheit der Mails*) eingeschaltet, zeigt *Einstellungen →
   Synchronisieren* die Anleitung für Outlook (Windows und Mac), iPhone/iPad (ActiveSync) und
   Android. Mail, Kalender und Kontakte synchronisieren dann direkt mit Push; bei aktivierter
-  Anmeldung mit Code wird dafür ein App-Passwort verwendet.
+  Anmeldung mit Code braucht es dafür ein App-Passwort direkt aus Stalwart (Kontexts
+  App-Passwörter unter *Synchronisieren* gelten nur für Aufgaben über CalDAV).
